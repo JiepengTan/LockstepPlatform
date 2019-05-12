@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1A00F547-A5D9-4FBA-953A-04236882CC7A}</ProjectGuid>
+    <ProjectGuid>{2EE8F630-4373-4F2E-B988-B576A7B6FE52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lockstep.Serializaition</RootNamespace>
-    <AssemblyName>Lockstep.Serializaition</AssemblyName>
+    <RootNamespace>NetMsg.Lobby</RootNamespace>
+    <AssemblyName>NetMsg.Lobby</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -38,12 +38,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\BaseFormater.cs" />
-    <Compile Include="src\Compressor.cs" />
-    <Compile Include="src\Deserializer.cs" />
-    <Compile Include="src\FastBitConverter.cs" />
-    <Compile Include="src\NetMsgExtension.cs" />
-    <Compile Include="src\Serializer.cs" />
+    <Content Include="Src\.DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Src\EMsgCL.cs" />
+    <Compile Include="Src\Extension\DictExtensions.cs" />
+    <Compile Include="Src\NetMsg\CreateRoom.cs" />
+    <Compile Include="Src\NetMsg\InitMsg.cs" />
+    <Compile Include="Src\NetMsg\ReqInit.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
