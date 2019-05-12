@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Logging;
@@ -27,7 +30,15 @@ namespace Lockstep.Logic.Server {
         public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_InitMsg;
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCL.EnumCount];
 
+        private  delegate IRoom FuncCreateRoom();
         private delegate void DealNetMsg(Player player, Deserializer reader);
+        private Dictionary<int, FuncCreateRoom> _roomFactoryFuncs = new Dictionary<int, FuncCreateRoom>();
+        //TODO read from config
+        string RoomType2DllPath(int type){
+            return "Game.Tank" + ".dll";
+        }
+
+        
 
         #region LifeCycle
 
@@ -88,6 +99,39 @@ namespace Lockstep.Logic.Server {
 
             room.DoDestroy();
         }
+        /// Create From Dll by reflect 
+        private IRoom CreateRoom(int type){
+            //TODO Pool
+            if (_roomFactoryFuncs.TryGetValue(type, out FuncCreateRoom _func)) {
+                return _func?.Invoke();
+            }
+
+            var path = RoomType2DllPath(type);
+            if (path == null) {
+                return null;
+            }
+
+            var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
+            var assembly = Assembly.LoadFrom(dllPath);
+            Debug.LogError("Load dll " + dllPath);
+            if (assembly == null) {
+                Debug.LogError("Load dll failed  " + dllPath);
+                _roomFactoryFuncs[type] = null;
+                return null;
+            }
+
+            var types = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IRoom))).ToArray();
+            if (types.Length != 1) {
+                Debug.LogError("dll do not have type of IRoom :" + dllPath);
+                _roomFactoryFuncs[type] = null;
+                return null;
+            }
+
+            FuncCreateRoom factory = () => { return (IRoom) System.Activator.CreateInstance(types[0], true); };
+            _roomFactoryFuncs[type] = factory;
+            return factory();
+        }
+
 
         public IRoom CreateRoom(int type, Player master, string roomName){
             if (RoomAutoIncID == int.MaxValue - 1) {
@@ -95,7 +139,13 @@ namespace Lockstep.Logic.Server {
             }
 
             var id = ++RoomAutoIncID;
-            IRoom room = null;//new Room(); //TODO should load dll 
+
+            IRoom room = CreateRoom(type);
+            if (room == null) {
+                Debug.LogError($"Can not load game DLL type = {type} roomName = {roomName}");
+                return null;
+            }
+
             Debug.Log($"CreateRoom type = {type} name = {roomName}");
             roomId2Room.Add(id, room);
             _allRooms.Add(room);
@@ -164,10 +214,12 @@ namespace Lockstep.Logic.Server {
         #endregion
 
         #region player
-        public void TickOut(Player player,int reason){
+
+        public void TickOut(Player player, int reason){
             Debug.LogError($"TickPlayer reason:{reason} {player.ToString()}");
             player.socket.Disconnect();
         }
+
         public Player GetPlayer(long playerId){
             return playerID2Player.GetRefVal(playerId);
         }
@@ -225,8 +277,7 @@ namespace Lockstep.Logic.Server {
         #endregion
 
         #region Msg Handler
-        
- 
+
         public void OnDataReceived(int netID, byte[] data){
             try {
                 realOnDataReceived(netID, data);
@@ -307,7 +358,7 @@ namespace Lockstep.Logic.Server {
         }
 
         private void SendReqInit(Player player){
-            player.Send((byte)EMsgCL.L2C_ReqInit, new ReqInit() {playerId = player.PlayerId});
+            player.Send((byte) EMsgCL.L2C_ReqInit, new ReqInit() {playerId = player.PlayerId});
         }
 
 

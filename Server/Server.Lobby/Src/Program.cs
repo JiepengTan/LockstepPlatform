@@ -6,8 +6,6 @@ using Lockstep.Logging;
 namespace Lockstep.Logic.Server {
     class Program {
         static long lastTick = 1;
-        static long deltaTime = 1;
-        static int tickCount = 0;
         static int tickInterval = 40;
 
         static void Main(string[] args){

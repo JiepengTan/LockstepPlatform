@@ -151,6 +151,7 @@ namespace Lockstep.Logic.Server {
                 }
             }
             catch (Exception e) {
+                Debug.LogError("Parse Msg Error:" + e);
                 data = null;
             }
 
