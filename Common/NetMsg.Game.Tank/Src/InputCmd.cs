@@ -13,7 +13,7 @@ namespace NetMsg.Game.Tank {
         }
 
         public override void Deserialize(Deserializer reader){
-            key = reader.GetByte();
+            key = reader.GetInt();
             val1 = reader.GetInt();
             val2 = reader.GetInt();
         }

@@ -26,14 +26,6 @@ namespace Server.Common {
             socket?.Send(data, DeliveryMethod.ReliableOrdered);
         }
 
-        public void Send(byte type, Lockstep.Serialization.ISerializable body){
-            var writer = new Serializer();
-            writer.Put((byte) type);
-            body.Serialize(writer);
-            var bytes = Compressor.Compress(writer);
-            Send(bytes);
-        }
-
         public override string ToString(){
             return $"playerID:{PlayerId} name:{name} roomID:{RoomId} localID:{localId}";
         }

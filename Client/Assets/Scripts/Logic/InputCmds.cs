@@ -1,7 +1,6 @@
 using Lockstep.Logging;
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
 using Lockstep.Math;
+using NetMsg.Game.Tank;
 
 namespace Lockstep.Game {
     public interface  IInputCommand {
@@ -24,12 +23,12 @@ namespace Lockstep.Game {
             for (int i = 0; i < input.allInputs.Length; i++) {
                 var inputCmd = input.allInputs[i];
                 if ( inputCmd== null) break;
-                retVal[i] = ParseCmd(inputCmd.key, inputCmd.val);
+                retVal[i] = ParseCmd(inputCmd.key, inputCmd.val1,inputCmd.val2);
             }
             return retVal;
         }
 
-        static IInputCommand ParseCmd(byte key, LVector3 val){
+        static IInputCommand ParseCmd(int key, int val1,int val2){
             var type = (EInputKeys) key;
             switch (type) {
                 case EInputKeys.Up:
@@ -45,7 +44,7 @@ namespace Lockstep.Game {
                     return new IInputCmdDir(LVector2.left);
                     break;
                 case EInputKeys.Fire:
-                     return new IInputCmdFire(val._x);
+                     return new IInputCmdFire(val1);
                     break;
             }
 

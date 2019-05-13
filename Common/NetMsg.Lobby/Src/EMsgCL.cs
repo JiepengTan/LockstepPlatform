@@ -10,7 +10,7 @@
         C2L_CreateRoom,
         C2L_LeaveRoom,
         C2L_RoomMsg,
-        
+        L2C_RoomMsg,
         EnumCount
     }
 }

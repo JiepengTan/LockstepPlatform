@@ -358,7 +358,11 @@ namespace Lockstep.Logic.Server {
         }
 
         private void SendReqInit(Player player){
-            player.Send((byte) EMsgCL.L2C_ReqInit, new ReqInit() {playerId = player.PlayerId});
+            var writer = new Serializer();
+            writer.Put((byte) EMsgCL.L2C_ReqInit);
+            new ReqInit() {playerId = player.PlayerId}.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            player.Send(bytes);
         }
 
 

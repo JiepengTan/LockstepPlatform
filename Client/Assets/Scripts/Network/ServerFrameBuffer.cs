@@ -1,6 +1,5 @@
 #define DEBUG_FRAME_DELAY
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
+using NetMsg.Game.Tank;
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 

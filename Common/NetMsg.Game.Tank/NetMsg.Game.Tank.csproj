@@ -48,6 +48,10 @@
     <Compile Include="Src\ServerFrames.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NetMsg.Lobby\NetMsg.Lobby.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Lobby</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>

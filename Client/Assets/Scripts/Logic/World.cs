@@ -1,9 +1,8 @@
 #define DEBUG_FRAME_DELAY
 using System;
 using System.Collections.Generic;
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
 using Lockstep.Math;
+using NetMsg.Game.Tank;
 
 namespace Lockstep.Game {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]

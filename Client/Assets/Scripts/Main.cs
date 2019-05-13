@@ -1,6 +1,5 @@
 using UnityEngine;
 using Lockstep.Logging;
-using Lockstep.Logic.Share;
 using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
@@ -12,6 +11,7 @@ namespace Lockstep.Game {
     }
 
     public class Main : MonoBehaviour {
+        public const string ClientKey = "SomeConnectionKey";
         public static Main Instance;
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
@@ -22,7 +22,7 @@ namespace Lockstep.Game {
             Instance = this;
             Log.OnMessage += OnLog;
             _simulation = new Simulation(_netMgr);
-            _netMgr.Init(ServerIp, ServerPort, _simulation, Define.ClientKey);
+            _netMgr.Init(ServerIp, ServerPort, _simulation, ClientKey);
         }
 
 

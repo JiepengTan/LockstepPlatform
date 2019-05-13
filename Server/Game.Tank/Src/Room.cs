@@ -4,6 +4,7 @@ using System.Linq;
 using LiteNetLib;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
+using NetMsg.Lobby;
 using Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
@@ -102,7 +103,7 @@ namespace Lockstep.Logic.Server {
                 return;
             }
 
-            //Debug.Log($"OnDataReceived netID = {netID}  type:{(EMsgCL)msgType}");
+            Debug.Log($"OnDataReceived netID = {player.localId}  type:{(EMsgCS)msgType}");
             {
                 var _func = allMsgDealFuncs[msgType];
                 var _parser = allMsgParsers[msgType];
@@ -170,16 +171,22 @@ namespace Lockstep.Logic.Server {
         }
 
         public void SendTo(Player player, EMsgCS type, ISerializable body){
-            player.Send((byte)type, body);
+            var writer = new Serializer();
+            writer.Put((byte) EMsgCL.L2C_RoomMsg);
+            writer.Put((byte) type);
+            body.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            player.Send(bytes);
         }
 
         public void SendToAll(EMsgCS type, ISerializable body){
             var writer = new Serializer();
+            writer.Put((byte) EMsgCL.L2C_RoomMsg);
             writer.Put((byte) type);
             body.Serialize(writer);
-            var data = Compressor.Compress(writer);
+            var bytes = Compressor.Compress(writer);
             foreach (var player in _allPlayers) {
-                SendTo(player, data);
+                player.Send(bytes);
             }
         }
 

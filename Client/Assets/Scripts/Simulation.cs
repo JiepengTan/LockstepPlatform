@@ -1,6 +1,5 @@
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
 using Lockstep.Math;
+using NetMsg.Game.Tank;
 using UnityEngine;
 
 namespace Lockstep.Game {

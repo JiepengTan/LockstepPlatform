@@ -44,6 +44,9 @@
     <Reference Include="NetMsg.Game.Tank, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\NetMsg.Game.Tank.dll</HintPath>
     </Reference>
+    <Reference Include="NetMsg.Lobby, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Libs\NetMsg.Lobby.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />

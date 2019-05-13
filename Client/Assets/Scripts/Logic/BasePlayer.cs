@@ -1,9 +1,9 @@
 #define DEBUG_FRAME_DELAY
 using System;
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
 using Lockstep.Math;
-using Debug  = Lockstep.Logging.Debug;
+using NetMsg.Game.Tank;
+using Debug  = Lockstep.Serialization;
+
 namespace Lockstep.Game {
     [System.Serializable]
     public class BasePlayer {

@@ -2,9 +2,9 @@
 using System;
 using System.Collections;
 using LiteNetLib;
-using Lockstep.Logic.Share;
-using Lockstep.Logic.Share.NetMsg;
 using Lockstep.Serialization;
+using NetMsg.Game.Tank;
+using NetMsg.Lobby;
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
@@ -51,7 +51,7 @@ namespace Lockstep.Game {
 
         void SendInitMsg(){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCS.C2L_InitMsg);
+            writer.Put((byte) EMsgCL.C2L_InitMsg);
             writer.Put(-1L);
             writer.Put("FishMan");
             Send(Compressor.Compress(writer));
@@ -59,12 +59,13 @@ namespace Lockstep.Game {
 
         void OnNet_ReqInit(Deserializer reader){
             _playerID = reader.GetLong();
+            Debug.LogError("PlayerID " + _playerID);
             SendCreateRoomMsg();
         }
 
         void SendCreateRoomMsg(){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCS.C2L_CreateRoom);
+            writer.Put((byte) EMsgCL.C2L_CreateRoom);
             writer.Put(_playerID); //playerID
             writer.Put(1); //roomtype
             writer.Put("FishMan"); //name
@@ -95,16 +96,32 @@ namespace Lockstep.Game {
         private void OnNetMsg(byte[] rawData){
             var data = Compressor.Decompress(rawData);
             var reader = new Deserializer(data);
-            var messageTag = (EMsgCS) reader.GetByte();
+            var msgTypeID = reader.GetByte();
+            //Handler Lobby msg
+            if (msgTypeID < (byte) EMsgCL.EnumCount) {
+                var messageTag = (EMsgCL) msgTypeID;
+                switch (messageTag) {
+                    case EMsgCL.L2C_ReqInit:
+                        OnNet_ReqInit(reader);
+                        break;
+                    case EMsgCL.L2C_RoomMsg:
+                        OnRoomMsg(reader);
+                        break;
+                }
+            }
+            
+        }
+
+        void OnRoomMsg(Deserializer reader){
+            var msgTypeID = reader.GetByte();
+            var messageTag = (EMsgCS) msgTypeID;
+            Debug.Log("Deal room msg " + messageTag);
             switch (messageTag) {
                 case EMsgCS.S2C_StartGame:
                     OnNet_StartGame(reader);
                     break;
                 case EMsgCS.S2C_FrameData:
                     OnNet_FrameData(reader);
-                    break;
-                case EMsgCS.L2C_ReqInit:
-                    OnNet_ReqInit(reader);
                     break;
             }
         }
@@ -134,7 +151,7 @@ namespace Lockstep.Game {
             var data = new PlayerInput();
             var cmd = new InputCmd();
             cmd.key = isFire ? (byte) EInputKeys.Fire : (byte) dir;
-            cmd.val._x = isFire ? 1 : 0;
+            cmd.val1 = isFire ? 1 : 0;
             data.allInputs[0] = cmd;
             data.playerID = _simulation.LocalActorId;
 #if DEBUG_FRAME_DELAY
@@ -145,7 +162,7 @@ namespace Lockstep.Game {
 
         private void SendRoomMsg(EMsgCS type, ISerializable body){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCS.C2L_RoomMsg);
+            writer.Put((byte) EMsgCL.C2L_RoomMsg);
             writer.Put(_playerID);
             writer.Put((byte) type);
             body.Serialize(writer);
