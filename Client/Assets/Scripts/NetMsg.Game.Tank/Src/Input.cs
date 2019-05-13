@@ -1,39 +1,37 @@
 #define DEBUG_FRAME_DELAY
+using System.Collections.Generic;
+using Lockstep.Game;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank{
-    public partial class PlayerInput : BaseFormater {
-        public byte playerID;
+    public partial class Input : BaseFormater{
+        public byte ActorId;
         public uint Tick;
-        public List<InputCmd> allInputs = new List<InputCmd>();
+        public List<ICommand> Commands = new List<ICommand>();
 #if DEBUG_FRAME_DELAY
         public float timeSinceStartUp;
 #endif
-        public PlayerInput(byte actorID, uint tick, params InputCmd[] inputs){
+        public Input( uint tick,byte actorID, ICommand[] inputs){
             
         }
+
+        public Input(){ }
 
         /// <summary>
         /// TODO     合并 输入
         /// </summary>
         /// <param name="inputb"></param>
-        public void Combine(PlayerInput inputb){ }
+        public void Combine(Input inputb){ }
 
         public override void Serialize(Serializer writer){
 #if DEBUG_FRAME_DELAY
             writer.Put(timeSinceStartUp);
 #endif
-            writer.Put(playerID);
-            int count = 0;
-            for (; count < allInputs.Length; count++) {
-                if (allInputs[count] == null) {
-                    break;
-                }
-            }
-
+            writer.Put(ActorId);
+            int count = Commands.Count;
             writer.Put((byte) count);
             for (int i = 0; i < count; i++) {
-                allInputs[i].Serialize(writer);
+                Commands[i].Serialize(writer);
             }
         }
 
@@ -41,11 +39,12 @@ namespace NetMsg.Game.Tank{
 #if DEBUG_FRAME_DELAY
             timeSinceStartUp = reader.GetFloat();
 #endif
-            playerID = reader.GetByte();
+            ActorId = reader.GetByte();
             int count = reader.GetByte();
             for (int i = 0; i < count; i++) {
-                allInputs[i] = new InputCmd();
-                allInputs[i].Deserialize(reader);
+                var cmd = new InputCmd();
+                cmd.Deserialize(reader);
+                //Commands.Add(cmd);
             }
         }
     }
