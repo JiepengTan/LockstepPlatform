@@ -47,5 +47,6 @@ namespace Lockstep.Core.Logic.Interfaces
                 return result;
             }
         }
-    }      
+    }
+
 }

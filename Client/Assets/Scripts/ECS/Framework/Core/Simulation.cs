@@ -64,14 +64,6 @@ namespace Lockstep.Game
 
         public void DoDestroy(){ }
 
-        public void CheckMissFrames(){
-            uint[] missFrames = null;
-           //missFrames = _buffer.GetMissFrames();
-           //if (missFrames != null) {
-           //    _network.SendPackRequire(missFrames);
-           //}
-        }
-
         
         public void Start(int targetFps, byte localActorId, byte[] allActors)
         {

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using LiteNetLib;
+using Lockstep.Core.Logic.Interfaces;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
 using NetMsg.Lobby;
@@ -10,7 +11,7 @@ using Debug = Lockstep.Logging.Debug;
 using Input = NetMsg.Game.Tank.Input;
 
 namespace Lockstep.Game {
-    public class NetHelper {
+    public class NetHelper :CommandQueue{
         private Simulation _simulation;
         private string ServerIp;
         private int ServerPort;

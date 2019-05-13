@@ -28,7 +28,7 @@ namespace Lockstep.Game {
         private void Awake(){
             Instance = this;
             Log.OnMessage += OnLog;
-            //_simulation = new Simulation(_netMgr);
+            _simulation = new Simulation(new Contexts(),_netMgr);
             _netMgr.Init(ServerIp, ServerPort, _simulation, ClientKey);
         }
 
