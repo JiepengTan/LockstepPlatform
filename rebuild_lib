@@ -1,0 +1,10 @@
+#!/bin/bash
+clear
+dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
+cd $dir
+msbuild /property:Configuration=Release /verbosity:minimal Common/CommonLibs.sln
+
+rm -rf Client/Assets/Plugins/Libs/*
+rm -rf Server/Libs/*
+cp -rf ./Libs/* Client/Assets/Plugins/Libs
+cp -rf ./Libs/* Server/bin

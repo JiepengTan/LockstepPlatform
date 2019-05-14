@@ -18,12 +18,18 @@ namespace Server.Common {
         public EPlayerStatus status;
         public IRoom room;
         public int RoomId => room == null ? 0 : room.RoomId;
-        public NetPeer socket;
+        public NetPeer lobbySock;
+        public NetPeer gameSock;
+        
         public int lastActiveTime; // in sec
         public byte localId;
+        
+        public void SendLobby(byte[] data){
+            lobbySock?.Send(data, DeliveryMethod.ReliableOrdered);
+        }
 
-        public void Send(byte[] data){
-            socket?.Send(data, DeliveryMethod.ReliableOrdered);
+        public void SendRoom(byte[] data){
+            gameSock?.Send(data, DeliveryMethod.ReliableOrdered);
         }
 
         public override string ToString(){

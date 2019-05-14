@@ -7,7 +7,7 @@ namespace Server.Common
     {
         public event Action<object> ClientConnected;
         public event Action<object> ClientDisconnected;
-        public event Action<int, byte[]> DataReceived;
+        public event Action<NetPeer, byte[]> DataReceived;
 
         private readonly NetManager _server;
         private readonly EventBasedNetListener _listener;
@@ -50,7 +50,7 @@ namespace Server.Common
 
             _listener.NetworkReceiveEvent += (peer, reader, method) =>
             {
-                DataReceived?.Invoke(peer.Id, reader.GetRemainingBytes());
+                DataReceived?.Invoke(peer, reader.GetRemainingBytes());
             };
 
             _listener.PeerDisconnectedEvent += (peer, info) =>

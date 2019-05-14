@@ -11,6 +11,8 @@
         C2L_LeaveRoom,
         C2L_RoomMsg,
         L2C_RoomMsg,
+        L2C_JoinRoomResult,
+        C2L_PlayerReady,
         EnumCount
     }
 }

@@ -4,7 +4,7 @@ namespace Server.Common {
     public interface ILobby {
         
         //life cycle
-        void DoStart(int port);
+        void DoStart(int tcpPort,int udpPort);
         void DoUpdate(int deltaTime);
         void DoDestroy();
         
@@ -25,6 +25,5 @@ namespace Server.Common {
         void OnClientConnected(object peer);
         void OnCilentDisconnected(object peer);
         //msg handle 
-        void OnDataReceived(int netID, byte[] arr);
     }
 }

@@ -1,4 +1,5 @@
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Security.Cryptography.X509Certificates;
 using Lockstep.Core;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
@@ -13,10 +14,11 @@ namespace Lockstep.Game {
         private long _playerID;
         private int _roomId;
         private Simulation _simulation;
-
+        private string key;
         public void Init(Simulation simulation, string ip, int port, string key){
             this._simulation = simulation;
             InitLobby(ip, port, key);
+            this.key = key;
         }
 
         private void InitLobby(string ip, int port, string key){
@@ -24,11 +26,13 @@ namespace Lockstep.Game {
             _netProxyLobby.OnConnected += OnConnectedLobby;
             _netProxyLobby.Init(ip, port, key, (int) EMsgCL.EnumCount);
             _netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_ReqInit, OnMsgLobby_ReqInit);
+            _netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_RoomMsg, OnMsgLobby_CreateRoom);
+            
         }
 
         public void InitRoom(string ip, int port, string key){
             _netProxyRoom = new NetProxyRoom();
-            _netProxyLobby.OnConnected += OnConnectedRoom;
+            _netProxyRoom.OnConnected += OnConnectedRoom;
             _netProxyRoom.Init(ip, port, key, (int) EMsgCS.EnumCount);
             //register msgs
 
@@ -62,7 +66,10 @@ namespace Lockstep.Game {
             SendInitMsg();
         }
 
-        public void OnConnectedRoom(){ }
+        public void OnConnectedRoom(){
+            Logging.Debug.Log("OnConnected room");
+            SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady(){roomId = _roomId});
+        }
 
         public void SendInput(PlayerInput playerInput){
             SendMsgRoom(EMsgCS.C2S_PlayerInput, playerInput);
@@ -73,16 +80,25 @@ namespace Lockstep.Game {
             writer.Put((byte) msgId);
             writer.Put(_playerID);
             body.Serialize(writer);
-            _netProxyRoom.Send(Compressor.Compress(writer));
+            _netProxyLobby.Send(Compressor.Compress(writer));
         }
 
         public void SendMsgRoom(EMsgCS msgId, ISerializable body){
             var writer = new Serializer();
+            writer.Put(_playerID);
             writer.Put((byte) msgId);
             body.Serialize(writer);
-            _netProxyLobby.Send(Compressor.Compress(writer));
+            _netProxyRoom.Send(Compressor.Compress(writer));
         }
-
+        
+        void OnMsgLobby_CreateRoom(Deserializer reader){
+            var msg = reader.Parse<Msg_CreateRoomResult>();
+            _roomId = msg.roomId;
+            Logging.Debug.LogError("OnMsgLobby_CreateRoom " + msg.port);
+            InitRoom(msg.ip, msg.port, key);
+            StartRoom();
+        }
+        
         void OnMsgLobby_ReqInit(Deserializer reader){
             var msg = reader.Parse<Msg_RepInit>();
             _playerID = msg.playerId;
@@ -95,6 +111,7 @@ namespace Lockstep.Game {
         }
 
         void SendCreateRoomMsg(){
+            Logging.Debug.LogError("SendCreateRoomMsg");
             SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {roomType = 1, name = "FishManRoom"});
         }
 

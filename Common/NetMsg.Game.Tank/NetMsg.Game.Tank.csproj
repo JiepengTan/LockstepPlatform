@@ -53,18 +53,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Src\.DS_Store" />
-    <Content Include="Src\EMsgCS.cs.meta" />
-    <Content Include="Src\HashCode.cs.meta" />
-    <Content Include="Src\InitServerFrame.cs.meta" />
-    <Content Include="Src\InputCmd.cs.meta" />
-    <Content Include="Src\InputCmds.cs.meta" />
-    <Content Include="Src\Msg_CreateRoom.cs.meta" />
-    <Content Include="Src\Msg_InitMsg.cs.meta" />
-    <Content Include="Src\Msg_RepInit.cs.meta" />
-    <Content Include="Src\PlayerInput.cs.meta" />
-    <Content Include="Src\ReMissFrame.cs.meta" />
-    <Content Include="Src\ServerFrame.cs.meta" />
-    <Content Include="Src\ServerFrames.cs.meta" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\EMsgCS.cs" />
@@ -74,6 +62,7 @@
     <Compile Include="Src\InputCmds.cs" />
     <Compile Include="Src\Msg_CreateRoom.cs" />
     <Compile Include="Src\Msg_InitMsg.cs" />
+    <Compile Include="Src\Msg_PlayerReady.cs" />
     <Compile Include="Src\Msg_RepInit.cs" />
     <Compile Include="Src\PlayerInput.cs" />
     <Compile Include="Src\ReMissFrame.cs" />

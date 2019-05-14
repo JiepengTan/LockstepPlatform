@@ -43,6 +43,7 @@ namespace Lockstep.Game {
 
         public uint _localTick;
         public int _roomId;
+        private NetMgr _netMgr;
 
         public Simulation(){ }
 
@@ -56,7 +57,6 @@ namespace Lockstep.Game {
             StartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
         }
 
-        private NetMgr _netMgr;
 
         public Simulation(Contexts context, NetMgr netMgr, params IService[] services){
             EventHelper.AddListener(EEvent.OnServerFrame, OnEvent_OnServerFrames);

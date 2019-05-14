@@ -7,6 +7,7 @@ namespace NetMsg.Game.Tank
     {   
         //Client GameServer
         C2S_PlayerInput,
+        C2S_PlayerReady,
         S2C_StartGame ,
         S2C_FrameData ,
         C2S_ReqMissPack,

@@ -16,6 +16,7 @@ namespace Lockstep.Logic.Server {
         private Dictionary<int, NetPeer> netId2NetPeer = new Dictionary<int, NetPeer>();
         private Dictionary<int, Player> netID2Player = new Dictionary<int, Player>();
 
+
         private Dictionary<int, IRoom> roomId2Room = new Dictionary<int, IRoom>();
         private List<IRoom> _allRooms = new List<IRoom>();
         private Dictionary<int, List<IRoom>> gameId2Rooms = new Dictionary<int, List<IRoom>>();
@@ -24,32 +25,85 @@ namespace Lockstep.Logic.Server {
         private static int RoomAutoIncID = 0;
         private const int MAX_NAME_LEN = 30;
 
-        public NetServer server;
+        public NetServer serverLobby;
+        public NetServer serverRoom;
 
         public const byte MAX_HANDLER_IDX = (byte) EMsgCL.EnumCount;
         public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_InitMsg;
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCL.EnumCount];
 
-        private  delegate IRoom FuncCreateRoom();
+        private delegate IRoom FuncCreateRoom();
+
         private delegate void DealNetMsg(Player player, Deserializer reader);
+
         private Dictionary<int, FuncCreateRoom> _roomFactoryFuncs = new Dictionary<int, FuncCreateRoom>();
+
         //TODO read from config
         string RoomType2DllPath(int type){
             return "Game.Tank" + ".dll";
         }
 
-        
 
         #region LifeCycle
 
-        public void DoStart(int port){
+        private int _udpPort;
+
+        public void DoStart(int tcpPort, int udpPort){
             RegisterMsgHandlers();
-            server = new NetServer(Define.ClientKey);
-            server.DataReceived += OnDataReceived;
-            server.ClientConnected += OnClientConnected;
-            server.ClientDisconnected += OnCilentDisconnected;
-            server.Run(port);
+            serverLobby = new NetServer(Define.ClientKey);
+            serverLobby.DataReceived += OnDataReceived;
+            serverLobby.ClientConnected += OnClientConnected;
+            serverLobby.ClientDisconnected += OnCilentDisconnected;
+            serverLobby.Run(tcpPort);
+
+            this._udpPort = udpPort;
+            serverRoom = new NetServer(Define.ClientKey);
+            serverRoom.DataReceived += OnDataReceivedRoom;
+            serverRoom.ClientConnected += OnClientConnectedRoom;
+            serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
+            serverRoom.Run(udpPort);
         }
+
+        public void OnDataReceivedRoom(NetPeer peer, byte[] data){
+            int netID = peer.Id;
+            try {
+                var reader = new Deserializer(Compressor.Decompress(data));
+                var playerID = reader.GetLong();
+                var player = GetPlayer(playerID);
+                if (player.gameSock == null) {
+                    player.gameSock = peer;
+                }
+
+                var room = player.room;
+                if (room == null) {
+                    Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
+                    return;
+                }
+
+                room.OnRecvMsg(player, reader);
+
+                realOnDataReceived(netID, data);
+            }
+            catch (Exception e) {
+                Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
+            }
+        }
+
+        public void OnClientConnectedRoom(object objPeer){
+            var peer = (NetPeer) objPeer;
+            Debug.Log($"OnClientConnected netID = {peer.Id}");
+        }
+
+        public void OnCilentDisconnectedRoom(object objPeer){
+            var peer = (NetPeer) objPeer;
+            Debug.Log($"OnCilentDisconnected netID = {peer.Id}");
+            var player = GetPlayerRoom(peer.Id);
+            if (player != null) {
+                LeaveRoom(player.PlayerId);
+                RemovePlayer(peer.Id);
+            }
+        }
+
 
         public void DoUpdate(int deltaTime){
             foreach (var room in _allRooms) {
@@ -65,7 +119,8 @@ namespace Lockstep.Logic.Server {
         public void DoDestroy(){ }
 
         public void PollEvents(){
-            server?.PollEvents();
+            serverLobby?.PollEvents();
+            serverRoom?.PollEvents();
         }
 
         #endregion
@@ -99,6 +154,7 @@ namespace Lockstep.Logic.Server {
 
             room.DoDestroy();
         }
+
         /// Create From Dll by reflect 
         private IRoom CreateRoom(int type){
             //TODO Pool
@@ -160,7 +216,16 @@ namespace Lockstep.Logic.Server {
 
             room.DoStart(type, id, this, 1, roomName);
             room.OnPlayerEnter(master);
+            SendCreateRoomResult(master);
             return room;
+        }
+
+        private void SendCreateRoomResult(Player player){
+            var writer = new Serializer();
+            writer.Put((byte) EMsgCL.L2C_RoomMsg);
+            new Msg_CreateRoomResult() {ip = "127.0.0.1", port = _udpPort, roomId = player.RoomId}.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            player.SendLobby(bytes);
         }
 
         public bool JoinRoom(long playerID, int roomID){
@@ -217,7 +282,7 @@ namespace Lockstep.Logic.Server {
 
         public void TickOut(Player player, int reason){
             Debug.LogError($"TickPlayer reason:{reason} {player.ToString()}");
-            player.socket.Disconnect();
+            player.lobbySock.Disconnect();
         }
 
         public Player GetPlayer(long playerId){
@@ -225,6 +290,10 @@ namespace Lockstep.Logic.Server {
         }
 
         public Player GetPlayer(int netID){
+            return netID2Player.GetRefVal(netID);
+        }
+
+        public Player GetPlayerRoom(int netID){
             return netID2Player.GetRefVal(netID);
         }
 
@@ -238,10 +307,12 @@ namespace Lockstep.Logic.Server {
         }
 
         public void RemovePlayer(int netID){
-            netId2NetPeer[netID] = null;
-            if (netID2Player.TryGetValue(netID, out var player)) {
-                netID2Player[netID] = null;
-                playerID2Player[player.PlayerId] = null;
+            if (netId2NetPeer.ContainsKey(netID)) {
+                netId2NetPeer[netID] = null;
+                if (netID2Player.TryGetValue(netID, out var player)) {
+                    netID2Player[netID] = null;
+                    playerID2Player[player.PlayerId] = null;
+                }
             }
         }
 
@@ -249,7 +320,7 @@ namespace Lockstep.Logic.Server {
             var player = new Player();
             player.PlayerId = playerID;
             player.netID = netID;
-            player.socket = netId2NetPeer[netID];
+            player.lobbySock = netId2NetPeer[netID];
             netID2Player[netID] = player;
             playerID2Player[playerID] = player;
             return player;
@@ -278,7 +349,8 @@ namespace Lockstep.Logic.Server {
 
         #region Msg Handler
 
-        public void OnDataReceived(int netID, byte[] data){
+        public void OnDataReceived(NetPeer peer, byte[] data){
+            int netID = peer.Id;
             try {
                 realOnDataReceived(netID, data);
             }
@@ -315,6 +387,7 @@ namespace Lockstep.Logic.Server {
             RegisterNetMsgHandler(EMsgCL.C2L_CreateRoom, OnMsg_CreateRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_LeaveRoom, OnMsg_LeaveRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_RoomMsg, OnMsg_RoomMsg);
+            
         }
 
         private void RegisterNetMsgHandler(EMsgCL type, DealNetMsg func){
@@ -362,7 +435,7 @@ namespace Lockstep.Logic.Server {
             writer.Put((byte) EMsgCL.L2C_ReqInit);
             new ReqInit() {playerId = player.PlayerId}.Serialize(writer);
             var bytes = Compressor.Compress(writer);
-            player.Send(bytes);
+            player.SendLobby(bytes);
         }
 
 

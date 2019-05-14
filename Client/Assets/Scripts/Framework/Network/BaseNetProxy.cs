@@ -29,7 +29,9 @@ namespace Lockstep.Game {
 
         public Action OnConnected;
 
-        public void RegisterMsgHandler(int msgType, OnNetMsgHandler handler){ }
+        public void RegisterMsgHandler(int msgType, OnNetMsgHandler handler){
+            _allMsgDealFuncs[msgType] = handler;
+        }
 
 
         public void Init(string ip, int port, string key, int maxMsgHandlerIdx){

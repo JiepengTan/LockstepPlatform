@@ -14,7 +14,7 @@ namespace Lockstep.Logic.Server {
             Console.WriteLine("=============== LockstepServer Start!! ===============");
             sw.Start();
             var server = new Lobby();
-            server.DoStart(9050);
+            server.DoStart(9050,9054);
             while (!Console.KeyAvailable) {
                 server.PollEvents();
                 var curTick = sw.ElapsedMilliseconds;

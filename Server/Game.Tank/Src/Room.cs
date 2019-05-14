@@ -136,6 +136,8 @@ namespace Lockstep.Logic.Server {
                 (reader) => { return ParseData<PlayerInput>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_ReqMissPack, OnNet_ReqMissPack, null);
             RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode, null);
+            RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady, 
+                (reader) => { return ParseData<Msg_PlayerReady>(reader); });
         }
 
         private void RegisterNetMsgHandler(EMsgCS type, DealNetMsg func, ParseNetMsg parseFunc){
@@ -161,7 +163,7 @@ namespace Lockstep.Logic.Server {
 
 
         public void SendTo(Player player, byte[] data){
-            player.Send(data);
+            player.SendRoom(data);
         }
 
         public void SendToAll(byte[] data){
@@ -172,21 +174,19 @@ namespace Lockstep.Logic.Server {
 
         public void SendTo(Player player, EMsgCS type, ISerializable body){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCL.L2C_RoomMsg);
             writer.Put((byte) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
-            player.Send(bytes);
+            player.SendRoom(bytes);
         }
 
         public void SendToAll(EMsgCS type, ISerializable body){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCL.L2C_RoomMsg);
             writer.Put((byte) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             foreach (var player in _allPlayers) {
-                player.Send(bytes);
+                player.SendRoom(bytes);
             }
         }
 
@@ -208,17 +208,25 @@ namespace Lockstep.Logic.Server {
             netId2LocalId[player.netID] = localId;
             _localId2Player[localId] = player;
             _allPlayers.Add(player);
+        }
 
-            if (CurPlayerCount == MaxPlayerCount) {
+        public void OnPlayerReady(Player tempplayer){
+            Debug.LogError("OnPlayerReady " + tempplayer.PlayerId);
+            tempplayer.status = EPlayerStatus.ReadyToPlay;
+            int readyCount = 0;
+            foreach (var player in _allPlayers) {
+                if (player.status == EPlayerStatus.ReadyToPlay) {
+                    readyCount++;
+                }
+            }
+            if (readyCount == MaxPlayerCount) {
                 Console.WriteLine("Room is full, starting new simulation...");
                 StartSimulationOnConnectedPeers();
             }
             else {
-                Console.WriteLine(netId2LocalId.Count + " / " + MaxPlayerCount + " players have connected.");
+                Console.WriteLine(readyCount + " / " + MaxPlayerCount + " players have ready.");
             }
         }
-
-        public void OnPlayerReady(Player player){ }
 
         public void OnPlayerLeave(Player player){
             Debug.Log($"Player{player.PlayerId} Leave room {RoomId}");
@@ -273,6 +281,10 @@ namespace Lockstep.Logic.Server {
 
         void OnNet_ReqMissPack(Player player, BaseFormater data){ }
         void OnNet_HashCode(Player player, BaseFormater data){ }
+
+        void OnNet_PlayerReady(Player player, BaseFormater data){
+            OnPlayerReady(player);
+        }
 
         #endregion
 

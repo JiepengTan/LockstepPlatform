@@ -1,14 +1,14 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank {
-    public partial class Msg_RepInit :BaseFormater{
-        public long playerId; 
+    public partial class Msg_PlayerReady :BaseFormater{
+        public int roomId; 
         public override void Serialize(Serializer writer){
-            writer.Put(playerId);
+            writer.Put(roomId);
         }
 
         public override void Deserialize(Deserializer reader){
-            playerId = reader.GetLong();
+            roomId = reader.GetInt();
         }
     }
 }
