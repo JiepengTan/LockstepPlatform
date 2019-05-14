@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddCoordinate(Lockstep.Math.LVector2 newValue) {
         var index = InputComponentsLookup.Coordinate;
-        var component = (Lockstep.Core.State.Input.CoordinateComponent)CreateComponent(index, typeof(Lockstep.Core.State.Input.CoordinateComponent));
+        var component = CreateComponent<Lockstep.Core.State.Input.CoordinateComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceCoordinate(Lockstep.Math.LVector2 newValue) {
         var index = InputComponentsLookup.Coordinate;
-        var component = (Lockstep.Core.State.Input.CoordinateComponent)CreateComponent(index, typeof(Lockstep.Core.State.Input.CoordinateComponent));
+        var component = CreateComponent<Lockstep.Core.State.Input.CoordinateComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -118,7 +118,7 @@ public partial class Contexts {
 #if (!ENTITAS_DISABLE_VISUAL_DEBUGGING && UNITY_EDITOR)
 
     [Entitas.CodeGeneration.Attributes.PostConstructor]
-    public void InitializeContextObservers() {
+    public void InitializeContexObservers() {
         try {
             CreateContextObserver(actor);
             CreateContextObserver(config);

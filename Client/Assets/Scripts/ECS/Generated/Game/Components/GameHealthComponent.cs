@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddHealth(int newValue) {
         var index = GameComponentsLookup.Health;
-        var component = (Lockstep.Core.State.Game.HealthComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.HealthComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.HealthComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceHealth(int newValue) {
         var index = GameComponentsLookup.Health;
-        var component = (Lockstep.Core.State.Game.HealthComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.HealthComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.HealthComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddSelection(uint[] newEntityIds) {
         var index = InputComponentsLookup.Selection;
-        var component = (Lockstep.Core.State.Input.SelectionComponent)CreateComponent(index, typeof(Lockstep.Core.State.Input.SelectionComponent));
+        var component = CreateComponent<Lockstep.Core.State.Input.SelectionComponent>(index);
         component.entityIds = newEntityIds;
         AddComponent(index, component);
     }
 
     public void ReplaceSelection(uint[] newEntityIds) {
         var index = InputComponentsLookup.Selection;
-        var component = (Lockstep.Core.State.Input.SelectionComponent)CreateComponent(index, typeof(Lockstep.Core.State.Input.SelectionComponent));
+        var component = CreateComponent<Lockstep.Core.State.Input.SelectionComponent>(index);
         component.entityIds = newEntityIds;
         ReplaceComponent(index, component);
     }

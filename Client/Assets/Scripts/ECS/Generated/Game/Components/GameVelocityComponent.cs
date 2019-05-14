@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddVelocity(Lockstep.Math.LVector2 newValue) {
         var index = GameComponentsLookup.Velocity;
-        var component = (Lockstep.Core.State.Game.VelocityComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.VelocityComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.VelocityComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceVelocity(Lockstep.Math.LVector2 newValue) {
         var index = GameComponentsLookup.Velocity;
-        var component = (Lockstep.Core.State.Game.VelocityComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.VelocityComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.VelocityComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

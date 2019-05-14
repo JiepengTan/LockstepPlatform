@@ -8,15 +8,18 @@
 //------------------------------------------------------------------------------
 public static class SnapshotComponentsLookup {
 
-    public const int Tick = 0;
+    public const int HashCode = 0;
+    public const int Tick = 1;
 
-    public const int TotalComponents = 1;
+    public const int TotalComponents = 2;
 
     public static readonly string[] componentNames = {
+        "HashCode",
         "Tick"
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(Lockstep.Core.State.Snapshot.HashCodeComponent),
         typeof(Lockstep.Core.State.Snapshot.TickComponent)
     };
 }

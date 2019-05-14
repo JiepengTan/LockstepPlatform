@@ -8,10 +8,7 @@
 //------------------------------------------------------------------------------
 public sealed class DestinationEventSystem : Entitas.ReactiveSystem<GameEntity> {
 
-    readonly System.Collections.Generic.List<IDestinationListener> _listenerBuffer;
-
     public DestinationEventSystem(Contexts contexts) : base(contexts.game) {
-        _listenerBuffer = new System.Collections.Generic.List<IDestinationListener>();
     }
 
     protected override Entitas.ICollector<GameEntity> GetTrigger(Entitas.IContext<GameEntity> context) {
@@ -27,9 +24,7 @@ public sealed class DestinationEventSystem : Entitas.ReactiveSystem<GameEntity> 
     protected override void Execute(System.Collections.Generic.List<GameEntity> entities) {
         foreach (var e in entities) {
             var component = e.destination;
-            _listenerBuffer.Clear();
-            _listenerBuffer.AddRange(e.destinationListener.value);
-            foreach (var listener in _listenerBuffer) {
+            foreach (var listener in e.destinationListener.value) {
                 listener.OnDestination(e, component.value);
             }
         }

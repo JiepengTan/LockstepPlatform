@@ -9,7 +9,22 @@
 public sealed partial class SnapshotContext : Entitas.Context<SnapshotEntity> {
 
     public SnapshotContext()
-        : base(0
+        : base(
+            SnapshotComponentsLookup.TotalComponents,
+            0,
+            new Entitas.ContextInfo(
+                "Snapshot",
+                SnapshotComponentsLookup.componentNames,
+                SnapshotComponentsLookup.componentTypes
+            ),
+            (entity) =>
+
+#if (ENTITAS_FAST_AND_UNSAFE)
+                new Entitas.UnsafeAERC()
+#else
+                new Entitas.SafeAERC(entity)
+#endif
+
         ) {
     }
 }

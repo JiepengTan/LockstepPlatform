@@ -8,5 +8,23 @@
 //------------------------------------------------------------------------------
 public sealed partial class ActorContext : Entitas.Context<ActorEntity> {
 
-    public ActorContext():base(0){ }
+    public ActorContext()
+        : base(
+            ActorComponentsLookup.TotalComponents,
+            0,
+            new Entitas.ContextInfo(
+                "Actor",
+                ActorComponentsLookup.componentNames,
+                ActorComponentsLookup.componentTypes
+            ),
+            (entity) =>
+
+#if (ENTITAS_FAST_AND_UNSAFE)
+                new Entitas.UnsafeAERC()
+#else
+                new Entitas.SafeAERC(entity)
+#endif
+
+        ) {
+    }
 }

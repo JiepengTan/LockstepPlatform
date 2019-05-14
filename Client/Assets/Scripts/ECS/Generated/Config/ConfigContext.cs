@@ -10,7 +10,21 @@ public sealed partial class ConfigContext : Entitas.Context<ConfigEntity> {
 
     public ConfigContext()
         : base(
-            0
+            ConfigComponentsLookup.TotalComponents,
+            0,
+            new Entitas.ContextInfo(
+                "Config",
+                ConfigComponentsLookup.componentNames,
+                ConfigComponentsLookup.componentTypes
+            ),
+            (entity) =>
+
+#if (ENTITAS_FAST_AND_UNSAFE)
+                new Entitas.UnsafeAERC()
+#else
+                new Entitas.SafeAERC(entity)
+#endif
+
         ) {
     }
 }

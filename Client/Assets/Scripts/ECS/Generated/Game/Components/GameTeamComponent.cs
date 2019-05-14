@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddTeam(byte newValue) {
         var index = GameComponentsLookup.Team;
-        var component = (Lockstep.Core.State.Game.TeamComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.TeamComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.TeamComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTeam(byte newValue) {
         var index = GameComponentsLookup.Team;
-        var component = (Lockstep.Core.State.Game.TeamComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.TeamComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.TeamComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

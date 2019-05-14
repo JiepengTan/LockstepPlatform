@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddRadius(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.Radius;
-        var component = (Lockstep.Core.State.Game.RadiusComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.RadiusComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.RadiusComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceRadius(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.Radius;
-        var component = (Lockstep.Core.State.Game.RadiusComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.RadiusComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.RadiusComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

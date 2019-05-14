@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class SnapshotEntity {
 
-    public Lockstep.Core.State.Snapshot.TickComponent tick { get { return (Lockstep.Core.State.Snapshot.TickComponent)GetComponent(SnapshotComponentsLookup.Tick); } }
-    public bool hasTick { get { return HasComponent(SnapshotComponentsLookup.Tick); } }
+    public Lockstep.Core.State.Snapshot.HashCodeComponent hashCode { get { return (Lockstep.Core.State.Snapshot.HashCodeComponent)GetComponent(SnapshotComponentsLookup.HashCode); } }
+    public bool hasHashCode { get { return HasComponent(SnapshotComponentsLookup.HashCode); } }
 
-    public void AddTick(uint newValue) {
-        var index = SnapshotComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.Snapshot.TickComponent>(index);
+    public void AddHashCode(long newValue) {
+        var index = SnapshotComponentsLookup.HashCode;
+        var component = CreateComponent<Lockstep.Core.State.Snapshot.HashCodeComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceTick(uint newValue) {
-        var index = SnapshotComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.Snapshot.TickComponent>(index);
+    public void ReplaceHashCode(long newValue) {
+        var index = SnapshotComponentsLookup.HashCode;
+        var component = CreateComponent<Lockstep.Core.State.Snapshot.HashCodeComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }
 
-    public void RemoveTick() {
-        RemoveComponent(SnapshotComponentsLookup.Tick);
+    public void RemoveHashCode() {
+        RemoveComponent(SnapshotComponentsLookup.HashCode);
     }
 }
 
@@ -40,17 +40,17 @@ public partial class SnapshotEntity {
 //------------------------------------------------------------------------------
 public sealed partial class SnapshotMatcher {
 
-    static Entitas.IMatcher<SnapshotEntity> _matcherTick;
+    static Entitas.IMatcher<SnapshotEntity> _matcherHashCode;
 
-    public static Entitas.IMatcher<SnapshotEntity> Tick {
+    public static Entitas.IMatcher<SnapshotEntity> HashCode {
         get {
-            if (_matcherTick == null) {
-                var matcher = (Entitas.Matcher<SnapshotEntity>)Entitas.Matcher<SnapshotEntity>.AllOf(SnapshotComponentsLookup.Tick);
+            if (_matcherHashCode == null) {
+                var matcher = (Entitas.Matcher<SnapshotEntity>)Entitas.Matcher<SnapshotEntity>.AllOf(SnapshotComponentsLookup.HashCode);
                 matcher.componentNames = SnapshotComponentsLookup.componentNames;
-                _matcherTick = matcher;
+                _matcherHashCode = matcher;
             }
 
-            return _matcherTick;
+            return _matcherHashCode;
         }
     }
 }

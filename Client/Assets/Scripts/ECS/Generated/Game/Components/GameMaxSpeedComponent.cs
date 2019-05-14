@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddMaxSpeed(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.MaxSpeed;
-        var component = (Lockstep.Core.State.Game.MaxSpeedComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.MaxSpeedComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.MaxSpeedComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceMaxSpeed(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.MaxSpeed;
-        var component = (Lockstep.Core.State.Game.MaxSpeedComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.MaxSpeedComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.MaxSpeedComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

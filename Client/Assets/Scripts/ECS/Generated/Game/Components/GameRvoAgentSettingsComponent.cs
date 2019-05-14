@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddRvoAgentSettings(Lockstep.Math.LVector2 newPreferredVelocity, Lockstep.Math.LFloat newTimeHorizonObst, System.Collections.Generic.IList<System.Collections.Generic.KeyValuePair<Lockstep.Math.LFloat, uint>> newAgentNeighbors) {
         var index = GameComponentsLookup.RvoAgentSettings;
-        var component = (Lockstep.Core.State.Game.RvoAgentSettingsComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.RvoAgentSettingsComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.RvoAgentSettingsComponent>(index);
         component.preferredVelocity = newPreferredVelocity;
         component.timeHorizonObst = newTimeHorizonObst;
         component.agentNeighbors = newAgentNeighbors;
@@ -22,7 +22,7 @@ public partial class GameEntity {
 
     public void ReplaceRvoAgentSettings(Lockstep.Math.LVector2 newPreferredVelocity, Lockstep.Math.LFloat newTimeHorizonObst, System.Collections.Generic.IList<System.Collections.Generic.KeyValuePair<Lockstep.Math.LFloat, uint>> newAgentNeighbors) {
         var index = GameComponentsLookup.RvoAgentSettings;
-        var component = (Lockstep.Core.State.Game.RvoAgentSettingsComponent)CreateComponent(index, typeof(Lockstep.Core.State.Game.RvoAgentSettingsComponent));
+        var component = CreateComponent<Lockstep.Core.State.Game.RvoAgentSettingsComponent>(index);
         component.preferredVelocity = newPreferredVelocity;
         component.timeHorizonObst = newTimeHorizonObst;
         component.agentNeighbors = newAgentNeighbors;
