@@ -5,7 +5,7 @@ using Lockstep.Serialization;
 using NetMsg.Game.Tank;
 using ISerializable = Lockstep.Serialization.ISerializable;
 
-namespace Lockstep.Game {
+namespace NetMsg.Game.Tank {
     public interface ICommand : ISerializable {
         void Execute(object player);
 

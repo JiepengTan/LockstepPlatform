@@ -58,7 +58,7 @@ namespace Lockstep.Logic.Server {
             frame.tick = Tick++;
             frame.inputs = new PlayerInput[_allPlayers.Count];
             foreach (var playerInput in _tempInputBuffer) {
-                var idx = playerInput.playerID;
+                var idx = playerInput.ActorId;
                 var input = frame.inputs[idx];
                 if (input != null) {
                     input.Combine(playerInput);

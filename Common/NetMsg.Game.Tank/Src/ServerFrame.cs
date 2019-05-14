@@ -32,6 +32,26 @@ namespace NetMsg.Game.Tank {
             var count = (inputs == null) ? 0 : inputs.Length;
             return $"t:{tick} inputNum:{count}";
         }
+
+        public bool IsSame(ServerFrame frame){
+            if (frame == null) return false;
+            if (tick != frame.tick) return false;
+            if (inputs.Length != frame.inputs.Length) {
+                return false;
+            }
+            for (int i = 0; i < inputs.Length; i++) {
+                var sInput = inputs[i];
+                var oInput = frame.inputs[i];
+                if((sInput == null) != (oInput == null)) return false;
+                if (sInput == null) {
+                    continue;
+                }
+                if (!sInput.IsSame(oInput)) {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 
 

@@ -16,6 +16,7 @@ using Lockstep.Serialization;
 using NetMsg.Game.Tank;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using ICommand = NetMsg.Game.Tank.ICommand;
 
 namespace Lockstep.Game {
     public class Simulation {
@@ -113,7 +114,7 @@ namespace Lockstep.Game {
             if (!Running) {
                 return;
             }
-
+            return;
             if (!cmdBuffer.CanExcuteNextFrame()) {//因为网络问题 需要等待服务器发送确认包 才能继续往前
                 return;
             }

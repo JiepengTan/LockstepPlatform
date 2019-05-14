@@ -1,17 +1,24 @@
 #define DEBUG_FRAME_DELAY
+using System.Collections.Generic;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank{
-    public partial class PlayerInput : BaseFormater {
-        public byte playerID;
+    public partial class PlayerInput : BaseFormater{
+        public byte ActorId;
         public uint Tick;
-        public List<InputCmd> allInputs = new List<InputCmd>();
+        public List<ICommand> Commands = new List<ICommand>();
 #if DEBUG_FRAME_DELAY
         public float timeSinceStartUp;
 #endif
-        public PlayerInput(byte actorID, uint tick, params InputCmd[] inputs){
-            
+        public PlayerInput( uint tick,byte actorID, List<ICommand> inputs){
+            this.Tick = tick;
+            this.ActorId = actorID;
+            if (inputs != null) {
+                this.Commands.AddRange(inputs);    
+            }
         }
+
+        public PlayerInput(){ }
 
         /// <summary>
         /// TODO     合并 输入
@@ -23,17 +30,11 @@ namespace NetMsg.Game.Tank{
 #if DEBUG_FRAME_DELAY
             writer.Put(timeSinceStartUp);
 #endif
-            writer.Put(playerID);
-            int count = 0;
-            for (; count < allInputs.Length; count++) {
-                if (allInputs[count] == null) {
-                    break;
-                }
-            }
-
+            writer.Put(ActorId);
+            int count = Commands.Count;
             writer.Put((byte) count);
             for (int i = 0; i < count; i++) {
-                allInputs[i].Serialize(writer);
+                Commands[i].Serialize(writer);
             }
         }
 
@@ -41,12 +42,24 @@ namespace NetMsg.Game.Tank{
 #if DEBUG_FRAME_DELAY
             timeSinceStartUp = reader.GetFloat();
 #endif
-            playerID = reader.GetByte();
+            ActorId = reader.GetByte();
             int count = reader.GetByte();
             for (int i = 0; i < count; i++) {
-                allInputs[i] = new InputCmd();
-                allInputs[i].Deserialize(reader);
+                var cmd = BaseCmd.Parse(reader);
+                Commands.Add(cmd);
             }
+        }
+        
+        public bool IsSame(PlayerInput playerInput){
+            if (playerInput == null) return false;
+            if (Tick != playerInput.Tick) return false;
+            var count = Commands.Count;
+            if (count != playerInput.Commands.Count) return false;
+
+            for (int i = 0; i < count; i++) {
+                if (!BaseCmd.IsSame(Commands[i], playerInput.Commands[i])) return false;
+            }
+            return true;
         }
     }
 }

@@ -39,11 +39,11 @@ namespace Lockstep.Game {
 
 
         public void StartRoom(){
-            _netProxyLobby.DoStart();
+            _netProxyRoom.DoStart();
         }
 
         public void StartLobby(){
-            _netProxyRoom.DoStart();
+            _netProxyLobby.DoStart();
         }
 
 
@@ -95,7 +95,7 @@ namespace Lockstep.Game {
         }
 
         void SendCreateRoomMsg(){
-            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_CreateRoom() {roomType = 1, name = "FishManRoom"});
+            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {roomType = 1, name = "FishManRoom"});
         }
 
 
