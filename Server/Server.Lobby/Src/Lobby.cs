@@ -20,7 +20,7 @@ namespace Lockstep.Logic.Server {
         private List<IRoom> _allRooms = new List<IRoom>();
         private Dictionary<int, List<IRoom>> gameId2Rooms = new Dictionary<int, List<IRoom>>();
 
-        private static long PlayerAutoIncID = 0;
+        private static long PlayerAutoIncID = 1;
         private static int RoomAutoIncID = 0;
         private const int MAX_NAME_LEN = 30;
 
@@ -230,10 +230,10 @@ namespace Lockstep.Logic.Server {
 
         public Player AddPlayer(int netID){
             if (PlayerAutoIncID >= long.MaxValue - 1) {
-                PlayerAutoIncID = 0;
+                PlayerAutoIncID = 1;
             }
 
-            var playerID = ++PlayerAutoIncID;
+            var playerID = PlayerAutoIncID++;
             return CreatePlayer(playerID, netID);
         }
 

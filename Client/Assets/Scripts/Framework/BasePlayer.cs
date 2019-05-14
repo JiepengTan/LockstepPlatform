@@ -56,11 +56,5 @@ namespace Lockstep.Game {
             _curFrameDeg = deg;
         }
 
-        public virtual void ApplyInput(Input input, LFloat deltaTime){
-            var commands = InputHelper.ParseCmd(input);
-            foreach (var cmd in commands) {
-                //cmd?.Execute(this, deltaTime);
-            }
-        }
     }
 }

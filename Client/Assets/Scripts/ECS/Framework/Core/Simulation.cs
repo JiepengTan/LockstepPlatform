@@ -3,194 +3,188 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Input;
+using Lockstep.Core;
+using Lockstep.Core.Logic;
 using Lockstep.Core.Logic.Interfaces;
 using Lockstep.Logging;
 using Lockstep.Game.Features;
 using Lockstep.Game.Features.Cleanup;
 using Lockstep.Game.Features.Input;
 using Lockstep.Logging;
+using Lockstep.Math;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
 using UnityEngine;
-using Input = NetMsg.Game.Tank.Input;
+using Debug = UnityEngine.Debug;
 
-namespace Lockstep.Game
-{
+namespace Lockstep.Game {
     public class Simulation {
         public static byte MainActorID;
-        public event EventHandler Started;
 
-        public Contexts Contexts { get; }   
+        public Contexts _context { get; }
 
         public GameLog GameLog { get; } = new GameLog();
 
-        public byte LocalActorId { get; private set; }     
+        public byte _localActorId { get; private set; }
 
         public bool Running { get; private set; }
-                                           
+
         public ServiceContainer Services { get; }
 
         private float _tickDt;
         private float _accumulatedTime;
 
         private World _world;
-        private readonly ICommandQueue _commandQueue;  
-        
-        private readonly List<ICommand> _localCommandBuffer = new List<ICommand>();
-                                                                                                       
-        public Simulation(Contexts contexts, ICommandQueue commandQueue, params IService[] services)
-        {
-            _commandQueue = commandQueue;
 
-            Contexts = contexts;
+        private CommandBuffer cmdBuffer = new CommandBuffer();
 
-            Services = new ServiceContainer();                    
-            foreach (var service in services)
-            {                         
-                Services.Register(service);
-            }                                          
+        public void OnNetFrame(ServerFrame[] frames){ }
+
+        public uint _localTick;
+        public int _roomId;
+
+        public Simulation(){ }
+
+        public void OnEvent_OnServerFrames(object param){
+            var msg = param as ServerFrames;
+            cmdBuffer.PushServerFrames(msg.frames);
         }
 
-        public void StartGame(int roomId, int targetFps, byte localActorId, byte[] allActors,
-            bool isNeedRender = true){ }
+        public void OnEvent_OnRoomGameStart(object param){
+            var msg = param as InitServerFrame;
+            StartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+        }
 
-        public void OnNetFrame(ServerFrame[] frames){
-            foreach (var frame in frames) {
-                //_buffer.EnqueueFrame(frame);
+        private NetMgr _netMgr;
+
+        public Simulation(Contexts context, NetMgr netMgr, params IService[] services){
+            EventHelper.AddListener(EEvent.OnServerFrame, OnEvent_OnServerFrames);
+            EventHelper.AddListener(EEvent.OnRoomGameStart, OnEvent_OnRoomGameStart);
+            _netMgr = netMgr;
+            _context = context;
+            Services = new ServiceContainer();
+            foreach (var service in services) {
+                Services.Register(service);
             }
+        }
 
-            CheckMissFrames();
+        public void StartGame(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
+            _localActorId = localActorId;
+            MainActorID = localActorId;
+            _localTick = 0;
+            _roomId = roomId;
+            _world = new World(_context, allActors);
+            this.Running = true;
         }
 
         public void DoDestroy(){ }
 
-        
-        public void Start(int targetFps, byte localActorId, byte[] allActors)
-        {
+        public byte[] _allActors;
+        private int _actorCount;
+        private int _actorIdx;
+
+        public void Start(int targetFps, byte localActorId, byte[] allActors){
             GameLog.LocalActorId = localActorId;
             GameLog.AllActorIds = allActors;
+            MainActorID = localActorId;
 
-            LocalActorId = localActorId;     
+            _actorCount = allActors.Length;
+            _localActorId = localActorId;
+            _allActors = allActors;
+            _actorIdx = -1;
+            for (int i = 0; i < _actorCount; i++) {
+                if (allActors[i] == localActorId) {
+                    _actorIdx = i;
+                    break;
+                }
+            }
 
+            Debug.Assert(_actorIdx != -1);
             _tickDt = 1000f / targetFps;
-            _world = new World(Contexts, allActors, 
-                new InputFeature(Contexts, Services), 
-                new CleanupFeature(Contexts, Services));
+            _world = new World(_context, allActors,
+                new InputFeature(_context, Services),
+                new CleanupFeature(_context, Services));
 
             Running = true;
+        }
 
-            Started?.Invoke(this, EventArgs.Empty);
-        }   
 
-        public void Update(float elapsedMilliseconds)
-        {
-            if (!Running)
-            {
+        public void DoUpdate(float elapsedMilliseconds){
+            if (!Running) {
                 return;
             }
-            
+
+            if (!cmdBuffer.CanExcuteNextFrame()) {//因为网络问题 需要等待服务器发送确认包 才能继续往前
+                return;
+            }
+
+            List<ICommand> Commands = InputMgr.GetInputCmds();
             _accumulatedTime += elapsedMilliseconds;
-
-            while (_accumulatedTime >= _tickDt)
-            {
-                lock (_localCommandBuffer) {
-                    var input = new Input(_world.Tick, LocalActorId, _localCommandBuffer.ToArray());
-                    _commandQueue.Enqueue(input);
-                    //sendInput
-                    _localCommandBuffer.Clear();    
-                    
-                    ProcessInputQueue();
-
-                    _world.Predict();
+            while (_accumulatedTime >= _tickDt) {
+                var input = new PlayerInput(_world.Tick, _localActorId, Commands);
+                _netMgr.SendInput(input);
+                var frame = new ServerFrame();
+                var tick = _world.Tick;
+                frame.tick = tick;
+                var inputs = new PlayerInput[_actorCount];
+                for (int i = 0; i < _actorCount; i++) {
+                    inputs[i] = new PlayerInput(tick, _allActors[i], null);
                 }
+
+                inputs[_actorIdx] = input;
+                //校验服务器包  如果有预测失败 则需要进行回滚
+                var isNeedRevert = cmdBuffer.CheckHistoryCmds();
+                if (isNeedRevert) {
+                    var curTick = _world.Tick;
+                    if (cmdBuffer.waitCheckTick > 0) {
+                        _world.RevertToTick(cmdBuffer.waitCheckTick - 1);
+                    }
+
+                    //Restore last local state       
+                    while (_world.Tick < curTick) {
+                        _world.Simulate();
+                    }
+                }
+
+                
+                //sendInput
+                ProcessInputQueue(frame);
+                _world.Predict();
+                cmdBuffer.PushLocalFrame(frame);
 
                 _accumulatedTime -= _tickDt;
             }
         }
 
-        public void Execute(ICommand command)
-        {
-            if (!Running)
-            {
-                return;
-            }
 
-            lock (_localCommandBuffer)
-            {
-                _localCommandBuffer.Add(command);
-            }
-        }          
-
-        public void DumpGameLog(Stream outputStream, bool closeStream = true)
-        {
+        public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
-            serializer.Put(Contexts.gameState.hashCode.value);
-            serializer.Put(Contexts.gameState.tick.value);
+            serializer.Put(_context.gameState.hashCode.value);
+            serializer.Put(_context.gameState.tick.value);
             outputStream.Write(serializer.Data, 0, serializer.Length);
 
             GameLog.WriteTo(outputStream);
 
-            if(closeStream)
-            {
+            if (closeStream) {
                 outputStream.Close();
             }
         }
 
-        private void ProcessInputQueue()
-        {
-            var inputs = _commandQueue.Dequeue();
+        private void ProcessInputQueue(ServerFrame frame){
+            var inputs = frame.inputs;
+            foreach (var input in inputs) {
+                GameLog.Add(_world.Tick, input);
 
-            if (inputs.Any())
-            {
-                //Store new input
-                foreach (var input in inputs)
-                {
-                    GameLog.Add(_world.Tick, input);
+                foreach (var command in input.Commands) {
+                    Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
 
-                    foreach (var command in input.Commands)
-                    {
-                        Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
+                    var inputEntity = _context.input.CreateEntity();
+                    command.Execute(inputEntity);
 
-                        var inputEntity = Contexts.input.CreateEntity();
-                        command.Execute(inputEntity);
-
-                        inputEntity.AddTick(input.Tick);
-                        inputEntity.AddActorId(input.ActorId);
-
-                        //TODO: after adding input, order the commands by timestamp => if commands intersect, the first one should win, timestamp should be added by server, RTT has to be considered
-                        //ordering by timestamp requires loopback functionality because we have to wait for server-response; at the moment commands get distributed to all clients except oneself
-                        //if a command comes back from server and it was our own command, the local command has to be overwritten instead of just adding it (like it is at the moment)
-                    }
-                }
-
-                var otherActorsInput = inputs.Where(input => input.ActorId != LocalActorId).ToList();
-                if (otherActorsInput.Any())
-                {
-                    var firstRemoteInputTick = otherActorsInput.Min(input => input.Tick);
-                    var lastRemoteInputTick = otherActorsInput.Max(input => input.Tick);
-
-                    Log.Trace(this, ">>>Input from " + firstRemoteInputTick + " to " + lastRemoteInputTick);
-
-                    //Only rollback if the mispredicted frame was in the past (the frame can be in the future e.g. due to high lag compensation)
-                    if (firstRemoteInputTick < _world.Tick)
-                    {
-                        var targetTick = _world.Tick;
-
-                        _world.RevertToTick(firstRemoteInputTick);
-
-                        //Restore last local state       
-                        while (_world.Tick <= lastRemoteInputTick && _world.Tick < targetTick)
-                        {
-                            _world.Simulate();
-                        }
-
-                        while (_world.Tick < targetTick)
-                        {
-                            _world.Predict();
-                        }
-                    }
+                    inputEntity.AddTick(input.Tick);
+                    inputEntity.AddActorId(input.ActorId);
                 }
             }
-        }              
+        }
     }
 }

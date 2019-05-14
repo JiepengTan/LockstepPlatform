@@ -4,24 +4,28 @@ using Lockstep.Game;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank{
-    public partial class Input : BaseFormater{
+    public partial class PlayerInput : BaseFormater{
         public byte ActorId;
         public uint Tick;
         public List<ICommand> Commands = new List<ICommand>();
 #if DEBUG_FRAME_DELAY
         public float timeSinceStartUp;
 #endif
-        public Input( uint tick,byte actorID, ICommand[] inputs){
-            
+        public PlayerInput( uint tick,byte actorID, List<ICommand> inputs){
+            this.Tick = tick;
+            this.ActorId = actorID;
+            if (inputs != null) {
+                this.Commands.AddRange(inputs);    
+            }
         }
 
-        public Input(){ }
+        public PlayerInput(){ }
 
         /// <summary>
         /// TODO     合并 输入
         /// </summary>
         /// <param name="inputb"></param>
-        public void Combine(Input inputb){ }
+        public void Combine(PlayerInput inputb){ }
 
         public override void Serialize(Serializer writer){
 #if DEBUG_FRAME_DELAY
@@ -42,10 +46,21 @@ namespace NetMsg.Game.Tank{
             ActorId = reader.GetByte();
             int count = reader.GetByte();
             for (int i = 0; i < count; i++) {
-                var cmd = new InputCmd();
-                cmd.Deserialize(reader);
-                //Commands.Add(cmd);
+                var cmd = BaseCmd.Parse(reader);
+                Commands.Add(cmd);
             }
+        }
+        
+        public bool IsSame(PlayerInput playerInput){
+            if (playerInput == null) return false;
+            if (Tick != playerInput.Tick) return false;
+            var count = Commands.Count;
+            if (count != playerInput.Commands.Count) return false;
+
+            for (int i = 0; i < count; i++) {
+                if (!BaseCmd.IsSame(Commands[i], playerInput.Commands[i])) return false;
+            }
+            return true;
         }
     }
 }
