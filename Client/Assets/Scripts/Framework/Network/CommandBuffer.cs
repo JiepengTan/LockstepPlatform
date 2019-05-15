@@ -15,7 +15,7 @@ namespace Lockstep.Game {
 
         /// 进行备份的帧间隔
         public const int SNAPSHORT_FRAME_INTERVAL = 10;
-        
+
         ///最大的可以超前的Frame数量
         public const int MAX_OVERRIDE_COUNT = MAX_FRAME_BUFFER_COUNT - SNAPSHORT_FRAME_INTERVAL;
 
@@ -37,7 +37,9 @@ namespace Lockstep.Game {
 
         /// 是否可以执行下一帧
         public bool CanExcuteNextFrame(){
-            return (nextClientTic - waitCheckTick) < MAX_OVERRIDE_COUNT;
+            var isOverFrame = (nextClientTic - waitCheckTick) >= MAX_OVERRIDE_COUNT;
+            var isServerFrameUpdate = IsServerFrameFlush();
+            return !isOverFrame || isServerFrameUpdate;
         }
 
         //is return true need revert to (waitCheckTick -1)
@@ -49,7 +51,7 @@ namespace Lockstep.Game {
                 var sFrame = serverFrames[sIdx];
                 if (sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
                     return false;
-                
+
                 UnityEngine.Debug.Assert(cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
                     $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick} checking:{waitCheckTick}");
                 //Check client guess input match the real input
@@ -66,6 +68,18 @@ namespace Lockstep.Game {
             return false;
         }
 
+        public uint GetMissServerFrameTick(){
+            uint tick = waitCheckTick;
+            for (; tick <= maxServerTick; tick++) {
+                var idx = tick % MAX_FRAME_BUFFER_COUNT;
+                if (serverFrames[idx] == null || serverFrames[idx].tick != tick) {
+                    break;
+                }
+            }
+            waitCheckTick = tick;
+            return tick;
+        }
+
         public ServerFrame GetFrame(uint tick){
             var sFrame = GetServerFrame(tick);
             if (sFrame != null && sFrame.tick == tick) {
@@ -75,17 +89,11 @@ namespace Lockstep.Game {
             return GetLocalFrame(tick);
         }
 
-        public void UpdateCheckedTick(){
-            uint tick = waitCheckTick;
-            for (; tick <= maxServerTick; tick++) {
-                var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                if (serverFrames[idx] == null || serverFrames[idx].tick != tick) {
-                    break;
-                }
-            }
-
-            waitCheckTick = tick;
+        public bool IsServerFrameFlush(){
+            var idx = waitCheckTick % MAX_FRAME_BUFFER_COUNT;
+            return serverFrames[idx] != null && serverFrames[idx].tick == waitCheckTick;
         }
+
 
         public void PushLocalFrame(ServerFrame frame){
             var tick = frame.tick;
@@ -125,8 +133,14 @@ namespace Lockstep.Game {
                     }
 
                     var targetIdx = data.tick % MAX_FRAME_BUFFER_COUNT;
-                    if (serverFrames[targetIdx] == null) {
+                    if (serverFrames[targetIdx] == null || serverFrames[targetIdx].tick != data.tick) {
                         serverFrames[targetIdx] = data;
+                        foreach (var input in data.inputs) {
+                            if (input.Commands.Count > 0) {
+                                UnityEngine.Debug.Log($"RecvInput actorID:{input.ActorId}  " +
+                                                      $"inputTick:{input.Tick}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                            }
+                        }
 #if DEBUG_FRAME_DELAY
                         var time = 0;
                         foreach (var input in data.inputs) {
@@ -145,7 +159,7 @@ namespace Lockstep.Game {
 
         public ServerFrame GetServerFrame(uint tick){
             lock (this) {
-                if (tick < waitCheckTick || tick > maxServerTick) {
+                if (tick > maxServerTick) {
                     return null;
                 }
 
@@ -156,7 +170,7 @@ namespace Lockstep.Game {
 
         public ServerFrame GetLocalFrame(uint tick){
             lock (this) {
-                if (tick < waitCheckTick || tick >= nextClientTic) {
+                if (tick >= nextClientTic) {
                     return null;
                 }
 

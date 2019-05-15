@@ -50,7 +50,7 @@ namespace Lockstep.Game {
                 OnConnected?.Invoke();
             };
             _client = new NetManager(_listener) {
-                DisconnectTimeout = 30000
+                DisconnectTimeout = 300000
             };
         }
 

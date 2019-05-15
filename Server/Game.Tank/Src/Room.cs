@@ -102,7 +102,14 @@ namespace Lockstep.Logic.Server {
                         return;
                     }
                 }
-                Debug.Log("Border input " + Tick);
+                //将所有未到的包 给予默认的输入
+                for (int i = 0; i < inputs.Length; i++) {
+                    if (inputs[i] == null) {
+                        inputs[i] = new PlayerInput(Tick,(byte)i,null);
+                    }
+                }
+                
+                //Debug.Log("Border input " + Tick);
                 var allFrames = new ServerFrames();
                 int count = Tick < 2 ? iTick + 1 : 3;
                 var frames = new ServerFrame[count];
@@ -328,7 +335,7 @@ namespace Lockstep.Logic.Server {
         void OnNet_PlayerInput(Player player, BaseFormater data){
             haveStart = true;
             var input = data as PlayerInput;
-            Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick}");
+            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Count}");
             if (input.Tick < Tick) {
                 return;
             }
@@ -359,6 +366,9 @@ namespace Lockstep.Logic.Server {
             }
 
             frame.inputs[id] = input;
+            if (input.Commands.Count > 0) {
+                Debug.Log($"RecvInput actorID:{input.ActorId}  inputTick:{input.Tick}  cmd:{(ECmdType)(input.Commands[0].type)}");
+            }
         }
 
         void OnNet_ReqMissPack(Player player, BaseFormater data){ }

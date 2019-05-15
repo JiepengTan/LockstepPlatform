@@ -17,7 +17,7 @@ namespace Server.Common
             _listener = new EventBasedNetListener();
             _server = new NetManager(_listener)
             {
-                DisconnectTimeout = 30000
+                DisconnectTimeout = 300000
             };
         }
 

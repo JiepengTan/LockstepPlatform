@@ -108,10 +108,10 @@ namespace Lockstep.Game {
                 var localFrame = new ServerFrame();
                 localFrame.tick = tick;
                 var inputs = new PlayerInput[_actorCount];
+                //将所有角色 给予默认的输入
                 for (int i = 0; i < _actorCount; i++) {
                     inputs[i] = new PlayerInput(tick, _allActors[i], null);
                 }
-
                 inputs[_localActorId] = input;
                 localFrame.inputs = inputs;
                 cmdBuffer.PushLocalFrame(localFrame);
@@ -122,24 +122,28 @@ namespace Lockstep.Game {
                 if (isNeedRevert) {
                     UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
-                    var revertTargetTick = System.Math.Min(cmdBuffer.waitCheckTick - 1, 0u);
+                    var revertTargetTick = System.Math.Max(cmdBuffer.waitCheckTick - 1, 0u);
                     _world.RevertToTick(revertTargetTick);
-                    //  _world.Tick -> cmdBuffer.waitCheckTick simulation
-                    while (_world.Tick < cmdBuffer.waitCheckTick) {
+                    //  _world.Tick -> nextMissServerFrame simulation
+                    var nextMissServerFrame = cmdBuffer.GetMissServerFrameTick();
+                    var snapTick = _world.Tick;
+                    while (_world.Tick < nextMissServerFrame) {
                         var frame = cmdBuffer.GetServerFrame(_world.Tick);
-                        UnityEngine.Debug.Assert(frame!= null && frame.tick == _world.Tick,"cmdBuffer Mgr error");
+                        if (!(frame != null && frame.tick == _world.Tick)) {
+                            Debug.LogError("cmdBuffer Mgr error");
+                        }
+                        UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
-                        _world.Simulate();
+                        _world.Simulate(_world.Tick != snapTick);
                     }
-
+                  
                     // cmdBuffer.waitCheckTick -> lastTick Predict
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
-                        UnityEngine.Debug.Assert(frame!= null && frame.tick == _world.Tick,"cmdBuffer Mgr error");
+                        UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Predict();
                     }
-                    cmdBuffer.UpdateCheckedTick();
                 }
 
                 {
@@ -147,7 +151,6 @@ namespace Lockstep.Game {
                     ProcessInputQueue(frame);
                     _world.Predict();
                 }
-
                 _accumulatedTime -= _tickDt;
             }
         }

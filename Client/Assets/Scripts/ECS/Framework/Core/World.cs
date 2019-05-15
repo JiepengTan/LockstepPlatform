@@ -36,8 +36,16 @@ namespace Lockstep.Core.Logic {
             _systems.Cleanup();
         }
 
-        public void Simulate(){
-            Contexts.gameState.isPredicting = false;
+        public void Simulate(bool isNeedGenSnap = true){
+            if ( isNeedGenSnap ) {
+                if (Tick % CommandBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                    Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
+                    Contexts.gameState.isPredicting = true;
+                }
+            }
+            else {
+                Contexts.gameState.isPredicting = false;
+            }
 
             Log.Trace(this, "Simulate " + Contexts.gameState.tick.value);
 
@@ -66,8 +74,11 @@ namespace Lockstep.Core.Logic {
             }
 
             var resultTick = snapshotIndices[i];
-
-            Log.Info(this, "Rolling back from " + resultTick + " to " + Contexts.gameState.tick.value);
+            var snaps = "";
+            foreach (var idx in snapshotIndices) {
+                snaps +=  idx + " ";
+            }
+            Log.Info(this, "Rolling back from " + resultTick + " to " + Contexts.gameState.tick.value + " snaps " + snaps);
 
             /*
              * ====================== Revert actors ======================
@@ -144,7 +155,6 @@ namespace Lockstep.Core.Logic {
 
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
-
             Contexts.gameState.ReplaceTick(resultTick);
         }
     }
