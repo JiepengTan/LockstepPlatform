@@ -1,6 +1,8 @@
 # Build and Object Folders  
 bin/  
 obj/  
+#忽略build 
+Build/
 # Nuget packages directory  
 packages/  
 # ide

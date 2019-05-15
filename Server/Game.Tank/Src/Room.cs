@@ -90,6 +90,7 @@ namespace Lockstep.Logic.Server {
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
                         if (inputs[i] == null) {
+                            Debug.Log($"Overtime wait remove localId = {i}" );
                             allNeedWaitInputPlayerIds.Remove((byte)i);
                         }
                     }
@@ -101,7 +102,7 @@ namespace Lockstep.Logic.Server {
                         return;
                     }
                 }
-                
+                Debug.Log("Border input " + Tick);
                 var allFrames = new ServerFrames();
                 int count = Tick < 2 ? iTick + 1 : 3;
                 var frames = new ServerFrame[count];
@@ -327,7 +328,7 @@ namespace Lockstep.Logic.Server {
         void OnNet_PlayerInput(Player player, BaseFormater data){
             haveStart = true;
             var input = data as PlayerInput;
-            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick}");
+            Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick}");
             if (input.Tick < Tick) {
                 return;
             }

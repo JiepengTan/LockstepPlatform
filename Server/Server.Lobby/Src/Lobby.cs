@@ -212,11 +212,12 @@ namespace Lockstep.Logic.Server {
                 gameId2Rooms.Add(type, lst);
             }
 
-            room.DoStart(type, id, this, 1, roomName);
+            room.DoStart(type, id, this, 2, roomName);
             room.OnPlayerEnter(master);
             SendCreateRoomResult(master);
             return room;
         }
+        
 
         private void SendCreateRoomResult(Player player){
             var writer = new Serializer();
@@ -250,8 +251,6 @@ namespace Lockstep.Logic.Server {
             }
 
             room.OnPlayerEnter(player);
-            player.room = room;
-            player.status = EPlayerStatus.Sit;
             return true;
         }
 
@@ -306,10 +305,10 @@ namespace Lockstep.Logic.Server {
 
         public void RemovePlayer(int netID){
             if (netId2NetPeer.ContainsKey(netID)) {
-                netId2NetPeer[netID] = null;
+                netId2NetPeer.Remove(netID);
                 if (netID2Player.TryGetValue(netID, out var player)) {
-                    netID2Player[netID] = null;
-                    playerID2Player[player.PlayerId] = null;
+                    netID2Player.Remove(netID);
+                    playerID2Player.Remove(player.PlayerId);
                 }
             }
         }
@@ -440,7 +439,13 @@ namespace Lockstep.Logic.Server {
 
         private void OnMsg_CreateRoom(Player player, Deserializer reader){
             var msg = reader.Parse<CreateRoom>();
-            CreateRoom(msg.type, player, msg.name);
+            if (_allRooms.Count > 0) {
+                JoinRoom(player.PlayerId, _allRooms[0].RoomId);
+                SendCreateRoomResult(player);
+            }
+            else { 
+                CreateRoom(msg.type, player, msg.name);
+            }
         }
 
         private void OnMsg_LeaveRoom(Player player, Deserializer reader){ }
@@ -455,7 +460,6 @@ namespace Lockstep.Logic.Server {
 
             room.OnRecvMsg(player, reader);
         }
-
         #endregion
     }
 }

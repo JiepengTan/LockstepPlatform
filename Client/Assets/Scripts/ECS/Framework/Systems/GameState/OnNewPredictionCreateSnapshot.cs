@@ -2,7 +2,8 @@
 using System.Linq;
 using DesperateDevs.Utils;
 using Entitas;
-using Lockstep.Logging;                       
+using Lockstep.Logging;
+using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Core.Logic.Systems.GameState
 {
@@ -40,8 +41,9 @@ namespace Lockstep.Core.Logic.Systems.GameState
         }
 
         protected override void Execute(List<GameStateEntity> entities)
-        {                                              
+        {                                             
             var currentTick = _gameStateContext.tick.value;
+            Debug.Log($"Create snapshort {currentTick}");
 
             //Register the tick for which a snapshot is created
             _snapshotContext.CreateEntity().AddTick(currentTick);     

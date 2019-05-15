@@ -120,19 +120,26 @@ namespace Lockstep.Game {
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
                 if (isNeedRevert) {
-                    Logging.Debug.LogError($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
+                    UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
-                    if (cmdBuffer.waitCheckTick > 0) {
-                        _world.RevertToTick(cmdBuffer.waitCheckTick - 1);
-                    }
-
-                    cmdBuffer.UpdateCheckedTick();
-                    //Restore last local state   
-                    while (_world.Tick < curTick) {
-                        var frame = cmdBuffer.GetFrame(_world.Tick);
+                    var revertTargetTick = System.Math.Min(cmdBuffer.waitCheckTick - 1, 0u);
+                    _world.RevertToTick(revertTargetTick);
+                    //  _world.Tick -> cmdBuffer.waitCheckTick simulation
+                    while (_world.Tick < cmdBuffer.waitCheckTick) {
+                        var frame = cmdBuffer.GetServerFrame(_world.Tick);
+                        UnityEngine.Debug.Assert(frame!= null && frame.tick == _world.Tick,"cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Simulate();
                     }
+
+                    // cmdBuffer.waitCheckTick -> lastTick Predict
+                    while (_world.Tick < curTick) {
+                        var frame = cmdBuffer.GetLocalFrame(_world.Tick);
+                        UnityEngine.Debug.Assert(frame!= null && frame.tick == _world.Tick,"cmdBuffer Mgr error");
+                        ProcessInputQueue(frame);
+                        _world.Predict();
+                    }
+                    cmdBuffer.UpdateCheckedTick();
                 }
 
                 {

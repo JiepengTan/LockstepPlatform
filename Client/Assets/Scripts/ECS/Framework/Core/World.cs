@@ -3,6 +3,7 @@ using System.Linq;
 using Entitas;
 using Lockstep.Logging;
 using Lockstep.Core.Logic.Systems;
+using Lockstep.Game;
 
 namespace Lockstep.Core.Logic {
     public class World {
@@ -24,7 +25,8 @@ namespace Lockstep.Core.Logic {
         }
 
         public void Predict(){
-            if (!Contexts.gameState.isPredicting) {
+            if (Tick % CommandBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
                 Contexts.gameState.isPredicting = true;
             }
 
@@ -35,9 +37,7 @@ namespace Lockstep.Core.Logic {
         }
 
         public void Simulate(){
-            if (Contexts.gameState.isPredicting) {
-                Contexts.gameState.isPredicting = false;
-            }
+            Contexts.gameState.isPredicting = false;
 
             Log.Trace(this, "Simulate " + Contexts.gameState.tick.value);
 
@@ -55,7 +55,17 @@ namespace Lockstep.Core.Logic {
         public void RevertToTick(uint tick){
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
-            var resultTick = snapshotIndices.Any() ? snapshotIndices.Max() : 0;
+            snapshotIndices.Sort();
+            UnityEngine.Debug.Assert(snapshotIndices.Count > 0 && snapshotIndices[0] <= tick,
+                $"Error! no correct history frame to revert minTick{(snapshotIndices.Count > 0 ? snapshotIndices[0] : 0u)} targetTick {tick}");
+            int i = snapshotIndices.Count - 1;
+            for (; i >= 0; i--) {
+                if (snapshotIndices[i] <= tick) {
+                    break;
+                }
+            }
+
+            var resultTick = snapshotIndices[i];
 
             Log.Info(this, "Rolling back from " + resultTick + " to " + Contexts.gameState.tick.value);
 
@@ -98,14 +108,17 @@ namespace Lockstep.Core.Logic {
                 invalidEntity.isDestroyed = true;
             }
 
+            //将太后 和太前的snapshort 删除掉
             foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
-                .Where(e => e.backup.tick > resultTick)) {
+                .Where(e => e.backup.tick > resultTick ||
+                            e.backup.tick < (resultTick - CommandBuffer.SNAPSHORT_FRAME_INTERVAL))) {
                 invalidBackupEntity.Destroy();
             }
 
 
             foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
-                .Where(e => e.tick.value > resultTick)) {
+                .Where(e => e.tick.value > resultTick ||
+                            e.tick.value < (resultTick - CommandBuffer.SNAPSHORT_FRAME_INTERVAL))) {
                 snapshotEntity.Destroy();
             }
 
@@ -133,10 +146,6 @@ namespace Lockstep.Core.Logic {
             _systems.Cleanup();
 
             Contexts.gameState.ReplaceTick(resultTick);
-
-            while (Tick <= tick) {
-                Simulate();
-            }
         }
     }
 }

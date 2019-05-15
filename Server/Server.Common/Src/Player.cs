@@ -15,7 +15,7 @@ namespace Server.Common {
         public string name;
         public int netID;
         public long PlayerId;
-        public EPlayerStatus status;
+        public EPlayerStatus status = EPlayerStatus.Idle;
         public IRoom room;
         public int RoomId => room == null ? 0 : room.RoomId;
         public NetPeer lobbySock;
