@@ -100,7 +100,7 @@ namespace Lockstep.Game {
                 return;
             }
 
-            List<ICommand> Commands = InputMgr.GetInputCmds();
+            List<ICommand> Commands = InputHelper.GetInputCmds();
             _accumulatedTime += elapsedMilliseconds;
             while (_accumulatedTime >= _tickDt) {
                 var tick = _world.Tick;
@@ -159,7 +159,6 @@ namespace Lockstep.Game {
         }
 
         private void ProcessInputQueue(ServerFrame frame){
-            return;
             var inputs = frame.inputs;
             foreach (var input in inputs) {
                 GameLog.Add(frame.tick, input);
@@ -168,8 +167,7 @@ namespace Lockstep.Game {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
 
                     var inputEntity = _context.input.CreateEntity();
-                    command.Execute(inputEntity);
-
+                    InputHelper.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);
                     inputEntity.AddActorId(input.ActorId);
                 }

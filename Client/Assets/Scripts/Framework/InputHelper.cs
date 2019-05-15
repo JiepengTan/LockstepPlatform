@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using Entitas;
+using Lockstep.Math;
 using NetMsg.Game.Tank;
 using UnityEngine;
 using Input = UnityEngine.Input;
 
 namespace Lockstep.Game {
-    public class InputMgr {
+    public class InputHelper {
         public static int GetDeg(EDir dir){
             switch (dir) {
                 case EDir.Up: return 0;
@@ -34,6 +36,20 @@ namespace Lockstep.Game {
             }
 
             return cmds;
+        }
+
+        public static void Execute(ICommand cmd, InputEntity entity){
+            var type = (ECmdType) cmd.type;
+            switch (type) {
+                case ECmdType.Dir:
+                    //entity.add
+                    break;
+                case ECmdType.Fire:
+                    entity.AddEntityConfigId(0);
+                    entity.AddCoordinate(LVector2.zero);
+                    break;
+            }
+            
         }
     }
 }

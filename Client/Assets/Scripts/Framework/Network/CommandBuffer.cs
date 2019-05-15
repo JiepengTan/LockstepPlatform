@@ -136,8 +136,6 @@ namespace Lockstep.Game {
                     }
                 }
             }
-
-            CheckHistoryCmds();
         }
 
         private ServerFrame GetServerFrame(uint tick){

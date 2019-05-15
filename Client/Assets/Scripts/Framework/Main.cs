@@ -15,12 +15,8 @@ namespace Lockstep.Game {
         public static Main Instance;
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
-        private Simulation _simulation;
+        public Simulation simulation;
 
-        public bool IsConnected => netMgr.IsConnected;
-        public uint CurTick => _simulation?.World?.Tick??0;
-        public long HashCode => contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
-        public int AgentCount => contexts.game.count;
 
         public NetMgr netMgr;
         public Contexts contexts;
@@ -30,8 +26,8 @@ namespace Lockstep.Game {
             Log.OnMessage += OnLog;
             netMgr = new NetMgr();
             contexts = new Contexts();
-            _simulation = new Simulation(contexts, netMgr);
-            netMgr.Init(_simulation, ServerIp, ServerPort, ClientKey);
+            simulation = new Simulation(contexts, netMgr);
+            netMgr.Init(simulation, ServerIp, ServerPort, ClientKey);
         }
 
 
@@ -41,13 +37,13 @@ namespace Lockstep.Game {
 
         private void OnDestroy(){
             netMgr.DoDestroy();
-            _simulation.DoDestroy();
+            simulation.DoDestroy();
         }
 
         void Update(){
             var deltaTimeMs = Time.deltaTime * 1000;
             netMgr.DoUpdate(deltaTimeMs);
-            _simulation.DoUpdate(deltaTimeMs);
+            simulation.DoUpdate(deltaTimeMs);
         }
 
 

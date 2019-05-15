@@ -1,6 +1,7 @@
 #!/bin/bash
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
 cd $dir
+pwd
 rm -rf Client/Assets/Plugins/Libs/*
 rm -rf Server/Libs/*
 cp -rf ./Libs/* Client/Assets/Plugins/Libs

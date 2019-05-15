@@ -6,12 +6,11 @@ using ISerializable = Lockstep.Serialization.ISerializable;
 
 namespace NetMsg.Game.Tank {
     public interface ICommand : ISerializable {
-        void Execute(object player);
-
+        byte type { get; }
         bool IsSame(ICommand other);
     }
 
-    public enum EInputKeys {
+    public enum ECmdType {
         Dir,
         Fire,
         Jump,
@@ -25,14 +24,14 @@ namespace NetMsg.Game.Tank {
 
         public static BaseCmd Parse(Deserializer reader){
             var itype = reader.GetByte();
-            var type = (EInputKeys) itype;
+            var type = (ECmdType) itype;
             BaseCmd val = null;
             switch (type) {
-                case EInputKeys.Dir: {
+                case ECmdType.Dir: {
                     val = reader.Parse<CmdDir>();
                     break;
                 }
-                case EInputKeys.Fire: {
+                case ECmdType.Fire: {
                     val = reader.Parse<CmdFire>();
                     break;
                 }
@@ -64,17 +63,10 @@ namespace NetMsg.Game.Tank {
 
     public class CmdDir : BaseCmd {
         public override byte type {
-            get { return (byte) EInputKeys.Dir; }
+            get { return (byte) ECmdType.Dir; }
         }
 
         public int deg;
-
-
-        public void Execute(object entity){
-            //var player = (Entity) entity;
-            //player.Position = player.Position + dir * deltaTime;
-            //Debug.Log($"Player{player.Name} Move {dir}");
-        }
 
         public override void Serialize(Serializer writer){
             writer.Put(type);
@@ -93,14 +85,10 @@ namespace NetMsg.Game.Tank {
 
     public class CmdFire : BaseCmd {
         public override byte type {
-            get { return (byte) EInputKeys.Fire; }
+            get { return (byte) ECmdType.Fire; }
         }
 
         public int skillID;
-
-        public void Execute(object entity){
-            //Debug.Log($"Player{player.Name} Fire ");
-        }
 
         public override void Serialize(Serializer writer){
             writer.Put(type);
