@@ -12,11 +12,11 @@ public class UIHelper : MonoBehaviour {
 
     void Update(){
         var instance = Main.Instance;
-        if (instance != null) {
+        ConnectedText.text = "Connected: " + instance.IsConnected;
+        if (instance != null && instance.IsConnected) {
             HashCodeText.text = "HashCode: " + instance.HashCode;
             CurrentTickText.text = "CurrentTick: " + instance.CurTick;
             AgentCountText.text = "Agents: " + instance.AgentCount;
-            ConnectedText.text = "Connected: " + instance.IsConnected;
         }
     }
 }

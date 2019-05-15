@@ -122,7 +122,6 @@ namespace Lockstep.Game {
                     var targetIdx = data.tick % MAX_FRAME_BUFFER_COUNT;
                     if (serverFrames[targetIdx] == null) {
                         serverFrames[targetIdx] = data;
-                        UnityEngine.Debug.Log("Recv Frame " + data.tick);
 #if DEBUG_FRAME_DELAY
                         var time = 0;
                         foreach (var input in data.inputs) {

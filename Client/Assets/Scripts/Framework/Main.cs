@@ -16,24 +16,27 @@ namespace Lockstep.Game {
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
         private Simulation _simulation;
-        
-        public bool IsConnected { get; }
-        public int CurTick { get; }
-        public int HashCode { get; }
-        public int AgentCount { get; }
+
+        public bool IsConnected => netMgr.IsConnected;
+        public uint CurTick => _simulation?.World?.Tick??0;
+        public long HashCode => contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
+        public int AgentCount => contexts.game.count;
 
         public NetMgr netMgr;
+        public Contexts contexts;
+
         private void Awake(){
             Instance = this;
             Log.OnMessage += OnLog;
             netMgr = new NetMgr();
-            _simulation = new Simulation(new Contexts(), netMgr);
-            netMgr.Init(_simulation,ServerIp, ServerPort,ClientKey);
+            contexts = new Contexts();
+            _simulation = new Simulation(contexts, netMgr);
+            netMgr.Init(_simulation, ServerIp, ServerPort, ClientKey);
         }
 
 
         private void Start(){
-            netMgr.StartLobby();;
+            netMgr.StartLobby();
         }
 
         private void OnDestroy(){

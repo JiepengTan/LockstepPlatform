@@ -15,7 +15,7 @@ using ICommand = NetMsg.Game.Tank.ICommand;
 namespace Lockstep.Game {
     public class Simulation {
         public static byte MainActorID;
-
+        public World World => _world;
         public Contexts _context { get; }
 
         public GameLog GameLog { get; } = new GameLog();

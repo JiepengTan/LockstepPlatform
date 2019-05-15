@@ -15,6 +15,10 @@ namespace Lockstep.Game {
         private int _roomId;
         private Simulation _simulation;
         private string key;
+        public bool IsConnected {
+            get { return _netProxyLobby!=null && _netProxyLobby.Connected; }
+        }
+
         public void Init(Simulation simulation, string ip, int port, string key){
             this._simulation = simulation;
             InitLobby(ip, port, key);
