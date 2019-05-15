@@ -12,7 +12,7 @@ namespace Lockstep.Game.Features
             //Performance-hit, only use for serious debugging
             //Add(new VerifySelectionIdExists(contexts));
 
-            Add(new ExecuteNavigationInput(contexts, services));
+            Add(new ExecuteMoveInput(contexts, services));
             //TODO: Add CleanupInput that removes input of validated frames (no rollback required => can be removed)
         }
     }

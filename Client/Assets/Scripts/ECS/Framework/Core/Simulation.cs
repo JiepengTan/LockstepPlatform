@@ -120,6 +120,7 @@ namespace Lockstep.Game {
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
                 if (isNeedRevert) {
+                    Logging.Debug.LogError($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
                     if (cmdBuffer.waitCheckTick > 0) {
                         _world.RevertToTick(cmdBuffer.waitCheckTick - 1);

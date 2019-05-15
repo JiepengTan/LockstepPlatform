@@ -1,22 +1,18 @@
 ﻿using UnityEngine;
 
-public class PositionListener : MonoBehaviour, IEventListener, IPositionListener
-{
-    private GameEntity _entity;   
+public class PositionListener : MonoBehaviour, IEventListener, IPositionListener {
+    private GameEntity _entity;
 
-    public void RegisterListeners(GameEntity entity)
-    {
+    public void RegisterListeners(GameEntity entity){
         _entity = entity;
         _entity.AddPositionListener(this);
     }
 
-    public void UnregisterListeners()
-    {
+    public void UnregisterListeners(){
         _entity.RemovePositionListener(this);
     }
 
-    public void OnPosition(GameEntity entity, Lockstep.Math.LVector2 newPosition)
-    {                                    
-        transform.position = new Vector3((float) newPosition.x.ToFloat(), 1, (float) newPosition.y.ToFloat());
+    public void OnPosition(GameEntity entity, Lockstep.Math.LVector2 newPosition){
+        transform.position = new Vector3((float) newPosition.x.ToFloat(), (float) newPosition.y.ToFloat(), 0);
     }
 }

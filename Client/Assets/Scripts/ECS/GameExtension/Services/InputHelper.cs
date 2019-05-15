@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Entitas;
 using Lockstep.Math;
 using NetMsg.Game.Tank;
+using UnityEditor.PackageManager.Requests;
 using UnityEngine;
 using Input = UnityEngine.Input;
 
@@ -17,32 +18,54 @@ namespace Lockstep.Game {
 
             return 0;
         }
-
+        public static LVector2 GetVector(int deg){
+            switch (deg) {
+                case 0: return LVector2.up;
+                case 90: return LVector2.left;
+                case 180: return LVector2.down;
+                case 270: return LVector2.right;
+            }
+            return LVector2.zero;
+        }
         public static List<ICommand> GetInputCmds(){
             var cmds = new List<ICommand>();
-            var vert = UnityEngine.Input.GetAxis("Vertical");
-            var horz = UnityEngine.Input.GetAxis("Horizontal");
             var isFire = Input.GetKey(KeyCode.Space);
-            var absv = Mathf.Abs(vert);
-            var absh = Mathf.Abs(horz);
-            var dir = (absv > absh ? (vert > 0 ? EDir.Up : EDir.Down) : (horz > 0 ? EDir.Right : EDir.Left));
-            const float MIN_INPUT_VAL = 0.01f;
-            if (absv > MIN_INPUT_VAL || absh < MIN_INPUT_VAL) {
+            var dir = EDir.Up;
+            if (Input.GetKey(KeyCode.W)) {
+                dir = EDir.Up;
+            }
+            else  if (Input.GetKey(KeyCode.D)) {
+                dir = EDir.Right;
+            }
+            else  if (Input.GetKey(KeyCode.S)) {
+                dir = EDir.Down;
+            }
+            else  if (Input.GetKey(KeyCode.A)) {
+                dir = EDir.Left;
+            }
+            else {
+                dir = EDir.EnumCount;
+            }
+            if (dir != EDir.EnumCount) {
                 cmds.Add(new CmdDir(){deg = GetDeg(dir)});
             }
 
-            if (isFire) {
+            if (isFire && lastFireTimer < Time.realtimeSinceStartup) {
+                lastFireTimer = Time.realtimeSinceStartup + fireCD;
                 cmds.Add(new CmdFire(){skillID =  1});
             }
 
             return cmds;
         }
 
+        private static float lastFireTimer;
+        private static float fireCD = 1;
+
         public static void Execute(ICommand cmd, InputEntity entity){
             var type = (ECmdType) cmd.type;
             switch (type) {
                 case ECmdType.Dir:
-                    //entity.add
+                    entity.AddMoveDir(GetVector((cmd as CmdDir).deg));
                     break;
                 case ECmdType.Fire:
                     entity.AddEntityConfigId(0);

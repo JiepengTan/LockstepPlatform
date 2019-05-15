@@ -8,6 +8,7 @@ namespace Lockstep.Game {
         Right,
         Down,
         Left,
+        EnumCount,
     }
 
     public class Main : MonoBehaviour {
@@ -26,7 +27,7 @@ namespace Lockstep.Game {
             Log.OnMessage += OnLog;
             netMgr = new NetMgr();
             contexts = new Contexts();
-            simulation = new Simulation(contexts, netMgr);
+            simulation = new Simulation(contexts, netMgr,new UnityGameService());
             netMgr.Init(simulation, ServerIp, ServerPort, ClientKey);
         }
 

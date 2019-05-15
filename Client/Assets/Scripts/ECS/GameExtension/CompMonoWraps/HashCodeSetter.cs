@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RTSNavigable : MonoBehaviour, IComponentSetter
-{      
+public class HashCodeSetter : MonoBehaviour, IComponentSetter
+{
     public void SetComponent(GameEntity entity)
     {
-        entity.isNavigable = true;
+        entity.isHashable = true;
     }
 }

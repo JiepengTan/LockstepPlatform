@@ -17,7 +17,6 @@ namespace Lockstep.Game.Features.Input
 
         private uint _localIdCounter;
         private readonly ActorContext _actorContext;
-
         public ExecuteSpawnInput(Contexts contexts, ServiceContainer serviceContainer)
         {                                                  
             _viewService = serviceContainer.Get<IViewService>();              
@@ -55,7 +54,7 @@ namespace Lockstep.Game.Features.Input
                 e.AddVelocity(LVector2.zero);
                 e.AddPosition(input.coordinate.value);
 
-                _viewService.LoadView(e, input.entityConfigId.value);
+                _viewService.LoadView(e, input.entityConfigId.value,_actorContext);
 
                 if (e.isNavigable)
                 {

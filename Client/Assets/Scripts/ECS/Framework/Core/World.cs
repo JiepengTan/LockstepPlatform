@@ -8,7 +8,7 @@ namespace Lockstep.Core.Logic {
     public class World {
         public Contexts Contexts { get; }
 
-        public uint Tick; //=> Contexts.gameState.tick.value;
+        public uint Tick => Contexts.gameState.tick.value;
 
         private readonly WorldSystems _systems;
 
@@ -24,8 +24,6 @@ namespace Lockstep.Core.Logic {
         }
 
         public void Predict(){
-            Tick = Tick + 1;
-            return;
             if (!Contexts.gameState.isPredicting) {
                 Contexts.gameState.isPredicting = true;
             }
@@ -37,8 +35,6 @@ namespace Lockstep.Core.Logic {
         }
 
         public void Simulate(){
-            Tick = Tick + 1;
-            return;
             if (Contexts.gameState.isPredicting) {
                 Contexts.gameState.isPredicting = false;
             }
@@ -57,9 +53,6 @@ namespace Lockstep.Core.Logic {
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
         public void RevertToTick(uint tick){
-            Tick = tick;
-            return;
-
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
             var resultTick = snapshotIndices.Any() ? snapshotIndices.Max() : 0;
