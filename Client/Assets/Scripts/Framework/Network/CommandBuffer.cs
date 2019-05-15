@@ -28,21 +28,23 @@ namespace Lockstep.Game {
 
         public uint maxServerTick; //当前最大接收到的frame tick
 
-        
+
         /// 是否可以执行下一帧
         public bool CanExcuteNextFrame(){
             return (nextClientTic - waitCheckTick) < MAX_FRAME_BUFFER_COUNT;
         }
 
-        //is return false need revert to (waitCheckTick -1)
+        //is return true need revert to (waitCheckTick -1)
         public bool CheckHistoryCmds(){
             UnityEngine.Debug.Assert(waitCheckTick <= nextClientTic, "localServerTick <= localClientTick ");
             while (waitCheckTick <= maxServerTick) {
                 var sIdx = waitCheckTick % MAX_FRAME_BUFFER_COUNT;
                 var cFrame = clientFrames[sIdx];
                 var sFrame = serverFrames[sIdx];
+                if (cFrame == null) //不可能出现
+                    return false;
                 if (sFrame == null) //服务器帧还没到
-                    return true;
+                    return false;
                 UnityEngine.Debug.Assert(cFrame.tick == sFrame.tick,
                     $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick}");
                 //Check client guess input match the real input
@@ -52,21 +54,49 @@ namespace Lockstep.Game {
                     waitCheckTick++;
                 }
                 else {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
+        }
+
+        public ServerFrame GetFrame(uint tick){
+            var sFrame = GetServerFrame(tick);
+            if (sFrame != null) {
+                return sFrame;
+            }
+
+            return GetLocalFrame(tick);
+        }
+
+        public void UpdateCheckedTick(){
+            uint tick = waitCheckTick;
+            for (; tick <= maxServerTick; tick++) {
+                var idx = tick % MAX_FRAME_BUFFER_COUNT;
+                if (serverFrames[idx] == null) {
+                    break;
+                }
+            }
+
+            waitCheckTick = tick;
         }
 
         public void PushLocalFrame(ServerFrame frame){
             var tick = frame.tick;
             UnityEngine.Debug.Assert(tick == nextClientTic);
-            UnityEngine.Debug.Assert(nextClientTic - waitCheckTick < MAX_FRAME_BUFFER_COUNT,"ring out of range");
+            UnityEngine.Debug.Assert(nextClientTic - waitCheckTick < MAX_FRAME_BUFFER_COUNT, "ring out of range");
             var sIdx = nextClientTic % MAX_FRAME_BUFFER_COUNT;
-            clientFrames[sIdx] = null;
+            clientFrames[sIdx] = frame;
             nextClientTic++;
-            
+#if DEBUG_FRAME_DELAY
+            var time = 0;
+            foreach (var input in frame.inputs) {
+                if (input.ActorId == Simulation.MainActorID) {
+                    input.timeSinceStartUp = Time.realtimeSinceStartup;
+                }
+            }
+#endif
         }
 
         public void PushServerFrames(ServerFrame[] frames){
@@ -74,6 +104,7 @@ namespace Lockstep.Game {
                 var count = frames.Length;
                 for (int i = 0; i < count; i++) {
                     var data = frames[i];
+
                     if (data == null || data.tick < waitCheckTick) {
                         //已经验证过的帧 直接抛弃
                         return;
@@ -91,12 +122,15 @@ namespace Lockstep.Game {
                     var targetIdx = data.tick % MAX_FRAME_BUFFER_COUNT;
                     if (serverFrames[targetIdx] == null) {
                         serverFrames[targetIdx] = data;
+                        UnityEngine.Debug.Log("Recv Frame " + data.tick);
 #if DEBUG_FRAME_DELAY
                         var time = 0;
                         foreach (var input in data.inputs) {
                             if (input.ActorId == Simulation.MainActorID) {
-                                Debug.Log(
-                                    $"Tick {data.tick} recv Delay {Time.realtimeSinceStartup - input.timeSinceStartUp}");
+                                var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
+                                if (delay > 0.2f) {
+                                    UnityEngine.Debug.Log($"Tick {data.tick} recv Delay {delay}");
+                                }
                             }
                         }
 #endif
@@ -107,7 +141,7 @@ namespace Lockstep.Game {
             CheckHistoryCmds();
         }
 
-        public ServerFrame GetServerFrame(uint tick){
+        private ServerFrame GetServerFrame(uint tick){
             lock (this) {
                 if (tick < waitCheckTick || tick > maxServerTick) {
                     return null;
@@ -118,7 +152,7 @@ namespace Lockstep.Game {
             }
         }
 
-        public ServerFrame GetLocalFrame(uint tick){
+        private ServerFrame GetLocalFrame(uint tick){
             lock (this) {
                 if (tick < waitCheckTick || tick >= nextClientTic) {
                     return null;

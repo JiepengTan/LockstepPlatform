@@ -2,16 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
 using Lockstep.Core;
 using Lockstep.Core.Logic;
-using Lockstep.Core.Logic.Interfaces;
 using Lockstep.Logging;
 using Lockstep.Game.Features;
-using Lockstep.Game.Features.Cleanup;
-using Lockstep.Game.Features.Input;
-using Lockstep.Logging;
-using Lockstep.Math;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
 using UnityEngine;
@@ -70,37 +64,16 @@ namespace Lockstep.Game {
         }
 
         public void StartGame(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
-            _localActorId = localActorId;
             MainActorID = localActorId;
-            _localTick = 0;
-            _roomId = roomId;
-            _world = new World(_context, allActors);
-            this.Running = true;
-        }
-
-        public void DoDestroy(){ }
-
-        public byte[] _allActors;
-        private int _actorCount;
-        private int _actorIdx;
-
-        public void Start(int targetFps, byte localActorId, byte[] allActors){
-            GameLog.LocalActorId = localActorId;
-            GameLog.AllActorIds = allActors;
-            MainActorID = localActorId;
-
-            _actorCount = allActors.Length;
             _localActorId = localActorId;
             _allActors = allActors;
-            _actorIdx = -1;
-            for (int i = 0; i < _actorCount; i++) {
-                if (allActors[i] == localActorId) {
-                    _actorIdx = i;
-                    break;
-                }
-            }
 
-            Debug.Assert(_actorIdx != -1);
+            _localTick = 0;
+            _roomId = roomId;
+            GameLog.LocalActorId = localActorId;
+            GameLog.AllActorIds = allActors;
+
+            _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
             _world = new World(_context, allActors,
                 new InputFeature(_context, Services),
@@ -109,30 +82,41 @@ namespace Lockstep.Game {
             Running = true;
         }
 
+        public void DoDestroy(){
+            Running = false;
+        }
+
+        public byte[] _allActors;
+        private int _actorCount;
+
+        private uint CurTick = 0;
 
         public void DoUpdate(float elapsedMilliseconds){
             if (!Running) {
                 return;
             }
-            return;
-            if (!cmdBuffer.CanExcuteNextFrame()) {//因为网络问题 需要等待服务器发送确认包 才能继续往前
+
+            if (!cmdBuffer.CanExcuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
                 return;
             }
 
             List<ICommand> Commands = InputMgr.GetInputCmds();
             _accumulatedTime += elapsedMilliseconds;
             while (_accumulatedTime >= _tickDt) {
-                var input = new PlayerInput(_world.Tick, _localActorId, Commands);
-                _netMgr.SendInput(input);
-                var frame = new ServerFrame();
                 var tick = _world.Tick;
-                frame.tick = tick;
+                var input = new PlayerInput(tick, _localActorId, Commands);
+                var localFrame = new ServerFrame();
+                localFrame.tick = tick;
                 var inputs = new PlayerInput[_actorCount];
                 for (int i = 0; i < _actorCount; i++) {
                     inputs[i] = new PlayerInput(tick, _allActors[i], null);
                 }
 
-                inputs[_actorIdx] = input;
+                inputs[_localActorId] = input;
+                localFrame.inputs = inputs;
+                cmdBuffer.PushLocalFrame(localFrame);
+                _netMgr.SendInput(input);
+
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
                 if (isNeedRevert) {
@@ -141,17 +125,20 @@ namespace Lockstep.Game {
                         _world.RevertToTick(cmdBuffer.waitCheckTick - 1);
                     }
 
-                    //Restore last local state       
+                    cmdBuffer.UpdateCheckedTick();
+                    //Restore last local state   
                     while (_world.Tick < curTick) {
+                        var frame = cmdBuffer.GetFrame(_world.Tick);
+                        ProcessInputQueue(frame);
                         _world.Simulate();
                     }
                 }
 
-                
-                //sendInput
-                ProcessInputQueue(frame);
-                _world.Predict();
-                cmdBuffer.PushLocalFrame(frame);
+                {
+                    var frame = localFrame;
+                    ProcessInputQueue(frame);
+                    _world.Predict();
+                }
 
                 _accumulatedTime -= _tickDt;
             }
@@ -172,9 +159,10 @@ namespace Lockstep.Game {
         }
 
         private void ProcessInputQueue(ServerFrame frame){
+            return;
             var inputs = frame.inputs;
             foreach (var input in inputs) {
-                GameLog.Add(_world.Tick, input);
+                GameLog.Add(frame.tick, input);
 
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());

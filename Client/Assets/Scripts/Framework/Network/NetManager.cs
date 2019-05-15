@@ -94,7 +94,7 @@ namespace Lockstep.Game {
         void OnMsgLobby_CreateRoom(Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
-            Logging.Debug.LogError("OnMsgLobby_CreateRoom " + msg.port);
+            UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + msg.port);
             InitRoom(msg.ip, msg.port, key);
             StartRoom();
         }
@@ -102,7 +102,7 @@ namespace Lockstep.Game {
         void OnMsgLobby_ReqInit(Deserializer reader){
             var msg = reader.Parse<Msg_RepInit>();
             _playerID = msg.playerId;
-            Debug.LogError("PlayerID " + _playerID);
+            Debug.Log("PlayerID " + _playerID);
             SendCreateRoomMsg();
         }
 
@@ -111,13 +111,12 @@ namespace Lockstep.Game {
         }
 
         void SendCreateRoomMsg(){
-            Logging.Debug.LogError("SendCreateRoomMsg");
+            UnityEngine.Debug.Log("SendCreateRoomMsg");
             SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {roomType = 1, name = "FishManRoom"});
         }
 
 
         private void OnMsgRoom_FrameData(Deserializer reader){
-            Debug.Log("Recv Frame Data");
             var msg = reader.Parse<ServerFrames>();
             EventHelper.Trigger(EEvent.OnServerFrame, msg);
         }
@@ -127,7 +126,7 @@ namespace Lockstep.Game {
             _roomId = msg.RoomID;
             Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
 
-            EventHelper.Trigger(EEvent.OnServerFrame, msg);
+            EventHelper.Trigger(EEvent.OnRoomGameStart, msg);
         }
     }
 }

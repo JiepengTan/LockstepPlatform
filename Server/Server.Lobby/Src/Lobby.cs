@@ -81,8 +81,6 @@ namespace Lockstep.Logic.Server {
                 }
 
                 room.OnRecvMsg(player, reader);
-
-                realOnDataReceived(netID, data);
             }
             catch (Exception e) {
                 Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
@@ -169,7 +167,7 @@ namespace Lockstep.Logic.Server {
 
             var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
             var assembly = Assembly.LoadFrom(dllPath);
-            Debug.LogError("Load dll " + dllPath);
+            Debug.Log("Load dll " + dllPath);
             if (assembly == null) {
                 Debug.LogError("Load dll failed  " + dllPath);
                 _roomFactoryFuncs[type] = null;
@@ -341,8 +339,10 @@ namespace Lockstep.Logic.Server {
             var peer = (NetPeer) objPeer;
             Debug.Log($"OnCilentDisconnected netID = {peer.Id}");
             var player = GetPlayer(peer.Id);
-            LeaveRoom(player.PlayerId);
-            RemovePlayer(peer.Id);
+            if (player != null) {
+                LeaveRoom(player.PlayerId);
+                RemovePlayer(peer.Id);
+            }
         }
 
         #endregion
@@ -387,7 +387,6 @@ namespace Lockstep.Logic.Server {
             RegisterNetMsgHandler(EMsgCL.C2L_CreateRoom, OnMsg_CreateRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_LeaveRoom, OnMsg_LeaveRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_RoomMsg, OnMsg_RoomMsg);
-            
         }
 
         private void RegisterNetMsgHandler(EMsgCL type, DealNetMsg func){

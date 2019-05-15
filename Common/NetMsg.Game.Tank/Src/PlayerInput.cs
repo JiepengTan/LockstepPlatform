@@ -31,6 +31,7 @@ namespace NetMsg.Game.Tank{
             writer.Put(timeSinceStartUp);
 #endif
             writer.Put(ActorId);
+            writer.Put(Tick);
             int count = Commands.Count;
             writer.Put((byte) count);
             for (int i = 0; i < count; i++) {
@@ -43,6 +44,7 @@ namespace NetMsg.Game.Tank{
             timeSinceStartUp = reader.GetFloat();
 #endif
             ActorId = reader.GetByte();
+            Tick = reader.GetUInt();
             int count = reader.GetByte();
             for (int i = 0; i < count; i++) {
                 var cmd = BaseCmd.Parse(reader);
