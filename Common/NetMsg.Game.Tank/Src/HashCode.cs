@@ -1,6 +1,6 @@
 ﻿using Lockstep.Serialization;
 
-namespace NetMsg.Lobby {
+namespace NetMsg.Game.Tank {
     public class HashCode : ISerializable {
         public ulong FrameNumber { get; set; }
         public long Value { get; set; }

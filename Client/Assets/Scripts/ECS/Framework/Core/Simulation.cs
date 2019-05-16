@@ -127,7 +127,7 @@ namespace Lockstep.Game {
                     _world.RevertToTick(revertTargetTick);
                     CheckRevertHashCode();
                     //  _world.Tick -> nextMissServerFrame simulation
-                    var waitCheckTick = cmdBuffer.GetMissServerFrameTick();//服务器 可能超前
+                    var waitCheckTick = cmdBuffer.GetMissServerFrameTick(); //服务器 可能超前
                     //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
                     var snapTick = _world.Tick;
                     while (_world.Tick < waitCheckTick) {
@@ -136,26 +136,24 @@ namespace Lockstep.Game {
                             Debug.LogError("cmdBuffer Mgr error");
                         }
 
-                        if (curTick > 600) {
-                            var ss = 0;
-                        }
-
                         //服务器超前 客户端 应该追上去 将服务器中的输入作为客户端输入
                         if (_world.Tick > curTick) {
                             cmdBuffer.PushLocalFrame(frame);
                         }
+
                         //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Simulate(_world.Tick != snapTick);
                         SetHashCode();
                     }
-                    
+
                     // cmdBuffer.waitCheckTick -> lastTick Predict
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
                         if (!(frame != null && frame.tick == _world.Tick)) {
                             Debug.LogError("cmdBuffer Mgr error");
                         }
+
                         //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Predict();
@@ -173,11 +171,50 @@ namespace Lockstep.Game {
                 }
                 _accumulatedTime -= _tickDt;
             }
+
+            CheckAndSendHashCodes();
         }
+
 
         public List<long> allBeforeExecuteHashCodes = new List<long>();
         public List<long> allHashCodes = new List<long>();
-        public static int[,] allAccumInputCount = new int[2,10000];
+        public static int[,] allAccumInputCount = new int[2, 10000];
+        private List<long> allHashCodess = new List<long>();
+        private uint firstHashTick = 0;
+
+        public void CheckAndSendHashCodes(){
+            if (cmdBuffer.waitCheckTick > firstHashTick) {
+                var count = System.Math.Min(allHashCodes.Count, (int) (cmdBuffer.waitCheckTick - firstHashTick));
+                if (count > 0) {
+                    Msg_HashCode msg = new Msg_HashCode();
+                    msg.startTick = firstHashTick;
+                    msg.hashCodes = new long[count];
+                    for (int i = 0; i < count; i++) {
+                        msg.hashCodes[i] = allHashCodess[i];
+                    }
+
+                    _netMgr.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
+                    firstHashTick = firstHashTick + (uint) count;
+                    allHashCodess.RemoveRange(0, count);
+                }
+            }
+        }
+
+        public void SetHash(uint tick, long hash){
+            if (tick < firstHashTick) {
+                return;
+            }
+
+            var idx = (int) (tick - firstHashTick);
+            if (allHashCodess.Count <= idx) {
+                for (int i = 0; i < idx + 1; i++) {
+                    allHashCodess.Add(0);
+                }
+            }
+
+            allHashCodess[idx] = hash;
+        }
+
         public void SetHashCode(){
             var nextTick = _world.Tick;
             var iTick = (int) nextTick - 1;
@@ -186,8 +223,10 @@ namespace Lockstep.Game {
                 allBeforeExecuteHashCodes.Add(0);
             }
 
+            var hash = _world.Contexts.gameState.hashCode.value;
             allHashCodes[iTick] = _world.Contexts.gameState.hashCode.value;
             allBeforeExecuteHashCodes[iTick] = _world.Contexts.gameState.beforeExecuteHashCode.value;
+            SetHash(nextTick - 1, hash);
         }
 
         public void CheckRevertHashCode(){
@@ -214,6 +253,7 @@ namespace Lockstep.Game {
         }
 
         public static int[] ExcutedPlayerInputCount = new int[2];
+
         private void ProcessInputQueue(ServerFrame frame){
             var inputs = frame.inputs;
             foreach (var input in inputs) {

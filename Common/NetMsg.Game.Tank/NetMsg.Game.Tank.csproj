@@ -61,6 +61,7 @@
     <Compile Include="Src\InputCmd.cs" />
     <Compile Include="Src\InputCmds.cs" />
     <Compile Include="Src\Msg_CreateRoom.cs" />
+    <Compile Include="Src\Msg_HashCode.cs" />
     <Compile Include="Src\Msg_InitMsg.cs" />
     <Compile Include="Src\Msg_PlayerReady.cs" />
     <Compile Include="Src\Msg_RepInit.cs" />

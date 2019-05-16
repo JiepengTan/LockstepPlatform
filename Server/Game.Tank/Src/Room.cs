@@ -9,6 +9,20 @@ using Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Logic.Server {
+    public class HashCodeMatcher {
+        public long hashCode;
+        public bool[] sendResult;
+        public int count;
+
+        public HashCodeMatcher(int num){
+            hashCode = 0;
+            sendResult = new bool[num];
+            count = 0;
+        }
+
+        public bool IsMatchered => count == sendResult.Length;
+    }
+
     public class Room : IRoom {
         public int TypeId { get; protected set; }
         public int RoomId { get; protected set; }
@@ -36,6 +50,8 @@ namespace Lockstep.Logic.Server {
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCS.EnumCount];
         private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgCS.EnumCount];
 
+        //hashcode 
+        private Dictionary<uint, HashCodeMatcher> allHashCodes = new Dictionary<uint, HashCodeMatcher>();
         private bool haveStart = false; //是否已经开始游戏
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
@@ -64,25 +80,27 @@ namespace Lockstep.Logic.Server {
 
         public long timeSinceLoaded;
         private long firstFrameTimeStamp = 0;
-        private int MaxWaitTime = 300;//最多等待事时间
+        private int MaxWaitTime = 300; //最多等待事时间
         private int waitTimer = 0;
-        
+
         //所有需要等待输入到来的Ids
         public List<byte> allNeedWaitInputPlayerIds;
-        List<ServerFrame> allHistoryFrames = new List<ServerFrame>();//所有的历史帧
+        List<ServerFrame> allHistoryFrames = new List<ServerFrame>(); //所有的历史帧
+
         private void BorderServerFrame(int deltaTime){
             waitTimer += deltaTime;
             if (!haveStart) return;
-            while (true) {// 如果落后太多 就一直追帧
+            while (true) { // 如果落后太多 就一直追帧
                 var iTick = (int) Tick;
                 if (allHistoryFrames.Count <= iTick) {
                     return;
                 }
+
                 var frame = allHistoryFrames[iTick];
                 if (frame == null) {
                     return;
                 }
-                
+
                 var inputs = frame.inputs;
                 //超时等待 移除超时玩家
                 if (waitTimer > MaxWaitTime) {
@@ -90,37 +108,40 @@ namespace Lockstep.Logic.Server {
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
                         if (inputs[i] == null) {
-                            Debug.Log($"Overtime wait remove localId = {i}" );
-                            allNeedWaitInputPlayerIds.Remove((byte)i);
+                            Debug.Log($"Overtime wait remove localId = {i}");
+                            allNeedWaitInputPlayerIds.Remove((byte) i);
                         }
                     }
                 }
-                
+
                 //是否所有的输入  都已经等到
                 foreach (var id in allNeedWaitInputPlayerIds) {
                     if (inputs[id] == null) {
                         return;
                     }
                 }
+
                 //将所有未到的包 给予默认的输入
                 for (int i = 0; i < inputs.Length; i++) {
                     if (inputs[i] == null) {
-                        inputs[i] = new PlayerInput(Tick,(byte)i,null);
+                        inputs[i] = new PlayerInput(Tick, (byte) i, null);
                     }
                 }
-                
+
                 //Debug.Log("Border input " + Tick);
                 var allFrames = new ServerFrames();
                 int count = Tick < 2 ? iTick + 1 : 3;
                 var frames = new ServerFrame[count];
-                for (int i = 0; i <count; i++) {
+                for (int i = 0; i < count; i++) {
                     frames[count - i - 1] = allHistoryFrames[iTick - i];
                 }
+
                 allFrames.frames = frames;
                 SendToAll(EMsgCS.S2C_FrameData, allFrames);
                 if (firstFrameTimeStamp <= 0) {
                     firstFrameTimeStamp = timeSinceLoaded;
                 }
+
                 Tick++;
             }
         }
@@ -181,7 +202,8 @@ namespace Lockstep.Logic.Server {
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerInput, OnNet_PlayerInput,
                 (reader) => { return ParseData<PlayerInput>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_ReqMissPack, OnNet_ReqMissPack, null);
-            RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode, null);
+            RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode,
+                (reader) => { return ParseData<Msg_HashCode>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady,
                 (reader) => { return ParseData<Msg_PlayerReady>(reader); });
         }
@@ -330,8 +352,6 @@ namespace Lockstep.Logic.Server {
 
         #region Net msg handler
 
-
-
         void OnNet_PlayerInput(Player player, BaseFormater data){
             haveStart = true;
             var input = data as PlayerInput;
@@ -372,7 +392,50 @@ namespace Lockstep.Logic.Server {
         }
 
         void OnNet_ReqMissPack(Player player, BaseFormater data){ }
-        void OnNet_HashCode(Player player, BaseFormater data){ }
+
+
+        void OnNet_HashCode(Player player, BaseFormater data){
+            var hashInfo = data as Msg_HashCode;
+            var id = player.localId;
+            for (uint i = 0; i < hashInfo.hashCodes.Length; i++) {
+                var code = hashInfo.hashCodes[i];
+                var tick = hashInfo.startTick + i;
+                if (allHashCodes.TryGetValue(tick, out HashCodeMatcher matcher1)) {
+                    if (matcher1 == null || matcher1.sendResult[id]) {
+                        continue;
+                    }
+
+                    if (matcher1.hashCode != code) {
+                        OnHashMatchResult(tick, code, false);
+                    }
+
+                    matcher1.count = matcher1.count + 1;
+                    matcher1.sendResult[id] = true;
+                    if (matcher1.IsMatchered) {
+                        OnHashMatchResult(tick, code, true);
+                    }
+                }
+                else {
+                    var matcher2 = new HashCodeMatcher(MaxPlayerCount);
+                    matcher2.count = 1;
+                    matcher2.hashCode = code;
+                    matcher2.sendResult[id] = true;
+                    allHashCodes.Add(tick, matcher2);
+                    if (matcher2.IsMatchered) {
+                        OnHashMatchResult(tick, code, true);
+                    }
+                }
+            }
+        }
+
+        void OnHashMatchResult(uint tick, long hash, bool isMatched){
+            if (isMatched) {
+                allHashCodes[tick] = null;
+            }
+            if (!isMatched) {
+                Debug.Log($"!!!!!!!!!!!! Hash not match tick{tick} hash{hash} ");
+            }
+        }
 
         void OnNet_PlayerReady(Player player, BaseFormater data){
             OnPlayerReady(player);
