@@ -366,9 +366,9 @@ namespace Lockstep.Logic.Server {
             }
 
             frame.inputs[id] = input;
-            if (input.Commands.Count > 0) {
-                Debug.Log($"RecvInput actorID:{input.ActorId}  inputTick:{input.Tick}  cmd:{(ECmdType)(input.Commands[0].type)}");
-            }
+            //if (input.Commands.Count > 0) {
+            //    Debug.Log($"RecvInput actorID:{input.ActorId}  inputTick:{input.Tick}  cmd:{(ECmdType)(input.Commands[0].type)}");
+            //}
         }
 
         void OnNet_ReqMissPack(Player player, BaseFormater data){ }

@@ -8,14 +8,16 @@
 //------------------------------------------------------------------------------
 public static class GameStateComponentsLookup {
 
-    public const int HashCode = 0;
-    public const int Paused = 1;
-    public const int Predicting = 2;
-    public const int Tick = 3;
+    public const int BeforeExecuteHashCode = 0;
+    public const int HashCode = 1;
+    public const int Paused = 2;
+    public const int Predicting = 3;
+    public const int Tick = 4;
 
-    public const int TotalComponents = 4;
+    public const int TotalComponents = 5;
 
     public static readonly string[] componentNames = {
+        "BeforeExecuteHashCode",
         "HashCode",
         "Paused",
         "Predicting",
@@ -23,6 +25,7 @@ public static class GameStateComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent),
         typeof(Lockstep.Core.State.GameState.HashCodeComponent),
         typeof(Lockstep.Core.State.GameState.PausedComponent),
         typeof(Lockstep.Core.State.GameState.PredictingComponent),

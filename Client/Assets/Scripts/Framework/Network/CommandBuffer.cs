@@ -52,7 +52,7 @@ namespace Lockstep.Game {
                 if (sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
                     return false;
 
-                UnityEngine.Debug.Assert(cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
+                UnityEngine.Debug.Assert(cFrame!=null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
                     $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick} checking:{waitCheckTick}");
                 //Check client guess input match the real input
                 if (sFrame.IsSame(cFrame)) {
@@ -97,8 +97,12 @@ namespace Lockstep.Game {
 
         public void PushLocalFrame(ServerFrame frame){
             var tick = frame.tick;
+            if (tick != nextClientTic) {
+                UnityEngine.Debug.LogError($"hehehe {tick} :next{nextClientTic}");
+            }
+
             UnityEngine.Debug.Assert(tick == nextClientTic);
-            UnityEngine.Debug.Assert(nextClientTic - waitCheckTick < MAX_OVERRIDE_COUNT, "ring out of range");
+            UnityEngine.Debug.Assert(((int)nextClientTic - (int)waitCheckTick) < MAX_OVERRIDE_COUNT, $"ring out of range cTick:{nextClientTic}  waitCheck:{waitCheckTick} ");
             var sIdx = nextClientTic % MAX_FRAME_BUFFER_COUNT;
             clientFrames[sIdx] = frame;
             nextClientTic++;
@@ -108,10 +112,14 @@ namespace Lockstep.Game {
                 if (input.ActorId == Simulation.MainActorID) {
                     input.timeSinceStartUp = Time.realtimeSinceStartup;
                 }
+                if (input.Commands.Count > 0) {
+                    UnityEngine.Debug.Log($"Local~~~self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                }
             }
 #endif
         }
 
+        public static int[] PlayerInputCount = new int[2];
         public void PushServerFrames(ServerFrame[] frames){
             lock (this) {
                 var count = frames.Length;
@@ -137,9 +145,11 @@ namespace Lockstep.Game {
                         serverFrames[targetIdx] = data;
                         foreach (var input in data.inputs) {
                             if (input.Commands.Count > 0) {
-                                UnityEngine.Debug.Log($"RecvInput actorID:{input.ActorId}  " +
-                                                      $"inputTick:{input.Tick}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                                UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                                PlayerInputCount[input.ActorId]++;
                             }
+
+                            Simulation.allAccumInputCount[input.ActorId, input.Tick] = PlayerInputCount[input.ActorId];
                         }
 #if DEBUG_FRAME_DELAY
                         var time = 0;
@@ -147,7 +157,7 @@ namespace Lockstep.Game {
                             if (input.ActorId == Simulation.MainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
                                 if (delay > 0.2f) {
-                                    UnityEngine.Debug.Log($"Tick {data.tick} recv Delay {delay}");
+                                    UnityEngine.Debug.Log($"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
                                 }
                             }
                         }

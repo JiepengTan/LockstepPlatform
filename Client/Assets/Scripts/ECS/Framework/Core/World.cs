@@ -4,6 +4,7 @@ using Entitas;
 using Lockstep.Logging;
 using Lockstep.Core.Logic.Systems;
 using Lockstep.Game;
+using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Core.Logic {
     public class World {
@@ -119,7 +120,7 @@ namespace Lockstep.Core.Logic {
                 invalidEntity.isDestroyed = true;
             }
 
-            //将太后 和太前的snapshort 删除掉
+            //将太后 和太前的snapshot 删除掉
             foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
                 .Where(e => e.backup.tick > resultTick ||
                             e.backup.tick < (resultTick - CommandBuffer.SNAPSHORT_FRAME_INTERVAL))) {
@@ -156,6 +157,18 @@ namespace Lockstep.Core.Logic {
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
             Contexts.gameState.ReplaceTick(resultTick);
+            var selectedEntities = Contexts.game.GetEntities(GameMatcher.LocalId);
+            foreach (var entity in selectedEntities)
+            {
+                if (!entity.isDestroyed) {
+                    var pos = entity.position.value;
+                    var preNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick-1] * 16;
+                    var nextNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick] * 16;
+                    Debug.Log($"Revert to tick{resultTick}: actorID:{entity.actorId.value} pos:{pos} preNum:{preNum} nextNum:{nextNum}");
+                }
+            }
+            
+            _systems.ExecuteBeforeExecuteHashCodeSystem();
         }
     }
 }

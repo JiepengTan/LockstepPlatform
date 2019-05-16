@@ -43,7 +43,7 @@ namespace Lockstep.Core.Logic.Systems.GameState
         protected override void Execute(List<GameStateEntity> entities)
         {                                             
             var currentTick = _gameStateContext.tick.value;
-            Debug.Log($"Create snapshort {currentTick}");
+            //Debug.Log($"Create snapshort {currentTick}");
 
             //Register the tick for which a snapshot is created
             _snapshotContext.CreateEntity().AddTick(currentTick);     

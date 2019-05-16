@@ -28,17 +28,20 @@ namespace Lockstep.Game.Features.Input
             foreach (var input in _navigationInput.GetEntities().
                 Where(entity => entity.tick.value == _gameStateContext.tick.value))
             {
-                var destination = input.moveDir.value;
+                var dir = input.moveDir.value;
                 var selectedEntities = _gameContext
                     .GetEntities(GameMatcher.LocalId)
                     .Where(entity => entity.actorId.value == input.actorId.value);
 
 
                 Log.Trace(this, input.actorId.value + " moving " + string.Join(", ", selectedEntities.Select(entity => entity.id.value)));
-
+                var accuCount = Simulation.allAccumInputCount[input.actorId.value, _gameStateContext.tick.value] * 16;
                 foreach (var entity in selectedEntities)
                 {
-                    entity.ReplacePosition(entity.position.value + destination * new LFloat(true,16) );           
+                    entity.ReplacePosition(entity.position.value + dir * new LFloat(true,16) );
+                    Debug.Log($"tick{_gameStateContext.tick.value}Replace POs id: {entity.actorId.value} pos: {entity.position.value}" );
+                    var pos = entity.position.value;
+                    int ss = 0;
                 }
             }
         }

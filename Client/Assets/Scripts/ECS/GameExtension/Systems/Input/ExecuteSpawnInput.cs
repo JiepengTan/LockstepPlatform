@@ -42,7 +42,6 @@ namespace Lockstep.Game.Features.Input
                 var e = _gameContext.CreateEntity();        
 
                 Log.Trace(this, actor.id.value + " -> " + nextEntityId);
-
                 //composite primary key
                 e.AddId(nextEntityId);
                 e.AddActorId(input.actorId.value);

@@ -17,7 +17,7 @@ namespace Lockstep.Core.Logic.Systems.GameState
 
         public void Execute()
         {                                              
-            _gameStateContext.tickEntity.ReplaceTick(_gameStateContext.tick.value + 1);
+            _gameStateContext.ReplaceTick(_gameStateContext.tick.value + 1);
         }   
     }
 }

@@ -8,6 +8,7 @@ using Lockstep.Logging;
 using Lockstep.Game.Features;
 using Lockstep.Serialization;
 using NetMsg.Game.Tank;
+using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 using ICommand = NetMsg.Game.Tank.ICommand;
@@ -100,11 +101,10 @@ namespace Lockstep.Game {
                 return;
             }
 
-            List<ICommand> Commands = InputHelper.GetInputCmds();
             _accumulatedTime += elapsedMilliseconds;
             while (_accumulatedTime >= _tickDt) {
                 var tick = _world.Tick;
-                var input = new PlayerInput(tick, _localActorId, Commands);
+                var input = new PlayerInput(tick, _localActorId, InputHelper.GetInputCmds());
                 var localFrame = new ServerFrame();
                 localFrame.tick = tick;
                 var inputs = new PlayerInput[_actorCount];
@@ -112,6 +112,7 @@ namespace Lockstep.Game {
                 for (int i = 0; i < _actorCount; i++) {
                     inputs[i] = new PlayerInput(tick, _allActors[i], null);
                 }
+
                 inputs[_localActorId] = input;
                 localFrame.inputs = inputs;
                 cmdBuffer.PushLocalFrame(localFrame);
@@ -124,37 +125,80 @@ namespace Lockstep.Game {
                     var curTick = _world.Tick;
                     var revertTargetTick = System.Math.Max(cmdBuffer.waitCheckTick - 1, 0u);
                     _world.RevertToTick(revertTargetTick);
+                    CheckRevertHashCode();
                     //  _world.Tick -> nextMissServerFrame simulation
-                    var nextMissServerFrame = cmdBuffer.GetMissServerFrameTick();
+                    var waitCheckTick = cmdBuffer.GetMissServerFrameTick();//服务器 可能超前
+                    //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
                     var snapTick = _world.Tick;
-                    while (_world.Tick < nextMissServerFrame) {
+                    while (_world.Tick < waitCheckTick) {
                         var frame = cmdBuffer.GetServerFrame(_world.Tick);
                         if (!(frame != null && frame.tick == _world.Tick)) {
                             Debug.LogError("cmdBuffer Mgr error");
                         }
-                        UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
+
+                        if (curTick > 600) {
+                            var ss = 0;
+                        }
+
+                        //服务器超前 客户端 应该追上去 将服务器中的输入作为客户端输入
+                        if (_world.Tick > curTick) {
+                            cmdBuffer.PushLocalFrame(frame);
+                        }
+                        //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Simulate(_world.Tick != snapTick);
+                        SetHashCode();
                     }
-                  
+                    
                     // cmdBuffer.waitCheckTick -> lastTick Predict
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
-                        UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
+                        if (!(frame != null && frame.tick == _world.Tick)) {
+                            Debug.LogError("cmdBuffer Mgr error");
+                        }
+                        //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         ProcessInputQueue(frame);
                         _world.Predict();
+                        SetHashCode();
                     }
                 }
 
                 {
                     var frame = localFrame;
-                    ProcessInputQueue(frame);
-                    _world.Predict();
+                    if (_world.Tick <= frame.tick) {
+                        ProcessInputQueue(frame);
+                        _world.Predict();
+                        SetHashCode();
+                    }
                 }
                 _accumulatedTime -= _tickDt;
             }
         }
 
+        public List<long> allBeforeExecuteHashCodes = new List<long>();
+        public List<long> allHashCodes = new List<long>();
+        public static int[,] allAccumInputCount = new int[2,10000];
+        public void SetHashCode(){
+            var nextTick = _world.Tick;
+            var iTick = (int) nextTick - 1;
+            for (int i = allHashCodes.Count; i <= iTick; i++) {
+                allHashCodes.Add(0);
+                allBeforeExecuteHashCodes.Add(0);
+            }
+
+            allHashCodes[iTick] = _world.Contexts.gameState.hashCode.value;
+            allBeforeExecuteHashCodes[iTick] = _world.Contexts.gameState.beforeExecuteHashCode.value;
+        }
+
+        public void CheckRevertHashCode(){
+            var iTick = (int) _world.Tick;
+            var hashCodeAfterRevert = _world.Contexts.gameState.beforeExecuteHashCode.value;
+            var hashCodeBefore = allBeforeExecuteHashCodes[iTick];
+            Debug.Log($"iTick{iTick} hashCode Before {hashCodeBefore} revert{hashCodeAfterRevert}");
+            if (hashCodeAfterRevert != hashCodeBefore) {
+                Debug.LogError($"Revert Error: 前后状态不一致 before{hashCodeBefore} afterRevert{hashCodeAfterRevert}");
+            }
+        }
 
         public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
@@ -169,6 +213,7 @@ namespace Lockstep.Game {
             }
         }
 
+        public static int[] ExcutedPlayerInputCount = new int[2];
         private void ProcessInputQueue(ServerFrame frame){
             var inputs = frame.inputs;
             foreach (var input in inputs) {
@@ -176,11 +221,12 @@ namespace Lockstep.Game {
 
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
-
+                    ExcutedPlayerInputCount[input.ActorId]++;
                     var inputEntity = _context.input.CreateEntity();
                     InputHelper.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);
                     inputEntity.AddActorId(input.ActorId);
+                    inputEntity.isDestroyed = true;
                 }
             }
         }

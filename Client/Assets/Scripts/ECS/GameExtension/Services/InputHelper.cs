@@ -49,7 +49,7 @@ namespace Lockstep.Game {
             }
 
             if (isFire && lastFireTimer < Time.realtimeSinceStartup) {
-                lastFireTimer = Time.realtimeSinceStartup + fireCD;
+                lastFireTimer = Time.realtimeSinceStartup + 4;
                 cmds.Add(new CmdFire(){skillID =  1});
             }
 

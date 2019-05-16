@@ -15,6 +15,6 @@ public class PositionListener : MonoBehaviour, IEventListener, IPositionListener
     public void OnPosition(GameEntity entity, Lockstep.Math.LVector2 newPosition){
         var dst = new Vector3((float) newPosition.x.ToFloat(), (float) newPosition.y.ToFloat(), 0);
         var src = transform.position;
-        transform.position = Vector3.Lerp(src, dst, Time.deltaTime);
+        transform.position = Vector3.Lerp(src, dst, 0.1f);
     }
 }
