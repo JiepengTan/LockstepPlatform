@@ -11,7 +11,6 @@ using NetMsg.Game.Tank;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-using ICommand = NetMsg.Game.Tank.ICommand;
 
 namespace Lockstep.Game {
     public class Simulation {
@@ -43,12 +42,12 @@ namespace Lockstep.Game {
         public Simulation(){ }
 
         public void OnEvent_OnServerFrames(object param){
-            var msg = param as ServerFrames;
+            var msg = param as Msg_ServerFrames;
             cmdBuffer.PushServerFrames(msg.frames);
         }
 
         public void OnEvent_OnRoomGameStart(object param){
-            var msg = param as InitServerFrame;
+            var msg = param as Msg_StartGame;
             StartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
         }
 
@@ -104,13 +103,13 @@ namespace Lockstep.Game {
             _accumulatedTime += elapsedMilliseconds;
             while (_accumulatedTime >= _tickDt) {
                 var tick = _world.Tick;
-                var input = new PlayerInput(tick, _localActorId, InputHelper.GetInputCmds());
+                var input = new Msg_PlayerInput(tick, _localActorId, InputHelper.GetInputCmds());
                 var localFrame = new ServerFrame();
                 localFrame.tick = tick;
-                var inputs = new PlayerInput[_actorCount];
+                var inputs = new Msg_PlayerInput[_actorCount];
                 //将所有角色 给予默认的输入
                 for (int i = 0; i < _actorCount; i++) {
-                    inputs[i] = new PlayerInput(tick, _allActors[i], null);
+                    inputs[i] = new Msg_PlayerInput(tick, _allActors[i], null);
                 }
 
                 inputs[_localActorId] = input;
@@ -121,7 +120,7 @@ namespace Lockstep.Game {
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
                 if (isNeedRevert) {
-                    UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
+                    //UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
                     var revertTargetTick = System.Math.Max(cmdBuffer.waitCheckTick - 1, 0u);
                     _world.RevertToTick(revertTargetTick);
@@ -251,7 +250,7 @@ namespace Lockstep.Game {
             }
         }
 
-        public static int[] ExcutedPlayerInputCount = new int[2];
+        public static int[] ExcutedMsg_PlayerInputCount = new int[2];
 
         private void ProcessInputQueue(ServerFrame frame){
             var inputs = frame.inputs;
@@ -260,7 +259,7 @@ namespace Lockstep.Game {
 
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
-                    ExcutedPlayerInputCount[input.ActorId]++;
+                    ExcutedMsg_PlayerInputCount[input.ActorId]++;
                     var inputEntity = _context.input.CreateEntity();
                     InputHelper.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);

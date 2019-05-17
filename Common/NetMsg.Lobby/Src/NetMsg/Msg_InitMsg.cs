@@ -1,7 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Lobby {
-    public partial class InitMsg : BaseFormater {
+    public partial class Msg_InitMsg : BaseFormater {
         public string name;
 
         public override void Serialize(Serializer writer){

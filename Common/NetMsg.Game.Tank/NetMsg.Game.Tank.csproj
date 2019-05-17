@@ -38,14 +38,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Logging\Logging.csproj">
-      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NetMsg.Lobby\NetMsg.Lobby.csproj">
-      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
-      <Name>NetMsg.Lobby</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
@@ -56,19 +48,18 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\EMsgCS.cs" />
-    <Compile Include="Src\HashCode.cs" />
-    <Compile Include="Src\InitServerFrame.cs" />
-    <Compile Include="Src\InputCmd.cs" />
-    <Compile Include="Src\InputCmds.cs" />
-    <Compile Include="Src\Msg_CreateRoom.cs" />
-    <Compile Include="Src\Msg_HashCode.cs" />
-    <Compile Include="Src\Msg_InitMsg.cs" />
-    <Compile Include="Src\Msg_PlayerReady.cs" />
-    <Compile Include="Src\Msg_RepInit.cs" />
-    <Compile Include="Src\PlayerInput.cs" />
-    <Compile Include="Src\ReMissFrame.cs" />
-    <Compile Include="Src\ServerFrame.cs" />
-    <Compile Include="Src\ServerFrames.cs" />
+    <Compile Include="Src\Tcp\Msg_GameEvent.cs" />
+    <Compile Include="Src\Tcp\Msg_RoomInitMsg.cs" />
+    <Compile Include="Src\Tcp\Msg_PlayerReady.cs" />
+    <Compile Include="Src\Tcp\Msg_RepInit.cs" />
+    <Compile Include="Src\Tcp\Msg_RepMissFrames.cs" />
+    <Compile Include="Src\Tcp\Msg_ReqMissFrame.cs" />
+    <Compile Include="Src\Tcp\Msg_StartGame.cs" />
+    <Compile Include="Src\Udp\FrameInfo\InputCmd.cs" />
+    <Compile Include="Src\Udp\FrameInfo\ServerFrame.cs" />
+    <Compile Include="Src\Udp\Msg_HashCode.cs" />
+    <Compile Include="Src\Udp\Msg_PlayerInput.cs" />
+    <Compile Include="Src\Udp\Msg_ServerFrames.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

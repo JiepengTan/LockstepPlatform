@@ -423,7 +423,7 @@ namespace Lockstep.Logic.Server {
         }
 
         private void OnMsg_InitMsg(Player player, Deserializer reader){
-            var initMsg = reader.Parse<InitMsg>();
+            var initMsg = reader.Parse<Msg_InitMsg>();
             player.name = initMsg.name;
             SendReqInit(player);
         }
@@ -431,14 +431,14 @@ namespace Lockstep.Logic.Server {
         private void SendReqInit(Player player){
             var writer = new Serializer();
             writer.Put((byte) EMsgCL.L2C_ReqInit);
-            new ReqInit() {playerId = player.PlayerId}.Serialize(writer);
+            new Msg_ReqInit() {playerId = player.PlayerId}.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             player.SendLobby(bytes);
         }
 
 
         private void OnMsg_CreateRoom(Player player, Deserializer reader){
-            var msg = reader.Parse<CreateRoom>();
+            var msg = reader.Parse<Msg_CreateRoom>();
             if (_allRooms.Count > 0) {
                 JoinRoom(player.PlayerId, _allRooms[0].RoomId);
                 SendCreateRoomResult(player);

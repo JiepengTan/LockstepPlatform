@@ -7,9 +7,9 @@ namespace Lockstep.Core.Logic.Interfaces
 {
     public interface ICommandQueue
     {
-        void Enqueue(PlayerInput playerInput);
+        void Enqueue(Msg_PlayerInput msg);
 
-        List<PlayerInput> Dequeue();
+        List<Msg_PlayerInput> Dequeue();
     }
     
     public class CommandQueue : ICommandQueue
@@ -17,28 +17,28 @@ namespace Lockstep.Core.Logic.Interfaces
         /// <summary>
         /// Mapping: FrameNumber -> Commands per player(Id)
         /// </summary>    
-        public Dictionary<uint, List<PlayerInput>> Buffer { get; } = new Dictionary<uint, List<PlayerInput>>(5000);
+        public Dictionary<uint, List<Msg_PlayerInput>> Buffer { get; } = new Dictionary<uint, List<Msg_PlayerInput>>(5000);
 
 
-        public void Enqueue(uint tick, byte actorId, List<ICommand> commands)
+        public void Enqueue(uint tick, byte actorId, List<InputCmd> commands)
         {
-            Enqueue(new PlayerInput(tick, actorId, commands));
+            Enqueue(new Msg_PlayerInput(tick, actorId, commands));
         }
 
-        public virtual void Enqueue(PlayerInput playerInput)
+        public virtual void Enqueue(Msg_PlayerInput msg)
         {
             lock (Buffer)
             {
-                if (!Buffer.ContainsKey(playerInput.Tick))
+                if (!Buffer.ContainsKey(msg.Tick))
                 {
-                    Buffer.Add(playerInput.Tick, new List<PlayerInput>(10)); //Initial size for 10 players
+                    Buffer.Add(msg.Tick, new List<Msg_PlayerInput>(10)); //Initial size for 10 players
                 }       
 
-                Buffer[playerInput.Tick].Add(playerInput);
+                Buffer[msg.Tick].Add(msg);
             }
         }
 
-        public virtual List<PlayerInput> Dequeue()
+        public virtual List<Msg_PlayerInput> Dequeue()
         {
             lock (Buffer)
             {

@@ -75,8 +75,8 @@ namespace Lockstep.Game {
             SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady(){roomId = _roomId});
         }
 
-        public void SendInput(PlayerInput playerInput){
-            SendMsgRoom(EMsgCS.C2S_PlayerInput, playerInput);
+        public void SendInput(Msg_PlayerInput msg){
+            SendMsgRoom(EMsgCS.C2S_PlayerInput, msg);
         }
 
         public void SendMsgLobby(EMsgCL msgId, ISerializable body){
@@ -111,22 +111,22 @@ namespace Lockstep.Game {
         }
 
         void SendInitMsg(){
-            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_InitMsg() {name = "FishMan"});
+            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_RoomInitMsg() {name = "FishMan"});
         }
 
         void SendCreateRoomMsg(){
             UnityEngine.Debug.Log("SendCreateRoomMsg");
-            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {roomType = 1, name = "FishManRoom"});
+            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom"});
         }
 
 
         private void OnMsgRoom_FrameData(Deserializer reader){
-            var msg = reader.Parse<ServerFrames>();
+            var msg = reader.Parse<Msg_ServerFrames>();
             EventHelper.Trigger(EEvent.OnServerFrame, msg);
         }
 
         public void OnMsgRoom_StartGame(Deserializer reader){
-            var msg = reader.Parse<InitServerFrame>();
+            var msg = reader.Parse<Msg_StartGame>();
             _roomId = msg.RoomID;
             Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
 

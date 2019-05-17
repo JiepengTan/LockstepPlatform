@@ -1,14 +1,15 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank {
-    public partial class Msg_InitMsg :BaseFormater{
-        public string name; 
+    public partial  class Msg_ReqMissFrame : BaseFormater {
+        public uint[] missFrames;
+
         public override void Serialize(Serializer writer){
-            writer.Put(name);
+            writer.PutArray(missFrames);
         }
 
         public override void Deserialize(Deserializer reader){
-            name = reader.GetString();
+            missFrames = reader.GetUIntArray();
         }
     }
 }

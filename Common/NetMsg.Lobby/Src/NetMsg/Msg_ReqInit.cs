@@ -1,7 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Lobby {
-    public partial class ReqInit : BaseFormater {
+    public partial class Msg_ReqInit : BaseFormater {
         public long playerId ;
 
         public override void Serialize(Serializer writer){

@@ -14,27 +14,27 @@ namespace Lockstep.Game {
         public byte LocalActorId { get; set; }
         public byte[] AllActorIds { get; set; }
 
-        public Dictionary<uint, Dictionary<uint, Dictionary<byte, List<ICommand>>>> InputLog { get; } =
-            new Dictionary<uint, Dictionary<uint, Dictionary<byte, List<ICommand>>>>();
+        public Dictionary<uint, Dictionary<uint, Dictionary<byte, List<InputCmd>>>> InputLog { get; } =
+            new Dictionary<uint, Dictionary<uint, Dictionary<byte, List<InputCmd>>>>();
 
-        public void Add(uint tick, uint targetTick, byte actorId, List<ICommand> commands){
-            Add(tick, new PlayerInput(tick, actorId, commands));
+        public void Add(uint tick, uint targetTick, byte actorId, List<InputCmd> commands){
+            Add(tick, new Msg_PlayerInput(tick, actorId, commands));
         }
 
-        public void Add(uint tick, PlayerInput playerInput){
+        public void Add(uint tick, Msg_PlayerInput msg){
             if (!InputLog.ContainsKey(tick)) {
-                InputLog.Add(tick, new Dictionary<uint, Dictionary<byte, List<ICommand>>>());
+                InputLog.Add(tick, new Dictionary<uint, Dictionary<byte, List<InputCmd>>>());
             }
 
-            if (!InputLog[tick].ContainsKey(playerInput.Tick)) {
-                InputLog[tick].Add(playerInput.Tick, new Dictionary<byte, List<ICommand>>());
+            if (!InputLog[tick].ContainsKey(msg.Tick)) {
+                InputLog[tick].Add(msg.Tick, new Dictionary<byte, List<InputCmd>>());
             }
 
-            if (!InputLog[tick][playerInput.Tick].ContainsKey(playerInput.ActorId)) {
-                InputLog[tick][playerInput.Tick].Add(playerInput.ActorId, new List<ICommand>());
+            if (!InputLog[tick][msg.Tick].ContainsKey(msg.ActorId)) {
+                InputLog[tick][msg.Tick].Add(msg.ActorId, new List<InputCmd>());
             }
 
-            InputLog[tick][playerInput.Tick][playerInput.ActorId].AddRange(playerInput.Commands);
+            InputLog[tick][msg.Tick][msg.ActorId].AddRange(msg.Commands);
         }
 
         public void WriteTo(Stream stream){

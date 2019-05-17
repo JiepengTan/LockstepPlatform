@@ -2,7 +2,7 @@
 
 namespace NetMsg.Game.Tank
 {
-    public class InitServerFrame : ISerializable
+    public class Msg_StartGame : ISerializable
     {
         public int RoomID { get; set; }
         public int Seed { get; set; }

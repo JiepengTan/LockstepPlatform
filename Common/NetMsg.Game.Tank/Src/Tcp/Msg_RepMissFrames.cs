@@ -1,7 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Game.Tank {
-    public partial class ServerFrames : BaseFormater {
+    public partial class Msg_RepMissFrame : BaseFormater {
         public ServerFrame[] frames;
 
         public override void Serialize(Serializer writer){

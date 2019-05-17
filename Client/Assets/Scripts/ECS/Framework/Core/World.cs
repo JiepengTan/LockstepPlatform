@@ -164,7 +164,6 @@ namespace Lockstep.Core.Logic {
                     var pos = entity.position.value;
                     var preNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick-1] * 16;
                     var nextNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick] * 16;
-                    Debug.Log($"Revert to tick{resultTick}: actorID:{entity.actorId.value} pos:{pos} preNum:{preNum} nextNum:{nextNum}");
                 }
             }
             

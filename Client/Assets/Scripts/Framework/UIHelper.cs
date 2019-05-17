@@ -24,8 +24,8 @@ public class UIHelper : MonoBehaviour {
             HashCodeText.text = "HashCode: " + HashCode;
             CurrentTickText.text = "CurrentTick: " + CurTick;
             AgentCountText.text = "Agents: " + AgentCount;
-            RecvInputCount.text = $"RecvInputNum: {CommandBuffer.PlayerInputCount[0]} : {CommandBuffer.PlayerInputCount[1]}";
-            ExcutedInputCount.text = $"ExeInputNum: {Simulation.ExcutedPlayerInputCount[0]} : {Simulation.ExcutedPlayerInputCount[1]}";
+            RecvInputCount.text = $"RecvInputNum: {CommandBuffer.Msg_PlayerInputCount[0]} : {CommandBuffer.Msg_PlayerInputCount[1]}";
+            ExcutedInputCount.text = $"ExeInputNum: {Simulation.ExcutedMsg_PlayerInputCount[0]} : {Simulation.ExcutedMsg_PlayerInputCount[1]}";
         }
     }
 }

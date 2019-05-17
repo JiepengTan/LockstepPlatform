@@ -43,9 +43,9 @@
   <ItemGroup>
     <Compile Include="Src\EMsgCL.cs" />
     <Compile Include="Src\Extension\DictExtensions.cs" />
-    <Compile Include="Src\NetMsg\CreateRoom.cs" />
-    <Compile Include="Src\NetMsg\InitMsg.cs" />
-    <Compile Include="Src\NetMsg\ReqInit.cs" />
+    <Compile Include="Src\NetMsg\Msg_CreateRoom.cs" />
+    <Compile Include="Src\NetMsg\Msg_InitMsg.cs" />
+    <Compile Include="Src\NetMsg\Msg_ReqInit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Serializaition\Serializaition.csproj">

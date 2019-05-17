@@ -124,20 +124,20 @@ namespace Lockstep.Logic.Server {
                 //将所有未到的包 给予默认的输入
                 for (int i = 0; i < inputs.Length; i++) {
                     if (inputs[i] == null) {
-                        inputs[i] = new PlayerInput(Tick, (byte) i, null);
+                        inputs[i] = new Msg_PlayerInput(Tick, (byte) i, null);
                     }
                 }
 
                 //Debug.Log("Border input " + Tick);
-                var allFrames = new ServerFrames();
+                var msg = new Msg_ServerFrames();
                 int count = Tick < 2 ? iTick + 1 : 3;
                 var frames = new ServerFrame[count];
                 for (int i = 0; i < count; i++) {
                     frames[count - i - 1] = allHistoryFrames[iTick - i];
                 }
 
-                allFrames.frames = frames;
-                SendToAll(EMsgCS.S2C_FrameData, allFrames);
+                msg.frames = frames;
+                SendToAll(EMsgCS.S2C_FrameData, msg);
                 if (firstFrameTimeStamp <= 0) {
                     firstFrameTimeStamp = timeSinceLoaded;
                 }
@@ -200,8 +200,8 @@ namespace Lockstep.Logic.Server {
 
         private void RegisterMsgHandlers(){
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerInput, OnNet_PlayerInput,
-                (reader) => { return ParseData<PlayerInput>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_ReqMissPack, OnNet_ReqMissPack, null);
+                (reader) => { return ParseData<Msg_PlayerInput>(reader); });
+            RegisterNetMsgHandler(EMsgCS.C2S_ReqMissFrame, OnNet_ReqMissPack, null);
             RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode,
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady,
@@ -354,7 +354,7 @@ namespace Lockstep.Logic.Server {
 
         void OnNet_PlayerInput(Player player, BaseFormater data){
             haveStart = true;
-            var input = data as PlayerInput;
+            var input = data as Msg_PlayerInput;
             //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Count}");
             if (input.Tick < Tick) {
                 return;
@@ -377,7 +377,7 @@ namespace Lockstep.Logic.Server {
 
             var frame = allHistoryFrames[iTick];
             if (frame.inputs == null || frame.inputs.Length != MaxPlayerCount) {
-                frame.inputs = new PlayerInput[MaxPlayerCount];
+                frame.inputs = new Msg_PlayerInput[MaxPlayerCount];
             }
 
             var id = input.ActorId;
@@ -447,7 +447,7 @@ namespace Lockstep.Logic.Server {
             var seed = new Random().Next(int.MinValue, int.MaxValue);
             var ids = netId2LocalId.Values.ToArray();
             foreach (var player in _allPlayers) {
-                SendTo(player, EMsgCS.S2C_StartGame, new InitServerFrame {
+                SendTo(player, EMsgCS.S2C_StartGame, new Msg_StartGame {
                     RoomID = RoomId,
                     Seed = seed,
                     ActorID = player.localId,

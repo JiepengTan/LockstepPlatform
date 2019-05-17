@@ -116,7 +116,7 @@ namespace Lockstep.Game {
 #endif
         }
 
-        public static int[] PlayerInputCount = new int[2];
+        public static int[] Msg_PlayerInputCount = new int[2];
         public void PushServerFrames(ServerFrame[] frames){
             lock (this) {
                 var count = frames.Length;
@@ -141,12 +141,12 @@ namespace Lockstep.Game {
                     if (serverFrames[targetIdx] == null || serverFrames[targetIdx].tick != data.tick) {
                         serverFrames[targetIdx] = data;
                         foreach (var input in data.inputs) {
-                            if (input.Commands.Count > 0) {
+                            if (input.Commands.Length > 0) {
                                 //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
-                                PlayerInputCount[input.ActorId]++;
+                                Msg_PlayerInputCount[input.ActorId]++;
                             }
 
-                            Simulation.allAccumInputCount[input.ActorId, input.Tick] = PlayerInputCount[input.ActorId];
+                            Simulation.allAccumInputCount[input.ActorId, input.Tick] = Msg_PlayerInputCount[input.ActorId];
                         }
 #if DEBUG_FRAME_DELAY
                         var time = 0;
