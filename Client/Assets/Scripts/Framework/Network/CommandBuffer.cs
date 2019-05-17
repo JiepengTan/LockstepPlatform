@@ -52,7 +52,7 @@ namespace Lockstep.Game {
                 if (sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
                     return false;
 
-                UnityEngine.Debug.Assert(cFrame!=null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
+                UnityEngine.Debug.Assert(cFrame != null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
                     $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick} checking:{waitCheckTick}");
                 //Check client guess input match the real input
                 if (sFrame.IsSame(cFrame)) {
@@ -76,6 +76,7 @@ namespace Lockstep.Game {
                     break;
                 }
             }
+
             waitCheckTick = tick;
             return tick;
         }
@@ -102,14 +103,15 @@ namespace Lockstep.Game {
             }
 
             UnityEngine.Debug.Assert(tick == nextClientTic);
-            UnityEngine.Debug.Assert(((int)nextClientTic - (int)waitCheckTick) < MAX_OVERRIDE_COUNT, $"ring out of range cTick:{nextClientTic}  waitCheck:{waitCheckTick} ");
+            UnityEngine.Debug.Assert(((int) nextClientTic - (int) waitCheckTick) < MAX_OVERRIDE_COUNT,
+                $"ring out of range cTick:{nextClientTic}  waitCheck:{waitCheckTick} ");
             var sIdx = nextClientTic % MAX_FRAME_BUFFER_COUNT;
             clientFrames[sIdx] = frame;
             nextClientTic++;
 #if DEBUG_FRAME_DELAY
             var time = 0;
             foreach (var input in frame.inputs) {
-                if (input.ActorId == Simulation.MainActorID) {
+                if (input != null && input.ActorId == Simulation.MainActorID) {
                     input.timeSinceStartUp = Time.realtimeSinceStartup;
                 }
             }
@@ -150,7 +152,8 @@ namespace Lockstep.Game {
                             if (input.ActorId == Simulation.MainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
                                 if (delay > 0.2f) {
-                                    UnityEngine.Debug.Log($"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
+                                    UnityEngine.Debug.Log(
+                                        $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
                                 }
                             }
                         }

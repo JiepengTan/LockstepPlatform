@@ -107,12 +107,7 @@ namespace Lockstep.Game {
                 var localFrame = new ServerFrame();
                 localFrame.tick = tick;
                 var inputs = new Msg_PlayerInput[_actorCount];
-                //将所有角色 给予默认的输入
-                for (int i = 0; i < _actorCount; i++) {
-                    inputs[i] = new Msg_PlayerInput(tick, _allActors[i], null);
-                }
-
-                inputs[_localActorId] = input;
+                inputs[_localActorId] = input; 
                 localFrame.inputs = inputs;
                 cmdBuffer.PushLocalFrame(localFrame);
                 _netMgr.SendInput(input);
@@ -152,8 +147,9 @@ namespace Lockstep.Game {
                         if (!(frame != null && frame.tick == _world.Tick)) {
                             Debug.LogError("cmdBuffer Mgr error");
                         }
-
+                        
                         //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
+                        FillInputWithLastFrame(frame);
                         ProcessInputQueue(frame);
                         _world.Predict();
                         SetHashCode();
@@ -163,6 +159,7 @@ namespace Lockstep.Game {
                 {
                     var frame = localFrame;
                     if (_world.Tick <= frame.tick) {
+                        FillInputWithLastFrame(frame);
                         ProcessInputQueue(frame);
                         _world.Predict();
                         SetHashCode();
@@ -175,6 +172,18 @@ namespace Lockstep.Game {
             //清理无用 snapshot
             _world.CleanUselessSnapshot((cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick));
             CheckAndSendHashCodes();
+        }
+
+        private void FillInputWithLastFrame(ServerFrame frame){
+            uint tick = frame.tick;
+            var inputs = frame.inputs;
+            var lastFrameInputs = tick == 0 ? null : cmdBuffer.GetFrame(tick - 1)?.inputs;
+            var curFrameInput = inputs[_localActorId];
+            //将所有角色 给予默认的输入
+            for (int i = 0; i < _actorCount; i++) {
+                inputs[i] = new Msg_PlayerInput(tick, _allActors[i], lastFrameInputs?[i]?.Commands?.ToList());
+            }
+            inputs[_localActorId] = curFrameInput;
         }
 
 
