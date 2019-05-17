@@ -1,0 +1,10 @@
+#!/bin/bash
+clear
+dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
+cd $dir
+echo "run app"
+ps -ef | grep "Server.Lobby" | grep -v grep |awk '{print $2}' | xargs kill -9
+ps -ef | grep "MoveCube1" | grep -v grep |awk '{print $2}' | xargs kill -9
+open -n Build/MoveCube1.app
+open -n Build/MoveCube1.app
+mono Server/bin/Server.Lobby.exe

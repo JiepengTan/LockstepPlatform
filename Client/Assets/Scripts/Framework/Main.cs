@@ -29,6 +29,7 @@ namespace Lockstep.Game {
             contexts = new Contexts();
             simulation = new Simulation(contexts, netMgr,new UnityGameService());
             netMgr.Init(simulation, ServerIp, ServerPort, ClientKey);
+            Screen.SetResolution(1024, 768, false);  
         }
 
 

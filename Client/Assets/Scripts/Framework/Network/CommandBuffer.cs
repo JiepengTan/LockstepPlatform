@@ -98,7 +98,7 @@ namespace Lockstep.Game {
         public void PushLocalFrame(ServerFrame frame){
             var tick = frame.tick;
             if (tick != nextClientTic) {
-                UnityEngine.Debug.LogError($"hehehe {tick} :next{nextClientTic}");
+                UnityEngine.Debug.LogError($"PushLocalFrame error tick: {tick} :nextClientTic:{nextClientTic}");
             }
 
             UnityEngine.Debug.Assert(tick == nextClientTic);
@@ -111,9 +111,6 @@ namespace Lockstep.Game {
             foreach (var input in frame.inputs) {
                 if (input.ActorId == Simulation.MainActorID) {
                     input.timeSinceStartUp = Time.realtimeSinceStartup;
-                }
-                if (input.Commands.Count > 0) {
-                    UnityEngine.Debug.Log($"Local~~~self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
                 }
             }
 #endif
@@ -145,7 +142,7 @@ namespace Lockstep.Game {
                         serverFrames[targetIdx] = data;
                         foreach (var input in data.inputs) {
                             if (input.Commands.Count > 0) {
-                                UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                                //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
                                 PlayerInputCount[input.ActorId]++;
                             }
 

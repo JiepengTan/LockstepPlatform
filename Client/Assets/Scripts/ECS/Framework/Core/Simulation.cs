@@ -233,7 +233,6 @@ namespace Lockstep.Game {
             var iTick = (int) _world.Tick;
             var hashCodeAfterRevert = _world.Contexts.gameState.beforeExecuteHashCode.value;
             var hashCodeBefore = allBeforeExecuteHashCodes[iTick];
-            Debug.Log($"iTick{iTick} hashCode Before {hashCodeBefore} revert{hashCodeAfterRevert}");
             if (hashCodeAfterRevert != hashCodeBefore) {
                 Debug.LogError($"Revert Error: 前后状态不一致 before{hashCodeBefore} afterRevert{hashCodeAfterRevert}");
             }
