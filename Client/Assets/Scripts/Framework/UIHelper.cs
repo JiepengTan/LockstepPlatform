@@ -9,8 +9,6 @@ public class UIHelper : MonoBehaviour {
 
     public Text ConnectedText;
     public Text CurrentTickText;
-    public Text RecvInputCount;
-    public Text ExcutedInputCount;
 
     bool IsConnected => Main.Instance.netMgr.IsConnected;
     uint CurTick => Main.Instance.simulation?.World?.Tick ?? 0;
@@ -24,8 +22,6 @@ public class UIHelper : MonoBehaviour {
             HashCodeText.text = "HashCode: " + HashCode;
             CurrentTickText.text = "CurrentTick: " + CurTick;
             AgentCountText.text = "Agents: " + AgentCount;
-            RecvInputCount.text = $"RecvInputNum: {CommandBuffer.Msg_PlayerInputCount[0]} : {CommandBuffer.Msg_PlayerInputCount[1]}";
-            ExcutedInputCount.text = $"ExeInputNum: {Simulation.ExcutedMsg_PlayerInputCount[0]} : {Simulation.ExcutedMsg_PlayerInputCount[1]}";
         }
     }
 }

@@ -253,8 +253,6 @@ namespace Lockstep.Game {
             }
         }
 
-        public static int[] ExcutedMsg_PlayerInputCount = new int[2];
-
         private void ProcessInputQueue(ServerFrame frame){
             var inputs = frame.inputs;
             foreach (var input in inputs) {
@@ -262,7 +260,6 @@ namespace Lockstep.Game {
 
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
-                    ExcutedMsg_PlayerInputCount[input.ActorId]++;
                     var inputEntity = _context.input.CreateEntity();
                     InputHelper.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);
