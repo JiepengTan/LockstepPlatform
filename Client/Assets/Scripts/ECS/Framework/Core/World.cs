@@ -52,10 +52,6 @@ namespace Lockstep.Core.Logic {
 
             _systems.Execute();
             _systems.Cleanup();
-
-            var dbg = Contexts.debug.CreateEntity();
-            dbg.AddTick(Tick);
-            dbg.AddHashCode(Contexts.gameState.hashCode.value);
         }
         
         /// 清理无效的快照
@@ -72,11 +68,16 @@ namespace Lockstep.Core.Logic {
             }
             var resultTick = snapshotIndices[i];
             //将太后 和太前的snapshot 删除掉
+            
+            foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
+                .Where(e => e.backup.tick < (resultTick))) {
+                invalidBackupEntity.Destroy();
+            }
+            
             foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
                 .Where(e => e.backup.tick < (resultTick))) {
                 invalidBackupEntity.Destroy();
             }
-
 
             foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(e => e.tick.value < (resultTick))) {
@@ -149,13 +150,18 @@ namespace Lockstep.Core.Logic {
             }
 
             //将太后 和太前的snapshot 删除掉
+            foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
+                .Where(e => e.backup.tick > resultTick ||
+                            e.backup.tick < (resultTick))) {
+                invalidBackupEntity.Destroy();
+            }
+            
             foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
                 .Where(e => e.backup.tick > resultTick ||
                             e.backup.tick < (resultTick))) {
                 invalidBackupEntity.Destroy();
             }
-
-
+            
             foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(e => e.tick.value > resultTick ||
                             e.tick.value < (resultTick))) {
