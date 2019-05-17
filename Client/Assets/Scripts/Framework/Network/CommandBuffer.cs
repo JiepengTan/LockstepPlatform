@@ -14,7 +14,7 @@ namespace Lockstep.Game {
         public const int MAX_FRAME_BUFFER_COUNT = SERVER_FRAME_RATE;
 
         /// 进行备份的帧间隔
-        public const int SNAPSHORT_FRAME_INTERVAL = 10;
+        public const int SNAPSHORT_FRAME_INTERVAL = 2;
 
         ///最大的可以超前的Frame数量
         public const int MAX_OVERRIDE_COUNT = MAX_FRAME_BUFFER_COUNT - SNAPSHORT_FRAME_INTERVAL;

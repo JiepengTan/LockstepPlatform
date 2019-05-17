@@ -57,6 +57,33 @@ namespace Lockstep.Core.Logic {
             dbg.AddTick(Tick);
             dbg.AddHashCode(Contexts.gameState.hashCode.value);
         }
+        
+        /// 清理无效的快照
+        public void CleanUselessSnapshot(uint checkedTick){
+            if(checkedTick < 2u) return;
+            var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+                .Where(entity => entity.tick.value <= checkedTick).Select(entity => entity.tick.value).ToList();
+            snapshotIndices.Sort();
+            int i = snapshotIndices.Count - 1;
+            for (; i >= 0; i--) {
+                if (snapshotIndices[i] <= checkedTick) {
+                    break;
+                }
+            }
+            var resultTick = snapshotIndices[i];
+            //将太后 和太前的snapshot 删除掉
+            foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
+                .Where(e => e.backup.tick < (resultTick))) {
+                invalidBackupEntity.Destroy();
+            }
+
+
+            foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+                .Where(e => e.tick.value < (resultTick))) {
+                snapshotEntity.Destroy();
+            }
+            _systems.Cleanup();
+        }
 
         /// <summary>
         /// Reverts all changes that were done during or after the given tick
@@ -79,7 +106,8 @@ namespace Lockstep.Core.Logic {
             foreach (var idx in snapshotIndices) {
                 snaps +=  idx + " ";
             }
-            Log.Info(this, "Rolling back from " + resultTick + " to " + Contexts.gameState.tick.value + " snaps " + snaps);
+
+            Debug.Log( $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  total:{Tick - resultTick} snaps {snaps}" );
 
             /*
              * ====================== Revert actors ======================
@@ -123,14 +151,14 @@ namespace Lockstep.Core.Logic {
             //将太后 和太前的snapshot 删除掉
             foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
                 .Where(e => e.backup.tick > resultTick ||
-                            e.backup.tick < (resultTick - CommandBuffer.SNAPSHORT_FRAME_INTERVAL))) {
+                            e.backup.tick < (resultTick))) {
                 invalidBackupEntity.Destroy();
             }
 
 
             foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(e => e.tick.value > resultTick ||
-                            e.tick.value < (resultTick - CommandBuffer.SNAPSHORT_FRAME_INTERVAL))) {
+                            e.tick.value < (resultTick))) {
                 snapshotEntity.Destroy();
             }
 

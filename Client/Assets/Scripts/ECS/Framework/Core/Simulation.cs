@@ -122,7 +122,7 @@ namespace Lockstep.Game {
                 if (isNeedRevert) {
                     //UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
-                    var revertTargetTick = System.Math.Max(cmdBuffer.waitCheckTick - 1, 0u);
+                    var revertTargetTick = (cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick);
                     _world.RevertToTick(revertTargetTick);
                     CheckRevertHashCode();
                     //  _world.Tick -> nextMissServerFrame simulation
@@ -168,9 +168,12 @@ namespace Lockstep.Game {
                         SetHashCode();
                     }
                 }
+
                 _accumulatedTime -= _tickDt;
             }
 
+            //清理无用 snapshot
+            _world.CleanUselessSnapshot((cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick));
             CheckAndSendHashCodes();
         }
 
