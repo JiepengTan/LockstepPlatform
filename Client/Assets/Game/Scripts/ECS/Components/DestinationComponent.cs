@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 
 namespace Lockstep.Core.State.Game
 {
-    [Game, Event(true)]
+    [Game]
     public class DestinationComponent : IComponent
     {
         public LVector2 value;

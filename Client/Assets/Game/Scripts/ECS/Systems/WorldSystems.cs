@@ -5,16 +5,10 @@ using Lockstep.Core.Logic.Systems.GameState;
 namespace Lockstep.Core.Logic.Systems
 {
     public sealed class WorldSystems : Feature {
-        private CalculateBeforeExecuteHashCode beforeHashSys;
-        public void ExecuteBeforeExecuteHashCodeSystem(){
-            beforeHashSys.Execute();
-        }
 
         public WorldSystems(Contexts contexts, params Feature[] features)
         {
-            Add(new InitializeEntityCount(contexts));
-            beforeHashSys = new CalculateBeforeExecuteHashCode(contexts);
-            Add(beforeHashSys);   
+            Add(new InitializeEntityCount(contexts)); 
             Add(new OnNewPredictionCreateSnapshot(contexts));
 
             foreach (var feature in features)
@@ -27,7 +21,7 @@ namespace Lockstep.Core.Logic.Systems
             //Performance-hit, only use for serious debugging
             //Add(new VerifyNoDuplicateBackups(contexts));              
 
-            Add(new DestroyDestroyedGameSystem(contexts));
+            Add(new CleanDestroyedEntities(contexts));
             Add(new RemoveDestroyedInputSystem(contexts));
             Add(new IncrementTick(contexts));
         }      

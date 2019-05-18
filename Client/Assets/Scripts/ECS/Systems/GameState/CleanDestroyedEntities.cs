@@ -9,12 +9,12 @@
 using System.Collections.Generic;
 using Entitas;
 
-public sealed class DestroyDestroyedGameSystem : ICleanupSystem {
+public sealed class CleanDestroyedEntities : ICleanupSystem {
 
     readonly IGroup<GameEntity> _group;
     readonly List<GameEntity> _buffer = new List<GameEntity>();
 
-    public DestroyDestroyedGameSystem(Contexts contexts) {
+    public CleanDestroyedEntities(Contexts contexts) {
         _group = contexts.game.GetGroup(GameMatcher.Destroyed);
     }
 
