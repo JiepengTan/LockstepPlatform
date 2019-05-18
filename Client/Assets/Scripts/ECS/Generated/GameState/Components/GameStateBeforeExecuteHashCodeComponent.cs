@@ -9,12 +9,12 @@
 public partial class GameStateContext {
 
     public GameStateEntity beforeExecuteHashCodeEntity { get { return GetGroup(GameStateMatcher.BeforeExecuteHashCode).GetSingleEntity(); } }
-    public Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent beforeExecuteHashCode { get { return beforeExecuteHashCodeEntity.beforeExecuteHashCode; } }
+    public Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent beforeExecuteHashCode { get { return beforeExecuteHashCodeEntity.beforeExecuteHashCode; } }
     public bool hasBeforeExecuteHashCode { get { return beforeExecuteHashCodeEntity != null; } }
 
     public GameStateEntity SetBeforeExecuteHashCode(long newValue) {
         if (hasBeforeExecuteHashCode) {
-            throw new Entitas.EntitasException("Could not set BeforeExecuteHashCode!\n" + this + " already has an entity with Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent!",
+            throw new Entitas.EntitasException("Could not set BeforeExecuteHashCode!\n" + this + " already has an entity with Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent!",
                 "You should check if the context already has a beforeExecuteHashCodeEntity before setting it or use context.ReplaceBeforeExecuteHashCode().");
         }
         var entity = CreateEntity();
@@ -46,19 +46,19 @@ public partial class GameStateContext {
 //------------------------------------------------------------------------------
 public partial class GameStateEntity {
 
-    public Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent beforeExecuteHashCode { get { return (Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent)GetComponent(GameStateComponentsLookup.BeforeExecuteHashCode); } }
+    public Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent beforeExecuteHashCode { get { return (Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent)GetComponent(GameStateComponentsLookup.BeforeExecuteHashCode); } }
     public bool hasBeforeExecuteHashCode { get { return HasComponent(GameStateComponentsLookup.BeforeExecuteHashCode); } }
 
     public void AddBeforeExecuteHashCode(long newValue) {
         var index = GameStateComponentsLookup.BeforeExecuteHashCode;
-        var component = CreateComponent<Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceBeforeExecuteHashCode(long newValue) {
         var index = GameStateComponentsLookup.BeforeExecuteHashCode;
-        var component = CreateComponent<Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

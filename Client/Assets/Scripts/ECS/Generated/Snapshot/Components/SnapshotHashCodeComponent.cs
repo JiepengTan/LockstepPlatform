@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class SnapshotEntity {
 
-    public Lockstep.Core.State.Snapshot.HashCodeComponent hashCode { get { return (Lockstep.Core.State.Snapshot.HashCodeComponent)GetComponent(SnapshotComponentsLookup.HashCode); } }
+    public Lockstep.ECS.Snapshot.HashCodeComponent hashCode { get { return (Lockstep.ECS.Snapshot.HashCodeComponent)GetComponent(SnapshotComponentsLookup.HashCode); } }
     public bool hasHashCode { get { return HasComponent(SnapshotComponentsLookup.HashCode); } }
 
     public void AddHashCode(long newValue) {
         var index = SnapshotComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.Core.State.Snapshot.HashCodeComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Snapshot.HashCodeComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceHashCode(long newValue) {
         var index = SnapshotComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.Core.State.Snapshot.HashCodeComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Snapshot.HashCodeComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

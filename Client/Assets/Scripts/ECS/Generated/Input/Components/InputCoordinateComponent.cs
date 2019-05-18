@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    public Lockstep.Core.State.Input.CoordinateComponent coordinate { get { return (Lockstep.Core.State.Input.CoordinateComponent)GetComponent(InputComponentsLookup.Coordinate); } }
+    public Lockstep.ECS.Input.CoordinateComponent coordinate { get { return (Lockstep.ECS.Input.CoordinateComponent)GetComponent(InputComponentsLookup.Coordinate); } }
     public bool hasCoordinate { get { return HasComponent(InputComponentsLookup.Coordinate); } }
 
     public void AddCoordinate(Lockstep.Math.LVector2 newValue) {
         var index = InputComponentsLookup.Coordinate;
-        var component = CreateComponent<Lockstep.Core.State.Input.CoordinateComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.CoordinateComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceCoordinate(Lockstep.Math.LVector2 newValue) {
         var index = InputComponentsLookup.Coordinate;
-        var component = CreateComponent<Lockstep.Core.State.Input.CoordinateComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.CoordinateComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.State.Actor
+namespace Lockstep.ECS.Actor
 {
     [Actor]
     public class EntityCountComponent : IComponent

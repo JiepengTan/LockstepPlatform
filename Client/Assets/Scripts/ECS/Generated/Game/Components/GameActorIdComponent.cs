@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    public Lockstep.Core.State.Game.ActorIdComponent actorId { get { return (Lockstep.Core.State.Game.ActorIdComponent)GetComponent(GameComponentsLookup.ActorId); } }
+    public Lockstep.ECS.Game.ActorIdComponent actorId { get { return (Lockstep.ECS.Game.ActorIdComponent)GetComponent(GameComponentsLookup.ActorId); } }
     public bool hasActorId { get { return HasComponent(GameComponentsLookup.ActorId); } }
 
     public void AddActorId(byte newValue) {
         var index = GameComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.Core.State.Game.ActorIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Game.ActorIdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceActorId(byte newValue) {
         var index = GameComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.Core.State.Game.ActorIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Game.ActorIdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

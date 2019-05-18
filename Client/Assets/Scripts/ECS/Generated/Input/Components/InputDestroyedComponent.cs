@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    static readonly Lockstep.Core.State.Input.DestroyedComponent destroyedComponent = new Lockstep.Core.State.Input.DestroyedComponent();
+    static readonly Lockstep.ECS.Input.DestroyedComponent destroyedComponent = new Lockstep.ECS.Input.DestroyedComponent();
 
     public bool isDestroyed {
         get { return HasComponent(InputComponentsLookup.Destroyed); }

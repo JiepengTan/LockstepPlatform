@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.Actor
+namespace Lockstep.ECS.Actor
 {
     [Actor] 
     public sealed class IdComponent : IComponent

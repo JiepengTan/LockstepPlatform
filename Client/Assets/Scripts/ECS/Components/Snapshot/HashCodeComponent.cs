@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.State.Snapshot
+namespace Lockstep.ECS.Snapshot
 {
     [Snapshot]
     public sealed class HashCodeComponent : IComponent

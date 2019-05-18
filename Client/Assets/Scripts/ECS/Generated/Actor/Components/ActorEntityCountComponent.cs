@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class ActorEntity {
 
-    public Lockstep.Core.State.Actor.EntityCountComponent entityCount { get { return (Lockstep.Core.State.Actor.EntityCountComponent)GetComponent(ActorComponentsLookup.EntityCount); } }
+    public Lockstep.ECS.Actor.EntityCountComponent entityCount { get { return (Lockstep.ECS.Actor.EntityCountComponent)GetComponent(ActorComponentsLookup.EntityCount); } }
     public bool hasEntityCount { get { return HasComponent(ActorComponentsLookup.EntityCount); } }
 
     public void AddEntityCount(uint newValue) {
         var index = ActorComponentsLookup.EntityCount;
-        var component = CreateComponent<Lockstep.Core.State.Actor.EntityCountComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Actor.EntityCountComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceEntityCount(uint newValue) {
         var index = ActorComponentsLookup.EntityCount;
-        var component = CreateComponent<Lockstep.Core.State.Actor.EntityCountComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Actor.EntityCountComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

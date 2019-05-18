@@ -9,12 +9,12 @@
 public partial class GameStateContext {
 
     public GameStateEntity tickEntity { get { return GetGroup(GameStateMatcher.Tick).GetSingleEntity(); } }
-    public Lockstep.Core.State.GameState.TickComponent tick { get { return tickEntity.tick; } }
+    public Lockstep.ECS.GameState.TickComponent tick { get { return tickEntity.tick; } }
     public bool hasTick { get { return tickEntity != null; } }
 
     public GameStateEntity SetTick(uint newValue) {
         if (hasTick) {
-            throw new Entitas.EntitasException("Could not set Tick!\n" + this + " already has an entity with Lockstep.Core.State.GameState.TickComponent!",
+            throw new Entitas.EntitasException("Could not set Tick!\n" + this + " already has an entity with Lockstep.ECS.GameState.TickComponent!",
                 "You should check if the context already has a tickEntity before setting it or use context.ReplaceTick().");
         }
         var entity = CreateEntity();
@@ -46,19 +46,19 @@ public partial class GameStateContext {
 //------------------------------------------------------------------------------
 public partial class GameStateEntity {
 
-    public Lockstep.Core.State.GameState.TickComponent tick { get { return (Lockstep.Core.State.GameState.TickComponent)GetComponent(GameStateComponentsLookup.Tick); } }
+    public Lockstep.ECS.GameState.TickComponent tick { get { return (Lockstep.ECS.GameState.TickComponent)GetComponent(GameStateComponentsLookup.Tick); } }
     public bool hasTick { get { return HasComponent(GameStateComponentsLookup.Tick); } }
 
     public void AddTick(uint newValue) {
         var index = GameStateComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.GameState.TickComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTick(uint newValue) {
         var index = GameStateComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.GameState.TickComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

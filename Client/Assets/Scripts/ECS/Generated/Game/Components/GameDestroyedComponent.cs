@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly Lockstep.Core.State.Game.DestroyedComponent destroyedComponent = new Lockstep.Core.State.Game.DestroyedComponent();
+    static readonly Lockstep.ECS.Game.DestroyedComponent destroyedComponent = new Lockstep.ECS.Game.DestroyedComponent();
 
     public bool isDestroyed {
         get { return HasComponent(GameComponentsLookup.Destroyed); }

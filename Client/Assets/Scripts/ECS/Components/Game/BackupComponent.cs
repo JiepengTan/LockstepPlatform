@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.State.Game
+namespace Lockstep.ECS.Game
 {
     [Game]
     //A GameEntity with BackupComponent refers to an entity in the past

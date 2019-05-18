@@ -77,17 +77,17 @@ public partial class Contexts {
         actor.AddEntityIndex(new Entitas.PrimaryEntityIndex<ActorEntity, byte>(
             Id,
             actor.GetGroup(ActorMatcher.Id),
-            (e, c) => ((Lockstep.Core.State.Actor.IdComponent)c).value));
+            (e, c) => ((Lockstep.ECS.Actor.IdComponent)c).value));
 
         game.AddEntityIndex(new Entitas.PrimaryEntityIndex<GameEntity, uint>(
             LocalId,
             game.GetGroup(GameMatcher.LocalId),
-            (e, c) => ((Lockstep.Core.State.Game.LocalIdComponent)c).value));
+            (e, c) => ((Lockstep.ECS.Game.LocalIdComponent)c).value));
 
         snapshot.AddEntityIndex(new Entitas.PrimaryEntityIndex<SnapshotEntity, uint>(
             Tick,
             snapshot.GetGroup(SnapshotMatcher.Tick),
-            (e, c) => ((Lockstep.Core.State.Snapshot.TickComponent)c).value));
+            (e, c) => ((Lockstep.ECS.Snapshot.TickComponent)c).value));
     }
 }
 

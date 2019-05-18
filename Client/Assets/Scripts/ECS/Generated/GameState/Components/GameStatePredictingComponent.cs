@@ -35,7 +35,7 @@ public partial class GameStateContext {
 //------------------------------------------------------------------------------
 public partial class GameStateEntity {
 
-    static readonly Lockstep.Core.State.GameState.PredictingComponent predictingComponent = new Lockstep.Core.State.GameState.PredictingComponent();
+    static readonly Lockstep.ECS.GameState.PredictingComponent predictingComponent = new Lockstep.ECS.GameState.PredictingComponent();
 
     public bool isPredicting {
         get { return HasComponent(GameStateComponentsLookup.Predicting); }

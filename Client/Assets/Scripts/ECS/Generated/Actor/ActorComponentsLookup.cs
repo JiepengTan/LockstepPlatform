@@ -21,8 +21,8 @@ public static class ActorComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(Lockstep.Core.State.Actor.BackupComponent),
-        typeof(Lockstep.Core.State.Actor.EntityCountComponent),
-        typeof(Lockstep.Core.State.Actor.IdComponent)
+        typeof(Lockstep.ECS.Actor.BackupComponent),
+        typeof(Lockstep.ECS.Actor.EntityCountComponent),
+        typeof(Lockstep.ECS.Actor.IdComponent)
     };
 }

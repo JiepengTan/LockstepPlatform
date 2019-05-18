@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    public Lockstep.Core.State.Game.LocalIdComponent localId { get { return (Lockstep.Core.State.Game.LocalIdComponent)GetComponent(GameComponentsLookup.LocalId); } }
+    public Lockstep.ECS.Game.LocalIdComponent localId { get { return (Lockstep.ECS.Game.LocalIdComponent)GetComponent(GameComponentsLookup.LocalId); } }
     public bool hasLocalId { get { return HasComponent(GameComponentsLookup.LocalId); } }
 
     public void AddLocalId(uint newValue) {
         var index = GameComponentsLookup.LocalId;
-        var component = CreateComponent<Lockstep.Core.State.Game.LocalIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Game.LocalIdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceLocalId(uint newValue) {
         var index = GameComponentsLookup.LocalId;
-        var component = CreateComponent<Lockstep.Core.State.Game.LocalIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Game.LocalIdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

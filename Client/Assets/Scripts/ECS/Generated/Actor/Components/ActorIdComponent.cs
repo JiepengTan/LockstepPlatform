@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class ActorEntity {
 
-    public Lockstep.Core.State.Actor.IdComponent id { get { return (Lockstep.Core.State.Actor.IdComponent)GetComponent(ActorComponentsLookup.Id); } }
+    public Lockstep.ECS.Actor.IdComponent id { get { return (Lockstep.ECS.Actor.IdComponent)GetComponent(ActorComponentsLookup.Id); } }
     public bool hasId { get { return HasComponent(ActorComponentsLookup.Id); } }
 
     public void AddId(byte newValue) {
         var index = ActorComponentsLookup.Id;
-        var component = CreateComponent<Lockstep.Core.State.Actor.IdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Actor.IdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceId(byte newValue) {
         var index = ActorComponentsLookup.Id;
-        var component = CreateComponent<Lockstep.Core.State.Actor.IdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Actor.IdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

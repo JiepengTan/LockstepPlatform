@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.GameState
+namespace Lockstep.ECS.GameState
 {
     [GameState, Unique]
     public class PredictingComponent : IComponent

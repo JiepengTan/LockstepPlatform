@@ -29,12 +29,12 @@ public static class GameComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(Lockstep.Core.State.Game.ActorIdComponent),
-        typeof(Lockstep.Core.State.Game.BackupComponent),
-        typeof(Lockstep.Core.State.Game.DestroyedComponent),
-        typeof(Lockstep.Core.State.Game.IdComponent),
-        typeof(Lockstep.Core.State.Game.LocalIdComponent),
-        typeof(Lockstep.Core.State.Game.PositionComponent),
+        typeof(Lockstep.ECS.Game.ActorIdComponent),
+        typeof(Lockstep.ECS.Game.BackupComponent),
+        typeof(Lockstep.ECS.Game.DestroyedComponent),
+        typeof(Lockstep.ECS.Game.IdComponent),
+        typeof(Lockstep.ECS.Game.LocalIdComponent),
+        typeof(Lockstep.ECS.Game.PositionComponent),
         typeof(PositionListenerComponent)
     };
 }

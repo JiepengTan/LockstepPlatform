@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    public Lockstep.Core.State.Input.TickComponent tick { get { return (Lockstep.Core.State.Input.TickComponent)GetComponent(InputComponentsLookup.Tick); } }
+    public Lockstep.ECS.Input.TickComponent tick { get { return (Lockstep.ECS.Input.TickComponent)GetComponent(InputComponentsLookup.Tick); } }
     public bool hasTick { get { return HasComponent(InputComponentsLookup.Tick); } }
 
     public void AddTick(uint newValue) {
         var index = InputComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.Input.TickComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.TickComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTick(uint newValue) {
         var index = InputComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.Core.State.Input.TickComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.TickComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

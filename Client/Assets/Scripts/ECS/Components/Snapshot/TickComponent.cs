@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.Snapshot
+namespace Lockstep.ECS.Snapshot
 {                 
     [Snapshot]
     public class TickComponent : IComponent

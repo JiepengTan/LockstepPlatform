@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    public Lockstep.Core.State.Input.ActorIdComponent actorId { get { return (Lockstep.Core.State.Input.ActorIdComponent)GetComponent(InputComponentsLookup.ActorId); } }
+    public Lockstep.ECS.Input.ActorIdComponent actorId { get { return (Lockstep.ECS.Input.ActorIdComponent)GetComponent(InputComponentsLookup.ActorId); } }
     public bool hasActorId { get { return HasComponent(InputComponentsLookup.ActorId); } }
 
     public void AddActorId(byte newValue) {
         var index = InputComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.Core.State.Input.ActorIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.ActorIdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceActorId(byte newValue) {
         var index = InputComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.Core.State.Input.ActorIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.ActorIdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }

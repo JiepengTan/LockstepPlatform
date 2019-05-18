@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.Game
+namespace Lockstep.ECS.Game
 {
     public sealed class DestroyedComponent : IComponent
     {

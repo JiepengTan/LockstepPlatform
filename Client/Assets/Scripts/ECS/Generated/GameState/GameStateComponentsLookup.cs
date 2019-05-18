@@ -25,10 +25,10 @@ public static class GameStateComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(Lockstep.Core.State.GameState.BeforeExecuteHashCodeComponent),
-        typeof(Lockstep.Core.State.GameState.HashCodeComponent),
-        typeof(Lockstep.Core.State.GameState.PausedComponent),
-        typeof(Lockstep.Core.State.GameState.PredictingComponent),
-        typeof(Lockstep.Core.State.GameState.TickComponent)
+        typeof(Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent),
+        typeof(Lockstep.ECS.GameState.HashCodeComponent),
+        typeof(Lockstep.ECS.GameState.PausedComponent),
+        typeof(Lockstep.ECS.GameState.PredictingComponent),
+        typeof(Lockstep.ECS.GameState.TickComponent)
     };
 }

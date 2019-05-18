@@ -19,7 +19,7 @@ public static class SnapshotComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(Lockstep.Core.State.Snapshot.HashCodeComponent),
-        typeof(Lockstep.Core.State.Snapshot.TickComponent)
+        typeof(Lockstep.ECS.Snapshot.HashCodeComponent),
+        typeof(Lockstep.ECS.Snapshot.TickComponent)
     };
 }

@@ -2,7 +2,7 @@
 using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.Game
+namespace Lockstep.ECS.Game
 {
     [Game, Event(true)]
     public class PositionComponent : IComponent

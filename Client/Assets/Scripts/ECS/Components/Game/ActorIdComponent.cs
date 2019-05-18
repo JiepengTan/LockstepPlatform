@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.State.Game
+namespace Lockstep.ECS.Game
 {
     [Game]
     public class ActorIdComponent : IComponent

@@ -35,7 +35,7 @@ public partial class GameStateContext {
 //------------------------------------------------------------------------------
 public partial class GameStateEntity {
 
-    static readonly Lockstep.Core.State.GameState.PausedComponent pausedComponent = new Lockstep.Core.State.GameState.PausedComponent();
+    static readonly Lockstep.ECS.GameState.PausedComponent pausedComponent = new Lockstep.ECS.GameState.PausedComponent();
 
     public bool isPaused {
         get { return HasComponent(GameStateComponentsLookup.Paused); }

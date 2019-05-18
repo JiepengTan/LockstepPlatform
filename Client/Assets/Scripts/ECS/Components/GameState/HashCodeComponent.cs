@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
 
-namespace Lockstep.Core.State.GameState
+namespace Lockstep.ECS.GameState
 {
     /// <summary>
     /// 执行前的hash

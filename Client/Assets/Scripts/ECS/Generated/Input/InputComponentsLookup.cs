@@ -25,10 +25,10 @@ public static class InputComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
-        typeof(Lockstep.Core.State.Input.ActorIdComponent),
-        typeof(Lockstep.Core.State.Input.CoordinateComponent),
-        typeof(Lockstep.Core.State.Input.DestroyedComponent),
-        typeof(Lockstep.Core.State.Input.EntityConfigIdComponent),
-        typeof(Lockstep.Core.State.Input.TickComponent)
+        typeof(Lockstep.ECS.Input.ActorIdComponent),
+        typeof(Lockstep.ECS.Input.CoordinateComponent),
+        typeof(Lockstep.ECS.Input.DestroyedComponent),
+        typeof(Lockstep.ECS.Input.EntityConfigIdComponent),
+        typeof(Lockstep.ECS.Input.TickComponent)
     };
 }

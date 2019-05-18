@@ -8,19 +8,19 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    public Lockstep.Core.State.Input.EntityConfigIdComponent entityConfigId { get { return (Lockstep.Core.State.Input.EntityConfigIdComponent)GetComponent(InputComponentsLookup.EntityConfigId); } }
+    public Lockstep.ECS.Input.EntityConfigIdComponent entityConfigId { get { return (Lockstep.ECS.Input.EntityConfigIdComponent)GetComponent(InputComponentsLookup.EntityConfigId); } }
     public bool hasEntityConfigId { get { return HasComponent(InputComponentsLookup.EntityConfigId); } }
 
     public void AddEntityConfigId(int newValue) {
         var index = InputComponentsLookup.EntityConfigId;
-        var component = CreateComponent<Lockstep.Core.State.Input.EntityConfigIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.EntityConfigIdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceEntityConfigId(int newValue) {
         var index = InputComponentsLookup.EntityConfigId;
-        var component = CreateComponent<Lockstep.Core.State.Input.EntityConfigIdComponent>(index);
+        var component = CreateComponent<Lockstep.ECS.Input.EntityConfigIdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }
