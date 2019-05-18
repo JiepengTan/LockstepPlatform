@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NavigableSetter : MonoBehaviour, IComponentSetter
-{      
-    public void SetComponent(GameEntity entity)
-    {
-        entity.isNavigable = true;
+namespace Lockstep.Game {
+    public class NavigableSetter : MonoBehaviour, IComponentSetter {
+        public void SetComponent(GameEntity entity){
+            entity.isNavigable = true;
+        }
     }
 }

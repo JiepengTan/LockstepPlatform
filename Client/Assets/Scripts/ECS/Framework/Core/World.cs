@@ -196,8 +196,8 @@ namespace Lockstep.Core.Logic {
             {
                 if (!entity.isDestroyed) {
                     var pos = entity.position.value;
-                    var preNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick-1] * 16;
-                    var nextNum = Simulation.allAccumInputCount[entity.actorId.value, resultTick] * 16;
+                    var preNum = SimulationManager.allAccumInputCount[entity.actorId.value, resultTick-1] * 16;
+                    var nextNum = SimulationManager.allAccumInputCount[entity.actorId.value, resultTick] * 16;
                 }
             }
             

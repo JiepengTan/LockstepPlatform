@@ -1,0 +1,97 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1350919646032810406
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1350919646032810404}
+  - component: {fileID: 1350919646032810405}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1350919646032810404
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1350919646032810406}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 25.5, y: 9, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1350919646032810405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1350919646032810406}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc983c2909e0451eb3fe6434cf0ffd4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  transParentPlayer: {fileID: 0}
+  transParentEnemy: {fileID: 0}
+  transParentItem: {fileID: 0}
+  transParentBullet: {fileID: 0}
+  bornEnemyInterval: 3
+  MAX_ENEMY_COUNT: 6
+  initEnemyCount: 20
+  _RemainEnemyCount: 0
+  _RemainPlayerLife: 0
+  Score: 0
+  CurLevel: 0
+  IsGameOver: 0
+  MAX_LEVEL_COUNT: 2
+  tankPrefabs:
+  - {fileID: 7207381074908001021, guid: 5e8060cad6e0842409128c3163e9e0c8, type: 3}
+  - {fileID: 7207381074908001021, guid: 09329e39007ba4f1c9434ab378d1fa39, type: 3}
+  - {fileID: 7207381074908001021, guid: c5b6ded5bb6ea4c46a92cd57ee1ae54e, type: 3}
+  - {fileID: 7207381074908001021, guid: 9aae1dc9b19e641eb8784b317e5a4a6f, type: 3}
+  - {fileID: 7207381074908001021, guid: 1f381553858ec422c8fc4c9b99d29665, type: 3}
+  playerPrefabs:
+  - {fileID: 7207381074908001021, guid: 73a86cf7ef0c147d6bff26ad4d38c3d4, type: 3}
+  - {fileID: 7207381074908001021, guid: 4ad03c488789e473e850f24b947f7957, type: 3}
+  - {fileID: 7207381074908001021, guid: e9828395ee5634d93a0e4461b66bc1bc, type: 3}
+  - {fileID: 7207381074908001021, guid: 69c835cbcaaa046cebed60a426abd97f, type: 3}
+  bulletPrefabs:
+  - {fileID: 8545725408842799341, guid: b864db0a424c44bc9958779735772c7e, type: 3}
+  - {fileID: 4698795879962731491, guid: 91e8488ce6aa64e0b81ced589bc5a3dd, type: 3}
+  - {fileID: 4698795879962731491, guid: c71022e98a6eb4f5183cff8357c13552, type: 3}
+  itemPrefabs:
+  - {fileID: 8545725408842799341, guid: 66f84471f32a54fda9a1d0dc63fb37a0, type: 3}
+  - {fileID: 8545725408842799341, guid: 0a539ee1c10f54a2a8efdfaa61ed34d5, type: 3}
+  - {fileID: 8545725408842799341, guid: f81cbc5620d2c4e6899a36bcfdd33950, type: 3}
+  CampPrefab: {fileID: 4292889109681698490, guid: 6bc4b9cc6e0ac4e1fa8ae4a3c085ce77,
+    type: 3}
+  BornPrefab: {fileID: 2433665004566486538, guid: f9124a9f4000f49c0918ae0666d6f979,
+    type: 3}
+  DiedPrefab: {fileID: 8451803282559610881, guid: f9a976efc357c459a9b323ba90eb2fc3,
+    type: 3}
+  allEnmey: []
+  allPlayer: []
+  allBullet: []
+  allItem: []
+  camp: {fileID: 7041209654323201290, guid: 6bc4b9cc6e0ac4e1fa8ae4a3c085ce77, type: 3}
+  myPlayer: {fileID: 0}
+  campBound:
+    m_Position: {x: 0, y: 0, z: 0}
+    m_Size: {x: 0, y: 0, z: 0}
+  enemyBornPoints: []
+  playerBornPoint: {x: 0, y: 0}
+  player2BornPoint: {x: 0, y: 0}
+  min: {x: 0, y: 0}
+  max: {x: 0, y: 0}

@@ -111,7 +111,7 @@ namespace Lockstep.Game {
 #if DEBUG_FRAME_DELAY
             var time = 0;
             foreach (var input in frame.inputs) {
-                if (input != null && input.ActorId == Simulation.MainActorID) {
+                if (input != null && input.ActorId == SimulationManager.MainActorID) {
                     input.timeSinceStartUp = Time.realtimeSinceStartup;
                 }
             }
@@ -149,7 +149,7 @@ namespace Lockstep.Game {
 #if DEBUG_FRAME_DELAY
                         var time = 0;
                         foreach (var input in data.inputs) {
-                            if (input.ActorId == Simulation.MainActorID) {
+                            if (input.ActorId == SimulationManager.MainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
                                 if (delay > 0.2f) {
                                     UnityEngine.Debug.Log(

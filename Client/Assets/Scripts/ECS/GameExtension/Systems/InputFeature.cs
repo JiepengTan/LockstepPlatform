@@ -4,7 +4,7 @@ namespace Lockstep.Game.Features
 {
     sealed class InputFeature : Feature
     {
-        public InputFeature(Contexts contexts, ServiceContainer services) : base("Input")
+        public InputFeature(Contexts contexts, IServiceContainer services) : base("Input")
         {
             //TODO: Add InputValidationSystem  
             Add(new ExecuteSpawnInput(contexts, services));

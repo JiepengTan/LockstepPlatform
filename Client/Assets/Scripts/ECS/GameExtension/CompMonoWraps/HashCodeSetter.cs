@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HashCodeSetter : MonoBehaviour, IComponentSetter
-{
-    public void SetComponent(GameEntity entity)
-    {
-        entity.isHashable = true;
+namespace Lockstep.Game {
+    public class HashCodeSetter : MonoBehaviour, IComponentSetter {
+        public void SetComponent(GameEntity entity){
+            entity.isHashable = true;
+        }
     }
 }

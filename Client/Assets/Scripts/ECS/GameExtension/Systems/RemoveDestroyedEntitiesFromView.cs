@@ -9,20 +9,20 @@ namespace Lockstep.Game.Features.Cleanup
         private readonly IGroup<GameEntity> _group;
         private readonly List<GameEntity> _buffer = new List<GameEntity>();
 
-        private readonly IViewService _viewService;              
+        private readonly IResourceService _resourceService;              
 
-        public RemoveDestroyedEntitiesFromView(Contexts contexts, ServiceContainer services)
+        public RemoveDestroyedEntitiesFromView(Contexts contexts, IServiceContainer services)
         {
             _group = contexts.game.GetGroup(GameMatcher.Destroyed);
 
-            _viewService = services.Get<IViewService>();               
+            _resourceService = services.GetService<IResourceService>();               
         }
 
         public void Cleanup()
         {
             foreach (var e in _group.GetEntities(_buffer))
             {
-                _viewService.DeleteView(e.localId.value);        
+                _resourceService.DeleteView(e.localId.value);        
             }
         }
     }

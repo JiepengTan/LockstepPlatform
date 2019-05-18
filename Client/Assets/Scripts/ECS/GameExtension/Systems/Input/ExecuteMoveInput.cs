@@ -11,7 +11,7 @@ namespace Lockstep.Game.Features.Input
         readonly IGroup<InputEntity> _navigationInput;
         private readonly GameStateContext _gameStateContext;
 
-        public ExecuteMoveInput(Contexts contexts, ServiceContainer serviceContainer)
+        public ExecuteMoveInput(Contexts contexts, IServiceContainer serviceContainer)
         {                                             
             _gameContext = contexts.game;
             _gameStateContext = contexts.gameState;                          

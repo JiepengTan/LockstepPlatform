@@ -10,11 +10,11 @@ public class UIHelper : MonoBehaviour {
     public Text ConnectedText;
     public Text CurrentTickText;
 
-    bool IsConnected => Main.Instance.netMgr.IsConnected;
-    uint CurTick => Main.Instance.simulation?.World?.Tick ?? 0;
+    bool IsConnected => Main.Instance.networkMgr?.IsConnected ?? false;
+    uint CurTick => Main.Instance.simulationMgr?.World?.Tick ?? 0;
     long HashCode => Main.Instance.contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
     int AgentCount => Main.Instance.contexts.game.count;
-    
+
     void Update(){
         var instance = Main.Instance;
         ConnectedText.text = $"IsConn: {IsConnected}";

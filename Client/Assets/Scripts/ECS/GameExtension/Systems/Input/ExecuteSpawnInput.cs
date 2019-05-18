@@ -10,16 +10,16 @@ namespace Lockstep.Game.Features.Input
 {
     public class ExecuteSpawnInput : IExecuteSystem
     {                                              
-        private readonly IViewService _viewService;
+        private readonly IResourceService _resourceService;
         private readonly GameContext _gameContext;
         private readonly GameStateContext _gameStateContext;   
         private readonly IGroup<InputEntity> _spawnInputs;    
 
         private uint _localIdCounter;
         private readonly ActorContext _actorContext;
-        public ExecuteSpawnInput(Contexts contexts, ServiceContainer serviceContainer)
+        public ExecuteSpawnInput(Contexts contexts, IServiceContainer serviceContainer)
         {                                                  
-            _viewService = serviceContainer.Get<IViewService>();              
+            _resourceService = serviceContainer.GetService<IResourceService>();              
             _gameContext = contexts.game;
             _gameStateContext = contexts.gameState;
             _actorContext = contexts.actor;
@@ -53,7 +53,7 @@ namespace Lockstep.Game.Features.Input
                 e.AddVelocity(LVector2.zero);
                 e.AddPosition(input.coordinate.value);
 
-                _viewService.LoadView(e, input.entityConfigId.value,_actorContext);
+                _resourceService.LoadView(e, input.entityConfigId.value,_actorContext);
 
                 if (e.isNavigable)
                 {
