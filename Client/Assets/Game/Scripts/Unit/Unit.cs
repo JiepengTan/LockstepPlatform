@@ -2,6 +2,16 @@ using System.Collections.Generic;
 using Lockstep.Game;
 using UnityEngine;
 
+namespace Lockstep.Game {
+    public enum EDir {
+        Up,
+        Left,
+        Down,
+        Right,
+        EnumCount,
+    }
+}
+
 
 public class Unit : MonoBehaviour {
     /// <summary> 阵营</summary>
@@ -87,8 +97,6 @@ public class Unit : MonoBehaviour {
     }
 
     #region  debug infos
-
-
 
     #endregion
 }

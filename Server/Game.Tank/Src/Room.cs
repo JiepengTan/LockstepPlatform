@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using LiteNetLib;
 using Lockstep.Serialization;
-using NetMsg.Game.Tank;
+using NetMsg.Game;
 using NetMsg.Lobby;
 using Server.Common;
 using Debug = Lockstep.Logging.Debug;

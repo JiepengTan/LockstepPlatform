@@ -90,7 +90,7 @@ namespace Lockstep.Game {
 
         #region LifeCycle
 
-        public override void DoAwake(){
+        public override void DoAwake(IServiceContainer services){
             CurLevel = PlayerPrefs.GetInt("GameLevel", 0);
             Func<string, Transform> FuncCreateTrans = (name) => {
                 var go = new GameObject(name);
@@ -101,6 +101,42 @@ namespace Lockstep.Game {
             transParentEnemy = FuncCreateTrans("Enemies");
             transParentItem = FuncCreateTrans("Items");
             transParentBullet = FuncCreateTrans("Bullets");
+        }
+
+
+        public override void DoUpdate(float deltaTime){
+            if (IsGameOver) return;
+            //update player dir from input command
+            var input = inputMgr;
+            UpdatePlayer(allPlayerInfos[0], input.inputs[0]);
+            UpdatePlayer(allPlayerInfos[1], input.inputs[1]);
+            //born enemy
+            if (allEnmey.Count < MAX_ENEMY_COUNT && RemainEnemyCount > 0) {
+                bornTimer += deltaTime;
+                if (bornTimer > bornEnemyInterval && enemyBornPoints.Count > 0) {
+                    bornTimer = 0;
+                    //born enemy
+                    var idx = Random.Range(0, enemyBornPoints.Count);
+                    var bornPoint = enemyBornPoints[idx];
+                    CreateEnemy(bornPoint, Random.Range(0, tankPrefabs.Count));
+                }
+            }
+
+            //update all units
+            foreach (var target in allEnmey) {
+                target.DoUpdate(deltaTime);
+            }
+
+            foreach (var target in allPlayer) {
+                target.DoUpdate(deltaTime);
+            }
+
+            foreach (var target in allBullet) {
+                target.DoUpdate(deltaTime);
+            }
+
+            //collision detection
+            ColliderDetected();
         }
 
         /// <summary>
@@ -154,6 +190,7 @@ namespace Lockstep.Game {
             camp.radius = camp.size.magnitude;
         }
 
+        #endregion
 
         public PlayerInfo GetPlayerFormTank(Tank tank){
             if (tank == null) return null;
@@ -174,7 +211,7 @@ namespace Lockstep.Game {
 
             var tank = playerInfo.tank;
             if (tank != null) {
-                var input = main.inputMgr;
+                var input = inputMgr;
                 var v = inputV;
                 var h = intputH;
                 var absh = Mathf.Abs(h);
@@ -195,42 +232,7 @@ namespace Lockstep.Game {
                 }
             }
         }
-
-        public override void DoUpdate(float deltaTime){
-            if (IsGameOver) return;
-            //update player dir from input command
-            var input = main.inputMgr;
-            UpdatePlayer(allPlayerInfos[0], input.inputs[0]);
-            UpdatePlayer(allPlayerInfos[1], input.inputs[1]);
-            //born enemy
-            if (allEnmey.Count < MAX_ENEMY_COUNT && RemainEnemyCount > 0) {
-                bornTimer += deltaTime;
-                if (bornTimer > bornEnemyInterval && enemyBornPoints.Count > 0) {
-                    bornTimer = 0;
-                    //born enemy
-                    var idx = Random.Range(0, enemyBornPoints.Count);
-                    var bornPoint = enemyBornPoints[idx];
-                    CreateEnemy(bornPoint, Random.Range(0, tankPrefabs.Count));
-                }
-            }
-
-            //update all units
-            foreach (var target in allEnmey) {
-                target.DoUpdate(deltaTime);
-            }
-
-            foreach (var target in allPlayer) {
-                target.DoUpdate(deltaTime);
-            }
-
-            foreach (var target in allBullet) {
-                target.DoUpdate(deltaTime);
-            }
-
-            //collision detection
-            ColliderDetected();
-        }
-
+        
         private void ColliderDetected(){
             // update Bounding box
 
@@ -402,7 +404,6 @@ namespace Lockstep.Game {
             }
         }
 
-        #endregion
 
         #region GameStatus
 
