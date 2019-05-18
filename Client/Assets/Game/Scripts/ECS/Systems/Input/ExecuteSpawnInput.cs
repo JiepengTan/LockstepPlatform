@@ -49,20 +49,13 @@ namespace Lockstep.Game.Features.Input
                 //unique id for internal usage
                 e.AddLocalId(_localIdCounter);
                 
-                //some default components that every game-entity must have
-                e.AddVelocity(LVector2.zero);
-                e.AddPosition(input.coordinate.value);
+              // //some default components that every game-entity must have
+              // e.AddVelocity(LVector2.zero);
+              // e.AddPosition(input.coordinate.value);
 
                 _resourceService.LoadView(e, input.entityConfigId.value,_actorContext);
 
-                if (e.isNavigable)
-                {
-                    //TODO: factory method to create entity? 
-                    //Default agent settings
-                    e.AddRadius(1.ToLFloat());
-                    e.AddMaxSpeed(2.ToLFloat());
-                    e.AddRvoAgentSettings(LVector2.zero, 5.ToLFloat(), new List<KeyValuePair<LFloat, uint>>());
-                }
+            
 
                 actor.ReplaceEntityCount(nextEntityId + 1);
                 _localIdCounter += 1;

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Lockstep.Game {
     public class HashCodeSetter : MonoBehaviour, IComponentSetter {
         public void SetComponent(GameEntity entity){
-            entity.isHashable = true;
+            //entity.isHashable = true;
         }
     }
 }

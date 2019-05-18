@@ -185,7 +185,6 @@ namespace Lockstep.Game {
 
         public List<long> allBeforeExecuteHashCodes = new List<long>();
         public List<long> allHashCodes = new List<long>();
-        public static int[,] allAccumInputCount = new int[2, 10000];
         private List<long> allHashCodess = new List<long>();
         private uint firstHashTick = 0;
 

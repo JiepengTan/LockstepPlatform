@@ -191,15 +191,6 @@ namespace Lockstep.Core.Logic {
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
             Contexts.gameState.ReplaceTick(resultTick);
-            var selectedEntities = Contexts.game.GetEntities(GameMatcher.LocalId);
-            foreach (var entity in selectedEntities)
-            {
-                if (!entity.isDestroyed) {
-                    var pos = entity.position.value;
-                    var preNum = SimulationManager.allAccumInputCount[entity.actorId.value, resultTick-1] * 16;
-                    var nextNum = SimulationManager.allAccumInputCount[entity.actorId.value, resultTick] * 16;
-                }
-            }
         }
     }
 }
