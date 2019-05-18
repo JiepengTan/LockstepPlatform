@@ -8,21 +8,36 @@
 //------------------------------------------------------------------------------
 public static class ActorComponentsLookup {
 
-    public const int Backup = 0;
-    public const int EntityCount = 1;
-    public const int Id = 2;
+    public const int LifeListener = 0;
+    public const int Backup = 1;
+    public const int EntityCount = 2;
+    public const int Id = 3;
+    public const int Life = 4;
+    public const int Name = 5;
+    public const int Score = 6;
+    public const int ScoreListener = 7;
 
-    public const int TotalComponents = 3;
+    public const int TotalComponents = 8;
 
     public static readonly string[] componentNames = {
+        "LifeListener",
         "Backup",
         "EntityCount",
-        "Id"
+        "Id",
+        "Life",
+        "Name",
+        "Score",
+        "ScoreListener"
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(LifeListenerComponent),
         typeof(Lockstep.ECS.Actor.BackupComponent),
         typeof(Lockstep.ECS.Actor.EntityCountComponent),
-        typeof(Lockstep.ECS.Actor.IdComponent)
+        typeof(Lockstep.ECS.Actor.IdComponent),
+        typeof(Lockstep.ECS.Game.LifeComponent),
+        typeof(Lockstep.ECS.Game.NameComponent),
+        typeof(Lockstep.ECS.Game.ScoreComponent),
+        typeof(ScoreListenerComponent)
     };
 }

@@ -10,31 +10,58 @@ public static class GameComponentsLookup {
 
     public const int ActorId = 0;
     public const int Backup = 1;
-    public const int Destroyed = 2;
-    public const int Id = 3;
-    public const int LocalId = 4;
-    public const int Position = 5;
-    public const int PositionListener = 6;
+    public const int Collider = 2;
+    public const int Destroyed = 3;
+    public const int Id = 4;
+    public const int ItemType = 5;
+    public const int LocalId = 6;
+    public const int Move = 7;
+    public const int Position = 8;
+    public const int TagBullet = 9;
+    public const int TagPlayer = 10;
+    public const int TagTank = 11;
+    public const int TankAI = 12;
+    public const int TankSkill = 13;
+    public const int Unit = 14;
+    public const int PositionListener = 15;
 
-    public const int TotalComponents = 7;
+    public const int TotalComponents = 16;
 
     public static readonly string[] componentNames = {
         "ActorId",
         "Backup",
+        "Collider",
         "Destroyed",
         "Id",
+        "ItemType",
         "LocalId",
+        "Move",
         "Position",
+        "TagBullet",
+        "TagPlayer",
+        "TagTank",
+        "TankAI",
+        "TankSkill",
+        "Unit",
         "PositionListener"
     };
 
     public static readonly System.Type[] componentTypes = {
         typeof(Lockstep.ECS.Game.ActorIdComponent),
         typeof(Lockstep.ECS.Game.BackupComponent),
+        typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
         typeof(Lockstep.ECS.Game.IdComponent),
+        typeof(Lockstep.ECS.Game.ItemTypeComponent),
         typeof(Lockstep.ECS.Game.LocalIdComponent),
+        typeof(Lockstep.ECS.Game.MoveComponent),
         typeof(Lockstep.ECS.Game.PositionComponent),
+        typeof(Lockstep.ECS.Game.TagBulletComponent),
+        typeof(Lockstep.ECS.Game.TagPlayerComponent),
+        typeof(Lockstep.ECS.Game.TagTankComponent),
+        typeof(Lockstep.ECS.Game.TankAIComponent),
+        typeof(Lockstep.ECS.Game.TankSkillComponent),
+        typeof(Lockstep.ECS.Game.UnitComponent),
         typeof(PositionListenerComponent)
     };
 }

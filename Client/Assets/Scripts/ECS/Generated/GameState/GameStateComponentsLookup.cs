@@ -8,16 +8,22 @@
 //------------------------------------------------------------------------------
 public static class GameStateComponentsLookup {
 
-    public const int BeforeExecuteHashCode = 0;
-    public const int HashCode = 1;
-    public const int Paused = 2;
-    public const int Predicting = 3;
-    public const int Tick = 4;
+    public const int GameResultListener = 0;
+    public const int GameResultRemovedListener = 1;
+    public const int BeforeExecuteHashCode = 2;
+    public const int GameResult = 3;
+    public const int HashCode = 4;
+    public const int Paused = 5;
+    public const int Predicting = 6;
+    public const int Tick = 7;
 
-    public const int TotalComponents = 5;
+    public const int TotalComponents = 8;
 
     public static readonly string[] componentNames = {
+        "GameResultListener",
+        "GameResultRemovedListener",
         "BeforeExecuteHashCode",
+        "GameResult",
         "HashCode",
         "Paused",
         "Predicting",
@@ -25,7 +31,10 @@ public static class GameStateComponentsLookup {
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(GameResultListenerComponent),
+        typeof(GameResultRemovedListenerComponent),
         typeof(Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent),
+        typeof(Lockstep.ECS.GameState.GameResultComponent),
         typeof(Lockstep.ECS.GameState.HashCodeComponent),
         typeof(Lockstep.ECS.GameState.PausedComponent),
         typeof(Lockstep.ECS.GameState.PredictingComponent),
