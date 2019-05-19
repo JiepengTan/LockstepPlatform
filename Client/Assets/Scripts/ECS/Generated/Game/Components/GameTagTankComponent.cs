@@ -8,7 +8,7 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly Lockstep.ECS.Game.TagTankComponent tagTankComponent = new Lockstep.ECS.Game.TagTankComponent();
+    static readonly Lockstep.ECS.Game.TagEnemyComponent TagEnemyComponent = new Lockstep.ECS.Game.TagEnemyComponent();
 
     public bool isTagTank {
         get { return HasComponent(GameComponentsLookup.TagTank); }
@@ -19,7 +19,7 @@ public partial class GameEntity {
                     var componentPool = GetComponentPool(index);
                     var component = componentPool.Count > 0
                             ? componentPool.Pop()
-                            : tagTankComponent;
+                            : TagEnemyComponent;
 
                     AddComponent(index, component);
                 } else {

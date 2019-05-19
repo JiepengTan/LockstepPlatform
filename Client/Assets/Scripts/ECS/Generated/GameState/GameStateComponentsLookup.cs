@@ -8,34 +8,46 @@
 //------------------------------------------------------------------------------
 public static class GameStateComponentsLookup {
 
-    public const int GameResultListener = 0;
-    public const int GameResultRemovedListener = 1;
-    public const int BeforeExecuteHashCode = 2;
-    public const int GameResult = 3;
-    public const int HashCode = 4;
-    public const int Paused = 5;
-    public const int Predicting = 6;
-    public const int Tick = 7;
+    public const int EnemyCountListener = 0;
+    public const int GameResultListener = 1;
+    public const int GameResultRemovedListener = 2;
+    public const int LevelNumberListener = 3;
+    public const int BeforeExecuteHashCode = 4;
+    public const int EnemyCount = 5;
+    public const int GameResult = 6;
+    public const int HashCode = 7;
+    public const int LevelNumber = 8;
+    public const int Paused = 9;
+    public const int Predicting = 10;
+    public const int Tick = 11;
 
-    public const int TotalComponents = 8;
+    public const int TotalComponents = 12;
 
     public static readonly string[] componentNames = {
+        "EnemyCountListener",
         "GameResultListener",
         "GameResultRemovedListener",
+        "LevelNumberListener",
         "BeforeExecuteHashCode",
+        "EnemyCount",
         "GameResult",
         "HashCode",
+        "LevelNumber",
         "Paused",
         "Predicting",
         "Tick"
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(EnemyCountListenerComponent),
         typeof(GameResultListenerComponent),
         typeof(GameResultRemovedListenerComponent),
+        typeof(LevelNumberListenerComponent),
         typeof(Lockstep.ECS.GameState.BeforeExecuteHashCodeComponent),
+        typeof(Lockstep.ECS.GameState.EnemyCountComponent),
         typeof(Lockstep.ECS.GameState.GameResultComponent),
         typeof(Lockstep.ECS.GameState.HashCodeComponent),
+        typeof(Lockstep.ECS.GameState.LevelNumberComponent),
         typeof(Lockstep.ECS.GameState.PausedComponent),
         typeof(Lockstep.ECS.GameState.PredictingComponent),
         typeof(Lockstep.ECS.GameState.TickComponent)

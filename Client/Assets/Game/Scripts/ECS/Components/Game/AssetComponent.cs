@@ -6,7 +6,7 @@ namespace Lockstep.ECS.Game
 {
     [Game]
     [System.Serializable]
-    public class ItemTypeComponent : IComponent {
-        public int Type;
+    public class AssetComponent : IComponent {
+        public EAssetID assetId = EAssetID.Bullet0;
     }
 }

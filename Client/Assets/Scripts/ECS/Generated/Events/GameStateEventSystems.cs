@@ -9,7 +9,9 @@
 public sealed class GameStateEventSystems : Feature {
 
     public GameStateEventSystems(Contexts contexts) {
+        Add(new EnemyCountEventSystem(contexts)); // priority: 0
         Add(new GameResultEventSystem(contexts)); // priority: 0
         Add(new GameResultRemovedEventSystem(contexts)); // priority: 0
+        Add(new LevelNumberEventSystem(contexts)); // priority: 0
     }
 }

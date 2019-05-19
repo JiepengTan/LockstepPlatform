@@ -9,26 +9,29 @@
 public static class GameComponentsLookup {
 
     public const int ActorId = 0;
-    public const int Backup = 1;
-    public const int Collider = 2;
-    public const int Destroyed = 3;
-    public const int Id = 4;
-    public const int ItemType = 5;
-    public const int LocalId = 6;
-    public const int Move = 7;
-    public const int Position = 8;
-    public const int TagBullet = 9;
-    public const int TagPlayer = 10;
-    public const int TagTank = 11;
-    public const int TankAI = 12;
-    public const int TankSkill = 13;
-    public const int Unit = 14;
-    public const int PositionListener = 15;
+    public const int Asset = 1;
+    public const int Backup = 2;
+    public const int Collider = 3;
+    public const int Destroyed = 4;
+    public const int Id = 5;
+    public const int ItemType = 6;
+    public const int LocalId = 7;
+    public const int Move = 8;
+    public const int Owner = 9;
+    public const int Position = 10;
+    public const int TagBullet = 11;
+    public const int TagPlayer = 12;
+    public const int TagTank = 13;
+    public const int TankAI = 14;
+    public const int TankSkill = 15;
+    public const int Unit = 16;
+    public const int PositionListener = 17;
 
-    public const int TotalComponents = 16;
+    public const int TotalComponents = 18;
 
     public static readonly string[] componentNames = {
         "ActorId",
+        "Asset",
         "Backup",
         "Collider",
         "Destroyed",
@@ -36,6 +39,7 @@ public static class GameComponentsLookup {
         "ItemType",
         "LocalId",
         "Move",
+        "Owner",
         "Position",
         "TagBullet",
         "TagPlayer",
@@ -48,6 +52,7 @@ public static class GameComponentsLookup {
 
     public static readonly System.Type[] componentTypes = {
         typeof(Lockstep.ECS.Game.ActorIdComponent),
+        typeof(Lockstep.ECS.Game.AssetComponent),
         typeof(Lockstep.ECS.Game.BackupComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
@@ -55,10 +60,11 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.ItemTypeComponent),
         typeof(Lockstep.ECS.Game.LocalIdComponent),
         typeof(Lockstep.ECS.Game.MoveComponent),
+        typeof(Lockstep.ECS.Game.OwnerComponent),
         typeof(Lockstep.ECS.Game.PositionComponent),
         typeof(Lockstep.ECS.Game.TagBulletComponent),
         typeof(Lockstep.ECS.Game.TagPlayerComponent),
-        typeof(Lockstep.ECS.Game.TagTankComponent),
+        typeof(Lockstep.ECS.Game.TagEnemyComponent),
         typeof(Lockstep.ECS.Game.TankAIComponent),
         typeof(Lockstep.ECS.Game.TankSkillComponent),
         typeof(Lockstep.ECS.Game.UnitComponent),
