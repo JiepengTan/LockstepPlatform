@@ -1,11 +1,12 @@
 ﻿using Lockstep.Math;
 using Entitas;
+using Lockstep.Game;
 
 namespace Lockstep.ECS.Input
 {
     [Input]
-    public class CoordinateComponent : IComponent
+    public class MoveDirComponent : IComponent
     {                               
-        public LVector2 value;
+        public EDir value;
     }
 }

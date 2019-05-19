@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class InputEntity {
 
-    public Lockstep.ECS.Input.CoordinateComponent coordinate { get { return (Lockstep.ECS.Input.CoordinateComponent)GetComponent(InputComponentsLookup.Coordinate); } }
-    public bool hasCoordinate { get { return HasComponent(InputComponentsLookup.Coordinate); } }
+    public Lockstep.ECS.Input.MoveDirComponent moveDir { get { return (Lockstep.ECS.Input.MoveDirComponent)GetComponent(InputComponentsLookup.MoveDir); } }
+    public bool hasMoveDir { get { return HasComponent(InputComponentsLookup.MoveDir); } }
 
-    public void AddCoordinate(Lockstep.Math.LVector2 newValue) {
-        var index = InputComponentsLookup.Coordinate;
-        var component = CreateComponent<Lockstep.ECS.Input.CoordinateComponent>(index);
+    public void AddMoveDir(Lockstep.Game.EDir newValue) {
+        var index = InputComponentsLookup.MoveDir;
+        var component = CreateComponent<Lockstep.ECS.Input.MoveDirComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceCoordinate(Lockstep.Math.LVector2 newValue) {
-        var index = InputComponentsLookup.Coordinate;
-        var component = CreateComponent<Lockstep.ECS.Input.CoordinateComponent>(index);
+    public void ReplaceMoveDir(Lockstep.Game.EDir newValue) {
+        var index = InputComponentsLookup.MoveDir;
+        var component = CreateComponent<Lockstep.ECS.Input.MoveDirComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }
 
-    public void RemoveCoordinate() {
-        RemoveComponent(InputComponentsLookup.Coordinate);
+    public void RemoveMoveDir() {
+        RemoveComponent(InputComponentsLookup.MoveDir);
     }
 }
 
@@ -40,17 +40,17 @@ public partial class InputEntity {
 //------------------------------------------------------------------------------
 public sealed partial class InputMatcher {
 
-    static Entitas.IMatcher<InputEntity> _matcherCoordinate;
+    static Entitas.IMatcher<InputEntity> _matcherMoveDir;
 
-    public static Entitas.IMatcher<InputEntity> Coordinate {
+    public static Entitas.IMatcher<InputEntity> MoveDir {
         get {
-            if (_matcherCoordinate == null) {
-                var matcher = (Entitas.Matcher<InputEntity>)Entitas.Matcher<InputEntity>.AllOf(InputComponentsLookup.Coordinate);
+            if (_matcherMoveDir == null) {
+                var matcher = (Entitas.Matcher<InputEntity>)Entitas.Matcher<InputEntity>.AllOf(InputComponentsLookup.MoveDir);
                 matcher.componentNames = InputComponentsLookup.componentNames;
-                _matcherCoordinate = matcher;
+                _matcherMoveDir = matcher;
             }
 
-            return _matcherCoordinate;
+            return _matcherMoveDir;
         }
     }
 }

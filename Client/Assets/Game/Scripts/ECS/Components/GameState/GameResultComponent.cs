@@ -4,9 +4,10 @@ using Entitas.CodeGeneration.Attributes;
 namespace Lockstep.ECS.GameState
 {        
     public enum EGameResult {
-        Falied,
+        Playing,
+        Failed,
         Win,
-        NextLevel,
+        PartFinished,
     }
     
     [GameState]

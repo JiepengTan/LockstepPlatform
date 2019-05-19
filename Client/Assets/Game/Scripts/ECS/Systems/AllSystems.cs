@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Entitas;
+using Lockstep.ECS.GameState;
 using Lockstep.Game.Interfaces;
 using Lockstep.Logging;
 using Lockstep.Math;
@@ -37,7 +38,7 @@ namespace Lockstep.Game.Features {
                 GameMatcher.LocalId,
                 GameMatcher.ActorId,
                 GameMatcher.TagEnemy
-                ));
+            ));
         }
 
         public void Execute(){
@@ -69,13 +70,14 @@ namespace Lockstep.Game.Features {
                         entity.move.isChangedDir = true;
                     }
                 }
+
                 //Fire skill
                 var isNeedFire = LRandom.value < aiInfo.fireRate;
                 if (isNeedFire) {
                     if (entity.skill.timer <= LFloat.zero) {
                         entity.skill.timer = entity.skill.cd;
                         //Fire
-                        UnitUtil.CreateBullet(entity.position.value,entity.dir.value,entity.skill.bulletId,entity);
+                        UnitUtil.CreateBullet(entity.position.value, entity.dir.value, entity.skill.bulletId, entity);
                     }
                 }
             }
@@ -104,18 +106,17 @@ namespace Lockstep.Game.Features {
         }
     }
 
-    public class PlayerFireSystem  : IExecuteSystem{
+    public class PlayerFireSystem : IExecuteSystem {
         private readonly IResourceService _viewService;
         private readonly GameContext _gameContext;
-        private readonly GameStateContext _gameStateContext;   
-        private readonly IGroup<InputEntity> _spawnInputs;    
+        private readonly GameStateContext _gameStateContext;
+        private readonly IGroup<InputEntity> _spawnInputs;
 
         private uint _localIdCounter;
         private readonly ActorContext _actorContext;
 
-        public PlayerFireSystem(Contexts contexts, IServiceContainer serviceContainer)
-        {                                                  
-            _viewService = serviceContainer.GetService<IResourceService>();              
+        public PlayerFireSystem(Contexts contexts, IServiceContainer serviceContainer){
+            _viewService = serviceContainer.GetService<IResourceService>();
             _gameContext = contexts.game;
             _gameStateContext = contexts.gameState;
             _actorContext = contexts.actor;
@@ -124,18 +125,17 @@ namespace Lockstep.Game.Features {
                 InputMatcher.AllOf(
                     InputMatcher.EntityConfigId,
                     InputMatcher.ActorId,
-                    InputMatcher.Coordinate,
+                    InputMatcher.Fire,
                     InputMatcher.Tick));
-        }       
+        }
 
-        public void Execute()
-        {                                                             
-            foreach (var input in _spawnInputs.GetEntities().Where(entity => entity.tick.value == _gameStateContext.tick.value))
-            {           
+        public void Execute(){
+            foreach (var input in _spawnInputs.GetEntities()
+                .Where(entity => entity.tick.value == _gameStateContext.tick.value)) {
                 var actor = _actorContext.GetEntityWithId(input.actorId.value);
                 var nextEntityId = actor.entityCount.value;
 
-                var e = _gameContext.CreateEntity();        
+                var e = _gameContext.CreateEntity();
 
                 Log.Trace(this, actor.id.value + " -> " + nextEntityId);
 
@@ -145,28 +145,79 @@ namespace Lockstep.Game.Features {
 
                 //unique id for internal usage
                 e.AddLocalId(_localIdCounter);
-                
+
                 //some default components that every game-entity must have
                 //_viewService.LoadView(e, input.entityConfigId.value);
 
 
                 actor.ReplaceEntityCount(nextEntityId + 1);
                 _localIdCounter += 1;
-            }                                                                                    
-        }    
+            }
+        }
     }
 
     public class GameInitSystem : Entitas.IInitializeSystem {
+        private readonly Contexts _contexts;
+
+        public GameInitSystem(Contexts contexts, IServiceContainer serviceContainer){
+            _contexts = contexts;
+        }
+
         //Load map Create camp and other Entity
         //Create Players
-        public void Initialize(){ }
+        public void Initialize(){
+            var context = _contexts.gameState;
+            //reset status
+            context.ReplaceGameResult(EGameResult.Playing);
+            context.ReplaceEnemyCountState(
+                0,
+                6,
+                20,
+                20,
+                LFloat.zero, 
+                new LFloat(3));
+
+            //
+        }
     }
 
     public class PlayerMoveSystem {
         
+        
     }
 
-    public class EnemyBoreSystem {
-        
+    public class EnemyBornSystem : IExecuteSystem {
+        private readonly GameStateContext _contexts;
+        private IGroup<GameEntity> _spawnPoints;
+
+        public EnemyBornSystem(Contexts contexts, IServiceContainer serviceContainer){
+            _contexts = contexts.gameState;
+            _spawnPoints = contexts.game.GetGroup(
+                GameMatcher.AllOf(GameMatcher.LocalId, GameMatcher.BornPoint));
+            //_viewService = serviceContainer.GetService<IResourceService>();    
+        }
+
+        public void Execute(){
+            var state = _contexts.enemyCountState;
+            if (state.CurEnemyCountInScene < state.MaxEnemyCountInScene && state.RemainCountToBorn > 0) {
+                state.bornTimer += Define.DeltaTime;
+                var allPoints = _spawnPoints.GetEntities();
+                var bornPointCount = allPoints.Length;
+                if (state.bornTimer > state.bornInterval && bornPointCount > 0) {
+                    state.bornTimer = LFloat.zero;
+                    //born enemy
+                    var idx = LRandom.Range(0, bornPointCount);
+                    var bornPoint = allPoints[idx].bornPoint.coord;
+                    UnitUtil.CreateEnemy(bornPoint, LRandom.Range(0, 3)); //TODO
+                }
+            }
+        }
+    }
+
+
+    public class GameStateSystems : Feature {
+        public GameStateSystems(Contexts contexts, IServiceContainer services){
+            Add(new GameInitSystem(contexts, services));
+        }
     }
 }

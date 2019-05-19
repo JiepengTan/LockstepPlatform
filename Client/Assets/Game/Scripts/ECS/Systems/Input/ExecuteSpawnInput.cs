@@ -28,7 +28,7 @@ namespace Lockstep.Game.Features.Input
                 InputMatcher.AllOf(
                     InputMatcher.EntityConfigId,
                     InputMatcher.ActorId,
-                    InputMatcher.Coordinate,
+                    InputMatcher.Fire,
                     InputMatcher.Tick));
         }       
 

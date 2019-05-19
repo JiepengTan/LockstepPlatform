@@ -1,5 +1,6 @@
 using Entitas;
 using Lockstep.Math;
+using UnityEngine;
 
 namespace Lockstep.Game {
     public static class UnitUtil {
@@ -9,7 +10,7 @@ namespace Lockstep.Game {
             
         }
 
-        public static GameEntity CreateEnemy(LVector2 pos, EDir dir){
+        public static GameEntity CreateEnemy(Vector2Int pos, int type){
             return null;
         }
         

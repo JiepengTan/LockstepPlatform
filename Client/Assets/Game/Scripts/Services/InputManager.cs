@@ -171,14 +171,13 @@ namespace Lockstep.Game {
 
         public void Execute(InputCmd cmd, InputEntity entity){
             var type = (ECmdType) cmd.type;
-           // if (BitUtil.HasBit(cmd.type, ECmdType.Up)) entity.AddMoveDir(LVector2.up);
-           // if (BitUtil.HasBit(cmd.type, ECmdType.Left)) entity.AddMoveDir(LVector2.left);
-           // if (BitUtil.HasBit(cmd.type, ECmdType.Down)) entity.AddMoveDir(LVector2.down);
-           // if (BitUtil.HasBit(cmd.type, ECmdType.Right)) entity.AddMoveDir(LVector2.right);
-           // if (BitUtil.HasBit(cmd.type, ECmdType.Fire)) {
-           //     entity.AddEntityConfigId(0);
-           //     entity.AddCoordinate(LVector2.zero);
-           // }
+            if (BitUtil.HasBit(cmd.type, ECmdType.Up)) entity.AddMoveDir(  EDir.Up);
+            if (BitUtil.HasBit(cmd.type, ECmdType.Left)) entity.AddMoveDir(EDir.Left);
+            if (BitUtil.HasBit(cmd.type, ECmdType.Down)) entity.AddMoveDir(EDir.Down);
+            if (BitUtil.HasBit(cmd.type, ECmdType.Right)) entity.AddMoveDir(EDir.Right);
+            if (BitUtil.HasBit(cmd.type, ECmdType.Fire)) {
+                entity.isFire = true;
+            }
         }
     }
 }

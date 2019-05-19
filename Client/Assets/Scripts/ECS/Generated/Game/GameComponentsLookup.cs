@@ -13,26 +13,27 @@ public static class GameComponentsLookup {
     public const int AI = 2;
     public const int Asset = 3;
     public const int Backup = 4;
-    public const int Bullet = 5;
-    public const int Collider = 6;
-    public const int Destroyed = 7;
-    public const int Dir = 8;
-    public const int Id = 9;
-    public const int ItemType = 10;
-    public const int LocalId = 11;
-    public const int Move = 12;
-    public const int Owner = 13;
-    public const int Position = 14;
-    public const int Skill = 15;
-    public const int TagBullet = 16;
-    public const int TagEnemy = 17;
-    public const int TagPlayer = 18;
-    public const int Tilemap = 19;
-    public const int Unit = 20;
-    public const int UpgradeDestroyed = 21;
-    public const int PositionListener = 22;
+    public const int BornPoint = 5;
+    public const int Bullet = 6;
+    public const int Collider = 7;
+    public const int Destroyed = 8;
+    public const int Dir = 9;
+    public const int Id = 10;
+    public const int ItemType = 11;
+    public const int LocalId = 12;
+    public const int Move = 13;
+    public const int Owner = 14;
+    public const int Position = 15;
+    public const int Skill = 16;
+    public const int TagBullet = 17;
+    public const int TagEnemy = 18;
+    public const int TagPlayer = 19;
+    public const int Tilemap = 20;
+    public const int Unit = 21;
+    public const int UpgradeDestroyed = 22;
+    public const int PositionListener = 23;
 
-    public const int TotalComponents = 23;
+    public const int TotalComponents = 24;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -40,6 +41,7 @@ public static class GameComponentsLookup {
         "AI",
         "Asset",
         "Backup",
+        "BornPoint",
         "Bullet",
         "Collider",
         "Destroyed",
@@ -66,6 +68,7 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.AIComponent),
         typeof(Lockstep.ECS.Game.AssetComponent),
         typeof(Lockstep.ECS.Game.BackupComponent),
+        typeof(Lockstep.ECS.Game.BornPointComponent),
         typeof(Lockstep.ECS.Game.BulletComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
