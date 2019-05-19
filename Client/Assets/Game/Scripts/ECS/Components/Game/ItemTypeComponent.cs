@@ -4,9 +4,15 @@ using Lockstep.Game;
 
 namespace Lockstep.ECS.Game
 {
+    public enum EItemType {
+        Boom,
+        AddLife,
+        Upgrade,
+    }
+
     [Game]
     [System.Serializable]
     public class ItemTypeComponent : IComponent {
-        public int Type;
+        public EItemType Type;
     }
 }

@@ -11,21 +11,21 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.MoveComponent move { get { return (Lockstep.ECS.Game.MoveComponent)GetComponent(GameComponentsLookup.Move); } }
     public bool hasMove { get { return HasComponent(GameComponentsLookup.Move); } }
 
-    public void AddMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, Lockstep.Game.EDir newDir) {
+    public void AddMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir) {
         var index = GameComponentsLookup.Move;
         var component = CreateComponent<Lockstep.ECS.Game.MoveComponent>(index);
         component.moveSpd = newMoveSpd;
         component.maxMoveSpd = newMaxMoveSpd;
-        component.dir = newDir;
+        component.isChangedDir = newIsChangedDir;
         AddComponent(index, component);
     }
 
-    public void ReplaceMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, Lockstep.Game.EDir newDir) {
+    public void ReplaceMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir) {
         var index = GameComponentsLookup.Move;
         var component = CreateComponent<Lockstep.ECS.Game.MoveComponent>(index);
         component.moveSpd = newMoveSpd;
         component.maxMoveSpd = newMaxMoveSpd;
-        component.dir = newDir;
+        component.isChangedDir = newIsChangedDir;
         ReplaceComponent(index, component);
     }
 

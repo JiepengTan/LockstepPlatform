@@ -7,9 +7,10 @@ namespace Lockstep.ECS.Game
 
     [Game]
     [System.Serializable]
-    public class TankSkillComponent : IComponent {
+    public class SkillComponent : IComponent {
         public LFloat cd;
         public LFloat timer;
-        public int BulletType;
+        public EAssetID bulletId;
+        public bool isNeedFire;
     }
 }

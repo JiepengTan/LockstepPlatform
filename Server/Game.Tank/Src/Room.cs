@@ -22,8 +22,17 @@ namespace Lockstep.Logic.Server {
 
         public bool IsMatchered => count == sendResult.Length;
     }
+    public enum ERoomState{
+        Idle,
+        WaitingToPlay,
+        PartLoading,
+        Playing,
+        PartFinished,
+        FinishAll,
+    }
 
     public class Room : IRoom {
+        public ERoomState State = ERoomState.Idle;
         public int TypeId { get; protected set; }
         public int RoomId { get; protected set; }
 
@@ -260,7 +269,6 @@ namespace Lockstep.Logic.Server {
 
         #endregion
 
-
         #region player operator
 
         public void OnPlayerEnter(Player player){
@@ -340,7 +348,6 @@ namespace Lockstep.Logic.Server {
         public void FinishedGame(){ }
 
         #endregion
-
 
         #region IRecyclable
 

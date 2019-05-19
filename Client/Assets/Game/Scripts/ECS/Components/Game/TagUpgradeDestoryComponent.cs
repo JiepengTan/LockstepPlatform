@@ -6,6 +6,6 @@ namespace Lockstep.ECS.Game
 {
 
     [Game]
-    public class TagBulletComponent : IComponent { }
+    public class UpgradeDestroyedComponent : IComponent { }
 
 }

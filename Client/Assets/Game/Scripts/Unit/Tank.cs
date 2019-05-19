@@ -9,7 +9,7 @@ public class Tank : Unit {
     public AIProxy brain = new AIProxy();
     public Tank killer;
     public Vector2 FireOffsetPos {
-        get { return CollisionHelper.GetDirVec(dir); }
+        get { return DirUtil.GetDirVec(dir); }
     }
     
     public override void DoStart(){
@@ -51,7 +51,7 @@ public class Tank : Unit {
     }
 
     public Vector2 GetHeadPos(float len = FORWARD_HEAD_DIST){
-        var dirVec = CollisionHelper.GetDirVec(dir);
+        var dirVec = DirUtil.GetDirVec(dir);
         var fTargetHead = pos + (TANK_HALF_LEN + len) * (Vector2) dirVec;
         return fTargetHead;
     }
@@ -59,7 +59,7 @@ public class Tank : Unit {
     private void OnDrawGizmos(){
 #if UNITY_EDITOR
         if (!Application.isPlaying) return;
-        var debugInfo = CollisionHelper.DebugQueryCollider(dir, GetHeadPos(FORWARD_HEAD_DIST));
+        //var debugInfo = CollisionUtil.DebugQueryCollider(dir, GetHeadPos(FORWARD_HEAD_DIST));
         //foreach (var info in debugInfo) {
         //    if (info.z == 1) {
         //        Gizmos.DrawWireCube(info + transform.parent.position + new Vector3(0.5f, 0.5f, 0), Vector3.one * 0.5f);
@@ -69,7 +69,7 @@ public class Tank : Unit {
         //    }
         //}
 
-        debugInfo.Clear();
+        //debugInfo.Clear();
 #endif
     }
 }
@@ -84,35 +84,7 @@ public class AIProxy {
 
     
     public void DoUpdate(float deltaTime){
-        timer += deltaTime;
-        if (timer < updateInterval) {
-            return;
-        }
-        if(owner == null)
-            return;
-        timer = 0;
-        Vector2Int dir = Vector2Int.zero;
-        var isReachTheEnd = CollisionHelper.HasColliderWithBorder(owner.dir, owner.GetHeadPos());
-        if (isReachTheEnd) {
-            List<int> allWalkableDir = new List<int>();
-            for (int i = 0; i < (int) (EDir.EnumCount); i++) {
-                var vec = CollisionHelper.GetDirVec((EDir) i) * Tank.TANK_HALF_LEN;
-                var pos = owner.pos + vec;
-                if (!CollisionHelper.HasCollider(pos)) {
-                    allWalkableDir.Add(i);
-                }
-            }
-
-            var count = allWalkableDir.Count;
-            if ( count> 0) {
-                owner.dir = (EDir) (allWalkableDir[Random.Range(0, count)]);
-            }
-        }
-
-        var isNeedFire = Random.value < fireRate;
-        if (isNeedFire) {
-            owner.skill.Fire();
-        }
+       
     }
 }
 

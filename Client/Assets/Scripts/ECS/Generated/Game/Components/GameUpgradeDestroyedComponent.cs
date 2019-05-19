@@ -8,18 +8,18 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly Lockstep.ECS.Game.TagEnemyComponent TagEnemyComponent = new Lockstep.ECS.Game.TagEnemyComponent();
+    static readonly Lockstep.ECS.Game.UpgradeDestroyedComponent upgradeDestroyedComponent = new Lockstep.ECS.Game.UpgradeDestroyedComponent();
 
-    public bool isTagTank {
-        get { return HasComponent(GameComponentsLookup.TagTank); }
+    public bool isUpgradeDestroyed {
+        get { return HasComponent(GameComponentsLookup.UpgradeDestroyed); }
         set {
-            if (value != isTagTank) {
-                var index = GameComponentsLookup.TagTank;
+            if (value != isUpgradeDestroyed) {
+                var index = GameComponentsLookup.UpgradeDestroyed;
                 if (value) {
                     var componentPool = GetComponentPool(index);
                     var component = componentPool.Count > 0
                             ? componentPool.Pop()
-                            : TagEnemyComponent;
+                            : upgradeDestroyedComponent;
 
                     AddComponent(index, component);
                 } else {
@@ -40,17 +40,17 @@ public partial class GameEntity {
 //------------------------------------------------------------------------------
 public sealed partial class GameMatcher {
 
-    static Entitas.IMatcher<GameEntity> _matcherTagTank;
+    static Entitas.IMatcher<GameEntity> _matcherUpgradeDestroyed;
 
-    public static Entitas.IMatcher<GameEntity> TagTank {
+    public static Entitas.IMatcher<GameEntity> UpgradeDestroyed {
         get {
-            if (_matcherTagTank == null) {
-                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.TagTank);
+            if (_matcherUpgradeDestroyed == null) {
+                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.UpgradeDestroyed);
                 matcher.componentNames = GameComponentsLookup.componentNames;
-                _matcherTagTank = matcher;
+                _matcherUpgradeDestroyed = matcher;
             }
 
-            return _matcherTagTank;
+            return _matcherUpgradeDestroyed;
         }
     }
 }

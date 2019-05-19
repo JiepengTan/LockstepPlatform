@@ -240,7 +240,8 @@ namespace Lockstep.Game {
             foreach (var bullet in allBullet) {
                 var bulletCamp = bullet.camp;
                 foreach (var tank in allPlayer) {
-                    if (tank.camp != bulletCamp && CollisionHelper.CheckCollision(bullet, tank)) {
+                    //if (tank.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) 
+                    {
                         tempLst.Add(bullet);
                         AudioManager.PlayClipHitTank();
                         tank.TakeDamage(bullet);
@@ -248,7 +249,8 @@ namespace Lockstep.Game {
                 }
 
                 foreach (var tank in allEnmey) {
-                    if (tank.camp != bulletCamp && CollisionHelper.CheckCollision(bullet, tank)) {
+                    //if (tank.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) 
+                    {
                         tempLst.Add(bullet);
                         AudioManager.PlayClipHitTank();
                         tank.TakeDamage(bullet);
@@ -259,7 +261,8 @@ namespace Lockstep.Game {
             // bullet and camp
             foreach (var bullet in allBullet) {
                 var bulletCamp = bullet.camp;
-                if (CollisionHelper.CheckCollision(bullet, camp)) {
+                //if (CollisionUtil.CheckCollision(bullet, camp)) 
+                {
                     tempLst.Add(camp);
                     break;
                 }
@@ -268,22 +271,23 @@ namespace Lockstep.Game {
             // bullet and map
             foreach (var bullet in allBullet) {
                 var pos = bullet.pos;
-                Vector2 borderDir = CollisionHelper.GetBorderDir(bullet.dir);
-                var borderPos1 = pos + borderDir * bullet.radius;
-                var borderPos2 = pos - borderDir * bullet.radius;
-                tempPoss.Add(pos.Floor());
-                tempPoss.Add(borderPos1.Floor());
-                tempPoss.Add(borderPos2.Floor());
-                foreach (var iPos in tempPoss) {
-                    CheckBulletWithMap(iPos, tempLst, bullet);
-                }
-
-                tempPoss.Clear();
+                //Vector2 borderDir = CollisionUtil.GetBorderDir(bullet.dir);
+                //var borderPos1 = pos + borderDir * bullet.radius;
+                //var borderPos2 = pos - borderDir * bullet.radius;
+                //tempPoss.Add(pos.Floor());
+                //tempPoss.Add(borderPos1.Floor());
+                //tempPoss.Add(borderPos2.Floor());
+                //foreach (var iPos in tempPoss) {
+                //    CheckBulletWithMap(iPos, tempLst, bullet);
+                //}
+//
+                //tempPoss.Clear();
             }
 
             // bullet bound detected 
             foreach (var bullet in allBullet) {
-                if (CollisionHelper.IsOutOfBound(bullet.pos, min, max)) {
+                //if (CollisionUtil.IsOutOfBound(bullet.pos, min, max))
+                {
                     bullet.health = 0;
                 }
             }
@@ -292,7 +296,8 @@ namespace Lockstep.Game {
             var players = allPlayer.ToArray(); //item may modified the allPlayer list so copy it
             foreach (var tank in players) {
                 foreach (var item in allItem) {
-                    if (CollisionHelper.CheckCollision(tank, item)) {
+                   // if (CollisionUtil.CheckCollision(tank, item)) 
+                    {
                         item.TriggelEffect(tank);
                         tempLst.Add(item);
                     }

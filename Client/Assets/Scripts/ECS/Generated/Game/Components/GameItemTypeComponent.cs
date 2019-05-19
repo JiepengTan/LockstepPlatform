@@ -11,14 +11,14 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.ItemTypeComponent itemType { get { return (Lockstep.ECS.Game.ItemTypeComponent)GetComponent(GameComponentsLookup.ItemType); } }
     public bool hasItemType { get { return HasComponent(GameComponentsLookup.ItemType); } }
 
-    public void AddItemType(int newType) {
+    public void AddItemType(Lockstep.ECS.Game.EItemType newType) {
         var index = GameComponentsLookup.ItemType;
         var component = CreateComponent<Lockstep.ECS.Game.ItemTypeComponent>(index);
         component.Type = newType;
         AddComponent(index, component);
     }
 
-    public void ReplaceItemType(int newType) {
+    public void ReplaceItemType(Lockstep.ECS.Game.EItemType newType) {
         var index = GameComponentsLookup.ItemType;
         var component = CreateComponent<Lockstep.ECS.Game.ItemTypeComponent>(index);
         component.Type = newType;

@@ -9,6 +9,6 @@ namespace Lockstep.ECS.Game
     public partial class MoveComponent : IComponent {
         public LFloat moveSpd;
         public LFloat maxMoveSpd;
-        public EDir dir;
+        public bool isChangedDir;
     }
 }

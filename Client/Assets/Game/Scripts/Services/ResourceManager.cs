@@ -13,7 +13,6 @@ namespace Lockstep.Game {
             prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
             prefab.SetActive(false);
             prefab.transform.SetParent(transParent, false);
-            prefab.AddComponent<HashCodeSetter>();
             prefab.AddComponent<PositionListener>();
         }
 

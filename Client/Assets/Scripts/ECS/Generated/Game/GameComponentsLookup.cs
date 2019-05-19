@@ -8,66 +8,81 @@
 //------------------------------------------------------------------------------
 public static class GameComponentsLookup {
 
-    public const int ActorId = 0;
-    public const int Asset = 1;
-    public const int Backup = 2;
-    public const int Collider = 3;
-    public const int Destroyed = 4;
-    public const int Id = 5;
-    public const int ItemType = 6;
-    public const int LocalId = 7;
-    public const int Move = 8;
-    public const int Owner = 9;
-    public const int Position = 10;
-    public const int TagBullet = 11;
-    public const int TagPlayer = 12;
-    public const int TagTank = 13;
-    public const int TankAI = 14;
-    public const int TankSkill = 15;
-    public const int Unit = 16;
-    public const int PositionListener = 17;
+    public const int DirListener = 0;
+    public const int ActorId = 1;
+    public const int AI = 2;
+    public const int Asset = 3;
+    public const int Backup = 4;
+    public const int Bullet = 5;
+    public const int Collider = 6;
+    public const int Destroyed = 7;
+    public const int Dir = 8;
+    public const int Id = 9;
+    public const int ItemType = 10;
+    public const int LocalId = 11;
+    public const int Move = 12;
+    public const int Owner = 13;
+    public const int Position = 14;
+    public const int Skill = 15;
+    public const int TagBullet = 16;
+    public const int TagEnemy = 17;
+    public const int TagPlayer = 18;
+    public const int Tilemap = 19;
+    public const int Unit = 20;
+    public const int UpgradeDestroyed = 21;
+    public const int PositionListener = 22;
 
-    public const int TotalComponents = 18;
+    public const int TotalComponents = 23;
 
     public static readonly string[] componentNames = {
+        "DirListener",
         "ActorId",
+        "AI",
         "Asset",
         "Backup",
+        "Bullet",
         "Collider",
         "Destroyed",
+        "Dir",
         "Id",
         "ItemType",
         "LocalId",
         "Move",
         "Owner",
         "Position",
+        "Skill",
         "TagBullet",
+        "TagEnemy",
         "TagPlayer",
-        "TagTank",
-        "TankAI",
-        "TankSkill",
+        "Tilemap",
         "Unit",
+        "UpgradeDestroyed",
         "PositionListener"
     };
 
     public static readonly System.Type[] componentTypes = {
+        typeof(DirListenerComponent),
         typeof(Lockstep.ECS.Game.ActorIdComponent),
+        typeof(Lockstep.ECS.Game.AIComponent),
         typeof(Lockstep.ECS.Game.AssetComponent),
         typeof(Lockstep.ECS.Game.BackupComponent),
+        typeof(Lockstep.ECS.Game.BulletComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
+        typeof(Lockstep.ECS.Game.DirComponent),
         typeof(Lockstep.ECS.Game.IdComponent),
         typeof(Lockstep.ECS.Game.ItemTypeComponent),
         typeof(Lockstep.ECS.Game.LocalIdComponent),
         typeof(Lockstep.ECS.Game.MoveComponent),
         typeof(Lockstep.ECS.Game.OwnerComponent),
         typeof(Lockstep.ECS.Game.PositionComponent),
+        typeof(Lockstep.ECS.Game.SkillComponent),
         typeof(Lockstep.ECS.Game.TagBulletComponent),
-        typeof(Lockstep.ECS.Game.TagPlayerComponent),
         typeof(Lockstep.ECS.Game.TagEnemyComponent),
-        typeof(Lockstep.ECS.Game.TankAIComponent),
-        typeof(Lockstep.ECS.Game.TankSkillComponent),
+        typeof(Lockstep.ECS.Game.TagPlayerComponent),
+        typeof(Lockstep.ECS.Game.TilemapComponent),
         typeof(Lockstep.ECS.Game.UnitComponent),
+        typeof(Lockstep.ECS.Game.UpgradeDestroyedComponent),
         typeof(PositionListenerComponent)
     };
 }

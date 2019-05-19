@@ -49,6 +49,8 @@
   <ItemGroup>
     <Compile Include="Src\EMsgCS.cs" />
     <Compile Include="Src\Tcp\Msg_GameEvent.cs" />
+    <Compile Include="Src\Tcp\Msg_LoadingProgress.cs" />
+    <Compile Include="Src\Tcp\Msg_PartFinished.cs" />
     <Compile Include="Src\Tcp\Msg_RoomInitMsg.cs" />
     <Compile Include="Src\Tcp\Msg_PlayerReady.cs" />
     <Compile Include="Src\Tcp\Msg_RepInit.cs" />

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Lockstep.Math;
 
 namespace Lockstep.Game {
     [System.Serializable]
@@ -10,24 +11,26 @@ namespace Lockstep.Game {
 
     [System.Serializable]
     public enum EAssetID :ushort{
-        PlayerTank0 = 10,
-        PlayerTank1,
-        PlayerTank2,
-        PlayerTank3,
             
-        EnemyTank0 = 20,
+        EnemyTank0 = 10,
         EnemyTank1,
         EnemyTank2,
         EnemyTank3,
         EnemyTank4,
             
-        Bullet0 = 30,
+        ItemAddLife = 20,
+        ItemBoom,
+        ItemUpgrade,
+        
+        PlayerTank0 = 30,
+        PlayerTank1,
+        PlayerTank2,
+        PlayerTank3,
+        
+        Bullet0 = 40,
         Bullet1,
         Bullet2,
             
-        ItemAddLife = 40,
-        ItemBoom,
-        ItemUpgrade,
     }
     [System.Serializable]
     public class Define {
@@ -61,5 +64,7 @@ namespace Lockstep.Game {
             }
             return null;
         }
+
+        public static LFloat DeltaTime = new LFloat(true,16);
     }
 }

@@ -8,29 +8,29 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    public Lockstep.ECS.Game.TankAIComponent tankAI { get { return (Lockstep.ECS.Game.TankAIComponent)GetComponent(GameComponentsLookup.TankAI); } }
-    public bool hasTankAI { get { return HasComponent(GameComponentsLookup.TankAI); } }
+    public Lockstep.ECS.Game.AIComponent aI { get { return (Lockstep.ECS.Game.AIComponent)GetComponent(GameComponentsLookup.AI); } }
+    public bool hasAI { get { return HasComponent(GameComponentsLookup.AI); } }
 
-    public void AddTankAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
-        var index = GameComponentsLookup.TankAI;
-        var component = CreateComponent<Lockstep.ECS.Game.TankAIComponent>(index);
+    public void AddAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
+        var index = GameComponentsLookup.AI;
+        var component = CreateComponent<Lockstep.ECS.Game.AIComponent>(index);
         component.timer = newTimer;
         component.updateInterval = newUpdateInterval;
         component.fireRate = newFireRate;
         AddComponent(index, component);
     }
 
-    public void ReplaceTankAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
-        var index = GameComponentsLookup.TankAI;
-        var component = CreateComponent<Lockstep.ECS.Game.TankAIComponent>(index);
+    public void ReplaceAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
+        var index = GameComponentsLookup.AI;
+        var component = CreateComponent<Lockstep.ECS.Game.AIComponent>(index);
         component.timer = newTimer;
         component.updateInterval = newUpdateInterval;
         component.fireRate = newFireRate;
         ReplaceComponent(index, component);
     }
 
-    public void RemoveTankAI() {
-        RemoveComponent(GameComponentsLookup.TankAI);
+    public void RemoveAI() {
+        RemoveComponent(GameComponentsLookup.AI);
     }
 }
 
@@ -44,17 +44,17 @@ public partial class GameEntity {
 //------------------------------------------------------------------------------
 public sealed partial class GameMatcher {
 
-    static Entitas.IMatcher<GameEntity> _matcherTankAI;
+    static Entitas.IMatcher<GameEntity> _matcherAI;
 
-    public static Entitas.IMatcher<GameEntity> TankAI {
+    public static Entitas.IMatcher<GameEntity> AI {
         get {
-            if (_matcherTankAI == null) {
-                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.TankAI);
+            if (_matcherAI == null) {
+                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.AI);
                 matcher.componentNames = GameComponentsLookup.componentNames;
-                _matcherTankAI = matcher;
+                _matcherAI = matcher;
             }
 
-            return _matcherTankAI;
+            return _matcherAI;
         }
     }
 }

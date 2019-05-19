@@ -6,7 +6,7 @@ namespace Lockstep.ECS.Game
 {
     [Game]
     [System.Serializable]
-    public class TankAIComponent : IComponent {
+    public class AIComponent : IComponent {
         public LFloat timer;
         public LFloat updateInterval;
         public LFloat fireRate;
