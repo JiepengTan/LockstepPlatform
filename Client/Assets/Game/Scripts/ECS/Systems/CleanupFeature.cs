@@ -1,4 +1,4 @@
-﻿using Lockstep.Game.Features.Cleanup;
+﻿using Lockstep.Game.Systems.Cleanup;
 
 namespace Lockstep.Game.Features
 {
@@ -6,7 +6,7 @@ namespace Lockstep.Game.Features
     {
         public CleanupFeature(Contexts contexts, IServiceContainer services) : base("Cleanup")
         {
-            Add(new RemoveDestroyedEntitiesFromView(contexts, services));
+            Add(new SystemRemoveDestroyedEntitiesFromView(contexts, services));
         }
     }
 }

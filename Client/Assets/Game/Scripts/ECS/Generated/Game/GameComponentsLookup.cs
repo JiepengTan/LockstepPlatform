@@ -17,26 +17,27 @@ public static class GameComponentsLookup {
     public const int Bullet = 6;
     public const int Camp = 7;
     public const int Collider = 8;
-    public const int Destroyed = 9;
-    public const int Dir = 10;
-    public const int DropRate = 11;
-    public const int FireRequest = 12;
-    public const int ItemType = 13;
-    public const int LocalId = 14;
-    public const int Move = 15;
-    public const int MoveRequest = 16;
-    public const int Owner = 17;
-    public const int Position = 18;
-    public const int Skill = 19;
-    public const int TagBullet = 20;
-    public const int TagEnemy = 21;
-    public const int TagTank = 22;
-    public const int Tilemap = 23;
-    public const int Unit = 24;
-    public const int UpgradeDestroyed = 25;
-    public const int PositionListener = 26;
+    public const int DelayCall = 9;
+    public const int Destroyed = 10;
+    public const int Dir = 11;
+    public const int DropRate = 12;
+    public const int FireRequest = 13;
+    public const int ItemType = 14;
+    public const int LocalId = 15;
+    public const int Move = 16;
+    public const int MoveRequest = 17;
+    public const int Owner = 18;
+    public const int Position = 19;
+    public const int Skill = 20;
+    public const int TagBullet = 21;
+    public const int TagEnemy = 22;
+    public const int TagTank = 23;
+    public const int Tilemap = 24;
+    public const int Unit = 25;
+    public const int UpgradeDestroyed = 26;
+    public const int PositionListener = 27;
 
-    public const int TotalComponents = 27;
+    public const int TotalComponents = 28;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -48,6 +49,7 @@ public static class GameComponentsLookup {
         "Bullet",
         "Camp",
         "Collider",
+        "DelayCall",
         "Destroyed",
         "Dir",
         "DropRate",
@@ -78,6 +80,7 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.BulletComponent),
         typeof(Lockstep.ECS.Game.CampComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
+        typeof(Lockstep.ECS.Game.DelayCallComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
         typeof(Lockstep.ECS.Game.DirComponent),
         typeof(Lockstep.ECS.Game.DropRateComponent),
