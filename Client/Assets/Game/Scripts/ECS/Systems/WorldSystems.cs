@@ -23,8 +23,8 @@ namespace Lockstep.Core.Logic.Systems
             //Performance-hit, only use for serious debugging
             //Add(new VerifyNoDuplicateBackups(contexts));              
 
-            Add(new CleanDestroyedEntities(contexts));
-            Add(new RemoveDestroyedInputSystem(contexts));
+            Add(new CleanDestroyedGameEntities(contexts));
+            Add(new CleanDestroyedInputEntities(contexts));
             Add(new IncrementTick(contexts));
         }
     }

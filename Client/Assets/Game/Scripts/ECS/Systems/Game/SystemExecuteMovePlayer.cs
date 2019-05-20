@@ -2,15 +2,13 @@ using Entitas;
 using Lockstep.Math;
 using UnityEngine.SocialPlatforms;
 
-namespace Lockstep.Game.Systems.Game  {
-
-    public class SystemExecuteMovePlayer :BaseSystem, IExecuteSystem {
-        private readonly GameContext _gameContext;
+namespace Lockstep.Game.Systems.Game {
+    public class SystemExecuteMovePlayer : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _moveRequest;
 
-        public SystemExecuteMovePlayer(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
-            _gameContext = contexts.game;
-            _moveRequest = _gameContext.GetGroup(GameMatcher.AllOf(
+        public SystemExecuteMovePlayer(Contexts contexts, IServiceContainer serviceContainer) : base(contexts,
+            serviceContainer){
+            _moveRequest = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.MoveRequest,
                 GameMatcher.Move,
                 GameMatcher.ActorId,
@@ -32,6 +30,7 @@ namespace Lockstep.Game.Systems.Game  {
                         pos.y = CollisionUtil.RoundIfNear(pos.y, TankUtil.SNAP_DIST);
                     }
                 }
+
                 mover.pos = pos;
                 mover.isChangedDir = false;
                 entity.RemoveMoveRequest();

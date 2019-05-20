@@ -7,15 +7,10 @@ using Lockstep.Logging;
 
 namespace Lockstep.Game.Systems.Input {
     public class SystemFireInput :BaseSystem, IExecuteSystem {
-        private readonly GameContext _gameContext;
-        private readonly GameStateContext _gameStateContext;
         readonly IGroup<InputEntity> _moveInput;
 
         public SystemFireInput(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer)
-        {                                             
-            _gameContext = contexts.game;
-            _gameStateContext = contexts.gameState;                        
-
+        {         
             _moveInput = contexts.input.GetGroup(InputMatcher.AllOf(
                 InputMatcher.Fire,
                 InputMatcher.ActorId, 

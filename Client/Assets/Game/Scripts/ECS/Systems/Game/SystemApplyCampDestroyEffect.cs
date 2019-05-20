@@ -7,7 +7,7 @@ namespace Lockstep.Game.Systems.Game {
 
         public SystemApplyCampDestroyEffect(Contexts contexts, IServiceContainer serviceContainer) : base(contexts,
             serviceContainer){
-            _destroyedGroup = _gameContext.GetGroup(GameMatcher.AllOf(
+            _destroyedGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,
                 GameMatcher.Camp));

@@ -3,13 +3,10 @@ using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game  {
     public class SystemSkillUpdate :BaseSystem, IExecuteSystem {
-        private readonly GameContext _gameContext;
         readonly IGroup<GameEntity> _skillGroup;
 
         public SystemSkillUpdate(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
-            _gameContext = contexts.game;
-
-            _skillGroup = _gameContext.GetGroup(GameMatcher.AllOf(
+            _skillGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.Skill));
         }

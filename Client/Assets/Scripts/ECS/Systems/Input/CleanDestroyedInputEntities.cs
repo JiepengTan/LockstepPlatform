@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using Entitas;
 
-public sealed class RemoveDestroyedInputSystem : ICleanupSystem {
+public sealed class CleanDestroyedInputEntities : ICleanupSystem {
 
     readonly IGroup<InputEntity> _group;
     readonly List<InputEntity> _buffer = new List<InputEntity>();
 
-    public RemoveDestroyedInputSystem(Contexts contexts) {
+    public CleanDestroyedInputEntities(Contexts contexts) {
         _group = contexts.input.GetGroup(InputMatcher.Destroyed);
     }
 

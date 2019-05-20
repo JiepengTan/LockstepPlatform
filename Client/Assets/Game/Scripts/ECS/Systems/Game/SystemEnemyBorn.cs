@@ -3,18 +3,16 @@ using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game   {
     public class SystemEnemyBorn : BaseSystem,IExecuteSystem {
-        private readonly GameStateContext _contexts;
         private IGroup<GameEntity> _spawnPoints;
 
         public SystemEnemyBorn(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
-            _contexts = contexts.gameState;
             _spawnPoints = contexts.game.GetGroup(
                 GameMatcher.AllOf(GameMatcher.LocalId, GameMatcher.BornPoint));
             //_viewService = serviceContainer.GetService<IResourceService>();    
         }
 
         public void Execute(){
-            var state = _contexts.enemyCountState;
+            var state = _gameStateContext.enemyCountState;
             if (state.CurEnemyCountInScene < state.MaxEnemyCountInScene && state.RemainCountToBorn > 0) {
                 state.bornTimer += Define.DeltaTime;
                 var allPoints = _spawnPoints.GetEntities();

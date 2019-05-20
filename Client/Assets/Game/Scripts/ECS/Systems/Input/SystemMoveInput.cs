@@ -5,15 +5,10 @@ using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Input {
     public class SystemMoveInput : BaseSystem, IExecuteSystem {
-        private readonly GameContext _gameContext;
         readonly IGroup<InputEntity> _moveInput;
-        private readonly GameStateContext _gameStateContext;
 
         public SystemMoveInput(Contexts contexts, IServiceContainer serviceContainer) :
             base(contexts, serviceContainer){
-            _gameContext = contexts.game;
-            _gameStateContext = contexts.gameState;
-
             _moveInput = contexts.input.GetGroup(InputMatcher.AllOf(
                 InputMatcher.MoveDir,
                 InputMatcher.ActorId,

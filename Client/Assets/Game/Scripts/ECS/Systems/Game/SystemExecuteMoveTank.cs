@@ -4,12 +4,11 @@ using UnityEngine.SocialPlatforms;
 
 namespace Lockstep.Game.Systems.Game   {
     public class SystemExecuteMoveTank :BaseSystem, IExecuteSystem {
-        private readonly GameContext _gameContext;
         readonly IGroup<GameEntity> _moveRequest;
 
         public SystemExecuteMoveTank(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
-            _gameContext = contexts.game;
-            _moveRequest = _gameContext.GetGroup(GameMatcher.AllOf(
+
+            _moveRequest = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.TagTank,
                 GameMatcher.MoveRequest,
