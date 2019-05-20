@@ -74,7 +74,7 @@ namespace Lockstep.Game {
         public void TriggelEffect(Tank unit){
             if (!isEnable) return;
             isEnable = false;
-            AudioManager.PlayMusicGetItem();
+            //AudioManager.PlayMusicGetItem();
             OnTriggerEffect(unit);
         }
 

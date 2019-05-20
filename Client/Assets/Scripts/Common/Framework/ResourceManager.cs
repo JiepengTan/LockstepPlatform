@@ -4,18 +4,19 @@ using Entitas;
 using UnityEngine;
 using Entitas.Unity;
 using Entitas.VisualDebugging.Unity;
-using Lockstep.Game.Interfaces;
 
 namespace Lockstep.Game {
-    public partial class ResourceManager  : SingletonManager<ResourceManager>,IResourceService {
+    public partial class ResourceManager : SingletonManager<ResourceManager>, IViewService {
         private Dictionary<uint, GameObject> _linkedEntities = new Dictionary<uint, GameObject>();
+
         public void LoadView(GameEntity entity, int configId, IContext ctx){
             //TODO: pooling    
             var viewGo = InstantiatePrefab(configId);
             if (viewGo != null) {
                 if (!viewGo.activeSelf) {
-                    viewGo.SetActive(true);    
+                    viewGo.SetActive(true);
                 }
+
                 viewGo.Link(entity, ctx);
                 var componentSetters = viewGo.GetComponents<IComponentSetter>();
                 foreach (var componentSetter in componentSetters) {
@@ -42,6 +43,6 @@ namespace Lockstep.Game {
             _linkedEntities[entityId].Unlink();
             _linkedEntities[entityId].DestroyGameObject();
             _linkedEntities.Remove(entityId);
-        }        
+        }
     }
 }

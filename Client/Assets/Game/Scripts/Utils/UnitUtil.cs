@@ -11,12 +11,22 @@ namespace Lockstep.Game {
             
         }
         ///TODO 创建Enemy 
-        public static GameEntity CreateEnemy(Vector2Int pos, int type){
-            return null;
+        public static void CreateEnemy(Vector2Int pos, int type){
+        }
+        public static void CreatePlayer(byte actorId, int type){
         }
 
         public static void TakeDamage( GameEntity atker, GameEntity suffer){
             
         }
+
+        private static void CreateItem(){ }
+
+        public static void DropItem(LFloat rate){
+            //var x = Random.Range(min.x + 1.0f, max.x - 3.0f);
+            //var y = Random.Range(min.y + 1.0f, max.y - 3.0f);
+            //CreateItem(new Vector2(x, y), Random.Range(0, itemPrefabs.Count));
+        }
+
     }
 }

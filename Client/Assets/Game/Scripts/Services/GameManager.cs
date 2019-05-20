@@ -179,7 +179,7 @@ namespace Lockstep.Game {
                 }
             }
 
-            AudioManager.PlayMusicStart();
+            audioMgr.PlayMusicStart();
             //create camps
             var pos = (campPoss[0] + Vector2.one);
             camp = GameObject.Instantiate(CampPrefab, transform.position + (Vector3) pos, Quaternion.identity,
@@ -243,7 +243,7 @@ namespace Lockstep.Game {
                     //if (tank.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) 
                     {
                         tempLst.Add(bullet);
-                        AudioManager.PlayClipHitTank();
+                        audioMgr.PlayClipHitTank();
                         tank.TakeDamage(bullet);
                     }
                 }
@@ -252,7 +252,7 @@ namespace Lockstep.Game {
                     //if (tank.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) 
                     {
                         tempLst.Add(bullet);
-                        AudioManager.PlayClipHitTank();
+                        audioMgr.PlayClipHitTank();
                         tank.TakeDamage(bullet);
                     }
                 }
@@ -364,50 +364,7 @@ namespace Lockstep.Game {
         }
 
 
-        private void CheckBulletWithMap(Vector2Int iPos, HashSet<Unit> tempLst, Bullet bullet){
-            var id = LevelManager.Instance.Pos2TileID(iPos, false);
-            if (id != 0 && bullet.health > 0) {
-                //collide bullet with world
-                if (id == Global.TileID_Brick) {
-                    if (bullet.camp == Global.PlayerCamp) {
-                        AudioManager.PlayClipHitBrick();
-                    }
 
-                    LevelManager.Instance.ReplaceTile(iPos, id, 0);
-                    bullet.health--;
-                }
-                else if (id == Global.TileID_Iron) {
-                    if (!bullet.canDestoryIron) {
-                        if (bullet.camp == Global.PlayerCamp) {
-                            AudioManager.PlayClipHitIron();
-                        }
-
-                        bullet.health = 0;
-                    }
-                    else {
-                        if (bullet.camp == Global.PlayerCamp) {
-                            AudioManager.PlayClipDestroyIron();
-                        }
-
-                        bullet.health = Mathf.Max(bullet.health - 2, 0);
-                        LevelManager.Instance.ReplaceTile(iPos, id, 0);
-                    }
-                }
-                else if (id == Global.TileID_Grass) {
-                    if (bullet.canDestoryGrass) {
-                        if (bullet.camp == Global.PlayerCamp) {
-                            AudioManager.PlayClipDestroyGrass();
-                        }
-
-                        bullet.health -= 0;
-                        LevelManager.Instance.ReplaceTile(iPos, id, 0);
-                    }
-                }
-                else if (id == Global.TileID_Wall) {
-                    bullet.health = 0;
-                }
-            }
-        }
 
 
         #region GameStatus
@@ -491,7 +448,7 @@ namespace Lockstep.Game {
 
         public IEnumerator YiledCreatePlayer(Vector2 pos, int type, PlayerInfo playerInfo, bool isConsumeLife){
             ShowBornEffect(pos + TankBornOffset);
-            AudioManager.PlayClipBorn();
+            audioMgr.PlayClipBorn();
             yield return new WaitForSeconds(TankBornDelay);
             DirectCreatePlayer(pos, type, playerInfo, isConsumeLife);
         }
@@ -566,7 +523,7 @@ namespace Lockstep.Game {
             if (unit is T) {
                 GameObject.Destroy(unit.gameObject);
                 ShowDiedEffect(unit.pos);
-                AudioManager.PlayClipDied();
+                audioMgr.PlayClipDied();
                 unit.DoDestroy();
                 rUnit = null;
             }
@@ -577,7 +534,7 @@ namespace Lockstep.Game {
                 var tank = unit as Tank;
                 if (tank != null) {
                     ShowDiedEffect(unit.pos);
-                    AudioManager.PlayClipDied();
+                    audioMgr.PlayClipDied();
                     if (tank.camp == Global.EnemyCamp) {
                         var info = GetPlayerFormTank(tank.killer);
                         info.score += (tank.detailType + 1) * 100;

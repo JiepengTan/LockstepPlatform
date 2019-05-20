@@ -4,13 +4,12 @@ using Lockstep.Math;
 using Entitas;
 using Lockstep.Math;
 using Lockstep.Logging;
-using Lockstep.Game.Interfaces;
 
 namespace Lockstep.Game.Systems.Input {
     public class SystemFireInput : IExecuteSystem {
         private readonly GameContext _gameContext;
-        readonly IGroup<InputEntity> _moveInput;
         private readonly GameStateContext _gameStateContext;
+        readonly IGroup<InputEntity> _moveInput;
 
         public SystemFireInput(Contexts contexts, IServiceContainer serviceContainer)
         {                                             

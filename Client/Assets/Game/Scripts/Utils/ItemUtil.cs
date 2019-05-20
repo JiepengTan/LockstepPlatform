@@ -1,10 +1,10 @@
 using Entitas;
+using Lockstep.ECS.Game;
 
 namespace Lockstep.Game {
     public static class ItemUtil {
         //TODO
-        public static void TriggerEffect(GameEntity item, GameEntity player, Contexts contexts){
-            var type = item.itemType;
+        public static void TriggerEffect(EItemType type,ActorEntity actor, GameContext gameContext){
         }
 
         static void OnTriggerBoom(Tank trigger){

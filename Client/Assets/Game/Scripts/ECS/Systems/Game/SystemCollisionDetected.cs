@@ -1,20 +1,19 @@
+using System.Collections.Generic;
 using Entitas;
 using Lockstep.Core.Logic;
 using Lockstep.ECS.Game;
 using Lockstep.Math;
+using UnityEngine;
 
 namespace Lockstep.Game.Systems.Game {
-    public class SystemCollisionDetected : IExecuteSystem {
+    public class SystemCollisionDetected : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> allPlayer;
         readonly IGroup<GameEntity> allBullet;
         readonly IGroup<GameEntity> allEnmey;
         readonly IGroup<GameEntity> allItem;
-        private readonly GameContext _gameContext;
-        private readonly GameStateContext _gameStateContext;
 
-        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer){
-            _gameContext = contexts.game;
-            _gameStateContext = contexts.gameState;
+        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer)
+            : base(contexts, serviceContainer){
             allPlayer = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ActorId));
@@ -41,7 +40,7 @@ namespace Lockstep.Game.Systems.Game {
                 foreach (var tank in allPlayer) {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
-                        AudioManager.PlayClipHitTank();
+                        _audioService.PlayClipHitTank();
                         UnitUtil.TakeDamage(tank, bullet);
                     }
                 }
@@ -49,7 +48,7 @@ namespace Lockstep.Game.Systems.Game {
                 foreach (var tank in allEnmey) {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
-                        AudioManager.PlayClipHitTank();
+                        _audioService.PlayClipHitTank();
                         UnitUtil.TakeDamage(tank, bullet);
                     }
                 }
@@ -60,22 +59,23 @@ namespace Lockstep.Game.Systems.Game {
                 if (bullet.isDestroyed) continue;
                 if (camp.isDestroyed) continue;
                 if (CollisionUtil.CheckCollision(bullet, camp)) {
+                    _audioService.PlayClipHitTank();
                     UnitUtil.TakeDamage(camp, bullet);
-                    break;
                 }
             }
-/*
+
+            HashSet<Vector2Int> tempPoss = new HashSet<Vector2Int>();
             // bullet and map
             foreach (var bullet in allBullet) {
-                var pos = bullet.pos;
-                Vector2 borderDir = CollisionUtil.GetBorderDir(bullet.dir);
-                var borderPos1 = pos + borderDir * bullet.radius;
-                var borderPos2 = pos - borderDir * bullet.radius;
+                var pos = bullet.move.pos;
+                var borderDir = DirUtil.GetBorderDir(bullet.move.dir).ToLVector2();
+                var borderPos1 = pos + borderDir * bullet.collider.radius;
+                var borderPos2 = pos - borderDir * bullet.collider.radius;
                 tempPoss.Add(pos.Floor());
                 tempPoss.Add(borderPos1.Floor());
                 tempPoss.Add(borderPos2.Floor());
                 foreach (var iPos in tempPoss) {
-                    CheckBulletWithMap(iPos, tempLst, bullet);
+                    TilemapUtil.CheckBulletWithMap(iPos, bullet, _audioService);
                 }
 
                 tempPoss.Clear();
@@ -86,48 +86,25 @@ namespace Lockstep.Game.Systems.Game {
             // bullet bound detected 
             foreach (var bullet in allBullet) {
                 if (CollisionUtil.IsOutOfBound(bullet.move.pos, min, max)) {
-                    bullet.unit.health = 0;
+                    bullet.isDestroyed = true;
                 }
             }
 
             // tank  and item
-            var players = allPlayer.ToArray(); //item may modified the allPlayer list so copy it
-            foreach (var tank in players) {
+            //var players = allPlayer.ToArray(); //item may modified the allPlayer list so copy it
+            foreach (var player in allPlayer) {
+                if (player.isDestroyed) continue;
                 foreach (var item in allItem) {
-                    if (CollisionUtil.CheckCollision(tank, item)) {
-                        item.TriggelEffect(tank);
-                        tempLst.Add(item);
+                    if (item.isDestroyed) continue;
+                    if (CollisionUtil.CheckCollision(player, item)) {
+                        item.itemType.killerActorId = player.actorId.value;
+                        item.isDestroyed = true;
                     }
                 }
             }
 
-            foreach (var bullet in allBullet) {
-                if (bullet.health <= 0) {
-                    tempLst.Add(bullet);
-                }
-            }
-
-            foreach (var bullet in allEnmey) {
-                if (bullet.health <= 0) {
-                    tempLst.Add(bullet);
-                }
-            }
-
-            foreach (var bullet in allPlayer) {
-                if (bullet.health <= 0) {
-                    tempLst.Add(bullet);
-                }
-            }
-
             // destroy unit
-            foreach (var unit in tempLst) {
-                GameManager.Instance.DestroyUnit(unit as Bullet, GameManager.Instance.allBullet);
-                GameManager.Instance.DestroyUnit(unit as Tank, GameManager.Instance.allPlayer);
-                GameManager.Instance.DestroyUnit(unit as Tank, GameManager.Instance.allEnmey);
-                GameManager.Instance.DestroyUnit(unit as Item, GameManager.Instance.allItem);
-                GameManager.Instance.DestroyUnit(unit, ref camp);
-            }
-
+/*
             if (allPlayer.Count == 0) {
                 bool hasNoLife = true;
                 foreach (var info in allPlayerInfos) {

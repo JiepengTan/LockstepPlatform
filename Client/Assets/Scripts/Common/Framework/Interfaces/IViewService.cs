@@ -1,8 +1,8 @@
 ﻿using Entitas;
 
-namespace Lockstep.Game.Interfaces
+namespace Lockstep.Game
 {
-    public interface IResourceService : IService
+    public interface IViewService : IService
     {                                                        
         void LoadView(GameEntity entity, int configId, IContext ctx);
 
