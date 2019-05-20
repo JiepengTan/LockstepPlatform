@@ -17,12 +17,12 @@ namespace Lockstep.Game {
 
         public override void DoStart(){
             base.DoStart();
-            var gMgr = GameManager.Instance;
-            gMgr.OnLevelChanged += OnLevelChanged;
-            gMgr.OnScoreChanged += OnScoreChanged;
-            gMgr.OnLifeCountChanged += OnLifeChanged;
-            gMgr.OnEnmeyCountChanged += OnEnmeyCountChanged;
-            gMgr.OnMessage += OnMessageStr;
+            //var gMgr = Game.Instance;
+            //gMgr.OnLevelChanged += OnLevelChanged;
+            //gMgr.OnScoreChanged += OnScoreChanged;
+            //gMgr.OnLifeCountChanged += OnLifeChanged;
+            //gMgr.OnEnmeyCountChanged += OnEnmeyCountChanged;
+            //gMgr.OnMessage += OnMessageStr;
         }
 
         void OnMessageStr(string msg){

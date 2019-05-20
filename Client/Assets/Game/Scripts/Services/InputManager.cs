@@ -38,19 +38,19 @@ namespace Lockstep.Game {
         void ProcessInputs(){
             //player1 input
             var input = inputs[0];
-            input.horizontal = Input.GetKey(KeyCode.D) ? 1 : (Input.GetKey(KeyCode.A) ? -1 : 0);
-            input.vertical = Input.GetKey(KeyCode.W) ? 1 : (Input.GetKey(KeyCode.S) ? -1 : 0);
-            input.firePressed = Input.GetButtonDown("Jump");
-            input.fireHeld = Input.GetButton("Jump");
+            input.horizontal = UnityEngine.Input.GetKey(KeyCode.D) ? 1 : (UnityEngine.Input.GetKey(KeyCode.A) ? -1 : 0);
+            input.vertical = UnityEngine.Input.GetKey(KeyCode.W) ? 1 : (UnityEngine.Input.GetKey(KeyCode.S) ? -1 : 0);
+            input.firePressed = UnityEngine.Input.GetButtonDown("Jump");
+            input.fireHeld = UnityEngine.Input.GetButton("Jump");
             input.horizontal = Mathf.Clamp(input.horizontal, -1f, 1f);
             input.vertical = Mathf.Clamp(input.vertical, -1f, 1f);
 
             //player2 input
             input = inputs[1];
-            input.horizontal = Input.GetKey(KeyCode.RightArrow) ? 1 : (Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
-            input.vertical = Input.GetKey(KeyCode.UpArrow) ? 1 : (Input.GetKey(KeyCode.DownArrow) ? -1 : 0);
-            input.firePressed = Input.GetKey(KeyCode.Keypad0);
-            input.fireHeld = Input.GetKeyDown(KeyCode.Keypad0);
+            input.horizontal = UnityEngine.Input.GetKey(KeyCode.RightArrow) ? 1 : (UnityEngine.Input.GetKey(KeyCode.LeftArrow) ? -1 : 0);
+            input.vertical = UnityEngine.Input.GetKey(KeyCode.UpArrow) ? 1 : (UnityEngine.Input.GetKey(KeyCode.DownArrow) ? -1 : 0);
+            input.firePressed = UnityEngine.Input.GetKey(KeyCode.Keypad0);
+            input.fireHeld = UnityEngine.Input.GetKeyDown(KeyCode.Keypad0);
 
             input.horizontal = Mathf.Clamp(input.horizontal, -1f, 1f);
             input.vertical = Mathf.Clamp(input.vertical, -1f, 1f);
@@ -139,18 +139,18 @@ namespace Lockstep.Game {
         
         public List<InputCmd> GetInputCmds(){
             var cmds = new List<InputCmd>();
-            var isFire = Input.GetKey(KeyCode.Space);
+            var isFire = UnityEngine.Input.GetKey(KeyCode.Space);
             var dir = ECmdType.Up;
-            if (Input.GetKey(KeyCode.W)) {
+            if (UnityEngine.Input.GetKey(KeyCode.W)) {
                 dir = ECmdType.Up;
             }
-            else if (Input.GetKey(KeyCode.D)) {
+            else if (UnityEngine.Input.GetKey(KeyCode.D)) {
                 dir = ECmdType.Right;
             }
-            else if (Input.GetKey(KeyCode.S)) {
+            else if (UnityEngine.Input.GetKey(KeyCode.S)) {
                 dir = ECmdType.Down;
             }
-            else if (Input.GetKey(KeyCode.A)) {
+            else if (UnityEngine.Input.GetKey(KeyCode.A)) {
                 dir = ECmdType.Left;
             }
             else {

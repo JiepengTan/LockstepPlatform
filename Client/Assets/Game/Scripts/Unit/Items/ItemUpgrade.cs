@@ -3,6 +3,6 @@ using UnityEngine;
 
 public class ItemUpgrade : Item {
     protected override void OnTriggerEffect(Tank trigger){
-        GameManager.Instance.Upgrade(trigger, 1);
+        //GameManager.Instance.Upgrade(trigger, 1);
     }
 }

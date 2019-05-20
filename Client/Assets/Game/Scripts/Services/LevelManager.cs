@@ -8,8 +8,13 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
+    public interface IMapService :IService{
+        ushort Pos2TileID(Vector2Int pos, bool isCollider);
+        void ReplaceTile(Vector2Int pos, ushort srcID, ushort dstID);
+    }
+
     [System.Serializable]
-    public class LevelManager : SingletonManager<LevelManager> {
+    public class LevelManager : SingletonManager<LevelManager> ,IMapService{
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -20,7 +25,7 @@ namespace Lockstep.Game {
         private static string TILE_MAP_NAME_GRASS = "Grass";
 
         public static string GetMapPathFull(int level){
-            return Path.Combine(Application.dataPath, "Resources/Maps/" + level + ".bytes");
+            return Path.Combine(Application.dataPath, "Game/Resources/Maps/" + level + ".bytes");
         }
 
 
@@ -32,7 +37,7 @@ namespace Lockstep.Game {
 
         public void LoadGame(int level){
             gridInfo = LoadLevel(level);
-            gameMgr.StartGame(level);
+            _gameMgr.StartGame(level);
         }
 
         public TileBase Pos2Tile(Vector2 pos, bool isCollider){
@@ -59,7 +64,6 @@ namespace Lockstep.Game {
                 if (tile != null)
                     return tile;
             }
-
             return null;
         }
 

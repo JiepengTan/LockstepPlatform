@@ -12,8 +12,7 @@ namespace Lockstep.Game.Systems.Game {
         readonly IGroup<GameEntity> allEnmey;
         readonly IGroup<GameEntity> allItem;
 
-        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer)
-            : base(contexts, serviceContainer){
+        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer){
             allPlayer = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ActorId));
@@ -75,7 +74,7 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Add(borderPos1.Floor());
                 tempPoss.Add(borderPos2.Floor());
                 foreach (var iPos in tempPoss) {
-                    TilemapUtil.CheckBulletWithMap(iPos, bullet, _audioService);
+                    TilemapUtil.CheckBulletWithMap(iPos, bullet, _audioService,_mapService);
                 }
 
                 tempPoss.Clear();

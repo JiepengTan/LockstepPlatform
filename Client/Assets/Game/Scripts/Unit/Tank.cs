@@ -101,9 +101,9 @@ public class Skill {
 
     public void Fire(){
         CDTimer = CD;
-        var bullet = GameManager.Instance.CreateBullet(owner.pos, owner.dir, owner.FireOffsetPos, prefabType);
-        bullet.owner = owner;
-        bullet.camp = owner.camp;
+        //var bullet = GameManager.Instance.CreateBullet(owner.pos, owner.dir, owner.FireOffsetPos, prefabType);
+        //bullet.owner = owner;
+        //bullet.camp = owner.camp;
     }
 
     public void DoUpdate(float deltaTime){

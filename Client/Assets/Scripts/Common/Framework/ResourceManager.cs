@@ -6,7 +6,7 @@ using Entitas.Unity;
 using Entitas.VisualDebugging.Unity;
 
 namespace Lockstep.Game {
-    public partial class ResourceManager : SingletonManager<ResourceManager>, IViewService {
+    public partial class Resource : SingletonManager<Resource>, IViewService {
         private Dictionary<uint, GameObject> _linkedEntities = new Dictionary<uint, GameObject>();
 
         public void LoadView(GameEntity entity, int configId, IContext ctx){

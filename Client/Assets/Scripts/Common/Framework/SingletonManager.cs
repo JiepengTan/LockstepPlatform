@@ -1,7 +1,8 @@
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public partial class ManagerReferenceHolder : MonoBehaviour { }
+    public partial class ReferenceHolder { }
+    public partial class ManagerReferenceHolder:MonoBehaviour { }
 
     public partial class BaseManager : ManagerReferenceHolder, IRevertable, IService {
         public Main main { get; private set; }

@@ -78,7 +78,7 @@ namespace Lockstep.Game {
                 inputs[_localActorId] = input; 
                 localFrame.inputs = inputs;
                 cmdBuffer.PushLocalFrame(localFrame);
-                networkMgr.SendInput(input);
+                _networkMgr.SendInput(input);
 
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
@@ -199,7 +199,7 @@ namespace Lockstep.Game {
                         msg.hashCodes[i] = allHashCodess[i];
                     }
 
-                    networkMgr.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
+                    _networkMgr.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
                     firstHashTick = firstHashTick + (uint) count;
                     allHashCodess.RemoveRange(0, count);
                 }

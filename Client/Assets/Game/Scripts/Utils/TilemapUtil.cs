@@ -9,10 +9,10 @@ namespace Lockstep.Game {
         private const byte IronId = 4;
         private const byte OutOfRangeId = byte.MaxValue;
 
-        public static void CheckBulletWithMap(Vector2Int iPos, GameEntity entity,IAudioService audioService){
+        public static void CheckBulletWithMap(Vector2Int iPos, GameEntity entity,IAudioService audioService,IMapService mapService){
             var unit = entity.unit;
             var bullet = entity.bullet;
-            var id = LevelManager.Instance.Pos2TileID(iPos, false);
+            var id = mapService.Pos2TileID(iPos, false);
             if (id != 0 && unit.health > 0) {
                 //collide bullet with world
                 if (id == Global.TileID_Brick) {
@@ -20,7 +20,7 @@ namespace Lockstep.Game {
                         audioService.PlayClipHitBrick();
                     }
 
-                    LevelManager.Instance.ReplaceTile(iPos, id, 0);
+                    mapService.ReplaceTile(iPos, id, 0);
                     unit.health--;
                 }
                 else if (id == Global.TileID_Iron) {
@@ -37,7 +37,7 @@ namespace Lockstep.Game {
                         }
 
                         unit.health = Mathf.Max(unit.health - 2, 0);
-                        LevelManager.Instance.ReplaceTile(iPos, id, 0);
+                        mapService.ReplaceTile(iPos, id, 0);
                     }
                 }
                 else if (id == Global.TileID_Grass) {
@@ -47,7 +47,7 @@ namespace Lockstep.Game {
                         }
 
                         unit.health -= 0;
-                        LevelManager.Instance.ReplaceTile(iPos, id, 0);
+                        mapService.ReplaceTile(iPos, id, 0);
                     }
                 }
                 else if (id == Global.TileID_Wall) {

@@ -90,9 +90,9 @@ namespace Lockstep.Game {
 
 
         private void Start(){
-            this.AssignReference(this);
+            this.AssignReference(contexts,this,this);
             foreach (var mgr in allMgrs) {
-                mgr.AssignReference(this);
+                mgr.AssignReference(contexts,this,this);
             }
             foreach (var mgr in allMgrs) {
                 mgr.DoAwake(this);

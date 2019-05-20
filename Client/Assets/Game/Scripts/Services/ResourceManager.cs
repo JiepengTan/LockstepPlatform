@@ -9,7 +9,7 @@ namespace Lockstep.Game {
         void ShowBornEffect(LVector2 pos);
     }
 
-    public partial class ResourceManager :IResourceService{
+    public partial class Resource :IResourceService{
         private GameObject prefab;
         private Transform transParent;
 
