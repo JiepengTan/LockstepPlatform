@@ -37,14 +37,14 @@ namespace Lockstep.Game {
             txtRemainEnemy.text = val.ToString();
         }
 
-        void OnScoreChanged(PlayerInfo info){
-            Text txt = info.isMainPlayer ? txtScore : txtScore2;
-            txt.text = info.score.ToString();
-        }
+      // void OnScoreChanged(PlayerInfo info){
+      //     Text txt = info.isMainPlayer ? txtScore : txtScore2;
+      //     txt.text = info.score.ToString();
+      // }
 
-        void OnLifeChanged(PlayerInfo info){
-            Text txt = info.isMainPlayer ? txtRemainLife : txtRemainLife2;
-            txt.text = info.remainPlayerLife.ToString();
-        }
+      // void OnLifeChanged(PlayerInfo info){
+      //     Text txt = info.isMainPlayer ? txtRemainLife : txtRemainLife2;
+      //     txt.text = info.remainPlayerLife.ToString();
+      // }
     }
 }

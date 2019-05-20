@@ -5,16 +5,6 @@ using System.Collections;
 using System;
 using Random = UnityEngine.Random;
 
-[System.Serializable]
-public class PlayerInfo {
-    public bool isMainPlayer = false;
-    public Vector2Int bornPos;
-    public Tank tank;
-    public bool isLiveInLastLevel = true;
-    public int lastLevelTankType;
-    public int score;
-    public int remainPlayerLife;
-}
 
 namespace Lockstep.Game {
     [System.Serializable]
@@ -130,15 +120,6 @@ namespace Lockstep.Game {
 
         private void Clear(){ }
 
-        private void Clear<T>(List<T> lst) where T : Unit{
-            foreach (var unit in lst) {
-                if (unit != null) {
-                    GameObject.Destroy(unit.gameObject);
-                }
-            }
-
-            lst.Clear();
-        }
 
         #endregion
 

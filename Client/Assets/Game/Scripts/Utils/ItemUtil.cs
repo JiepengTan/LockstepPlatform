@@ -7,14 +7,14 @@ namespace Lockstep.Game {
         public static void TriggerEffect(EItemType type,ActorEntity actor, GameContext gameContext){
         }
 
-        static void OnTriggerBoom(Tank trigger){
+        static void OnTriggerBoom( ){
            // foreach (var tank in GameManager.Instance.allEnmey) {
            //     tank.health = 0;
            //     tank.killer = trigger;
            // }
         }
 
-        static void OnTriggerUpgrade(Tank trigger){
+        static void OnTriggerUpgrade(){
             //var level = playerTank.detailType + 1;
             //if (level >= playerPrefabs.Count) {
             //    return false;
@@ -29,7 +29,7 @@ namespace Lockstep.Game {
             
         }
 
-        static void OnTriggerAddLife(Tank trigger){
+        static void OnTriggerAddLife( ){
            // var gameMgr = GameManager.Instance;
            // var info = gameMgr.GetPlayerFormTank(trigger);
            // if (info != null) {
