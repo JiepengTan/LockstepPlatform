@@ -12,18 +12,20 @@ public static class ActorComponentsLookup {
     public const int Backup = 1;
     public const int EntityCount = 2;
     public const int Id = 3;
-    public const int Life = 4;
-    public const int Name = 5;
-    public const int Score = 6;
-    public const int ScoreListener = 7;
+    public const int LocalId = 4;
+    public const int Life = 5;
+    public const int Name = 6;
+    public const int Score = 7;
+    public const int ScoreListener = 8;
 
-    public const int TotalComponents = 8;
+    public const int TotalComponents = 9;
 
     public static readonly string[] componentNames = {
         "LifeListener",
         "Backup",
         "EntityCount",
         "Id",
+        "LocalId",
         "Life",
         "Name",
         "Score",
@@ -35,6 +37,7 @@ public static class ActorComponentsLookup {
         typeof(Lockstep.ECS.Actor.BackupComponent),
         typeof(Lockstep.ECS.Actor.EntityCountComponent),
         typeof(Lockstep.ECS.Actor.IdComponent),
+        typeof(Lockstep.ECS.Actor.LocalIdComponent),
         typeof(Lockstep.ECS.Game.LifeComponent),
         typeof(Lockstep.ECS.Game.NameComponent),
         typeof(Lockstep.ECS.Game.ScoreComponent),

@@ -7,7 +7,7 @@ namespace Lockstep.Game.Features
         public InputFeature(Contexts contexts, IServiceContainer services) : base("Input")
         {
             //TODO: Add InputValidationSystem  
-            Add(new ExecuteSpawnInput(contexts, services));
+            Add(new ExecuteFireInput(contexts, services));
 
             //Performance-hit, only use for serious debugging
             //Add(new VerifySelectionIdExists(contexts));

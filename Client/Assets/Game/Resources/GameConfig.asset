@@ -12,32 +12,65 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b40a25be40b76468ab12973fbc76cb6d, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: 
-  tankPrefabs: []
-  playerPrefabs: []
-  bulletPrefabs: []
-  itemPrefabs: []
+  enemyPrefabs: []
+  playerPrefabs:
+  - unit:
+      name: 
+      camp: 0
+      detailType: 0
+      health: 0
+    move:
+      moveSpd:
+        _val: 0
+      maxMoveSpd:
+        _val: 0
+      isChangedDir: 0
+    asset:
+      assetId: 30
+    skill:
+      cd:
+        _val: 0
+      timer:
+        _val: 0
+      bulletId: 0
+      isNeedFire: 0
+  bulletPrefabs:
+  - unit:
+      name: Bullet
+      camp: 0
+      detailType: 0
+      health: 0
+    move:
+      moveSpd:
+        _val: 10000
+      maxMoveSpd:
+        _val: 10000
+      isChangedDir: 0
+    asset:
+      assetId: 30
+    owner:
+      ownerID: 0
+  itemPrefabs:
+  - type:
+      Type: 0
+    asset:
+      assetId: 30
   CampPrefab:
     unit:
       name: 
       camp: 0
       detailType: 0
       health: 0
-    collider:
-      size:
-        _x: 0
-        _y: 0
-      radius:
-        _val: 0
     move:
       moveSpd:
         _val: 0
       maxMoveSpd:
         _val: 0
-      dir: 0
-    position:
-      value:
-        _x: 0
-        _y: 0
-    asset: 0
+      isChangedDir: 0
+    asset:
+      assetId: 30
   BornPrefab: {fileID: 0}
   DiedPrefab: {fileID: 0}
+  bornEnemyInterval: 3
+  MAX_ENEMY_COUNT: 6
+  initEnemyCount: 20

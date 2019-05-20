@@ -18,22 +18,24 @@ public static class GameComponentsLookup {
     public const int Collider = 7;
     public const int Destroyed = 8;
     public const int Dir = 9;
-    public const int Id = 10;
-    public const int ItemType = 11;
-    public const int LocalId = 12;
-    public const int Move = 13;
-    public const int Owner = 14;
-    public const int Position = 15;
-    public const int Skill = 16;
-    public const int TagBullet = 17;
-    public const int TagEnemy = 18;
-    public const int TagPlayer = 19;
-    public const int Tilemap = 20;
-    public const int Unit = 21;
-    public const int UpgradeDestroyed = 22;
-    public const int PositionListener = 23;
+    public const int FireRequest = 10;
+    public const int Id = 11;
+    public const int ItemType = 12;
+    public const int LocalId = 13;
+    public const int Move = 14;
+    public const int MoveRequest = 15;
+    public const int Owner = 16;
+    public const int Position = 17;
+    public const int Skill = 18;
+    public const int TagBullet = 19;
+    public const int TagEnemy = 20;
+    public const int TagPlayer = 21;
+    public const int Tilemap = 22;
+    public const int Unit = 23;
+    public const int UpgradeDestroyed = 24;
+    public const int PositionListener = 25;
 
-    public const int TotalComponents = 24;
+    public const int TotalComponents = 26;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -46,10 +48,12 @@ public static class GameComponentsLookup {
         "Collider",
         "Destroyed",
         "Dir",
+        "FireRequest",
         "Id",
         "ItemType",
         "LocalId",
         "Move",
+        "MoveRequest",
         "Owner",
         "Position",
         "Skill",
@@ -73,10 +77,12 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
         typeof(Lockstep.ECS.Game.DirComponent),
+        typeof(Lockstep.ECS.Game.FireRequestComponent),
         typeof(Lockstep.ECS.Game.IdComponent),
         typeof(Lockstep.ECS.Game.ItemTypeComponent),
         typeof(Lockstep.ECS.Game.LocalIdComponent),
         typeof(Lockstep.ECS.Game.MoveComponent),
+        typeof(Lockstep.ECS.Game.MoveRequestComponent),
         typeof(Lockstep.ECS.Game.OwnerComponent),
         typeof(Lockstep.ECS.Game.PositionComponent),
         typeof(Lockstep.ECS.Game.SkillComponent),
