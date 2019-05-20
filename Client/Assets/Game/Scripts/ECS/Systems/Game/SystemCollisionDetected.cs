@@ -12,7 +12,7 @@ namespace Lockstep.Game.Systems.Game {
         readonly IGroup<GameEntity> allEnmey;
         readonly IGroup<GameEntity> allItem;
 
-        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             allPlayer = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ActorId));

@@ -2,11 +2,11 @@ using Entitas;
 using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game {
-
     public class SystemApplyCampDestroyEffect : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _destroyedGroup;
 
-        public SystemApplyCampDestroyEffect(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemApplyCampDestroyEffect(Contexts contexts, IServiceContainer serviceContainer) : base(contexts,
+            serviceContainer){
             _destroyedGroup = _gameContext.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,
@@ -14,8 +14,6 @@ namespace Lockstep.Game.Systems.Game {
         }
 
 
-        public void Execute(){
-           
-        }
+        public void Execute(){ }
     }
 }

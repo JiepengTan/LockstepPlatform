@@ -4,10 +4,10 @@ using UnityEngine.SocialPlatforms;
 
 namespace Lockstep.Game.Systems.Game  {
 
-    public class SystemExecuteMoveBullet : IExecuteSystem {
+    public class SystemExecuteMoveBullet :BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _bulletGroup;
 
-        public SystemExecuteMoveBullet(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemExecuteMoveBullet(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             _bulletGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.TagBullet,

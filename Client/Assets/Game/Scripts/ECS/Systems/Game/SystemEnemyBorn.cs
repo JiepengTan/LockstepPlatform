@@ -2,11 +2,11 @@ using Entitas;
 using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game   {
-    public class SystemEnemyBorn : IExecuteSystem {
+    public class SystemEnemyBorn : BaseSystem,IExecuteSystem {
         private readonly GameStateContext _contexts;
         private IGroup<GameEntity> _spawnPoints;
 
-        public SystemEnemyBorn(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemEnemyBorn(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             _contexts = contexts.gameState;
             _spawnPoints = contexts.game.GetGroup(
                 GameMatcher.AllOf(GameMatcher.LocalId, GameMatcher.BornPoint));

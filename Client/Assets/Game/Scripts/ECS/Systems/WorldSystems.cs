@@ -1,6 +1,8 @@
-﻿using Lockstep.Core.Logic.Systems.Actor;
+﻿using Entitas;
+using Lockstep.Core.Logic.Systems.Actor;
 using Lockstep.Core.Logic.Systems.Debugging;      
-using Lockstep.Core.Logic.Systems.GameState;            
+using Lockstep.Core.Logic.Systems.GameState;
+using Lockstep.Game.Systems;
 
 namespace Lockstep.Core.Logic.Systems
 {
@@ -24,6 +26,6 @@ namespace Lockstep.Core.Logic.Systems
             Add(new CleanDestroyedEntities(contexts));
             Add(new RemoveDestroyedInputSystem(contexts));
             Add(new IncrementTick(contexts));
-        }      
+        }
     }
 }

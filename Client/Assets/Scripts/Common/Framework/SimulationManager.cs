@@ -157,9 +157,7 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context, allActors,
-                new InputFeature(_context, Services),
-                new CleanupFeature(_context, Services));
+            _world = new World(_context, allActors,new AllGameSystems(_context, Services));
 
             Running = true;
         }

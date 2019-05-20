@@ -15,9 +15,15 @@ namespace Lockstep.Game {
         protected SimulationManager _simulationMgr;
         protected NetworkManager _networkMgr;
 
+
+        protected Contexts _contexts;
+        protected IServiceContainer _serviceContainer;
+        
         public void AssignReference(Contexts contexts, IServiceContainer serviceContainer,
             IManagerContainer mgrContainer
         ){
+            _contexts = contexts;
+            _serviceContainer = serviceContainer;
             InitReference(mgrContainer);
             InitReference(contexts);
             InitReference(serviceContainer);

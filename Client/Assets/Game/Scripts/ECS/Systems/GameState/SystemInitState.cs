@@ -2,10 +2,10 @@ using Lockstep.ECS.GameState;
 using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.GameState {
-    public class SystemInitState : Entitas.IInitializeSystem {
+    public class SystemInitState :BaseSystem, Entitas.IInitializeSystem {
         private readonly Contexts _contexts;
 
-        public SystemInitState(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemInitState(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             _contexts = contexts;
         }
 

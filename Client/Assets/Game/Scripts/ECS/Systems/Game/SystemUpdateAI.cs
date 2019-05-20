@@ -4,10 +4,10 @@ using Lockstep.Math;
 using UnityEngine;
 
 namespace Lockstep.Game.Systems.Game {
-    public class SystemUpdateAI : IExecuteSystem {
+    public class SystemUpdateAI : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _AIGroup;
 
-        public SystemUpdateAI(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemUpdateAI(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             _AIGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ActorId,

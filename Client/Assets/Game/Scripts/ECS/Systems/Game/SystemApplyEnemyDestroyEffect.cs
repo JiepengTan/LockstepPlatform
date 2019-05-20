@@ -5,7 +5,7 @@ namespace Lockstep.Game.Systems.Game {
     public class SystemApplyEnemyDestroyEffect : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _destroyedGroup;
 
-        public SystemApplyEnemyDestroyEffect(Contexts contexts, IServiceContainer serviceContainer) {
+        public SystemApplyEnemyDestroyEffect(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer) {
             _destroyedGroup = _gameContext.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,

@@ -3,11 +3,11 @@ using Lockstep.Math;
 using UnityEngine.SocialPlatforms;
 
 namespace Lockstep.Game.Systems.Game   {
-    public class SystemExecuteMoveTank : IExecuteSystem {
+    public class SystemExecuteMoveTank :BaseSystem, IExecuteSystem {
         private readonly GameContext _gameContext;
         readonly IGroup<GameEntity> _moveRequest;
 
-        public SystemExecuteMoveTank(Contexts contexts, IServiceContainer serviceContainer){
+        public SystemExecuteMoveTank(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             _gameContext = contexts.game;
             _moveRequest = _gameContext.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,

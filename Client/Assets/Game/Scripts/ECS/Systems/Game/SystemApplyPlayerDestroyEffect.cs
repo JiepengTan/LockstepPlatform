@@ -6,7 +6,7 @@ namespace Lockstep.Game.Systems.Game {
     public class SystemApplyPlayerDestroyEffect : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _destroyedGroup;
 
-        public SystemApplyPlayerDestroyEffect(Contexts contexts, IServiceContainer serviceContainer) {
+        public SystemApplyPlayerDestroyEffect(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer) {
             _destroyedGroup = _gameContext.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,

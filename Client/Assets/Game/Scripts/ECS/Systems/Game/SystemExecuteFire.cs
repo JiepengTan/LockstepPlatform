@@ -2,11 +2,11 @@ using Entitas;
 using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game {
-    public class SystemExecuteFire :IExecuteSystem{
+    public class SystemExecuteFire :BaseSystem,IExecuteSystem{
         private readonly GameContext _gameContext;
         readonly IGroup<GameEntity> _fireReqGroup;
 
-        public SystemExecuteFire(Contexts contexts, IServiceContainer serviceContainer)
+        public SystemExecuteFire(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer)
         {                                             
             _gameContext = contexts.game;                    
 
