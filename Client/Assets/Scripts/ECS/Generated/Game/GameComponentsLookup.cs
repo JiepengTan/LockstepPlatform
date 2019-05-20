@@ -15,11 +15,11 @@ public static class GameComponentsLookup {
     public const int Backup = 4;
     public const int BornPoint = 5;
     public const int Bullet = 6;
-    public const int Collider = 7;
-    public const int Destroyed = 8;
-    public const int Dir = 9;
-    public const int FireRequest = 10;
-    public const int Id = 11;
+    public const int Camp = 7;
+    public const int Collider = 8;
+    public const int Destroyed = 9;
+    public const int Dir = 10;
+    public const int FireRequest = 11;
     public const int ItemType = 12;
     public const int LocalId = 13;
     public const int Move = 14;
@@ -29,7 +29,7 @@ public static class GameComponentsLookup {
     public const int Skill = 18;
     public const int TagBullet = 19;
     public const int TagEnemy = 20;
-    public const int TagPlayer = 21;
+    public const int TagTank = 21;
     public const int Tilemap = 22;
     public const int Unit = 23;
     public const int UpgradeDestroyed = 24;
@@ -45,11 +45,11 @@ public static class GameComponentsLookup {
         "Backup",
         "BornPoint",
         "Bullet",
+        "Camp",
         "Collider",
         "Destroyed",
         "Dir",
         "FireRequest",
-        "Id",
         "ItemType",
         "LocalId",
         "Move",
@@ -59,7 +59,7 @@ public static class GameComponentsLookup {
         "Skill",
         "TagBullet",
         "TagEnemy",
-        "TagPlayer",
+        "TagTank",
         "Tilemap",
         "Unit",
         "UpgradeDestroyed",
@@ -74,11 +74,11 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.BackupComponent),
         typeof(Lockstep.ECS.Game.BornPointComponent),
         typeof(Lockstep.ECS.Game.BulletComponent),
+        typeof(Lockstep.ECS.Game.CampComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),
         typeof(Lockstep.ECS.Game.DirComponent),
         typeof(Lockstep.ECS.Game.FireRequestComponent),
-        typeof(Lockstep.ECS.Game.IdComponent),
         typeof(Lockstep.ECS.Game.ItemTypeComponent),
         typeof(Lockstep.ECS.Game.LocalIdComponent),
         typeof(Lockstep.ECS.Game.MoveComponent),
@@ -88,7 +88,7 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.SkillComponent),
         typeof(Lockstep.ECS.Game.TagBulletComponent),
         typeof(Lockstep.ECS.Game.TagEnemyComponent),
-        typeof(Lockstep.ECS.Game.TagPlayerComponent),
+        typeof(Lockstep.ECS.Game.TagTankComponent),
         typeof(Lockstep.ECS.Game.TilemapComponent),
         typeof(Lockstep.ECS.Game.UnitComponent),
         typeof(Lockstep.ECS.Game.UpgradeDestroyedComponent),

@@ -9,7 +9,8 @@ namespace Lockstep.ECS.Game
     [System.Serializable]
     public class SkillComponent : IComponent {
         public LFloat cd;
-        public LFloat timer;
+        /// <=0 表示cd 冷却
+        public LFloat cdTimer;
         public EAssetID bulletId;
         public bool isNeedFire;
     }

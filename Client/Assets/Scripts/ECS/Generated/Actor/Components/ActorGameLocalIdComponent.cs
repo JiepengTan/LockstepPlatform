@@ -8,25 +8,25 @@
 //------------------------------------------------------------------------------
 public partial class ActorEntity {
 
-    public Lockstep.ECS.Actor.LocalIdComponent localId { get { return (Lockstep.ECS.Actor.LocalIdComponent)GetComponent(ActorComponentsLookup.LocalId); } }
-    public bool hasLocalId { get { return HasComponent(ActorComponentsLookup.LocalId); } }
+    public Lockstep.ECS.Actor.GameLocalIdComponent gameLocalId { get { return (Lockstep.ECS.Actor.GameLocalIdComponent)GetComponent(ActorComponentsLookup.GameLocalId); } }
+    public bool hasGameLocalId { get { return HasComponent(ActorComponentsLookup.GameLocalId); } }
 
-    public void AddLocalId(uint newValue) {
-        var index = ActorComponentsLookup.LocalId;
-        var component = CreateComponent<Lockstep.ECS.Actor.LocalIdComponent>(index);
+    public void AddGameLocalId(uint newValue) {
+        var index = ActorComponentsLookup.GameLocalId;
+        var component = CreateComponent<Lockstep.ECS.Actor.GameLocalIdComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceLocalId(uint newValue) {
-        var index = ActorComponentsLookup.LocalId;
-        var component = CreateComponent<Lockstep.ECS.Actor.LocalIdComponent>(index);
+    public void ReplaceGameLocalId(uint newValue) {
+        var index = ActorComponentsLookup.GameLocalId;
+        var component = CreateComponent<Lockstep.ECS.Actor.GameLocalIdComponent>(index);
         component.value = newValue;
         ReplaceComponent(index, component);
     }
 
-    public void RemoveLocalId() {
-        RemoveComponent(ActorComponentsLookup.LocalId);
+    public void RemoveGameLocalId() {
+        RemoveComponent(ActorComponentsLookup.GameLocalId);
     }
 }
 
@@ -40,17 +40,17 @@ public partial class ActorEntity {
 //------------------------------------------------------------------------------
 public sealed partial class ActorMatcher {
 
-    static Entitas.IMatcher<ActorEntity> _matcherLocalId;
+    static Entitas.IMatcher<ActorEntity> _matcherGameLocalId;
 
-    public static Entitas.IMatcher<ActorEntity> LocalId {
+    public static Entitas.IMatcher<ActorEntity> GameLocalId {
         get {
-            if (_matcherLocalId == null) {
-                var matcher = (Entitas.Matcher<ActorEntity>)Entitas.Matcher<ActorEntity>.AllOf(ActorComponentsLookup.LocalId);
+            if (_matcherGameLocalId == null) {
+                var matcher = (Entitas.Matcher<ActorEntity>)Entitas.Matcher<ActorEntity>.AllOf(ActorComponentsLookup.GameLocalId);
                 matcher.componentNames = ActorComponentsLookup.componentNames;
-                _matcherLocalId = matcher;
+                _matcherGameLocalId = matcher;
             }
 
-            return _matcherLocalId;
+            return _matcherGameLocalId;
         }
     }
 }

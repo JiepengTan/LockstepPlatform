@@ -22,41 +22,7 @@ namespace Lockstep.Game {
         }
         
         public static void DoUpdate(LFloat deltaTime,GameEntity entity){
-            var dir = entity.dir.value;
-            var pos = entity.position.value;
-            var moveSpd = entity.move.moveSpd;
-            var camp = entity.unit.camp;
-            var isChangedDir = entity.move.isChangedDir;
             
-            //can move 判定
-            var dirVec = DirUtil.GetDirVec(dir).ToLVector2();
-            var moveDist = (moveSpd * deltaTime);
-            var fTargetHead = pos + (TANK_HALF_LEN + moveDist) *  dirVec;
-            var fPreviewHead = pos + (TANK_HALF_LEN + FORWARD_HEAD_DIST) *  dirVec;
-
-            LFloat maxMoveDist = moveSpd * deltaTime;
-            var headPos = pos + (TANK_HALF_LEN) *  dirVec;
-            var dist = CollisionUtil.GetMaxMoveDist(dir, headPos, fTargetHead);
-            var dist2 = CollisionUtil.GetMaxMoveDist(dir, headPos, fPreviewHead);
-            maxMoveDist = LMath.Min(maxMoveDist, dist, dist2);
-
-            var diffPos = maxMoveDist *  dirVec;
-            pos = pos + diffPos;
-            if (camp == ECampType.Player) {
-                if (isChangedDir) {
-                    var idir = (int) (dir);
-                    var isUD = idir % 2 == 0;
-                    if (isUD) {
-                        pos.x = CollisionUtil.RoundIfNear(pos.x, SNAP_DIST);
-                    }
-                    else {
-                        pos.y = CollisionUtil.RoundIfNear(pos.y, SNAP_DIST);
-                    }
-                }
-            }
-
-            entity.position.value = pos;
-            entity.move.isChangedDir = false;
         }
     }
 }

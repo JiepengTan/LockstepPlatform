@@ -3,15 +3,15 @@ using Entitas;
 using Lockstep.Logging;
 using Lockstep.Math;
 
-namespace Lockstep.Game.Features.Input
+namespace Lockstep.Game.Systems.Input
 {
-    public class ExecuteMoveInput : IExecuteSystem
+    public class SystemMoveInput : IExecuteSystem
     {                                                           
         private readonly GameContext _gameContext;
         readonly IGroup<InputEntity> _moveInput;
         private readonly GameStateContext _gameStateContext;
 
-        public ExecuteMoveInput(Contexts contexts, IServiceContainer serviceContainer)
+        public SystemMoveInput(Contexts contexts, IServiceContainer serviceContainer)
         {                                             
             _gameContext = contexts.game;
             _gameStateContext = contexts.gameState;                        

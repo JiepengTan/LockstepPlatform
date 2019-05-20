@@ -10,5 +10,7 @@ namespace Lockstep.ECS.Game
         public LFloat moveSpd;
         public LFloat maxMoveSpd;
         public bool isChangedDir;
+        public EDir dir;
+        public LVector2 pos;
     }
 }

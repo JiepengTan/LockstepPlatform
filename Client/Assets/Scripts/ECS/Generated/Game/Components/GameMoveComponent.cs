@@ -11,21 +11,25 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.MoveComponent move { get { return (Lockstep.ECS.Game.MoveComponent)GetComponent(GameComponentsLookup.Move); } }
     public bool hasMove { get { return HasComponent(GameComponentsLookup.Move); } }
 
-    public void AddMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir) {
+    public void AddMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir, Lockstep.Game.EDir newDir, Lockstep.Math.LVector2 newPos) {
         var index = GameComponentsLookup.Move;
         var component = CreateComponent<Lockstep.ECS.Game.MoveComponent>(index);
         component.moveSpd = newMoveSpd;
         component.maxMoveSpd = newMaxMoveSpd;
         component.isChangedDir = newIsChangedDir;
+        component.dir = newDir;
+        component.pos = newPos;
         AddComponent(index, component);
     }
 
-    public void ReplaceMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir) {
+    public void ReplaceMove(Lockstep.Math.LFloat newMoveSpd, Lockstep.Math.LFloat newMaxMoveSpd, bool newIsChangedDir, Lockstep.Game.EDir newDir, Lockstep.Math.LVector2 newPos) {
         var index = GameComponentsLookup.Move;
         var component = CreateComponent<Lockstep.ECS.Game.MoveComponent>(index);
         component.moveSpd = newMoveSpd;
         component.maxMoveSpd = newMaxMoveSpd;
         component.isChangedDir = newIsChangedDir;
+        component.dir = newDir;
+        component.pos = newPos;
         ReplaceComponent(index, component);
     }
 

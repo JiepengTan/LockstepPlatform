@@ -113,6 +113,16 @@ public static class CollisionUtil {
         return false;
     }
 
+  
+    public static bool CheckCollision(GameEntity a, GameEntity b){
+        var cola = a.collider;
+        var colb = b.collider;
+        var posa = a.move.pos;
+        var posb = b.move.pos;
+        return CollisionUtil.CheckCollision(
+            posa, cola.radius, cola.size,
+            posb, colb.radius, colb.size);
+    }
     public static bool CheckCollision(LVector2 posA, LFloat rA, LVector2 sizeA, LVector2 posB, LFloat rB, LVector2 sizeB){
         var diff = posA - posB;
         var allRadius = rA + rB;

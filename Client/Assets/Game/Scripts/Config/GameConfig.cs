@@ -26,13 +26,12 @@ namespace Lockstep.Game {
         public class Tank : Unit {
             public AIComponent ai = new AIComponent();
             public SkillComponent skill = new SkillComponent();
-            public TagEnemyComponent tag = new TagEnemyComponent();
+            public TagTankComponent tag = new TagTankComponent();
         }
 
         [System.Serializable]
         public class Player : Unit {
             public SkillComponent skill = new SkillComponent();
-            public TagPlayerComponent tag = new TagPlayerComponent();
         }
 
         [System.Serializable]

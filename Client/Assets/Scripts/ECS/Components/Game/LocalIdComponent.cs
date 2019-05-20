@@ -3,6 +3,9 @@ using Entitas.CodeGeneration.Attributes;
 
 namespace Lockstep.ECS.Game
 {
+    /// <summary>
+    /// 标志 当前Entity 是当前Tick 中存在 非Backup
+    /// </summary>
     [Game] 
     public sealed class LocalIdComponent : IComponent
     {    

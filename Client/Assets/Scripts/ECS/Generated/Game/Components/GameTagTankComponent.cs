@@ -8,18 +8,18 @@
 //------------------------------------------------------------------------------
 public partial class GameEntity {
 
-    static readonly Lockstep.ECS.Game.TagPlayerComponent tagPlayerComponent = new Lockstep.ECS.Game.TagPlayerComponent();
+    static readonly Lockstep.ECS.Game.TagTankComponent tagTankComponent = new Lockstep.ECS.Game.TagTankComponent();
 
-    public bool isTagPlayer {
-        get { return HasComponent(GameComponentsLookup.TagPlayer); }
+    public bool isTagTank {
+        get { return HasComponent(GameComponentsLookup.TagTank); }
         set {
-            if (value != isTagPlayer) {
-                var index = GameComponentsLookup.TagPlayer;
+            if (value != isTagTank) {
+                var index = GameComponentsLookup.TagTank;
                 if (value) {
                     var componentPool = GetComponentPool(index);
                     var component = componentPool.Count > 0
                             ? componentPool.Pop()
-                            : tagPlayerComponent;
+                            : tagTankComponent;
 
                     AddComponent(index, component);
                 } else {
@@ -40,17 +40,17 @@ public partial class GameEntity {
 //------------------------------------------------------------------------------
 public sealed partial class GameMatcher {
 
-    static Entitas.IMatcher<GameEntity> _matcherTagPlayer;
+    static Entitas.IMatcher<GameEntity> _matcherTagTank;
 
-    public static Entitas.IMatcher<GameEntity> TagPlayer {
+    public static Entitas.IMatcher<GameEntity> TagTank {
         get {
-            if (_matcherTagPlayer == null) {
-                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.TagPlayer);
+            if (_matcherTagTank == null) {
+                var matcher = (Entitas.Matcher<GameEntity>)Entitas.Matcher<GameEntity>.AllOf(GameComponentsLookup.TagTank);
                 matcher.componentNames = GameComponentsLookup.componentNames;
-                _matcherTagPlayer = matcher;
+                _matcherTagTank = matcher;
             }
 
-            return _matcherTagPlayer;
+            return _matcherTagTank;
         }
     }
 }
