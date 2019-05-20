@@ -7,11 +7,11 @@ using Lockstep.Logging;
 
 namespace Lockstep.Game.Systems.Input {
     public class SystemFireInput :BaseSystem, IExecuteSystem {
-        readonly IGroup<InputEntity> _moveInput;
+        readonly IGroup<InputEntity> _inputGroup;
 
         public SystemFireInput(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer)
         {         
-            _moveInput = contexts.input.GetGroup(InputMatcher.AllOf(
+            _inputGroup = contexts.input.GetGroup(InputMatcher.AllOf(
                 InputMatcher.Fire,
                 InputMatcher.ActorId, 
                 InputMatcher.Tick));
@@ -19,7 +19,7 @@ namespace Lockstep.Game.Systems.Input {
 
         public void Execute()
         {
-            foreach (var input in _moveInput.GetEntities().
+            foreach (var input in _inputGroup.GetEntities().
                 Where(entity => entity.tick.value == _gameStateContext.tick.value))
             {
                 var gameEntity = _gameContext.GetEntityWithLocalId(input.actorId.value);

@@ -14,11 +14,11 @@ namespace Editor {
             base.OnInspectorGUI();
             owner = target as MapTool;
             if (GUILayout.Button(" LoadLevel")) {
-                LevelManager.LoadLevel(owner.curLevel);
+                MapManager.Instance.LoadLevel(owner.curLevel);
             }
 
             if (GUILayout.Button("SaveLevel")) {
-                LevelManager.SaveLevel(owner.curLevel);
+                MapManager.SaveLevel(owner.curLevel);
                 EditorUtility.DisplayDialog("提示", "Finish Save","OK");
             }
         }

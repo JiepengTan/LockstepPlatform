@@ -22,6 +22,9 @@ namespace Lockstep.Core.Logic {
             }
 
             _systems = new WorldSystems(Contexts, features);
+        }
+
+        public void StartSimulate(){
             _systems.Initialize();
         }
 

@@ -9,7 +9,7 @@ namespace Lockstep.Game {
         #region Mgrs
         protected AudioManager _audioMgr;
         protected InputManager _inputMgr;
-        protected LevelManager _levelMgr;
+        protected MapManager MapMgr;
         protected GameManager _gameMgr;
         protected UIManager _uiMgr;
         protected SimulationManager _simulationMgr;
@@ -32,7 +32,7 @@ namespace Lockstep.Game {
         public void InitReference(IManagerContainer mgrContainer){
             _audioMgr = mgrContainer.GetManager<AudioManager>();
             _inputMgr = mgrContainer.GetManager<InputManager>();
-            _levelMgr = mgrContainer.GetManager<LevelManager>();
+            MapMgr = mgrContainer.GetManager<MapManager>();
             _gameMgr = mgrContainer.GetManager<GameManager>();
             _uiMgr = mgrContainer.GetManager<UIManager>();
             _simulationMgr = mgrContainer.GetManager<SimulationManager>();
@@ -56,6 +56,7 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
+        protected IConfigService _configService;
         
 
         public void InitReference(IServiceContainer serviceContainer){
@@ -63,6 +64,7 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
+            _configService = serviceContainer.GetService<IConfigService>();
         }
 
         public void InitReference(Contexts contexts){
@@ -72,7 +74,6 @@ namespace Lockstep.Game {
             _gameStateContext = contexts.gameState;
         }
     }
-    
     
     public partial class ReferenceHolder {
         protected InputContext _inputContext;
@@ -84,6 +85,7 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
+        protected IConfigService _configService;
         
 
         public void InitReference(IServiceContainer serviceContainer){
@@ -91,6 +93,8 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
+            _configService = serviceContainer.GetService<IConfigService>();
+            
         }
 
         public void InitReference(Contexts contexts){

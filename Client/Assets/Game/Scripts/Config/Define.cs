@@ -65,6 +65,9 @@ namespace Lockstep.Game {
             return null;
         }
 
+        public const int MAX_PLAYER_COUNT = 2;
+        public static LVector2 TankBornOffset = LVector2.one;
+        public static LFloat TankBornDelay = LFloat.one;
         public static LFloat DeltaTime = new LFloat(true,16);
     }
 }

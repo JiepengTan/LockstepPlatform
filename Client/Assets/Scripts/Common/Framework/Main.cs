@@ -54,6 +54,16 @@ namespace Lockstep.Game {
                     allServices[name] = service;
                 }
             }
+
+            //自身也注册
+            if (interfaceNames.Length > 0) {
+                var name = service.GetType().FullName;
+                if (!allServices.ContainsKey(name))
+                    allServices.Add(name, service);
+                else if (overwriteExisting) {
+                    allServices[name] = service;
+                }
+            }
         }
 
         public T GetService<T>() where T : IService{
@@ -94,6 +104,8 @@ namespace Lockstep.Game {
             foreach (var mgr in allMgrs) {
                 mgr.AssignReference(contexts,this,this);
             }
+            //bind events
+            
             foreach (var mgr in allMgrs) {
                 mgr.DoAwake(this);
             }

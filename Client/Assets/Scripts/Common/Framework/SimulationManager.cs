@@ -48,7 +48,7 @@ namespace Lockstep.Game {
 
         public void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
-            StartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+            OnStartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
         }
 
         public override void DoAwake(IServiceContainer services){
@@ -145,7 +145,12 @@ namespace Lockstep.Game {
             Running = false;
         }
 
-        public void StartGame(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
+        public void OnStartGame(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
+            //初始化全局配置
+            _configService.roomId = roomId;
+            _configService.allActorIds = allActors;
+            _configService.actorCount = allActors.Length;
+            
             MainActorID = localActorId;
             _localActorId = localActorId;
             _allActors = allActors;
@@ -158,7 +163,14 @@ namespace Lockstep.Game {
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
             _world = new World(_context, allActors,new GameLogicSystems(_context, Services));
+        }
 
+        public void OnEvent_AllPlayerFinishedLoad(object param){
+            OnLoadFinished();
+        }
+
+        public void OnLoadFinished(){
+            _world.StartSimulate();
             Running = true;
         }
 

@@ -98,7 +98,7 @@ public static class CollisionUtil {
 
     public static bool HasCollider(LVector2 pos){
         var iPos = pos.Floor();
-        var id = LevelManager.Instance.Pos2TileID(iPos, true);
+        var id = MapManager.Instance.Pos2TileID(iPos, true);
         return id != 0;
     }
 

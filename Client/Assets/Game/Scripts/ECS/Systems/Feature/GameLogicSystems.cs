@@ -5,9 +5,13 @@ using Lockstep.Game.Systems;
 
 sealed class GameLogicSystems : Feature {
     public GameLogicSystems(Contexts contexts, IServiceContainer services) : base("AllGameSystems"){
+        //Init
         Add(new GameStateFeature(contexts, services));
+        //Input
         Add(new InputFeature(contexts, services));
+        //Logic
         Add(new GameFeature(contexts, services));
+        //Clean
         Add(new CleanupFeature(contexts, services));
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Lockstep.Core;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
@@ -8,9 +9,15 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
+    public interface IMapManager {
+        TileInfos GetMapInfo(string name);
+        void LoadLevel(int level);
+        Vector2Int mapMin{get;}
+        Vector2Int mapMax{get;}
+    }
 
     [System.Serializable]
-    public class LevelManager : SingletonManager<LevelManager> ,IMapService{
+    public class MapManager : SingletonManager<MapManager>,IMapManager, IMapService {
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -29,11 +36,69 @@ namespace Lockstep.Game {
             return gridInfo.GetMapInfo(name);
         }
 
-        public GridInfo gridInfo;
+        public GridInfo gridInfo{get;private set;}
+        public Vector2Int mapMin{get;private set;}
+        public Vector2Int mapMax{get;private set;}
+        public Grid grid{get;private set;}
+        
+        public List<Vector2Int> enemyBornPoints{get;private set;}
+        public List<Vector2Int> playerBornPoss {get;private set;}
 
-        public void LoadGame(int level){
-            gridInfo = LoadLevel(level);
-            _gameMgr.StartGame(level);
+        public override void DoStart(){
+            base.DoStart();
+            grid = GameObject.FindObjectOfType<Grid>();
+        }
+
+        public void LoadLevel(int level){
+            if (grid == null) {
+                grid = GameObject.FindObjectOfType<Grid>();
+            }
+            gridInfo = MapManager.LoadMap(grid,level);
+            var min = new Vector2Int(int.MaxValue, int.MaxValue);
+            var max = new Vector2Int(int.MinValue, int.MinValue);
+            foreach (var tempInfo in gridInfo.tileMaps) {
+                var tileMap = tempInfo.tilemap;
+                var mapMin = tileMap.cellBounds.min;
+                if (mapMin.x < min.x) min.x = mapMin.x;
+                if (mapMin.y < min.y) min.y = mapMin.y;
+                var mapMax = tileMap.cellBounds.max;
+                if (mapMax.x > max.x) max.x = mapMax.x;
+                if (mapMax.y > max.y) max.y = mapMax.y;
+            }
+            mapMin = min;
+            mapMax = max;
+            
+            var tileInfo = GetMapInfo(Global.TileMapName_BornPos);
+            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
+            Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
+            enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosEnemy));
+            playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosHero));
+
+            if (_configService != null) {
+                _configService.mapMin = mapMin;
+                _configService.mapMax = mapMax;
+                _configService.enemyBornPoints = enemyBornPoints;
+                _configService.playerBornPoss = playerBornPoss;
+            }
+           
+                
+            Debug.Assert(_configService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
+                "Map should has 2 player born pos");
+
+
+            EventHelper.Trigger(EEvent.LoadMapDone,level);
+            //test
+            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad,null);
+        }
+
+        void OnEvent_OnRoomGameStart(object param){
+            LoadLevel(0);
+        }
+        
+
+        public void OnEvent_BeforeGameStart(){
+            
+            LoadLevel(0);
         }
 
         public TileBase Pos2Tile(Vector2 pos, bool isCollider){
@@ -60,6 +125,7 @@ namespace Lockstep.Game {
                 if (tile != null)
                     return tile;
             }
+
             return null;
         }
 
@@ -76,9 +142,9 @@ namespace Lockstep.Game {
             return 0;
         }
 
-        public static GridInfo LoadLevel(int level){
+        public static GridInfo LoadMap(Grid grid,int level){
             CheckLoadTileIDMap();
-            var path = LevelManager.GetMapPathFull(level);
+            var path = MapManager.GetMapPathFull(level);
             if (!File.Exists(path)) {
                 Debug.LogError("Have no map file" + level);
                 return null;
@@ -87,9 +153,8 @@ namespace Lockstep.Game {
             var bytes = File.ReadAllBytes(path);
             var reader = new BinaryReader(new MemoryStream(bytes));
             var info = TileMapSerializer.ReadGrid(reader);
-            var go = GameObject.FindObjectOfType<Grid>();
-            if (go != null) {
-                var maps = go.GetComponentsInChildren<Tilemap>();
+            if (grid != null) {
+                var maps = grid.GetComponentsInChildren<Tilemap>();
                 for (int i = 0; i < maps.Length; i++) {
                     var tileMap = maps[i];
                     var tileMapInfo = info.GetMapInfo(tileMap.name);
@@ -115,20 +180,6 @@ namespace Lockstep.Game {
                 }
             }
 
-            var min = new Vector2Int(int.MaxValue, int.MaxValue);
-            var max = new Vector2Int(int.MinValue, int.MinValue);
-            foreach (var tempInfo in info.tileMaps) {
-                var tileMap = tempInfo.tilemap;
-                var mapMin = tileMap.cellBounds.min;
-                if (mapMin.x < min.x) min.x = mapMin.x;
-                if (mapMin.y < min.y) min.y = mapMin.y;
-                var mapMax = tileMap.cellBounds.max;
-                if (mapMax.x > max.x) max.x = mapMax.x;
-                if (mapMax.y > max.y) max.y = mapMax.y;
-            }
-
-            GameManager.Instance.min = min;
-            GameManager.Instance.max = max;
             return info;
         }
 
@@ -139,9 +190,9 @@ namespace Lockstep.Game {
                 return;
             var grid = go.GetComponent<Grid>();
             if (grid == null) return;
-            var bytes = TileMapSerializer.SerializeGrid(grid, LevelManager.Tile2ID);
+            var bytes = TileMapSerializer.SerializeGrid(grid, MapManager.Tile2ID);
             if (bytes != null) {
-                File.WriteAllBytes(LevelManager.GetMapPathFull(level), bytes);
+                File.WriteAllBytes(MapManager.GetMapPathFull(level), bytes);
             }
 #if UNITY_EDITOR
             if (!Application.isPlaying) {
