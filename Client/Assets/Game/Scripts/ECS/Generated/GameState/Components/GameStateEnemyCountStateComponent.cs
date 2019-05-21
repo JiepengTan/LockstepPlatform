@@ -12,22 +12,22 @@ public partial class GameStateContext {
     public Lockstep.ECS.GameState.EnemyCountStateComponent enemyCountState { get { return enemyCountStateEntity.enemyCountState; } }
     public bool hasEnemyCountState { get { return enemyCountStateEntity != null; } }
 
-    public GameStateEntity SetEnemyCountState(int newCurEnemyCountInScene, int newMaxEnemyCountInScene, int newRemainCountToBorn, int newTotalEnemyCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
+    public GameStateEntity SetEnemyCountState(int newMaxEnemyCountInScene, int newTotalEnemyCountToBorn, int newCurEnemyCountInScene, int newRemainCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
         if (hasEnemyCountState) {
             throw new Entitas.EntitasException("Could not set EnemyCountState!\n" + this + " already has an entity with Lockstep.ECS.GameState.EnemyCountStateComponent!",
                 "You should check if the context already has a enemyCountStateEntity before setting it or use context.ReplaceEnemyCountState().");
         }
         var entity = CreateEntity();
-        entity.AddEnemyCountState(newCurEnemyCountInScene, newMaxEnemyCountInScene, newRemainCountToBorn, newTotalEnemyCountToBorn, newBornTimer, newBornInterval);
+        entity.AddEnemyCountState(newMaxEnemyCountInScene, newTotalEnemyCountToBorn, newCurEnemyCountInScene, newRemainCountToBorn, newBornTimer, newBornInterval);
         return entity;
     }
 
-    public void ReplaceEnemyCountState(int newCurEnemyCountInScene, int newMaxEnemyCountInScene, int newRemainCountToBorn, int newTotalEnemyCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
+    public void ReplaceEnemyCountState(int newMaxEnemyCountInScene, int newTotalEnemyCountToBorn, int newCurEnemyCountInScene, int newRemainCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
         var entity = enemyCountStateEntity;
         if (entity == null) {
-            entity = SetEnemyCountState(newCurEnemyCountInScene, newMaxEnemyCountInScene, newRemainCountToBorn, newTotalEnemyCountToBorn, newBornTimer, newBornInterval);
+            entity = SetEnemyCountState(newMaxEnemyCountInScene, newTotalEnemyCountToBorn, newCurEnemyCountInScene, newRemainCountToBorn, newBornTimer, newBornInterval);
         } else {
-            entity.ReplaceEnemyCountState(newCurEnemyCountInScene, newMaxEnemyCountInScene, newRemainCountToBorn, newTotalEnemyCountToBorn, newBornTimer, newBornInterval);
+            entity.ReplaceEnemyCountState(newMaxEnemyCountInScene, newTotalEnemyCountToBorn, newCurEnemyCountInScene, newRemainCountToBorn, newBornTimer, newBornInterval);
         }
     }
 
@@ -49,25 +49,25 @@ public partial class GameStateEntity {
     public Lockstep.ECS.GameState.EnemyCountStateComponent enemyCountState { get { return (Lockstep.ECS.GameState.EnemyCountStateComponent)GetComponent(GameStateComponentsLookup.EnemyCountState); } }
     public bool hasEnemyCountState { get { return HasComponent(GameStateComponentsLookup.EnemyCountState); } }
 
-    public void AddEnemyCountState(int newCurEnemyCountInScene, int newMaxEnemyCountInScene, int newRemainCountToBorn, int newTotalEnemyCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
+    public void AddEnemyCountState(int newMaxEnemyCountInScene, int newTotalEnemyCountToBorn, int newCurEnemyCountInScene, int newRemainCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
         var index = GameStateComponentsLookup.EnemyCountState;
         var component = CreateComponent<Lockstep.ECS.GameState.EnemyCountStateComponent>(index);
-        component.CurEnemyCountInScene = newCurEnemyCountInScene;
         component.MaxEnemyCountInScene = newMaxEnemyCountInScene;
-        component.RemainCountToBorn = newRemainCountToBorn;
         component.TotalEnemyCountToBorn = newTotalEnemyCountToBorn;
+        component.CurEnemyCountInScene = newCurEnemyCountInScene;
+        component.RemainCountToBorn = newRemainCountToBorn;
         component.bornTimer = newBornTimer;
         component.bornInterval = newBornInterval;
         AddComponent(index, component);
     }
 
-    public void ReplaceEnemyCountState(int newCurEnemyCountInScene, int newMaxEnemyCountInScene, int newRemainCountToBorn, int newTotalEnemyCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
+    public void ReplaceEnemyCountState(int newMaxEnemyCountInScene, int newTotalEnemyCountToBorn, int newCurEnemyCountInScene, int newRemainCountToBorn, Lockstep.Math.LFloat newBornTimer, Lockstep.Math.LFloat newBornInterval) {
         var index = GameStateComponentsLookup.EnemyCountState;
         var component = CreateComponent<Lockstep.ECS.GameState.EnemyCountStateComponent>(index);
-        component.CurEnemyCountInScene = newCurEnemyCountInScene;
         component.MaxEnemyCountInScene = newMaxEnemyCountInScene;
-        component.RemainCountToBorn = newRemainCountToBorn;
         component.TotalEnemyCountToBorn = newTotalEnemyCountToBorn;
+        component.CurEnemyCountInScene = newCurEnemyCountInScene;
+        component.RemainCountToBorn = newRemainCountToBorn;
         component.bornTimer = newBornTimer;
         component.bornInterval = newBornInterval;
         ReplaceComponent(index, component);

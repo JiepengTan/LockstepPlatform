@@ -7,10 +7,13 @@ namespace Lockstep.ECS.GameState
     [GameState]
     [Unique]
     public class EnemyCountStateComponent : IComponent {
-        public int CurEnemyCountInScene;
+        //const in the game
         public int MaxEnemyCountInScene;
-        public int RemainCountToBorn;
         public int TotalEnemyCountToBorn;
+        
+        //changed in the game
+        public int CurEnemyCountInScene;
+        public int RemainCountToBorn;
         public LFloat bornTimer;
         public LFloat bornInterval;
     }

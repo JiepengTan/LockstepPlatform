@@ -126,7 +126,7 @@ namespace Lockstep.Game {
             }
 
             Instance = this;
-            contexts = new Contexts();
+            contexts = Contexts.sharedInstance;
             Log.OnMessage += OnLog;
             DoAwake();
             RegisterService(this);

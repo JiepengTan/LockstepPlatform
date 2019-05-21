@@ -30,9 +30,9 @@ namespace Lockstep.Game.Systems.GameState {
             //reset status
             _gameStateContext.ReplaceGameResult(EGameResult.Playing);
             _gameStateContext.ReplaceEnemyCountState(
-                0,
                 6,
                 20,
+                0,
                 20,
                 LFloat.zero,
                 new LFloat(3));

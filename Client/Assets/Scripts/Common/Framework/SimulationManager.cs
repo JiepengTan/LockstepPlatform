@@ -41,13 +41,14 @@ namespace Lockstep.Game {
         void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
             OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
-            EventHelper.Trigger(EEvent.OnSimulationInitFinished,null);
+            EventHelper.Trigger(EEvent.OnSimulationInited,null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
             Debug.Log($"OnEvent_OnAllPlayerFinishedLoad");
             Running = true;
             _world.StartSimulate();
+            EventHelper.Trigger(EEvent.OnSimulationStart,null);
         }
 
         public void OnEvent_AllPlayerFinishedLoad(object param){

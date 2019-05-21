@@ -110,7 +110,9 @@ namespace Lockstep.Game {
             _audioService.PlayClipBorn();
             EDir dir = EDir.Down;
             DelayCall(Define.TankBornDelay,
-                () => { CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy); });
+                () => {
+                    CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
+                });
         }
 
         public void CreatePlayer(byte actorId, int type){
@@ -169,8 +171,8 @@ namespace Lockstep.Game {
 
         #endregion
 
-
-        private bool IsGameOver;
+        public bool IsPlaying = false;
+        public bool IsGameOver;
 
         public override void DoUpdate(float deltaTime){
             if (IsGameOver) return;
@@ -185,6 +187,9 @@ namespace Lockstep.Game {
             EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
         }
 
+        public void OnEvent_OnSimulationStart(object param){
+            IsPlaying = true;
+        }
         #endregion
 
 

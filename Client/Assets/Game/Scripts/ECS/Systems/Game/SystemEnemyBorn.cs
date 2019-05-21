@@ -14,6 +14,8 @@ namespace Lockstep.Game.Systems.Game {
                 state.bornTimer -= Define.DeltaTime;
                 if (state.bornTimer < 0) {
                     state.bornTimer = state.bornInterval;
+                    state.RemainCountToBorn--;
+                    state.CurEnemyCountInScene++;
                     //born enemy
                     var allPoints = _globalStateService.enemyBornPoints;
                     var bornPointCount = allPoints.Count;

@@ -3,7 +3,7 @@ using Lockstep.Game;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIHelper : MonoBehaviour {
+public class UIECSDebugInfo : MonoBehaviour {
     public Text HashCodeText;
     public Text AgentCountText;
 
@@ -16,9 +16,9 @@ public class UIHelper : MonoBehaviour {
     int AgentCount => Main.Instance.contexts.game.count;
 
     void Update(){
-        var instance = Main.Instance;
+        if (!GameManager.Instance.IsPlaying) return;
         ConnectedText.text = $"IsConn: {IsConnected}";
-        if (instance != null && IsConnected) {
+        if ( IsConnected) {
             HashCodeText.text = "HashCode: " + HashCode;
             CurrentTickText.text = "CurrentTick: " + CurTick;
             AgentCountText.text = "Agents: " + AgentCount;
