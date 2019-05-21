@@ -13,7 +13,7 @@ namespace Lockstep.Game {
         public static Dictionary<Type, int> type2Idx = new Dictionary<Type, int>();
         public static Dictionary<string, int> name2Idx;
 
-        public virtual void CopyTo(Entity entity){
+        public virtual void SetComponentsTo(Entity targetEntity){
             var allMemberInfos = this.GetType().GetPublicMemberInfos();
             foreach (var memberInfo in allMemberInfos) {
                 int index = 0;
@@ -43,14 +43,14 @@ namespace Lockstep.Game {
                 }
 
                 IComponent srcComp = memberInfo.GetValue(this) as IComponent;
-                if (entity.HasComponent(index)) {
-                    IComponent dstComp = entity.GetComponent(index);
+                if (targetEntity.HasComponent(index)) {
+                    IComponent dstComp = targetEntity.GetComponent(index);
                     srcComp.CopyPublicMemberValues((object) dstComp);
                 }
                 else {
-                    IComponent dstComp = entity.CreateComponent(index, srcComp.GetType());
+                    IComponent dstComp = targetEntity.CreateComponent(index, srcComp.GetType());
                     srcComp.CopyPublicMemberValues((object) dstComp);
-                    entity.AddComponent(index, dstComp);
+                    targetEntity.AddComponent(index, dstComp);
                 }
             }
         }

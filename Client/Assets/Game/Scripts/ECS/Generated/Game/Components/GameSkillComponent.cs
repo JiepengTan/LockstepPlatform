@@ -11,7 +11,7 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.SkillComponent skill { get { return (Lockstep.ECS.Game.SkillComponent)GetComponent(GameComponentsLookup.Skill); } }
     public bool hasSkill { get { return HasComponent(GameComponentsLookup.Skill); } }
 
-    public void AddSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, Lockstep.Game.EAssetID newBulletId, bool newIsNeedFire) {
+    public void AddSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, int newBulletId, bool newIsNeedFire) {
         var index = GameComponentsLookup.Skill;
         var component = CreateComponent<Lockstep.ECS.Game.SkillComponent>(index);
         component.cd = newCd;
@@ -21,7 +21,7 @@ public partial class GameEntity {
         AddComponent(index, component);
     }
 
-    public void ReplaceSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, Lockstep.Game.EAssetID newBulletId, bool newIsNeedFire) {
+    public void ReplaceSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, int newBulletId, bool newIsNeedFire) {
         var index = GameComponentsLookup.Skill;
         var component = CreateComponent<Lockstep.ECS.Game.SkillComponent>(index);
         component.cd = newCd;

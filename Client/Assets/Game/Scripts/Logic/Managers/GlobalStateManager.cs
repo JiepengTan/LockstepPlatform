@@ -4,7 +4,7 @@ using NaughtyAttributes;
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public class GameStateManager : SingletonManager<GameStateManager>, IGameStateService {
+    public class GlobalStateManager : SingletonManager<GlobalStateManager>, IGlobalStateService {
         //room info
         [SerializeField] private byte[] _allActorIds;
 
@@ -21,16 +21,16 @@ namespace Lockstep.Game {
         //map info
         [ShowNativeProperty] public Vector2Int mapMin { get; set; }
         [ShowNativeProperty] public Vector2Int mapMax { get; set; }
-        [SerializeField] private List<Vector2Int> _enemyBornPoints;
+        [SerializeField] private List<LVector2> _enemyBornPoints;
 
-        public List<Vector2Int> enemyBornPoints {
+        public List<LVector2> enemyBornPoints {
             get { return _enemyBornPoints; }
             set { _enemyBornPoints = value; }
         }
 
-        [SerializeField] private List<Vector2Int> _playerBornPoss;
+        [SerializeField] private List<LVector2> _playerBornPoss;
 
-        public List<Vector2Int> playerBornPoss {
+        public List<LVector2> playerBornPoss {
             get { return _playerBornPoss; }
             set { _playerBornPoss = value; }
         }

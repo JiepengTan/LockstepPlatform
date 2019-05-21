@@ -10,5 +10,6 @@ namespace Lockstep.ECS.Game
         
         public bool canDestoryIron = false;
         public bool canDestoryGrass = false;
+        public uint ownerLocalId;
     }
 }

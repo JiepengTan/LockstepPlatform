@@ -40,7 +40,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
                         _audioService.PlayClipHitTank();
-                        UnitUtil.TakeDamage(tank, bullet);
+                        _unitService.TakeDamage(tank, bullet);
                     }
                 }
 
@@ -48,7 +48,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
                         _audioService.PlayClipHitTank();
-                        UnitUtil.TakeDamage(tank, bullet);
+                        _unitService.TakeDamage(tank, bullet);
                     }
                 }
             }
@@ -59,7 +59,7 @@ namespace Lockstep.Game.Systems.Game {
                 if (camp.isDestroyed) continue;
                 if (CollisionUtil.CheckCollision(bullet, camp)) {
                     _audioService.PlayClipHitTank();
-                    UnitUtil.TakeDamage(camp, bullet);
+                    _unitService.TakeDamage(camp, bullet);
                 }
             }
 
@@ -80,8 +80,8 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Clear();
             }
 
-            var min = _gameStateService.mapMin.ToLVector2();
-            var max = _gameStateService.mapMax.ToLVector2();
+            var min = _globalStateService.mapMin.ToLVector2();
+            var max = _globalStateService.mapMax.ToLVector2();
             // bullet bound detected 
             foreach (var bullet in allBullet) {
                 if (CollisionUtil.IsOutOfBound(bullet.move.pos, min, max)) {

@@ -11,25 +11,27 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.UnitComponent unit { get { return (Lockstep.ECS.Game.UnitComponent)GetComponent(GameComponentsLookup.Unit); } }
     public bool hasUnit { get { return HasComponent(GameComponentsLookup.Unit); } }
 
-    public void AddUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, byte newKillerActorId) {
+    public void AddUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, int newDamage, uint newKillerLocalId) {
         var index = GameComponentsLookup.Unit;
         var component = CreateComponent<Lockstep.ECS.Game.UnitComponent>(index);
         component.name = newName;
         component.camp = newCamp;
         component.detailType = newDetailType;
         component.health = newHealth;
-        component.killerActorId = newKillerActorId;
+        component.damage = newDamage;
+        component.killerLocalId = newKillerLocalId;
         AddComponent(index, component);
     }
 
-    public void ReplaceUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, byte newKillerActorId) {
+    public void ReplaceUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, int newDamage, uint newKillerLocalId) {
         var index = GameComponentsLookup.Unit;
         var component = CreateComponent<Lockstep.ECS.Game.UnitComponent>(index);
         component.name = newName;
         component.camp = newCamp;
         component.detailType = newDetailType;
         component.health = newHealth;
-        component.killerActorId = newKillerActorId;
+        component.damage = newDamage;
+        component.killerLocalId = newKillerLocalId;
         ReplaceComponent(index, component);
     }
 

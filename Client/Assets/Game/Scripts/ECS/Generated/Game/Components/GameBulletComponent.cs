@@ -11,19 +11,21 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.BulletComponent bullet { get { return (Lockstep.ECS.Game.BulletComponent)GetComponent(GameComponentsLookup.Bullet); } }
     public bool hasBullet { get { return HasComponent(GameComponentsLookup.Bullet); } }
 
-    public void AddBullet(bool newCanDestoryIron, bool newCanDestoryGrass) {
+    public void AddBullet(bool newCanDestoryIron, bool newCanDestoryGrass, uint newOwnerLocalId) {
         var index = GameComponentsLookup.Bullet;
         var component = CreateComponent<Lockstep.ECS.Game.BulletComponent>(index);
         component.canDestoryIron = newCanDestoryIron;
         component.canDestoryGrass = newCanDestoryGrass;
+        component.ownerLocalId = newOwnerLocalId;
         AddComponent(index, component);
     }
 
-    public void ReplaceBullet(bool newCanDestoryIron, bool newCanDestoryGrass) {
+    public void ReplaceBullet(bool newCanDestoryIron, bool newCanDestoryGrass, uint newOwnerLocalId) {
         var index = GameComponentsLookup.Bullet;
         var component = CreateComponent<Lockstep.ECS.Game.BulletComponent>(index);
         component.canDestoryIron = newCanDestoryIron;
         component.canDestoryGrass = newCanDestoryGrass;
+        component.ownerLocalId = newOwnerLocalId;
         ReplaceComponent(index, component);
     }
 

@@ -11,7 +11,7 @@ namespace Lockstep.ECS.Game
         public LFloat cd;
         /// <=0 表示cd 冷却
         public LFloat cdTimer;
-        public EAssetID bulletId;
+        public int bulletId;
         public bool isNeedFire;
     }
 }

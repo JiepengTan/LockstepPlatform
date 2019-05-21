@@ -149,9 +149,9 @@ namespace Lockstep.Game {
             bool isNeedRender = true){
             CommandBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
-            _gameStateService.roomId = roomId;
-            _gameStateService.allActorIds = allActors;
-            _gameStateService.actorCount = allActors.Length;
+            _globalStateService.roomId = roomId;
+            _globalStateService.allActorIds = allActors;
+            _globalStateService.actorCount = allActors.Length;
 
             _localActorId = localActorId;
             _allActors = allActors;

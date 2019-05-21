@@ -47,17 +47,19 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IGameStateService _gameStateService;
+        protected IGlobalStateService _globalStateService;
         protected IEventRegisterService _eventRegisterService;
-        
-
+        protected IViewService _viewService;
+        protected IUnitService _unitService;
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _gameStateService = serviceContainer.GetService<IGameStateService>();
+            _globalStateService = serviceContainer.GetService<IGlobalStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
+            _viewService = serviceContainer.GetService<IViewService>();
+            _unitService = serviceContainer.GetService<IUnitService>();
         }
 
         public void InitReference(Contexts contexts){
@@ -78,8 +80,11 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IGameStateService _gameStateService;
+        protected IGlobalStateService _globalStateService;
         protected IEventRegisterService _eventRegisterService;
+        protected IViewService _viewService;
+        protected IUnitService _unitService;
+        
         
 
         public void InitReference(IServiceContainer serviceContainer){
@@ -87,8 +92,10 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _gameStateService = serviceContainer.GetService<IGameStateService>();
+            _globalStateService = serviceContainer.GetService<IGlobalStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
+            _viewService = serviceContainer.GetService<IViewService>();
+            _unitService = serviceContainer.GetService<IUnitService>();
         }
 
         public void InitReference(Contexts contexts){

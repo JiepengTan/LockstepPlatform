@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
+using Lockstep.Math;
 
 namespace Lockstep.Game {
     public class TileInfos {
@@ -53,14 +54,14 @@ namespace Lockstep.Game {
             tilemap.SetTile(new Vector3Int(pos.x, pos.y, 0), tile);
         }
 
-        public List<Vector2Int> GetAllTiles(TileBase type){
-            var lst = new List<Vector2Int>();
+        public List<LVector2> GetAllTiles(TileBase type){
+            var lst = new List<LVector2>();
             var tiles = GetAllTiles();
             var poss = GetAllPositions();
             var count = tiles.Length;
             for (int i = 0; i < count; i++) {
                 if (tiles[i] == type) {
-                    lst.Add(new Vector2Int(poss[i].x, poss[i].y));
+                    lst.Add(new LVector2(poss[i].x, poss[i].y));
                 }
             }
 

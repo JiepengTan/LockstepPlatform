@@ -11,14 +11,14 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.BornPointComponent bornPoint { get { return (Lockstep.ECS.Game.BornPointComponent)GetComponent(GameComponentsLookup.BornPoint); } }
     public bool hasBornPoint { get { return HasComponent(GameComponentsLookup.BornPoint); } }
 
-    public void AddBornPoint(UnityEngine.Vector2Int newCoord) {
+    public void AddBornPoint(Lockstep.Math.LVector2 newCoord) {
         var index = GameComponentsLookup.BornPoint;
         var component = CreateComponent<Lockstep.ECS.Game.BornPointComponent>(index);
         component.coord = newCoord;
         AddComponent(index, component);
     }
 
-    public void ReplaceBornPoint(UnityEngine.Vector2Int newCoord) {
+    public void ReplaceBornPoint(Lockstep.Math.LVector2 newCoord) {
         var index = GameComponentsLookup.BornPoint;
         var component = CreateComponent<Lockstep.ECS.Game.BornPointComponent>(index);
         component.coord = newCoord;

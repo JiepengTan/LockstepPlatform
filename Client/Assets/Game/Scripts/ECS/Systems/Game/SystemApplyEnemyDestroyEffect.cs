@@ -5,7 +5,8 @@ namespace Lockstep.Game.Systems.Game {
     public class SystemApplyEnemyDestroyEffect : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _destroyedGroup;
 
-        public SystemApplyEnemyDestroyEffect(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer) {
+        public SystemApplyEnemyDestroyEffect(Contexts contexts, IServiceContainer serviceContainer) : base(contexts,
+            serviceContainer){
             _destroyedGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,
@@ -18,11 +19,14 @@ namespace Lockstep.Game.Systems.Game {
                 var tank = entity.unit;
                 _resourceService.ShowDiedEffect(entity.move.pos);
                 _audioService.PlayClipDied();
-                var info = _actorContext.GetEntityWithId(tank.killerActorId);
-                info.score.value += (tank.detailType + 1) * 100;
+                var killerGameEntity = _gameContext.GetEntityWithLocalId(tank.killerLocalId);
                 if (entity.hasDropRate) {
-                    UnitUtil.DropItem(entity.dropRate.value);
+                    this._unitService.DropItem(entity.dropRate.value);
                 }
+
+                if (killerGameEntity == null) return;
+                var killerActor = _actorContext.GetEntityWithId(killerGameEntity.actorId.value);
+                killerActor.score.value += (tank.detailType + 1) * 100;
             }
         }
     }

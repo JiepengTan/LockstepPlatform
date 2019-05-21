@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lockstep.Game {
 
-    public interface IGameStateService : IService {
+    public interface IGlobalStateService : IService {
         //room info
         byte[] allActorIds { get; set; }
         int roomId { get; set; }
@@ -15,8 +15,8 @@ namespace Lockstep.Game {
         Vector2Int mapMin { get; set; }
         Vector2Int mapMax { get; set; }
 
-        List<Vector2Int> enemyBornPoints { get; set; }
-        List<Vector2Int> playerBornPoss { get; set; }
+        List<LVector2> enemyBornPoints { get; set; }
+        List<LVector2> playerBornPoss { get; set; }
 
         int curLevel { get; set; }
     }

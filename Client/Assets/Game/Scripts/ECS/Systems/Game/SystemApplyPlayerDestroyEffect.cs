@@ -21,7 +21,7 @@ namespace Lockstep.Game.Systems.Game {
                 var actor = _actorContext.GetEntityWithId(entity.actorId.value);
                 UnityEngine.Debug.Assert(actor != null, " player's tank have no owner");
                 if (actor.life.value > 0) {
-                    UnitUtil.CreatePlayer(entity.actorId.value, 0);
+                    _unitService.CreatePlayer(entity.actorId.value, 0);
                 }
             }
         }

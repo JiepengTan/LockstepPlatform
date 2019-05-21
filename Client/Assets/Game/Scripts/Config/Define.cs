@@ -58,6 +58,10 @@ namespace Lockstep.Game {
             {(ushort)EAssetID.ItemUpgrade, "Prefabs/Items/ItemUpgrade"},
         };
 
+        public static string GetAssetPath(EAssetID assetId){
+            return GetAssetPath((ushort) assetId);
+        }
+
         public static string GetAssetPath(ushort assetId){
             if (id2Path.TryGetValue(assetId, out string path)) {
                 return path;

@@ -18,8 +18,10 @@ namespace Lockstep.Game.Systems.Input {
         public void Execute(){
             foreach (var input in _inputGroup.GetEntities()
                 .Where(entity => entity.tick.value == _gameStateContext.tick.value)) {
-                var gameEntity = _gameContext.GetEntityWithLocalId(input.actorId.value);
-                gameEntity.AddMoveRequest(input.moveDir.value);
+                var actorEntity = _actorContext.GetEntityWithId(input.actorId.value);
+                var gameLocalId = actorEntity.gameLocalId.value;
+                var gameEntity =  _gameContext.GetEntityWithLocalId(gameLocalId);
+                gameEntity?.AddMoveRequest(input.moveDir.value);
             }
         }
     }

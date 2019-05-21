@@ -6,12 +6,11 @@ using Entitas.Unity;
 using Entitas.VisualDebugging.Unity;
 
 namespace Lockstep.Game {
-    public partial class Resource : SingletonManager<Resource>, IViewService {
+    public partial class ResourceManager : SingletonManager<ResourceManager>, IViewService {
         private Dictionary<uint, GameObject> _linkedEntities = new Dictionary<uint, GameObject>();
 
-        public void LoadView(GameEntity entity, int configId, IContext ctx){
-            //TODO: pooling    
-            var viewGo = InstantiatePrefab(configId);
+        public void BindView(GameEntity entity, IContext ctx, object viewObj){
+            var viewGo = viewObj as GameObject;
             if (viewGo != null) {
                 if (!viewGo.activeSelf) {
                     viewGo.SetActive(true);

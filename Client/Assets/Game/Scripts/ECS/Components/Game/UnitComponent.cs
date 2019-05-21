@@ -12,6 +12,7 @@ namespace Lockstep.ECS.Game
         public ECampType camp;
         public int detailType;
         public int health;
-        public byte killerActorId;
+        public int damage;
+        public uint killerLocalId;
     }
 }

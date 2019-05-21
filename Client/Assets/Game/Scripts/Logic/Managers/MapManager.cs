@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Lockstep.Core;
+using Lockstep.Math;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 #if UNITY_EDITOR
@@ -41,8 +42,9 @@ namespace Lockstep.Game {
         public Vector2Int mapMax { get; private set; }
         [SerializeField] public Grid grid { get; private set; }
 
-        public List<Vector2Int> enemyBornPoints { get; private set; }
-        public List<Vector2Int> playerBornPoss { get; private set; }
+        public List<LVector2> enemyBornPoints { get; private set; }
+        public List<LVector2> playerBornPoss { get; private set; }
+        public List<LVector2> campPoss { get; private set; }
 
         public override void DoStart(){
             base.DoStart();
@@ -69,20 +71,20 @@ namespace Lockstep.Game {
             mapMax = max;
 
             var tileInfo = GetMapInfo(Global.TileMapName_BornPos);
-            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
+            campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
             enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosEnemy));
             playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosHero));
 
-            if (_gameStateService != null) {
-                _gameStateService.mapMin = mapMin;
-                _gameStateService.mapMax = mapMax;
-                _gameStateService.enemyBornPoints = enemyBornPoints;
-                _gameStateService.playerBornPoss = playerBornPoss;
+            if (_globalStateService != null) {
+                _globalStateService.mapMin = mapMin;
+                _globalStateService.mapMax = mapMax;
+                _globalStateService.enemyBornPoints = enemyBornPoints;
+                _globalStateService.playerBornPoss = playerBornPoss;
             }
 
 
-            Debug.Assert(_gameStateService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
+            Debug.Assert(_globalStateService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
                 "Map should has 2 player born pos");
 
 

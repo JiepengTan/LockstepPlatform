@@ -8,6 +8,6 @@ namespace Lockstep.ECS.Game
     [Game]
     [System.Serializable]
     public class BornPointComponent : IComponent {
-        public Vector2Int coord;
+        public LVector2 coord;
     }
 }

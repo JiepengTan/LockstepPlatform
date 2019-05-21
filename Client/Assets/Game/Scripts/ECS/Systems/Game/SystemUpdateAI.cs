@@ -7,7 +7,7 @@ namespace Lockstep.Game.Systems.Game {
     public class SystemUpdateAI : BaseSystem, IExecuteSystem {
         readonly IGroup<GameEntity> _AIGroup;
 
-        public SystemUpdateAI(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
+        public SystemUpdateAI(Contexts contexts, IServiceContainer serviceContainer) : base(contexts, serviceContainer){
             _AIGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ActorId,
@@ -51,7 +51,8 @@ namespace Lockstep.Game.Systems.Game {
                     if (entity.skill.cdTimer <= LFloat.zero) {
                         entity.skill.cdTimer = entity.skill.cd;
                         //Fire
-                        UnitUtil.CreateBullet(entity.position.value, entity.dir.value, entity.skill.bulletId, entity);
+                        _unitService.CreateBullet(entity.position.value, entity.dir.value, (int) entity.skill.bulletId,
+                            entity);
                     }
                 }
             }

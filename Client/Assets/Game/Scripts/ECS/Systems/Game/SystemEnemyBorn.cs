@@ -22,7 +22,7 @@ namespace Lockstep.Game.Systems.Game   {
                     //born enemy
                     var idx = LRandom.Range(0, bornPointCount);
                     var bornPoint = allPoints[idx].bornPoint.coord;
-                    UnitUtil.CreateEnemy(bornPoint, LRandom.Range(0, 3)); //TODO
+                    _unitService.CreateEnemy(bornPoint, LRandom.Range(0, 3)); //TODO
                 }
             }
         }
