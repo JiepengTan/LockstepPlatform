@@ -93,7 +93,7 @@ namespace Lockstep.Game {
             EventHelper.Trigger(EEvent.LoadMapDone, level);
         }
 
-        void OnEvent_OnRoomGameStart(object param){
+        void OnEvent_OnSimulationInitFinished(object param){
             LoadLevel(1);
         }
 

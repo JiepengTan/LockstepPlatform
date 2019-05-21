@@ -122,16 +122,6 @@ namespace Lockstep.Game {
         }
 
 
-        public static partial class BitUtil {
-            public static byte ToByte(ECmdType idx){
-                return (byte) (1 << (byte) idx);
-            }
-
-            public static bool HasBit(byte val, ECmdType idx){
-                return (val & 1 << (byte) idx) != 0;
-            }
-        }
-
 
         private static float lastFireTimer;
         private static float fireCD = 1;
@@ -167,6 +157,16 @@ namespace Lockstep.Game {
             }
 
             return cmds;
+        }
+
+        public static partial class BitUtil {
+            public static byte ToByte(ECmdType idx){
+                return (byte) (1 << (byte) idx);
+            }
+
+            public static bool HasBit(byte val, ECmdType idx){
+                return (val & (1 << (byte) idx)) != 0;
+            }
         }
 
         public void Execute(InputCmd cmd, InputEntity entity){

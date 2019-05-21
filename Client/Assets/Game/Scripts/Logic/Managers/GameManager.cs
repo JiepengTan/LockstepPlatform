@@ -55,7 +55,7 @@ namespace Lockstep.Game {
         #region IUnitService
 
         public void TakeDamage(GameEntity atker, GameEntity suffer){
-            if(suffer.isDestroyed) return;
+            if (suffer.isDestroyed) return;
             if (suffer.unit.health <= atker.unit.damage) {
                 suffer.unit.health = 0;
                 suffer.unit.killerLocalId = atker.localId.value;
@@ -67,6 +67,7 @@ namespace Lockstep.Game {
         }
 
         public void DropItem(LFloat rate){
+            UnityEngine.Debug.Log($"hehe DropItem " + rate);
             if (LRandom.value >= rate) {
                 return;
             }
@@ -79,44 +80,56 @@ namespace Lockstep.Game {
         }
 
         private void CreateItem(LVector2 createPos, int type){
+            UnityEngine.Debug.Log($"hehe CreateItem " + type);
             CreateUnit(createPos, _config.itemPrefabs, type, EDir.Up, transParentItem);
         }
 
         public void CreateCamp(LVector2 createPos, int type = 0){
+            UnityEngine.Debug.Log($"hehe CreateCamp " + type);
             CreateUnit(createPos + Define.TankBornOffset, _config.CampPrefabs, 0, EDir.Up, transParentItem);
         }
 
         public void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner){
+            UnityEngine.Debug.Log($"hehe CreateBullet " + type);
             var createPos = pos + DirUtil.GetDirLVec(dir) * TankUtil.TANK_HALF_LEN;
-            DelayCall(Define.TankBornDelay, () => {
-                var entity = CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
-                entity.bullet.ownerLocalId = owner.localId.value;
-            });
+            
+            var entity = CreateUnit(createPos, _config.bulletPrefabs, type, dir, transParentBullet);
+            entity.bullet.ownerLocalId = owner.localId.value;
         }
 
         public void CreateEnemy(LVector2 bornPos){
             var type = LRandom.Range(0, _config.enemyPrefabs.Count);
-            CreateEnemy(bornPos,type);
+            CreateEnemy(bornPos, type);
         }
 
         public void CreateEnemy(LVector2 bornPos, int type){
+            UnityEngine.Debug.Log($"hehe create enemy " + type);
             var createPos = bornPos + Define.TankBornOffset;
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
             EDir dir = EDir.Down;
-            DelayCall(Define.TankBornDelay, () => {
-                CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
-            });
+            DelayCall(Define.TankBornDelay,
+                () => { CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy); });
         }
 
         public void CreatePlayer(byte actorId, int type){
+            UnityEngine.Debug.Log($"hehe CreatePlayer " + type);
             var bornPos = _globalStateService.playerBornPoss[actorId];
             var createPos = bornPos + Define.TankBornOffset;
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
             EDir dir = EDir.Up;
             DelayCall(Define.TankBornDelay, () => {
-                CreateUnit(createPos, _config.playerPrefabs, type, dir, transParentPlayer);
+                var entity = CreateUnit(createPos, _config.playerPrefabs, type, dir, transParentPlayer);
+                var actor = _actorContext.GetEntityWithId(actorId);
+                if (actor != null) {
+                    actor.ReplaceGameLocalId(entity.localId.value);
+                    entity.ReplaceActorId(actorId);
+                }
+                else {
+                    Debug.LogError(
+                        $"can not find a actor after create a game player actorId:{actorId} localId{entity.localId.value}");
+                }
             });
         }
 
@@ -126,26 +139,22 @@ namespace Lockstep.Game {
             var ecsPrefab = prefabLst[type];
             var assetId = ecsPrefab.asset.assetId;
             var prefab = Resources.Load<GameObject>(Define.GetAssetPath(assetId));
-            var go = GameObject.Instantiate(prefab, this.transform.position + createPos.ToVector3(),
+            var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
                 Quaternion.identity, parent);
             go.AddComponent<PosListener>();
             go.AddComponent<DirListener>();
-            
+
             var entity = CreateGameEntity();
             _viewService.BindView(entity, _gameContext, go);
             ecsPrefab.SetComponentsTo(entity);
-            if (entity.hasMove) {
-                entity.pos.value = createPos;
-            }
-            else {
-                entity.dir.value = dir;
-            }
-
+            entity.dir.value = dir;
+            entity.pos.value = createPos;
             return entity;
         }
-        
+
         ///用于惟一标记 GameEntity 用于回滚
         private uint _localIdCounter;
+
         private GameEntity CreateGameEntity(){
             var entity = _gameContext.CreateEntity();
             entity.AddLocalId(_localIdCounter);

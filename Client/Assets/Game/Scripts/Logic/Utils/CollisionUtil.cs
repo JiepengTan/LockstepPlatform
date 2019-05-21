@@ -13,7 +13,7 @@ public static class LVector2Extension {
         return new Vector2Int(Mathf.FloorToInt(vec.x),Mathf.FloorToInt(vec.y));
     }  
     public static Vector2Int Floor(this LVector2 vec){
-        return vec.ToVector2Int();
+        return new Vector2Int(LMath.FloorToInt(vec.x),LMath.FloorToInt(vec.y));
     }
 }
 

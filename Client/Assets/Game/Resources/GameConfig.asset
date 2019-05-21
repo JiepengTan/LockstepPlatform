@@ -21,6 +21,12 @@ MonoBehaviour:
       value:
         _x: 0
         _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 0
     unit:
       name: Enemy
       camp: 1
@@ -34,13 +40,6 @@ MonoBehaviour:
       maxMoveSpd:
         _val: 3000
       isChangedDir: 0
-    ai:
-      timer:
-        _val: 0
-      updateInterval:
-        _val: 1000
-      fireRate:
-        _val: 300
     skill:
       cd:
         _val: 1000
@@ -57,6 +56,12 @@ MonoBehaviour:
       value:
         _x: 0
         _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 0
     unit:
       name: player
       camp: 0
@@ -66,13 +71,13 @@ MonoBehaviour:
       killerLocalId: 0
     move:
       moveSpd:
-        _val: 3000
+        _val: 5000
       maxMoveSpd:
-        _val: 3000
+        _val: 5000
       isChangedDir: 0
     skill:
       cd:
-        _val: 1000
+        _val: 300
       cdTimer:
         _val: 0
       bulletId: 0
@@ -86,6 +91,12 @@ MonoBehaviour:
       value:
         _x: 0
         _y: 0
+    collider:
+      size:
+        _x: 0
+        _y: 0
+      radius:
+        _val: 200
     unit:
       name: Bullet
       camp: 0
@@ -110,6 +121,12 @@ MonoBehaviour:
       value:
         _x: 0
         _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 0
     type:
       type: 0
       killerActorId: 0
@@ -122,6 +139,12 @@ MonoBehaviour:
       value:
         _x: 0
         _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 0
     unit:
       name: Camp
       camp: 2

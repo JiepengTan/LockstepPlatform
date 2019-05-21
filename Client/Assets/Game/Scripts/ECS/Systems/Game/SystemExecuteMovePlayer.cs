@@ -9,10 +9,10 @@ namespace Lockstep.Game.Systems.Game {
         public SystemExecuteMovePlayer(Contexts contexts, IServiceContainer serviceContainer) : base(contexts,
             serviceContainer){
             _moveRequest = contexts.game.GetGroup(GameMatcher.AllOf(
+                GameMatcher.LocalId,
                 GameMatcher.MoveRequest,
                 GameMatcher.Move,
-                GameMatcher.ActorId,
-                GameMatcher.LocalId
+                GameMatcher.ActorId
             ));
         }
 

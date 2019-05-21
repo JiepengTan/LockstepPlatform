@@ -11,6 +11,7 @@ namespace Lockstep.Game.Systems.Game {
         readonly IGroup<GameEntity> allBullet;
         readonly IGroup<GameEntity> allEnmey;
         readonly IGroup<GameEntity> allItem;
+        readonly IGroup<GameEntity> allCamp;
 
         public SystemCollisionDetected(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
             allPlayer = contexts.game.GetGroup(GameMatcher.AllOf(
@@ -27,11 +28,14 @@ namespace Lockstep.Game.Systems.Game {
             allItem = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.ItemType));
+            
+            allCamp = contexts.game.GetGroup(GameMatcher.AllOf(
+                GameMatcher.LocalId,
+                GameMatcher.ItemType));
         }
 
 
         public void Execute(){
-            var camp = _gameContext.campEntity;
             // bullet and tank
             foreach (var bullet in allBullet) {
                 if (bullet.isDestroyed) continue;
@@ -54,12 +58,14 @@ namespace Lockstep.Game.Systems.Game {
             }
 
             // bullet and camp
-            foreach (var bullet in allBullet) {
-                if (bullet.isDestroyed) continue;
-                if (camp.isDestroyed) continue;
-                if (CollisionUtil.CheckCollision(bullet, camp)) {
-                    _audioService.PlayClipHitTank();
-                    _unitService.TakeDamage(camp, bullet);
+            foreach (var camp in allCamp) {
+                foreach (var bullet in allBullet) {
+                    if (bullet.isDestroyed) continue;
+                    if (camp.isDestroyed) continue;
+                    if (CollisionUtil.CheckCollision(bullet, camp)) {
+                        _audioService.PlayClipHitTank();
+                        _unitService.TakeDamage(camp, bullet);
+                    }
                 }
             }
 
@@ -75,6 +81,10 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Add(borderPos2.Floor());
                 foreach (var iPos in tempPoss) {
                     TilemapUtil.CheckBulletWithMap(iPos, bullet, _audioService,_mapService);
+                }
+
+                if (bullet.unit.health == 0) {
+                    bullet.isDestroyed = true;
                 }
 
                 tempPoss.Clear();
@@ -101,48 +111,6 @@ namespace Lockstep.Game.Systems.Game {
                     }
                 }
             }
-
-            // destroy unit
-/*
-            if (allPlayer.Count == 0) {
-                bool hasNoLife = true;
-                foreach (var info in allPlayerInfos) {
-                    if (info != null && info.remainPlayerLife > 0) {
-                        hasNoLife = false;
-                        break;
-                    }
-                }
-
-                if (hasNoLife) {
-                    GameFalied();
-                }
-            }
-
-            if (allEnmey.Count == 0 && RemainEnemyCount <= 0) {
-                foreach (var playerInfo in allPlayerInfos) {
-                    if (playerInfo != null) {
-                        playerInfo.lastLevelTankType = playerInfo.tank == null ? 0 : playerInfo.tank.detailType;
-                        playerInfo.isLiveInLastLevel = playerInfo.tank != null;
-                    }
-                }
-
-                GameWin();
-            }
-
-            if (camp == null) {
-                GameFalied();
-            }
-
-            tempLst.Clear();
-
-
-            foreach (var entity in _bullets.GetEntities()) {
-                var move = entity.move;
-                var dirVec = DirUtil.GetDirLVec(entity.dir.value);
-                var offset = (move.moveSpd * Define.DeltaTime) * dirVec;
-                entity.position.value = offset;
-            }
-            */
         }
     }
 }

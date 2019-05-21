@@ -45,15 +45,15 @@ namespace Lockstep.Game {
             {(ushort)EAssetID.PlayerTank2,"Prefabs/Player/Player2"},
             {(ushort)EAssetID.PlayerTank3,"Prefabs/Player/Player3"},
             
-            {(ushort)EAssetID.EnemyTank0, "Prefabs/Tanks/Player0"},
-            {(ushort)EAssetID.EnemyTank1, "Prefabs/Tanks/Player1"},
-            {(ushort)EAssetID.EnemyTank2, "Prefabs/Tanks/Player2"},
-            {(ushort)EAssetID.EnemyTank3, "Prefabs/Tanks/Player3"},
-            {(ushort)EAssetID.EnemyTank4, "Prefabs/Tanks/Player4"},
+            {(ushort)EAssetID.EnemyTank0, "Prefabs/Tanks/Tank0"},
+            {(ushort)EAssetID.EnemyTank1, "Prefabs/Tanks/Tank1"},
+            {(ushort)EAssetID.EnemyTank2, "Prefabs/Tanks/Tank2"},
+            {(ushort)EAssetID.EnemyTank3, "Prefabs/Tanks/Tank3"},
+            {(ushort)EAssetID.EnemyTank4, "Prefabs/Tanks/Tank4"},
             
-            {(ushort)EAssetID.Bullet0, "Prefabs/Bullet/Player0"},
-            {(ushort)EAssetID.Bullet1, "Prefabs/Bullet/Player0"},
-            {(ushort)EAssetID.Bullet2, "Prefabs/Bullet/Player0"},
+            {(ushort)EAssetID.Bullet0, "Prefabs/Bullet/Bullet0"},
+            {(ushort)EAssetID.Bullet1, "Prefabs/Bullet/Bullet1"},
+            {(ushort)EAssetID.Bullet2, "Prefabs/Bullet/Bullet2"},
             
             {(ushort)EAssetID.ItemAddLife, "Prefabs/Items/ItemAddLife"},
             {(ushort)EAssetID.ItemBoom, "Prefabs/Items/ItemBoom"},

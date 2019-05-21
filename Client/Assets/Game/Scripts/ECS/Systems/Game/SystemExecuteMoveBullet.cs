@@ -11,7 +11,6 @@ namespace Lockstep.Game.Systems.Game  {
             _bulletGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
                 GameMatcher.TagBullet,
-                GameMatcher.MoveRequest,
                 GameMatcher.Move));
         }
 
@@ -20,7 +19,7 @@ namespace Lockstep.Game.Systems.Game  {
                 var move = entity.move;
                 var dirVec = DirUtil.GetDirLVec(entity.dir.value);
                 var offset = (move.moveSpd * Define.DeltaTime) * dirVec;
-                entity.pos.value = offset;
+                entity.pos.value = entity.pos.value + offset;
             }
         }
     }

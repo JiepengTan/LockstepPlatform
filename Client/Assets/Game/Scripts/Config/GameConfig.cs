@@ -15,6 +15,7 @@ namespace Lockstep.Game {
             public AssetComponent asset = new AssetComponent();
             public DirComponent dir = new DirComponent();
             public PosComponent pos = new PosComponent();
+            public ColliderComponent collider = new ColliderComponent();
         }
         [System.Serializable]
         public class Item : Unit {
@@ -23,34 +24,37 @@ namespace Lockstep.Game {
         [System.Serializable]
         public class Camp : Unit { 
             public UnitComponent unit = new UnitComponent();
+            public TagCampComponent tagCamp = new TagCampComponent();
         }
         [System.Serializable]
         public class Mover : Unit {
             public UnitComponent unit = new UnitComponent();
-
             //public ColliderComponent collider = new ColliderComponent();
             public MoveComponent move = new MoveComponent();
-
             //public PositionComponent position = new PositionComponent();
         }
         
         [System.Serializable]
         public class Tank : Mover {
-            public AIComponent ai = new AIComponent();
             public SkillComponent skill = new SkillComponent();
-            public TagTankComponent tag = new TagTankComponent();
+            public TagTankComponent tagTank = new TagTankComponent();
         }
 
         [System.Serializable]
-        public class Player : Mover {
-            public SkillComponent skill = new SkillComponent();
+        public class Player : Tank {
+            ActorIdComponent actorId = new ActorIdComponent();
         }
-
+        public class Enemy : Tank {
+            public AIComponent ai = new AIComponent();
+            public TagEnemyComponent tagEnemy = new TagEnemyComponent();
+            public MoveRequestComponent moveReq = new MoveRequestComponent();
+        }
 
         [System.Serializable]
         public class Bullet : Mover {
             public OwnerComponent owner = new OwnerComponent();
-            public TagBulletComponent tag = new TagBulletComponent();
+            public BulletComponent bullet = new BulletComponent();
+            public TagBulletComponent tagBullet = new TagBulletComponent();
         }
 
 

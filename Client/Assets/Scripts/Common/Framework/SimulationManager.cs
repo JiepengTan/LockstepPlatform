@@ -41,6 +41,7 @@ namespace Lockstep.Game {
         void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
             OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+            EventHelper.Trigger(EEvent.OnSimulationInitFinished,null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
@@ -147,6 +148,7 @@ namespace Lockstep.Game {
 
         public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors,
             bool isNeedRender = true){
+            Debug.Log($"hehe OnGameStart simulation");
             CommandBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
             _globalStateService.roomId = roomId;
@@ -164,6 +166,7 @@ namespace Lockstep.Game {
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
             _world = new World(_context, allActors, new GameLogicSystems(_context, Services));
+            
         }
 
 

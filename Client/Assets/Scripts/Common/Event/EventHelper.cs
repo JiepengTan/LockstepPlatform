@@ -12,6 +12,7 @@ namespace Lockstep.Core {
     public enum EEvent {
         LoadMapDone,
         OnRoomGameStart,
+        OnSimulationInitFinished,
         OnAllPlayerFinishedLoad,
         OnServerFrame
     }

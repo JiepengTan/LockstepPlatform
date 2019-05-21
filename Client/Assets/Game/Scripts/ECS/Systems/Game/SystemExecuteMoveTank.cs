@@ -10,8 +10,8 @@ namespace Lockstep.Game.Systems.Game   {
 
             _moveRequest = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
-                GameMatcher.TagTank,
                 GameMatcher.MoveRequest,
+                GameMatcher.TagTank,
                 GameMatcher.Move));
         }
 
@@ -33,7 +33,7 @@ namespace Lockstep.Game.Systems.Game   {
                 var headPos = pos + (TankUtil.TANK_HALF_LEN) * dirVec;
                 var dist = CollisionUtil.GetMaxMoveDist(dir, headPos, fTargetHead);
                 var dist2 = CollisionUtil.GetMaxMoveDist(dir, headPos, fPreviewHead);
-                maxMoveDist = LMath.Min(maxMoveDist, dist, dist2);
+                maxMoveDist =LMath.Max(LFloat.zero,LMath.Min(maxMoveDist, dist, dist2)) ;
 
                 var diffPos = maxMoveDist * dirVec;
                 pos = pos + diffPos;

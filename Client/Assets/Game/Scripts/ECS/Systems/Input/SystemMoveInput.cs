@@ -21,7 +21,14 @@ namespace Lockstep.Game.Systems.Input {
                 var actorEntity = _actorContext.GetEntityWithId(input.actorId.value);
                 var gameLocalId = actorEntity.gameLocalId.value;
                 var gameEntity =  _gameContext.GetEntityWithLocalId(gameLocalId);
-                gameEntity?.AddMoveRequest(input.moveDir.value);
+                if (gameEntity != null) {
+                    gameEntity.ReplaceMoveRequest(input.moveDir.value);
+                    if (gameEntity.dir.value != input.moveDir.value) {
+                        gameEntity.move.isChangedDir = true;
+                    }
+                    gameEntity.dir.value = input.moveDir.value;
+                }
+
             }
         }
     }
