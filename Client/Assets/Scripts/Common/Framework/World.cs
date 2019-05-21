@@ -17,10 +17,6 @@ namespace Lockstep.Core.Logic {
         public World(Contexts contexts, IEnumerable<byte> actorIds, params Feature[] features){
             Contexts = contexts;
 
-            foreach (var id in actorIds) {
-                Contexts.actor.CreateEntity().AddId(id);
-            }
-
             _systems = new WorldSystems(Contexts, features);
         }
 

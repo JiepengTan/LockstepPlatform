@@ -80,8 +80,8 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Clear();
             }
 
-            var min = _gameStateContext.worldBound.min;
-            var max = _gameStateContext.worldBound.max;
+            var min = _gameStateService.mapMin.ToLVector2();
+            var max = _gameStateService.mapMax.ToLVector2();
             // bullet bound detected 
             foreach (var bullet in allBullet) {
                 if (CollisionUtil.IsOutOfBound(bullet.move.pos, min, max)) {

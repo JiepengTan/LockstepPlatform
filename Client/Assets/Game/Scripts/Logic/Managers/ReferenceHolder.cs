@@ -78,7 +78,7 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IGameStateService GameStateService;
+        protected IGameStateService _gameStateService;
         protected IEventRegisterService _eventRegisterService;
         
 
@@ -87,7 +87,7 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            GameStateService = serviceContainer.GetService<IGameStateService>();
+            _gameStateService = serviceContainer.GetService<IGameStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
         }
 

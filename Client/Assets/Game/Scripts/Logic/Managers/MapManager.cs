@@ -44,10 +44,6 @@ namespace Lockstep.Game {
         public List<Vector2Int> enemyBornPoints { get; private set; }
         public List<Vector2Int> playerBornPoss { get; private set; }
 
-        public override void DoAwake(IServiceContainer serviceContainer){
-            EventHelper.AddListener(EEvent.OnRoomGameStart, OnEvent_OnRoomGameStart);
-        }
-
         public override void DoStart(){
             base.DoStart();
             if (grid == null) {
