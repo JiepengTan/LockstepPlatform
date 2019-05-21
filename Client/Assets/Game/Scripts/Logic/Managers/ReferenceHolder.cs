@@ -2,9 +2,6 @@ using UnityEngine;
 
 namespace Lockstep.Game {
 
-
-    
-    
     public partial class ManagerReferenceHolder {
         #region Mgrs
         protected AudioManager _audioMgr;
@@ -41,12 +38,6 @@ namespace Lockstep.Game {
         
         #endregion
         
-        
-        
-        
-        
-        
-        
         protected InputContext _inputContext;
         protected ActorContext _actorContext;
         protected GameContext _gameContext;
@@ -57,6 +48,7 @@ namespace Lockstep.Game {
         protected IInputService _inputService;
         protected IMapService _mapService;
         protected IConfigService _configService;
+        protected IEventRegisterService _eventRegisterService;
         
 
         public void InitReference(IServiceContainer serviceContainer){
@@ -65,6 +57,7 @@ namespace Lockstep.Game {
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
             _configService = serviceContainer.GetService<IConfigService>();
+            _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
         }
 
         public void InitReference(Contexts contexts){
@@ -86,6 +79,7 @@ namespace Lockstep.Game {
         protected IInputService _inputService;
         protected IMapService _mapService;
         protected IConfigService _configService;
+        protected IEventRegisterService _eventRegisterService;
         
 
         public void InitReference(IServiceContainer serviceContainer){
@@ -94,7 +88,7 @@ namespace Lockstep.Game {
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
             _configService = serviceContainer.GetService<IConfigService>();
-            
+            _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
         }
 
         public void InitReference(Contexts contexts){

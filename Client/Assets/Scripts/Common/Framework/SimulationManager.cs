@@ -41,19 +41,21 @@ namespace Lockstep.Game {
         public SimulationManager(){ }
 
         public void OnNetFrame(ServerFrame[] frames){ }
-        public void OnEvent_OnServerFrames(object param){
+        public void OnEvent_OnServerFrame(object param){
             var msg = param as Msg_ServerFrames;
             cmdBuffer.PushServerFrames(msg.frames);
         }
 
         public void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
-            OnStartGame(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+            OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+        }
+        
+        public void OnEvent_AllPlayerFinishedLoad(object param){
+            OnLoadFinished();
         }
 
         public override void DoAwake(IServiceContainer services){
-            EventHelper.AddListener(EEvent.OnServerFrame, OnEvent_OnServerFrames);
-            EventHelper.AddListener(EEvent.OnRoomGameStart, OnEvent_OnRoomGameStart);
             Services = services;
             _context = Main.Instance.contexts;
             inputService = Services.GetService<IInputService>();
@@ -145,7 +147,7 @@ namespace Lockstep.Game {
             Running = false;
         }
 
-        public void OnStartGame(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
+        public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
             //初始化全局配置
             _configService.roomId = roomId;
             _configService.allActorIds = allActors;
@@ -165,9 +167,6 @@ namespace Lockstep.Game {
             _world = new World(_context, allActors,new GameLogicSystems(_context, Services));
         }
 
-        public void OnEvent_AllPlayerFinishedLoad(object param){
-            OnLoadFinished();
-        }
 
         public void OnLoadFinished(){
             _world.StartSimulate();

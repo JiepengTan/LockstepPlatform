@@ -3,7 +3,5 @@ using System;
 
 namespace Lockstep.Game {
 
-    public class NetProxyLobby : BaseNetProxy {
-
-    }
+    //public class NetProxyLobby : BaseNetProxy {}
 }

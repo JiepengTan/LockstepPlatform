@@ -29,7 +29,6 @@ namespace Lockstep.Game {
         #region LifeCycle
 
         public override void DoAwake(IServiceContainer services){
-            EventHelper.AddListener(EEvent.LoadMapDone,OnEvent_LoadMapDone);
             CurLevel = PlayerPrefs.GetInt("GameLevel", 0);
             Func<string, Transform> FuncCreateTrans = (name) => {
                 var go = new GameObject(name);

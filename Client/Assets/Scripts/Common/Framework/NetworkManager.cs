@@ -10,8 +10,8 @@ namespace Lockstep.Game {
         public int ServerPort = 9050;
         public const string ClientKey = "SomeConnectionKey";
         
-        private NetProxyLobby _netProxyLobby;
-        private NetProxyRoom _netProxyRoom;
+        private BaseNetProxy _netProxyLobby;
+        private BaseNetProxy _netProxyRoom;
 
         private long _playerID;
         private int _roomId;
@@ -21,6 +21,10 @@ namespace Lockstep.Game {
         }
 
         public override void DoAwake(IServiceContainer services){
+            _netProxyRoom = new BaseNetProxy((int) EMsgCS.EnumCount);
+            _netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
+            _eventRegisterService.RegisterEvent<EMsgCL,NetMsgHandler>("OnMsg_L2C","OnMsg_".Length,RegisterMsgHandler);
+            _eventRegisterService.RegisterEvent<EMsgCS,NetMsgHandler>("OnMsg_S2C","OnMsg_".Length,RegisterMsgHandler);
             InitLobby(ServerIp, ServerPort, key);
         }
         public override void DoStart(){
@@ -36,24 +40,28 @@ namespace Lockstep.Game {
             _netProxyRoom?.DoDestroy();
         }
 
-        
+        public void RegisterMsgHandler(EMsgCL type, NetMsgHandler handler){
+            _netProxyLobby.RegisterMsgHandler((byte)type, handler);
+        }   
+        public void RegisterMsgHandler(EMsgCS type, NetMsgHandler handler){
+            _netProxyRoom.RegisterMsgHandler((byte)type, handler);
+        }
+
         private void InitLobby(string ip, int port, string key){
-            _netProxyLobby = new NetProxyLobby();
             _netProxyLobby.OnConnected += OnConnectedLobby;
-            _netProxyLobby.Init(ip, port, key, (int) EMsgCL.EnumCount);
-            _netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_ReqInit, OnMsgLobby_ReqInit);
-            _netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_RoomMsg, OnMsgLobby_CreateRoom);
+            _netProxyLobby.Init(ip, port, key);
+            //_netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_ReqInit, OnMsg_L2C_ReqInit);
+            //_netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_RoomMsg, OnMsg_L2C_RoomMsg);
             
         }
 
         public void InitRoom(string ip, int port, string key){
-            _netProxyRoom = new NetProxyRoom();
             _netProxyRoom.OnConnected += OnConnectedRoom;
-            _netProxyRoom.Init(ip, port, key, (int) EMsgCS.EnumCount);
+            _netProxyRoom.Init(ip, port, key);
             //register msgs
 
-            _netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_StartGame, OnMsgRoom_StartGame);
-            _netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_FrameData, OnMsgRoom_FrameData);
+            //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_StartGame, OnMsg_S2C_StartGame);
+            //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_FrameData, OnMsg_S2C_FrameData);
             //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_RepMissPack,OnNet_ReqInit);
         }
 
@@ -66,8 +74,6 @@ namespace Lockstep.Game {
         public void StartLobby(){
             _netProxyLobby.DoStart();
         }
-
-
 
 
         public void OnConnectedLobby(){
@@ -99,7 +105,7 @@ namespace Lockstep.Game {
             _netProxyRoom.Send(Compressor.Compress(writer));
         }
         
-        void OnMsgLobby_CreateRoom(Deserializer reader){
+        void OnMsg_L2C_RoomMsg(Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
             UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + msg.port);
@@ -107,7 +113,7 @@ namespace Lockstep.Game {
             StartRoom();
         }
         
-        void OnMsgLobby_ReqInit(Deserializer reader){
+        void OnMsg_L2C_ReqInit(Deserializer reader){
             var msg = reader.Parse<Msg_RepInit>();
             _playerID = msg.playerId;
             Debug.Log("PlayerID " + _playerID);
@@ -124,16 +130,15 @@ namespace Lockstep.Game {
         }
 
 
-        private void OnMsgRoom_FrameData(Deserializer reader){
+        private void OnMsg_S2C_FrameData(Deserializer reader){
             var msg = reader.Parse<Msg_ServerFrames>();
             EventHelper.Trigger(EEvent.OnServerFrame, msg);
         }
 
-        public void OnMsgRoom_StartGame(Deserializer reader){
+        public void OnMsg_S2C_StartGame(Deserializer reader){
             var msg = reader.Parse<Msg_StartGame>();
             _roomId = msg.RoomID;
             Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
-
             EventHelper.Trigger(EEvent.OnRoomGameStart, msg);
         }
     }

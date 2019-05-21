@@ -1,21 +1,30 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using DesperateDevs.Utils;
+using Lockstep.Core;
 using UnityEngine;
 using Lockstep.Logging;
 using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
+    public interface IEventRegisterService : IService {
+        void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+            Action<TEnum, TDelegate> callBack)where TDelegate : Delegate
+            where TEnum : struct;
+    }
 
-
-    public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer {
+    public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, IEventRegisterService {
         public static Main Instance { get; private set; }
         public Contexts contexts;
         private Dictionary<string, BaseManager> name2Mgr = new Dictionary<string, BaseManager>();
         private List<BaseManager> allMgrs = new List<BaseManager>();
         private Dictionary<string, IService> allServices = new Dictionary<string, IService>();
 
-        
+
         #region IManagerContainer
+
         public void RegisterManager(BaseManager manager){
             var name = manager.GetType().Name;
             if (name2Mgr.ContainsKey(name)) {
@@ -78,13 +87,37 @@ namespace Lockstep.Game {
 
             return (T) allServices[key];
         }
-        
 
         #endregion
 
-        #region LifeCycle
+        #region IEventRegisterService
+        public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
+            return Delegate.CreateDelegate(typeof(T), instance, method) as T;
+        }
 
+        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+            Action<TEnum, TDelegate> callBack)
+            where TDelegate : Delegate
+            where TEnum : struct{
+            if (callBack == null) return;
+            foreach (var mgr in allMgrs) {
+                var methods = mgr.GetType().GetMethods(BindingFlags.DeclaredOnly);
+                foreach (var method in methods) {
+                    var methodName = method.Name;
+                    if (methodName.StartsWith(prefix)) {
+                        var eventTypeStr = methodName.Substring(ignorePrefixLen);
+                        if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
+                            var hanlder = CreateDelegateFromMethodInfo<TDelegate>(mgr, method);
+                            callBack(eType, hanlder);
+                        }
+                    }
+                }
+            }
+        }
         
+
+        #endregion
+        #region LifeCycle
 
         private void Awake(){
             if (Instance != null) {
@@ -100,20 +133,24 @@ namespace Lockstep.Game {
 
 
         private void Start(){
-            this.AssignReference(contexts,this,this);
+            this.AssignReference(contexts, this, this);
             foreach (var mgr in allMgrs) {
-                mgr.AssignReference(contexts,this,this);
+                mgr.AssignReference(contexts, this, this);
             }
+
             //bind events
-            
+            RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
+                (eType, handler) => { EventHelper.AddListener(eType, handler); });
             foreach (var mgr in allMgrs) {
                 mgr.DoAwake(this);
             }
+
             DoStart();
             foreach (var mgr in allMgrs) {
                 mgr.DoStart();
             }
         }
+
 
         void Update(){
             var deltaTime = Time.deltaTime;
@@ -135,10 +172,12 @@ namespace Lockstep.Game {
             foreach (var mgr in allMgrs) {
                 mgr.DoDestroy();
             }
+
             DoDestroy();
         }
 
         #endregion
+
         void OnLog(object sender, LogEventArgs args){
             switch (args.LogSeverity) {
                 case LogSeverity.Info:

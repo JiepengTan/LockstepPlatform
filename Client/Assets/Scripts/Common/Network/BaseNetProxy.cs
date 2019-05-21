@@ -9,6 +9,8 @@ using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Game {
+    
+    public delegate void NetMsgHandler(Deserializer reader);
     public class BaseNetProxy {
         protected string _ip;
         protected int _port;
@@ -22,19 +24,20 @@ namespace Lockstep.Game {
         public float AutoConnInterval = 1;
 
         //所有的消息处理函数
-        protected OnNetMsgHandler[] _allMsgDealFuncs;
+        protected NetMsgHandler[] _allMsgDealFuncs;
 
-        public delegate void OnNetMsgHandler(Deserializer reader);
 
         public Action OnConnected;
 
-        public void RegisterMsgHandler(int msgType, OnNetMsgHandler handler){
+        public void RegisterMsgHandler(int msgType, NetMsgHandler handler){
             _allMsgDealFuncs[msgType] = handler;
         }
 
+        public BaseNetProxy(int maxMsgHandlerIdx){
+            _allMsgDealFuncs = new NetMsgHandler[maxMsgHandlerIdx];
+        }
 
-        public void Init(string ip, int port, string key, int maxMsgHandlerIdx){
-            _allMsgDealFuncs = new OnNetMsgHandler[maxMsgHandlerIdx];
+        public void Init(string ip, int port, string key){
             _key = key;
             this._ip = ip;
             this._port = port;

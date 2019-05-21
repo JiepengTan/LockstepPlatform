@@ -16,17 +16,18 @@ namespace Lockstep.Core {
         OnServerFrame
     }
 
+    public delegate void GlobalEventHandler(object param);
+    public delegate void NetMsgHandler(object param);
     public class EventHelper {
 
-        public delegate void OnEventHandler(object param);
-        public static Dictionary<int,List<OnEventHandler>> allListeners = new Dictionary<int, List<OnEventHandler>>();
+        public static Dictionary<int,List<GlobalEventHandler>> allListeners = new Dictionary<int, List<GlobalEventHandler>>();
         private static bool IsTriggingEvent;
         
         public static void RemoveAllListener(EEvent type){
             allListeners.Remove((int) type);
         }
 
-        public static void AddListener(EEvent type, OnEventHandler listener){
+        public static void AddListener(EEvent type, GlobalEventHandler listener){
 #if _DEBUG_EVENT_TRIGGER 
             if (IsTriggingEvent) { Debug.LogError("Error!!! can not modify allListeners when was Trigger Event");}
 #endif
@@ -36,12 +37,12 @@ namespace Lockstep.Core {
                 tmplst.Add(listener);
             }
             else {
-                var lst = new List<OnEventHandler>();
+                var lst = new List<GlobalEventHandler>();
                 lst.Add(listener);
                 allListeners.Add(itype,lst);
             }
         }
-        public static void RemoveListener(EEvent type, OnEventHandler listener){
+        public static void RemoveListener(EEvent type, GlobalEventHandler listener){
 #if _DEBUG_EVENT_TRIGGER
             if (IsTriggingEvent) { Debug.LogError("Error!!! can not modify allListeners when was Trigger Event");}
 #endif

@@ -44,6 +44,10 @@ namespace Lockstep.Game {
         public List<Vector2Int> enemyBornPoints{get;private set;}
         public List<Vector2Int> playerBornPoss {get;private set;}
 
+        public override void DoAwake(IServiceContainer serviceContainer){
+            EventHelper.AddListener(EEvent.OnRoomGameStart,OnEvent_OnRoomGameStart);
+        }
+
         public override void DoStart(){
             base.DoStart();
             grid = GameObject.FindObjectOfType<Grid>();
@@ -96,10 +100,6 @@ namespace Lockstep.Game {
         }
         
 
-        public void OnEvent_BeforeGameStart(){
-            
-            LoadLevel(0);
-        }
 
         public TileBase Pos2Tile(Vector2 pos, bool isCollider){
             return Pos2Tile(pos.Floor(), isCollider);
