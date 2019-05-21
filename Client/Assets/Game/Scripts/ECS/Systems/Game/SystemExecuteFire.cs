@@ -1,5 +1,7 @@
 using Entitas;
+using Lockstep.Logging;
 using Lockstep.Math;
+using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game.Systems.Game {
     public class SystemExecuteFire :BaseSystem,IExecuteSystem{
