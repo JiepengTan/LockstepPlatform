@@ -26,9 +26,9 @@ MonoBehaviour:
         _x: 1000
         _y: 1000
       radius:
-        _val: 0
+        _val: 1414
     unit:
-      name: Enemy
+      name: Enmy
       camp: 1
       detailType: 0
       health: 1
@@ -42,11 +42,18 @@ MonoBehaviour:
       isChangedDir: 0
     skill:
       cd:
-        _val: 1000
+        _val: 1111000
       cdTimer:
         _val: 0
       bulletId: 0
       isNeedFire: 0
+    ai:
+      timer:
+        _val: 1000
+      updateInterval:
+        _val: 0
+      fireRate:
+        _val: 0
   playerPrefabs:
   - asset:
       assetId: 40
@@ -61,7 +68,7 @@ MonoBehaviour:
         _x: 1000
         _y: 1000
       radius:
-        _val: 0
+        _val: 1414
     unit:
       name: player
       camp: 0
@@ -111,7 +118,7 @@ MonoBehaviour:
         _val: 10000
       isChangedDir: 0
     owner:
-      ownerID: 0
+      localId: 0
   itemPrefabs:
   - asset:
       assetId: 21
@@ -126,7 +133,7 @@ MonoBehaviour:
         _x: 1000
         _y: 1000
       radius:
-        _val: 0
+        _val: 1414
     type:
       type: 0
       killerActorId: 0
@@ -144,7 +151,7 @@ MonoBehaviour:
         _x: 1000
         _y: 1000
       radius:
-        _val: 0
+        _val: 1414
     unit:
       name: Camp
       camp: 2

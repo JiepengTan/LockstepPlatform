@@ -21,6 +21,7 @@ namespace Lockstep.Game.Systems.Input {
             foreach (var input in _inputGroup.GetEntities()
                 .Where(entity => entity.tick.value == _gameStateContext.tick.value)) {
                 var actorEntity = _actorContext.GetEntityWithId(input.actorId.value);
+                if (!actorEntity.hasGameLocalId) continue;
                 var gameLocalId = actorEntity.gameLocalId.value;
                 var gameEntity = _gameContext.GetEntityWithLocalId(gameLocalId);
                 if (gameEntity != null) {

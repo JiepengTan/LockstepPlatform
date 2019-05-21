@@ -30,13 +30,11 @@ namespace Lockstep.Game {
                 }
 
                 _linkedEntities.Add(entity.localId.value, viewGo);
-                UnityEngine.Debug.Log($"BindView  " + entity.localId.value + " " + viewGo.name);
             }
         }
 
         public void DeleteView(uint entityId){
             if(!_linkedEntities.ContainsKey(entityId)) return;
-            UnityEngine.Debug.Log($"DeleteView " + entityId);
             var viewGo = _linkedEntities[entityId];
             var eventListeners = viewGo.GetComponents<IEventListener>();
             foreach (var listener in eventListeners) {

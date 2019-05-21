@@ -40,11 +40,11 @@ namespace Lockstep.Game.Systems.Game {
             foreach (var bullet in allBullet) {
                 if (bullet.isDestroyed) continue;
                 var bulletCamp = bullet.unit.camp;
-                foreach (var tank in allPlayer) {
+                 foreach (var tank in allPlayer) {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
                         _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(tank, bullet);
+                        _unitService.TakeDamage(bullet,tank );
                     }
                 }
 
@@ -52,7 +52,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
                         _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(tank, bullet);
+                        _unitService.TakeDamage(bullet,tank );
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (camp.isDestroyed) continue;
                     if (CollisionUtil.CheckCollision(bullet, camp)) {
                         _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(camp, bullet);
+                        _unitService.TakeDamage(bullet,camp);
                     }
                 }
             }
@@ -72,6 +72,7 @@ namespace Lockstep.Game.Systems.Game {
             HashSet<Vector2Int> tempPoss = new HashSet<Vector2Int>();
             // bullet and map
             foreach (var bullet in allBullet) {
+                if (bullet.isDestroyed) continue;
                 var pos = bullet.pos.value;
                 var borderDir = DirUtil.GetBorderDir(bullet.dir.value).ToLVector2();
                 var borderPos1 = pos + borderDir * bullet.collider.radius;

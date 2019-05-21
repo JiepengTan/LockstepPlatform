@@ -10,8 +10,8 @@ namespace Lockstep.Game.Systems.Game {
         public SystemUpdateAI(Contexts contexts, IServiceContainer serviceContainer) : base(contexts, serviceContainer){
             _AIGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
-                GameMatcher.ActorId,
-                GameMatcher.AI
+                GameMatcher.AI,
+                GameMatcher.Skill
             ));
         }
 

@@ -54,15 +54,18 @@ namespace Lockstep.Game {
 
         #region IUnitService
 
-        public void TakeDamage(GameEntity atker, GameEntity suffer){
+        public void TakeDamage(GameEntity bullet, GameEntity suffer){
             if (suffer.isDestroyed) return;
-            if (suffer.unit.health <= atker.unit.damage) {
+            if (suffer.unit.health <= bullet.unit.damage) {
+                bullet.unit.health -= suffer.unit.health;
                 suffer.unit.health = 0;
-                suffer.unit.killerLocalId = atker.localId.value;
+                suffer.unit.killerLocalId = bullet.bullet.ownerLocalId;
                 suffer.isDestroyed = true;
             }
             else {
-                suffer.unit.health -= atker.unit.damage;
+                suffer.unit.health -= bullet.unit.damage;
+                bullet.unit.health = 0;
+                bullet.isDestroyed = true;
             }
         }
 
@@ -85,16 +88,15 @@ namespace Lockstep.Game {
         }
 
         public void CreateCamp(LVector2 createPos, int type = 0){
-            UnityEngine.Debug.Log($"hehe CreateCamp " + type);
             CreateUnit(createPos + Define.TankBornOffset, _config.CampPrefabs, 0, EDir.Up, transParentItem);
         }
 
         public void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner){
-            UnityEngine.Debug.Log($"hehe CreateBullet " + type);
             var createPos = pos + DirUtil.GetDirLVec(dir) * TankUtil.TANK_HALF_LEN;
             
             var entity = CreateUnit(createPos, _config.bulletPrefabs, type, dir, transParentBullet);
             entity.bullet.ownerLocalId = owner.localId.value;
+            entity.unit.camp = owner.unit.camp;
         }
 
         public void CreateEnemy(LVector2 bornPos){
@@ -103,8 +105,7 @@ namespace Lockstep.Game {
         }
 
         public void CreateEnemy(LVector2 bornPos, int type){
-            UnityEngine.Debug.Log($"hehe create enemy " + type);
-            var createPos = bornPos + Define.TankBornOffset;
+            var createPos = bornPos + LVector2.right;
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
             EDir dir = EDir.Down;
@@ -113,7 +114,6 @@ namespace Lockstep.Game {
         }
 
         public void CreatePlayer(byte actorId, int type){
-            UnityEngine.Debug.Log($"hehe CreatePlayer " + type);
             var bornPos = _globalStateService.playerBornPoss[actorId];
             var createPos = bornPos + Define.TankBornOffset;
             _resourceService.ShowBornEffect(createPos);

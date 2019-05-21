@@ -10,7 +10,7 @@ namespace Lockstep.Game {
         void CreateCamp(LVector2 pos, int type);
         void CreatePlayer(byte actorId, int type);
         void DropItem(LFloat rate);
-        void TakeDamage(GameEntity atker, GameEntity suffer);
+        void TakeDamage(GameEntity bullet, GameEntity suffer);
         void DelayCall(LFloat delay, Action callback);
     }
 

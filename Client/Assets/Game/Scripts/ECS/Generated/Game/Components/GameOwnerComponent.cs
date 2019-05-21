@@ -11,17 +11,17 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.OwnerComponent owner { get { return (Lockstep.ECS.Game.OwnerComponent)GetComponent(GameComponentsLookup.Owner); } }
     public bool hasOwner { get { return HasComponent(GameComponentsLookup.Owner); } }
 
-    public void AddOwner(int newOwnerID) {
+    public void AddOwner(uint newLocalId) {
         var index = GameComponentsLookup.Owner;
         var component = CreateComponent<Lockstep.ECS.Game.OwnerComponent>(index);
-        component.ownerID = newOwnerID;
+        component.localId = newLocalId;
         AddComponent(index, component);
     }
 
-    public void ReplaceOwner(int newOwnerID) {
+    public void ReplaceOwner(uint newLocalId) {
         var index = GameComponentsLookup.Owner;
         var component = CreateComponent<Lockstep.ECS.Game.OwnerComponent>(index);
-        component.ownerID = newOwnerID;
+        component.localId = newLocalId;
         ReplaceComponent(index, component);
     }
 

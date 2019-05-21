@@ -44,6 +44,7 @@ namespace Lockstep.Game {
         public class Player : Tank {
             ActorIdComponent actorId = new ActorIdComponent();
         }
+        [System.Serializable]
         public class Enemy : Tank {
             public AIComponent ai = new AIComponent();
             public TagEnemyComponent tagEnemy = new TagEnemyComponent();
@@ -58,7 +59,7 @@ namespace Lockstep.Game {
         }
 
 
-        [Header("Prefab info")] public List<Tank> enemyPrefabs = new List<Tank>();
+        public List<Enemy> enemyPrefabs = new List<Enemy>();
         public List<Player> playerPrefabs = new List<Player>();
         public List<Bullet> bulletPrefabs = new List<Bullet>();
         public List<Item> itemPrefabs = new List<Item>();
