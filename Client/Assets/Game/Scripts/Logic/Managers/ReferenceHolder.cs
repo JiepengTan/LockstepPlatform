@@ -47,7 +47,7 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IConfigService _configService;
+        protected IGameStateService _gameStateService;
         protected IEventRegisterService _eventRegisterService;
         
 
@@ -56,7 +56,7 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _configService = serviceContainer.GetService<IConfigService>();
+            _gameStateService = serviceContainer.GetService<IGameStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
         }
 
@@ -78,7 +78,7 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IConfigService _configService;
+        protected IGameStateService GameStateService;
         protected IEventRegisterService _eventRegisterService;
         
 
@@ -87,7 +87,7 @@ namespace Lockstep.Game {
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _configService = serviceContainer.GetService<IConfigService>();
+            GameStateService = serviceContainer.GetService<IGameStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
         }
 

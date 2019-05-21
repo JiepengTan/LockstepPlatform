@@ -14,43 +14,41 @@ using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
     public class SimulationManager : SingletonManager<SimulationManager> {
-        public static byte MainActorID;
         public World World => _world;
-        public Contexts _context { get; private set; }
-
-        public GameLog GameLog { get; } = new GameLog();
-
-        public byte _localActorId { get; private set; }
-
-        public bool Running { get; private set; }
-
-        public IServiceContainer Services { get; private set; }
-
+        private Contexts _context;
+        private GameLog GameLog = new GameLog();
+        private byte _localActorId;
+        private bool Running;
+        private IServiceContainer Services;
         private float _tickDt;
         private float _accumulatedTime;
-
         private World _world;
-
         private CommandBuffer cmdBuffer = new CommandBuffer();
+        private uint _localTick;
+        private int _roomId;
+        private List<long> allHashCodes = new List<long>();
+        private uint firstHashTick = 0;
+        
+        private byte[] _allActors;
+        private int _actorCount;
+        private uint CurTick = 0;
 
-
-        public uint _localTick;
-        public int _roomId;
-        private IInputService inputService;
-
-        public SimulationManager(){ }
-
-        public void OnNetFrame(ServerFrame[] frames){ }
-        public void OnEvent_OnServerFrame(object param){
+        void OnEvent_OnServerFrame(object param){
             var msg = param as Msg_ServerFrames;
             cmdBuffer.PushServerFrames(msg.frames);
         }
 
-        public void OnEvent_OnRoomGameStart(object param){
+        void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
             OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
         }
-        
+
+        void OnEvent_OnAllPlayerFinishedLoad(object param){
+            Debug.Log($"OnEvent_OnAllPlayerFinishedLoad");
+            Running = true;
+            _world.StartSimulate();
+        }
+
         public void OnEvent_AllPlayerFinishedLoad(object param){
             OnLoadFinished();
         }
@@ -58,7 +56,7 @@ namespace Lockstep.Game {
         public override void DoAwake(IServiceContainer services){
             Services = services;
             _context = Main.Instance.contexts;
-            inputService = Services.GetService<IInputService>();
+            _inputService = Services.GetService<IInputService>();
         }
 
         public override void DoUpdate(float deltaTime){
@@ -70,14 +68,14 @@ namespace Lockstep.Game {
                 return;
             }
 
-            _accumulatedTime += deltaTime* 1000;
+            _accumulatedTime += deltaTime * 1000;
             while (_accumulatedTime >= _tickDt) {
                 var tick = _world.Tick;
-                var input = new Msg_PlayerInput(tick, _localActorId, inputService.GetInputCmds());
+                var input = new Msg_PlayerInput(tick, _localActorId, _inputService.GetInputCmds());
                 var localFrame = new ServerFrame();
                 localFrame.tick = tick;
                 var inputs = new Msg_PlayerInput[_actorCount];
-                inputs[_localActorId] = input; 
+                inputs[_localActorId] = input;
                 localFrame.inputs = inputs;
                 cmdBuffer.PushLocalFrame(localFrame);
                 _networkMgr.SendInput(input);
@@ -89,7 +87,6 @@ namespace Lockstep.Game {
                     var curTick = _world.Tick;
                     var revertTargetTick = (cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick);
                     _world.RevertToTick(revertTargetTick);
-                    CheckRevertHashCode();
                     //  _world.Tick -> nextMissServerFrame simulation
                     var waitCheckTick = cmdBuffer.GetMissServerFrameTick(); //服务器 可能超前
                     //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
@@ -117,7 +114,7 @@ namespace Lockstep.Game {
                         if (!(frame != null && frame.tick == _world.Tick)) {
                             Debug.LogError("cmdBuffer Mgr error");
                         }
-                        
+
                         //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
                         FillInputWithLastFrame(frame);
                         ProcessInputQueue(frame);
@@ -143,17 +140,19 @@ namespace Lockstep.Game {
             _world.CleanUselessSnapshot((cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick));
             CheckAndSendHashCodes();
         }
+
         public override void DoDestroy(){
             Running = false;
         }
 
-        public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors, bool isNeedRender = true){
+        public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors,
+            bool isNeedRender = true){
+            CommandBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
-            _configService.roomId = roomId;
-            _configService.allActorIds = allActors;
-            _configService.actorCount = allActors.Length;
-            
-            MainActorID = localActorId;
+            _gameStateService.roomId = roomId;
+            _gameStateService.allActorIds = allActors;
+            _gameStateService.actorCount = allActors.Length;
+
             _localActorId = localActorId;
             _allActors = allActors;
 
@@ -164,7 +163,7 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context, allActors,new GameLogicSystems(_context, Services));
+            _world = new World(_context, allActors, new GameLogicSystems(_context, Services));
         }
 
 
@@ -173,10 +172,6 @@ namespace Lockstep.Game {
             Running = true;
         }
 
-        public byte[] _allActors;
-        private int _actorCount;
-
-        private uint CurTick = 0;
 
 
         private void FillInputWithLastFrame(ServerFrame frame){
@@ -188,14 +183,10 @@ namespace Lockstep.Game {
             for (int i = 0; i < _actorCount; i++) {
                 inputs[i] = new Msg_PlayerInput(tick, _allActors[i], lastFrameInputs?[i]?.Commands?.ToList());
             }
+
             inputs[_localActorId] = curFrameInput;
         }
 
-
-        public List<long> allBeforeExecuteHashCodes = new List<long>();
-        public List<long> allHashCodes = new List<long>();
-        private List<long> allHashCodess = new List<long>();
-        private uint firstHashTick = 0;
 
         public void CheckAndSendHashCodes(){
             if (cmdBuffer.waitCheckTick > firstHashTick) {
@@ -205,12 +196,12 @@ namespace Lockstep.Game {
                     msg.startTick = firstHashTick;
                     msg.hashCodes = new long[count];
                     for (int i = 0; i < count; i++) {
-                        msg.hashCodes[i] = allHashCodess[i];
+                        msg.hashCodes[i] = allHashCodes[i];
                     }
 
                     _networkMgr.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
                     firstHashTick = firstHashTick + (uint) count;
-                    allHashCodess.RemoveRange(0, count);
+                    allHashCodes.RemoveRange(0, count);
                 }
             }
         }
@@ -221,13 +212,13 @@ namespace Lockstep.Game {
             }
 
             var idx = (int) (tick - firstHashTick);
-            if (allHashCodess.Count <= idx) {
+            if (allHashCodes.Count <= idx) {
                 for (int i = 0; i < idx + 1; i++) {
-                    allHashCodess.Add(0);
+                    allHashCodes.Add(0);
                 }
             }
 
-            allHashCodess[idx] = hash;
+            allHashCodes[idx] = hash;
         }
 
         public void SetHashCode(){
@@ -235,23 +226,13 @@ namespace Lockstep.Game {
             var iTick = (int) nextTick - 1;
             for (int i = allHashCodes.Count; i <= iTick; i++) {
                 allHashCodes.Add(0);
-                allBeforeExecuteHashCodes.Add(0);
             }
 
             var hash = _world.Contexts.gameState.hashCode.value;
             allHashCodes[iTick] = _world.Contexts.gameState.hashCode.value;
-            allBeforeExecuteHashCodes[iTick] = _world.Contexts.gameState.beforeExecuteHashCode.value;
             SetHash(nextTick - 1, hash);
         }
 
-        public void CheckRevertHashCode(){
-            var iTick = (int) _world.Tick;
-            var hashCodeAfterRevert = _world.Contexts.gameState.beforeExecuteHashCode.value;
-            var hashCodeBefore = allBeforeExecuteHashCodes[iTick];
-            if (hashCodeAfterRevert != hashCodeBefore) {
-                Debug.LogError($"Revert Error: 前后状态不一致 before{hashCodeBefore} afterRevert{hashCodeAfterRevert}");
-            }
-        }
 
         public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
@@ -274,7 +255,7 @@ namespace Lockstep.Game {
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
                     var inputEntity = _context.input.CreateEntity();
-                    inputService.Execute(command, inputEntity);
+                    _inputService.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);
                     inputEntity.AddActorId(input.ActorId);
                     inputEntity.isDestroyed = true;

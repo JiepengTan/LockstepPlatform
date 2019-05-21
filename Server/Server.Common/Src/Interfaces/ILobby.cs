@@ -12,7 +12,7 @@ namespace Server.Common {
         List<IRoom> GetRooms(int roomType);
         IRoom GetRoom(int roomId);
         IRoom GetRoomByUserID(int id);
-        IRoom CreateRoom(int type, Player master, string roomName);
+        IRoom CreateRoom(int type, Player master, string roomName,byte size);
         void RemoveRoom(IRoom room);
         bool JoinRoom(long playerID, int roomID);
         bool LeaveRoom(long playerID);

@@ -9,6 +9,9 @@ namespace Lockstep.Game {
     /// 滑动窗口 msg buffer
     /// </summary>
     public class CommandBuffer {
+        /// for debug
+        public static byte DebugMainActorID;
+        
         public const int SERVER_FRAME_RATE = 60;
         public const int MAX_FRAME_BUFFER_COUNT = SERVER_FRAME_RATE;
 
@@ -110,7 +113,7 @@ namespace Lockstep.Game {
 #if DEBUG_FRAME_DELAY
             var time = 0;
             foreach (var input in frame.inputs) {
-                if (input != null && input.ActorId == SimulationManager.MainActorID) {
+                if (input != null && input.ActorId == DebugMainActorID) {
                     input.timeSinceStartUp = Time.realtimeSinceStartup;
                 }
             }
@@ -148,7 +151,7 @@ namespace Lockstep.Game {
 #if DEBUG_FRAME_DELAY
                         var time = 0;
                         foreach (var input in data.inputs) {
-                            if (input.ActorId == SimulationManager.MainActorID) {
+                            if (input.ActorId == DebugMainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
                                 if (delay > 0.2f) {
                                     UnityEngine.Debug.Log(

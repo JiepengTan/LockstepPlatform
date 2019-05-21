@@ -13,14 +13,14 @@ namespace Lockstep.Game.Systems.GameState {
             //create camps 
             
             //create actors
-            Debug.Assert(_configService.actorCount <= _configService.playerBornPoss.Count,"");
-            var allActorIds = _configService.allActorIds;
-            for (int i = 0; i < _configService.actorCount; i++) {
+            Debug.Assert(GameStateService.actorCount <= GameStateService.playerBornPoss.Count,"");
+            var allActorIds = GameStateService.allActorIds;
+            for (int i = 0; i < GameStateService.actorCount; i++) {
                 var entity = _actorContext.CreateEntity();
-                entity.AddId(_configService.allActorIds[i]);
+                entity.AddId(GameStateService.allActorIds[i]);
                 entity.AddName("" + i);
                 entity.AddScore(0);
-                entity.AddLife(_configService.playerInitLifeCount);
+                entity.AddLife(GameStateService.playerInitLifeCount);
             }
             //reset status
             _gameStateContext.ReplaceGameResult(EGameResult.Playing);

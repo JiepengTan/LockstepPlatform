@@ -12,12 +12,12 @@ namespace Lockstep.Game {
     public interface IMapManager {
         TileInfos GetMapInfo(string name);
         void LoadLevel(int level);
-        Vector2Int mapMin{get;}
-        Vector2Int mapMax{get;}
+        Vector2Int mapMin { get; }
+        Vector2Int mapMax { get; }
     }
 
     [System.Serializable]
-    public class MapManager : SingletonManager<MapManager>,IMapManager, IMapService {
+    public class MapManager : SingletonManager<MapManager>, IMapManager, IMapService {
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -36,28 +36,27 @@ namespace Lockstep.Game {
             return gridInfo.GetMapInfo(name);
         }
 
-        public GridInfo gridInfo{get;private set;}
-        public Vector2Int mapMin{get;private set;}
-        public Vector2Int mapMax{get;private set;}
-        public Grid grid{get;private set;}
-        
-        public List<Vector2Int> enemyBornPoints{get;private set;}
-        public List<Vector2Int> playerBornPoss {get;private set;}
+        public GridInfo gridInfo { get; private set; }
+        public Vector2Int mapMin { get; private set; }
+        public Vector2Int mapMax { get; private set; }
+        [SerializeField] public Grid grid { get; private set; }
+
+        public List<Vector2Int> enemyBornPoints { get; private set; }
+        public List<Vector2Int> playerBornPoss { get; private set; }
 
         public override void DoAwake(IServiceContainer serviceContainer){
-            EventHelper.AddListener(EEvent.OnRoomGameStart,OnEvent_OnRoomGameStart);
+            EventHelper.AddListener(EEvent.OnRoomGameStart, OnEvent_OnRoomGameStart);
         }
 
         public override void DoStart(){
             base.DoStart();
-            grid = GameObject.FindObjectOfType<Grid>();
-        }
-
-        public void LoadLevel(int level){
             if (grid == null) {
                 grid = GameObject.FindObjectOfType<Grid>();
             }
-            gridInfo = MapManager.LoadMap(grid,level);
+        }
+
+        public void LoadLevel(int level){
+            gridInfo = MapManager.LoadMap(grid, level);
             var min = new Vector2Int(int.MaxValue, int.MaxValue);
             var max = new Vector2Int(int.MinValue, int.MinValue);
             foreach (var tempInfo in gridInfo.tileMaps) {
@@ -69,36 +68,34 @@ namespace Lockstep.Game {
                 if (mapMax.x > max.x) max.x = mapMax.x;
                 if (mapMax.y > max.y) max.y = mapMax.y;
             }
+
             mapMin = min;
             mapMax = max;
-            
+
             var tileInfo = GetMapInfo(Global.TileMapName_BornPos);
             var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
             enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosEnemy));
             playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosHero));
 
-            if (_configService != null) {
-                _configService.mapMin = mapMin;
-                _configService.mapMax = mapMax;
-                _configService.enemyBornPoints = enemyBornPoints;
-                _configService.playerBornPoss = playerBornPoss;
+            if (_gameStateService != null) {
+                _gameStateService.mapMin = mapMin;
+                _gameStateService.mapMax = mapMax;
+                _gameStateService.enemyBornPoints = enemyBornPoints;
+                _gameStateService.playerBornPoss = playerBornPoss;
             }
-           
-                
-            Debug.Assert(_configService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
+
+
+            Debug.Assert(_gameStateService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
                 "Map should has 2 player born pos");
 
 
-            EventHelper.Trigger(EEvent.LoadMapDone,level);
-            //test
-            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad,null);
+            EventHelper.Trigger(EEvent.LoadMapDone, level);
         }
 
         void OnEvent_OnRoomGameStart(object param){
-            LoadLevel(0);
+            LoadLevel(1);
         }
-        
 
 
         public TileBase Pos2Tile(Vector2 pos, bool isCollider){
@@ -142,11 +139,11 @@ namespace Lockstep.Game {
             return 0;
         }
 
-        public static GridInfo LoadMap(Grid grid,int level){
+        public static GridInfo LoadMap(Grid grid, int level){
             CheckLoadTileIDMap();
             var path = MapManager.GetMapPathFull(level);
             if (!File.Exists(path)) {
-                Debug.LogError("Have no map file" + level);
+                Debug.LogError("Have no map file" + level + " path:"+path);
                 return null;
             }
 
@@ -184,11 +181,7 @@ namespace Lockstep.Game {
         }
 
 
-        public static void SaveLevel(int level){
-            var go = GameObject.FindObjectOfType<Grid>();
-            if (go == null)
-                return;
-            var grid = go.GetComponent<Grid>();
+        public static void SaveLevel(Grid grid, int level){
             if (grid == null) return;
             var bytes = TileMapSerializer.SerializeGrid(grid, MapManager.Tile2ID);
             if (bytes != null) {

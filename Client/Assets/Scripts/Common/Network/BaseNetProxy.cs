@@ -37,6 +37,7 @@ namespace Lockstep.Game {
             _allMsgDealFuncs = new NetMsgHandler[maxMsgHandlerIdx];
         }
 
+        private bool _isInit = false;
         public void Init(string ip, int port, string key){
             _key = key;
             this._ip = ip;
@@ -47,25 +48,33 @@ namespace Lockstep.Game {
                 dataReader.Recycle();
             };
             _listener.PeerConnectedEvent += (peer) => {
-                Debug.Log("Connected!!");
+                UnityEngine.Debug.Log("Connected!!");
                 _peer = peer;
                 OnConnected?.Invoke();
+            };       
+            _listener.PeerDisconnectedEvent += (peer,disconnectInfo) => {
+                UnityEngine.Debug.Log("DisConnected!!");
             };
             _client = new NetManager(_listener) {
                 DisconnectTimeout = 300000
             };
+            _isInit = true;
+            Debug.Log($"Try Connect to {ip}:{port}");
         }
 
         public void DoStart(){
+            if(!_isInit) return;
             _client.Start();
             _client.Connect(_ip, _port, _key);
         }
 
         public void DoDestroy(){
-            _client.Stop();
+            _isInit = false;
+            _client?.Stop();
         }
 
         public void DoUpdate(){
+            if(!_isInit) return;
             AutoConnect();
             _client.PollEvents();
         }

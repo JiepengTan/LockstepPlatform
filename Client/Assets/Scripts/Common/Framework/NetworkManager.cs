@@ -8,14 +8,13 @@ namespace Lockstep.Game {
     public partial class NetworkManager :SingletonManager<NetworkManager>{
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
-        public const string ClientKey = "SomeConnectionKey";
+        public const string ClientKey = "LockstepPlatform";
         
         private BaseNetProxy _netProxyLobby;
         private BaseNetProxy _netProxyRoom;
 
         private long _playerID;
         private int _roomId;
-        private string key;
         public bool IsConnected {
             get { return _netProxyLobby!=null && _netProxyLobby.Connected; }
         }
@@ -25,7 +24,7 @@ namespace Lockstep.Game {
             _netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
             _eventRegisterService.RegisterEvent<EMsgCL,NetMsgHandler>("OnMsg_L2C","OnMsg_".Length,RegisterMsgHandler);
             _eventRegisterService.RegisterEvent<EMsgCS,NetMsgHandler>("OnMsg_S2C","OnMsg_".Length,RegisterMsgHandler);
-            InitLobby(ServerIp, ServerPort, key);
+            InitLobby(ServerIp, ServerPort, ClientKey);
         }
         public override void DoStart(){
             StartLobby();
@@ -57,7 +56,7 @@ namespace Lockstep.Game {
 
         public void InitRoom(string ip, int port, string key){
             _netProxyRoom.OnConnected += OnConnectedRoom;
-            _netProxyRoom.Init(ip, port, key);
+            _netProxyRoom.Init(ip, port, ClientKey);
             //register msgs
 
             //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_StartGame, OnMsg_S2C_StartGame);
@@ -109,7 +108,7 @@ namespace Lockstep.Game {
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
             UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + msg.port);
-            InitRoom(msg.ip, msg.port, key);
+            InitRoom(msg.ip, msg.port, ClientKey);
             StartRoom();
         }
         
@@ -126,7 +125,7 @@ namespace Lockstep.Game {
 
         void SendCreateRoomMsg(){
             UnityEngine.Debug.Log("SendCreateRoomMsg");
-            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom"});
+            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom",size = 1});
         }
 
 

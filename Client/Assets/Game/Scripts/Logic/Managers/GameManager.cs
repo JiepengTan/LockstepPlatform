@@ -4,6 +4,7 @@ using UnityEditor;
 using System.Collections;
 using System;
 using Lockstep.Core;
+using Debug = Lockstep.Logging.Debug;
 using Random = UnityEngine.Random;
 
 
@@ -42,8 +43,8 @@ namespace Lockstep.Game {
         }
 
         public void OnEvent_LoadMapDone(object param){
-            var msg = (int) param;
-            StartGame(msg);
+            var level = (int) param;
+            StartGame(level);
         }
 
         private bool IsGameOver;
@@ -58,12 +59,11 @@ namespace Lockstep.Game {
         public void StartGame(int level){
             IsGameOver = false;
             //reset variables
-            _configService.curLevel = level;
+            _gameStateService.curLevel = level;
             //read map info
                  // init player pos info
-
-            //create players
-            _audioMgr.PlayMusicStart();
+            //test
+            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad,null);
 
             // for (int i = 0; i < MAX_PLAYER_COUNT; i++) {
             //     var playerInfo = allPlayerInfos[i];

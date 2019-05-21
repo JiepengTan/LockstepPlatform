@@ -101,7 +101,7 @@ namespace Lockstep.Game {
             where TEnum : struct{
             if (callBack == null) return;
             foreach (var mgr in allMgrs) {
-                var methods = mgr.GetType().GetMethods(BindingFlags.DeclaredOnly);
+                var methods = mgr.GetType().GetMethods(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly);
                 foreach (var method in methods) {
                     var methodName = method.Name;
                     if (methodName.StartsWith(prefix)) {
@@ -129,6 +129,7 @@ namespace Lockstep.Game {
             contexts = new Contexts();
             Log.OnMessage += OnLog;
             DoAwake();
+            RegisterService(this);
         }
 
 

@@ -32,5 +32,10 @@ namespace Lockstep.Game {
                 Source.PlayOneShot(clip);
             }
         }
+
+        void OnEvent_OnAllPlayerFinishedLoad(object param){
+            PlayMusicStart();
+        }
+
     }
 }

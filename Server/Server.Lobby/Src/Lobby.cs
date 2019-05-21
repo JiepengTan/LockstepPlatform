@@ -55,13 +55,13 @@ namespace Lockstep.Logic.Server {
             serverLobby.ClientConnected += OnClientConnected;
             serverLobby.ClientDisconnected += OnCilentDisconnected;
             serverLobby.Run(tcpPort);
-
             this._udpPort = udpPort;
             serverRoom = new NetServer(Define.ClientKey);
             serverRoom.DataReceived += OnDataReceivedRoom;
             serverRoom.ClientConnected += OnClientConnectedRoom;
             serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
             serverRoom.Run(udpPort);
+            Debug.Log($"Listen tcpPort {tcpPort} udpPort {udpPort}");
         }
 
         public void OnDataReceivedRoom(NetPeer peer, byte[] data){
@@ -187,7 +187,7 @@ namespace Lockstep.Logic.Server {
         }
 
 
-        public IRoom CreateRoom(int type, Player master, string roomName){
+        public IRoom CreateRoom(int type, Player master, string roomName, byte size){
             if (RoomAutoIncID == int.MaxValue - 1) {
                 RoomAutoIncID = 0;
             }
@@ -212,12 +212,12 @@ namespace Lockstep.Logic.Server {
                 gameId2Rooms.Add(type, lst);
             }
 
-            room.DoStart(type, id, this, 2, roomName);
+            room.DoStart(type, id, this, size, roomName);
             room.OnPlayerEnter(master);
             SendCreateRoomResult(master);
             return room;
         }
-        
+
 
         private void SendCreateRoomResult(Player player){
             var writer = new Serializer();
@@ -443,8 +443,8 @@ namespace Lockstep.Logic.Server {
                 JoinRoom(player.PlayerId, _allRooms[0].RoomId);
                 SendCreateRoomResult(player);
             }
-            else { 
-                CreateRoom(msg.type, player, msg.name);
+            else {
+                CreateRoom(msg.type, player, msg.name, msg.size);
             }
         }
 
@@ -460,6 +460,7 @@ namespace Lockstep.Logic.Server {
 
             room.OnRecvMsg(player, reader);
         }
+
         #endregion
     }
 }

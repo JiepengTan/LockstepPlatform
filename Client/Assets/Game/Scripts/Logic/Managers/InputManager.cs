@@ -60,8 +60,8 @@ namespace Lockstep.Game {
         public override void DoUpdate(float deltaTime){
             ClearInput();
 
-            if (main.IsGameOver())
-                return;
+            //if (main.IsGameOver())
+            //    return;
 
             ProcessInputs();
         }

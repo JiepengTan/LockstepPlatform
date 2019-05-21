@@ -1,12 +1,6 @@
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using UnityEditor;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 public static class BinaryWriterExtension {
     public static void Write(this BinaryWriter writer, Vector3 vec){
