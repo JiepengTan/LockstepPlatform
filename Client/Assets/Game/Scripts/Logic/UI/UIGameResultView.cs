@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Lockstep.Game;
+using UnityEngine;
 using UnityEngine.UI;
 using Debug = Lockstep.Logging.Debug;
 
@@ -18,9 +19,11 @@ public class UIGameResultView : MonoBehaviour, IGameResultListener,IGameResultRe
         SetGameOver(Contexts.sharedInstance.gameState.gameResultEntity, Contexts.sharedInstance.gameState.hasGameResult);
     }
 
-    public void OnGameResult(GameStateEntity entity, Lockstep.ECS.GameState.EGameResult value)
+    public void OnGameResult(GameStateEntity entity, Lockstep.Game.EGameResult value)
     {
-        SetGameOver(entity, true);
+        if (value != EGameResult.Playing) { 
+            UnityEngine.Debug.LogError("SetGameOver " + value);
+        }
     }
     public void OnGameResultRemoved(GameStateEntity entity)
     {

@@ -12,7 +12,7 @@ public partial class GameStateContext {
     public Lockstep.ECS.GameState.GameResultComponent gameResult { get { return gameResultEntity.gameResult; } }
     public bool hasGameResult { get { return gameResultEntity != null; } }
 
-    public GameStateEntity SetGameResult(Lockstep.ECS.GameState.EGameResult newValue) {
+    public GameStateEntity SetGameResult(Lockstep.Game.EGameResult newValue) {
         if (hasGameResult) {
             throw new Entitas.EntitasException("Could not set GameResult!\n" + this + " already has an entity with Lockstep.ECS.GameState.GameResultComponent!",
                 "You should check if the context already has a gameResultEntity before setting it or use context.ReplaceGameResult().");
@@ -22,7 +22,7 @@ public partial class GameStateContext {
         return entity;
     }
 
-    public void ReplaceGameResult(Lockstep.ECS.GameState.EGameResult newValue) {
+    public void ReplaceGameResult(Lockstep.Game.EGameResult newValue) {
         var entity = gameResultEntity;
         if (entity == null) {
             entity = SetGameResult(newValue);
@@ -49,14 +49,14 @@ public partial class GameStateEntity {
     public Lockstep.ECS.GameState.GameResultComponent gameResult { get { return (Lockstep.ECS.GameState.GameResultComponent)GetComponent(GameStateComponentsLookup.GameResult); } }
     public bool hasGameResult { get { return HasComponent(GameStateComponentsLookup.GameResult); } }
 
-    public void AddGameResult(Lockstep.ECS.GameState.EGameResult newValue) {
+    public void AddGameResult(Lockstep.Game.EGameResult newValue) {
         var index = GameStateComponentsLookup.GameResult;
         var component = CreateComponent<Lockstep.ECS.GameState.GameResultComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceGameResult(Lockstep.ECS.GameState.EGameResult newValue) {
+    public void ReplaceGameResult(Lockstep.Game.EGameResult newValue) {
         var index = GameStateComponentsLookup.GameResult;
         var component = CreateComponent<Lockstep.ECS.GameState.GameResultComponent>(index);
         component.value = newValue;

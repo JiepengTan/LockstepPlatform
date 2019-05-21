@@ -1,4 +1,5 @@
 using Entitas;
+using Lockstep.ECS.GameState;
 using Lockstep.Math;
 
 namespace Lockstep.Game.Systems.Game {
@@ -10,10 +11,14 @@ namespace Lockstep.Game.Systems.Game {
             _destroyedGroup = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.Destroyed,
                 GameMatcher.LocalId,
-                GameMatcher.Camp));
+                GameMatcher.TagCamp));
         }
 
 
-        public void Execute(){ }
+        public void Execute(){
+            if (_destroyedGroup.GetEntities().Length > 0) {
+                _gameStateContext.ReplaceGameResult(EGameResult.Failed);
+            }
+        }
     }
 }

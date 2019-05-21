@@ -15,30 +15,29 @@ public static class GameComponentsLookup {
     public const int Backup = 4;
     public const int BornPoint = 5;
     public const int Bullet = 6;
-    public const int Camp = 7;
-    public const int Collider = 8;
-    public const int DelayCall = 9;
-    public const int Destroyed = 10;
-    public const int Dir = 11;
-    public const int DropRate = 12;
-    public const int FireRequest = 13;
-    public const int ItemType = 14;
-    public const int LocalId = 15;
-    public const int Move = 16;
-    public const int MoveRequest = 17;
-    public const int Owner = 18;
-    public const int Pos = 19;
-    public const int Skill = 20;
-    public const int TagBullet = 21;
-    public const int TagCamp = 22;
-    public const int TagEnemy = 23;
-    public const int TagTank = 24;
-    public const int Tilemap = 25;
-    public const int Unit = 26;
-    public const int UpgradeDestroyed = 27;
-    public const int PosListener = 28;
+    public const int Collider = 7;
+    public const int DelayCall = 8;
+    public const int Destroyed = 9;
+    public const int Dir = 10;
+    public const int DropRate = 11;
+    public const int FireRequest = 12;
+    public const int ItemType = 13;
+    public const int LocalId = 14;
+    public const int Move = 15;
+    public const int MoveRequest = 16;
+    public const int Owner = 17;
+    public const int Pos = 18;
+    public const int Skill = 19;
+    public const int TagBullet = 20;
+    public const int TagCamp = 21;
+    public const int TagEnemy = 22;
+    public const int TagTank = 23;
+    public const int Tilemap = 24;
+    public const int Unit = 25;
+    public const int UpgradeDestroyed = 26;
+    public const int PosListener = 27;
 
-    public const int TotalComponents = 29;
+    public const int TotalComponents = 28;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -48,7 +47,6 @@ public static class GameComponentsLookup {
         "Backup",
         "BornPoint",
         "Bullet",
-        "Camp",
         "Collider",
         "DelayCall",
         "Destroyed",
@@ -80,7 +78,6 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.BackupComponent),
         typeof(Lockstep.ECS.Game.BornPointComponent),
         typeof(Lockstep.ECS.Game.BulletComponent),
-        typeof(Lockstep.ECS.Game.CampComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DelayCallComponent),
         typeof(Lockstep.ECS.Game.DestroyedComponent),

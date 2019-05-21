@@ -7,5 +7,5 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 public interface IGameResultListener {
-    void OnGameResult(GameStateEntity entity, Lockstep.ECS.GameState.EGameResult value);
+    void OnGameResult(GameStateEntity entity, Lockstep.Game.EGameResult value);
 }

@@ -10,6 +10,12 @@ using Random = UnityEngine.Random;
 
 
 namespace Lockstep.Game {
+    public enum EGameResult {
+        Playing,
+        Failed,
+        Win,
+        PartFinished,
+    }
     [System.Serializable]
     public partial class GameManager : SingletonManager<GameManager>, IUnitService {
         [Header("Transforms")] [HideInInspector]

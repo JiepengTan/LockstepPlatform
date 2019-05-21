@@ -2,6 +2,7 @@
 using System.Linq;
 using Lockstep.Math;
 using Entitas;
+using Lockstep.ECS.GameState;
 using Lockstep.Math;
 using Lockstep.Logging;
 

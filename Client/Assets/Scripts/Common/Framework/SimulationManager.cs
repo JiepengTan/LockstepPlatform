@@ -61,11 +61,11 @@ namespace Lockstep.Game {
             _inputService = Services.GetService<IInputService>();
         }
 
+
         public override void DoUpdate(float deltaTime){
             if (!Running) {
                 return;
             }
-
             if (!cmdBuffer.CanExcuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
                 return;
             }

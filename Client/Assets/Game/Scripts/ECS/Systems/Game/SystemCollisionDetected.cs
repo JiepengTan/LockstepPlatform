@@ -31,7 +31,7 @@ namespace Lockstep.Game.Systems.Game {
             
             allCamp = contexts.game.GetGroup(GameMatcher.AllOf(
                 GameMatcher.LocalId,
-                GameMatcher.ItemType));
+                GameMatcher.TagCamp));
         }
 
 
@@ -56,7 +56,7 @@ namespace Lockstep.Game.Systems.Game {
                     }
                 }
             }
-
+   
             // bullet and camp
             foreach (var camp in allCamp) {
                 foreach (var bullet in allBullet) {

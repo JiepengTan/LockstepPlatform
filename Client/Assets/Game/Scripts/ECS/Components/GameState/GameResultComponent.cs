@@ -1,15 +1,10 @@
 ﻿using Entitas;
 using Entitas.CodeGeneration.Attributes;
+using Lockstep.Game;
 
 namespace Lockstep.ECS.GameState
 {        
-    public enum EGameResult {
-        Playing,
-        Failed,
-        Win,
-        PartFinished,
-    }
-    
+
     [GameState]
     [Unique]
     [Event(false, EventType.Added)]
