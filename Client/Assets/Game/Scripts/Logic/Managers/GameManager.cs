@@ -41,6 +41,7 @@ namespace Lockstep.Game {
             transParentEnemy = FuncCreateTrans("Enemies");
             transParentItem = FuncCreateTrans("Items");
             transParentBullet = FuncCreateTrans("Bullets");
+            _config = Resources.Load<GameConfig>(Define.ConfigPath);
         }
 
         public void OnEvent_LoadMapDone(object param){
@@ -82,17 +83,20 @@ namespace Lockstep.Game {
         }
 
         public void CreateCamp(LVector2 createPos, int type = 0){
-            CreateUnit(createPos, _config.itemPrefabs, 0, EDir.Up, transParentItem);
+            CreateUnit(createPos + Define.TankBornOffset, _config.CampPrefabs, 0, EDir.Up, transParentItem);
         }
 
         public void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner){
             var createPos = pos + DirUtil.GetDirLVec(dir) * TankUtil.TANK_HALF_LEN;
-            var delayEntity = _gameContext.CreateEntity();
-            delayEntity.AddDelayCall(LFloat.zero, Define.TankBornDelay, () => {
+            DelayCall(Define.TankBornDelay, () => {
                 var entity = CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
                 entity.bullet.ownerLocalId = owner.localId.value;
-                delayEntity.isDestroyed = true;
             });
+        }
+
+        public void CreateEnemy(LVector2 bornPos){
+            var type = LRandom.Range(0, _config.enemyPrefabs.Count);
+            CreateEnemy(bornPos,type);
         }
 
         public void CreateEnemy(LVector2 bornPos, int type){
@@ -100,10 +104,8 @@ namespace Lockstep.Game {
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
             EDir dir = EDir.Down;
-            var delayEntity = _gameContext.CreateEntity();
-            delayEntity.AddDelayCall(LFloat.zero, Define.TankBornDelay, () => {
+            DelayCall(Define.TankBornDelay, () => {
                 CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
-                delayEntity.isDestroyed = true;
             });
         }
 
@@ -113,10 +115,8 @@ namespace Lockstep.Game {
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
             EDir dir = EDir.Up;
-            var delayEntity = _gameContext.CreateEntity();
-            delayEntity.AddDelayCall(LFloat.zero, Define.TankBornDelay, () => {
+            DelayCall(Define.TankBornDelay, () => {
                 CreateUnit(createPos, _config.playerPrefabs, type, dir, transParentPlayer);
-                delayEntity.isDestroyed = true;
             });
         }
 
@@ -128,12 +128,34 @@ namespace Lockstep.Game {
             var prefab = Resources.Load<GameObject>(Define.GetAssetPath(assetId));
             var go = GameObject.Instantiate(prefab, this.transform.position + createPos.ToVector3(),
                 Quaternion.identity, parent);
-            var entity = _gameContext.CreateEntity();
+            go.AddComponent<PosListener>();
+            go.AddComponent<DirListener>();
+            
+            var entity = CreateGameEntity();
             _viewService.BindView(entity, _gameContext, go);
             ecsPrefab.SetComponentsTo(entity);
-            entity.dir.value = dir;
-            entity.move.pos = createPos;
+            if (entity.hasMove) {
+                entity.pos.value = createPos;
+            }
+            else {
+                entity.dir.value = dir;
+            }
+
             return entity;
+        }
+        
+        ///用于惟一标记 GameEntity 用于回滚
+        private uint _localIdCounter;
+        private GameEntity CreateGameEntity(){
+            var entity = _gameContext.CreateEntity();
+            entity.AddLocalId(_localIdCounter);
+            _localIdCounter++;
+            return entity;
+        }
+
+        public void DelayCall(LFloat delay, Action callback){
+            var delayEntity = CreateGameEntity();
+            delayEntity.AddDelayCall(delay, callback);
         }
 
         #endregion

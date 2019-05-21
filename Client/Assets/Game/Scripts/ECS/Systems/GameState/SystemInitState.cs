@@ -7,11 +7,10 @@ namespace Lockstep.Game.Systems.GameState {
         public SystemInitState(Contexts contexts, IServiceContainer serviceContainer) :
             base(contexts, serviceContainer){ }
 
-        //Load map Create camp and other Entity
-        //Create Players
         public void Initialize(){
             //create camps 
-            var entitys = _actorContext.GetEntities();
+            var campPos = _globalStateService.campPos;
+            _unitService.CreateCamp(campPos,0);
             //create actors
             Debug.Assert(_globalStateService.actorCount <= _globalStateService.playerBornPoss.Count,"");
             var allActorIds = _globalStateService.allActorIds;
@@ -24,8 +23,8 @@ namespace Lockstep.Game.Systems.GameState {
             }
             //born Player
             for (int i = 0; i < _globalStateService.actorCount; i++) {
-                var id = _globalStateService.allActorIds[i];
-                
+                var actorId = _globalStateService.allActorIds[i];
+                _unitService.CreatePlayer(actorId,0);
             }
 
             //reset status

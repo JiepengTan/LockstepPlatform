@@ -25,8 +25,8 @@ namespace Lockstep.Game.Systems.Game {
 
                 aiInfo.timer = LFloat.zero;
                 Vector2Int dir = Vector2Int.zero;
-                var curPos = entity.position.value;
-                var headPos = TankUtil.GetHeadPos(entity.position.value, entity.dir.value);
+                var curPos = entity.pos.value;
+                var headPos = TankUtil.GetHeadPos(entity.pos.value, entity.dir.value);
                 var isReachTheEnd = CollisionUtil.HasColliderWithBorder(entity.dir.value, headPos);
                 if (isReachTheEnd) {
                     List<int> allWalkableDir = new List<int>();
@@ -51,7 +51,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (entity.skill.cdTimer <= LFloat.zero) {
                         entity.skill.cdTimer = entity.skill.cd;
                         //Fire
-                        _unitService.CreateBullet(entity.position.value, entity.dir.value, (int) entity.skill.bulletId,
+                        _unitService.CreateBullet(entity.pos.value, entity.dir.value, (int) entity.skill.bulletId,
                             entity);
                     }
                 }

@@ -17,7 +17,7 @@ namespace Lockstep.Game {
             var allMemberInfos = this.GetType().GetPublicMemberInfos();
             foreach (var memberInfo in allMemberInfos) {
                 int index = 0;
-                var memType = memberInfo.GetType();
+                var memType = memberInfo.type;
                 if (type2Idx.TryGetValue(memType, out int qidx)) {
                     index = qidx;
                 }
@@ -26,18 +26,18 @@ namespace Lockstep.Game {
                         name2Idx = new Dictionary<string, int>();
                         var fileds = typeof(GameComponentsLookup).GetFields(BindingFlags.Static | BindingFlags.Public);
                         foreach (var filed in fileds) {
-                            if (filed.IsLiteral && !filed.IsInitOnly && filed.DeclaringType == typeof(int)) {
+                            if (filed.IsLiteral && !filed.IsInitOnly && filed.FieldType == typeof(int)) {
                                 name2Idx.Add(filed.Name + "Component", (int) filed.GetRawConstantValue());
                             }
                         }
                     }
 
                     if (name2Idx.TryGetValue(memType.Name, out int nidx)) {
-                        index = qidx;
+                        index = nidx;
                         type2Idx.Add(memType, nidx);
                     }
                     else {
-                        Debug.LogError("Do not have type" + memType.ToString());
+                        Debug.LogError("Do not have type" + memType.Name.ToString());
                         return;
                     }
                 }

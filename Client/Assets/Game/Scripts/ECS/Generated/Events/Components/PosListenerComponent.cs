@@ -7,6 +7,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 [Entitas.CodeGeneration.Attributes.DontGenerate(false)]
-public sealed class PositionListenerComponent : Entitas.IComponent {
-    public System.Collections.Generic.List<IPositionListener> value;
+public sealed class PosListenerComponent : Entitas.IComponent {
+    public System.Collections.Generic.List<IPosListener> value;
 }

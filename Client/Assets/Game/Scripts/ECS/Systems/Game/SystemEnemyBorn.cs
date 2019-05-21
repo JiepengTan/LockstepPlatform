@@ -1,14 +1,14 @@
 using Entitas;
 using Lockstep.Math;
 
-namespace Lockstep.Game.Systems.Game   {
-    public class SystemEnemyBorn : BaseSystem,IExecuteSystem {
+namespace Lockstep.Game.Systems.Game {
+    public class SystemEnemyBorn : BaseSystem, IExecuteSystem {
         private IGroup<GameEntity> _spawnPoints;
 
-        public SystemEnemyBorn(Contexts contexts, IServiceContainer serviceContainer):base(contexts,serviceContainer){
+        public SystemEnemyBorn(Contexts contexts, IServiceContainer serviceContainer) :
+            base(contexts, serviceContainer){
             _spawnPoints = contexts.game.GetGroup(
                 GameMatcher.AllOf(GameMatcher.LocalId, GameMatcher.BornPoint));
-            //_viewService = serviceContainer.GetService<IResourceService>();    
         }
 
         public void Execute(){
@@ -22,10 +22,9 @@ namespace Lockstep.Game.Systems.Game   {
                     //born enemy
                     var idx = LRandom.Range(0, bornPointCount);
                     var bornPoint = allPoints[idx].bornPoint.coord;
-                    _unitService.CreateEnemy(bornPoint, LRandom.Range(0, 3)); //TODO
+                    _unitService.CreateEnemy(bornPoint);
                 }
             }
         }
     }
-
 }

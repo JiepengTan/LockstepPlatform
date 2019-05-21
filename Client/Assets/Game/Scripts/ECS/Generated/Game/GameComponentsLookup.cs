@@ -27,7 +27,7 @@ public static class GameComponentsLookup {
     public const int Move = 16;
     public const int MoveRequest = 17;
     public const int Owner = 18;
-    public const int Position = 19;
+    public const int Pos = 19;
     public const int Skill = 20;
     public const int TagBullet = 21;
     public const int TagEnemy = 22;
@@ -35,7 +35,7 @@ public static class GameComponentsLookup {
     public const int Tilemap = 24;
     public const int Unit = 25;
     public const int UpgradeDestroyed = 26;
-    public const int PositionListener = 27;
+    public const int PosListener = 27;
 
     public const int TotalComponents = 28;
 
@@ -59,7 +59,7 @@ public static class GameComponentsLookup {
         "Move",
         "MoveRequest",
         "Owner",
-        "Position",
+        "Pos",
         "Skill",
         "TagBullet",
         "TagEnemy",
@@ -67,7 +67,7 @@ public static class GameComponentsLookup {
         "Tilemap",
         "Unit",
         "UpgradeDestroyed",
-        "PositionListener"
+        "PosListener"
     };
 
     public static readonly System.Type[] componentTypes = {
@@ -90,7 +90,7 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.MoveComponent),
         typeof(Lockstep.ECS.Game.MoveRequestComponent),
         typeof(Lockstep.ECS.Game.OwnerComponent),
-        typeof(Lockstep.ECS.Game.PositionComponent),
+        typeof(Lockstep.ECS.Game.PosComponent),
         typeof(Lockstep.ECS.Game.SkillComponent),
         typeof(Lockstep.ECS.Game.TagBulletComponent),
         typeof(Lockstep.ECS.Game.TagEnemyComponent),
@@ -98,6 +98,6 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.TilemapComponent),
         typeof(Lockstep.ECS.Game.UnitComponent),
         typeof(Lockstep.ECS.Game.UpgradeDestroyedComponent),
-        typeof(PositionListenerComponent)
+        typeof(PosListenerComponent)
     };
 }

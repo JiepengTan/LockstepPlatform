@@ -10,6 +10,6 @@ public sealed class GameEventSystems : Feature {
 
     public GameEventSystems(Contexts contexts) {
         Add(new DirEventSystem(contexts)); // priority: 0
-        Add(new PositionEventSystem(contexts)); // priority: 0
+        Add(new PosEventSystem(contexts)); // priority: 0
     }
 }

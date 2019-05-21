@@ -44,7 +44,7 @@ namespace Lockstep.Game {
 
         public List<LVector2> enemyBornPoints { get; private set; }
         public List<LVector2> playerBornPoss { get; private set; }
-        public List<LVector2> campPoss { get; private set; }
+        public LVector2 campPos { get; private set; }
 
         public override void DoStart(){
             base.DoStart();
@@ -71,8 +71,9 @@ namespace Lockstep.Game {
             mapMax = max;
 
             var tileInfo = GetMapInfo(Global.TileMapName_BornPos);
-            campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
+            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
+            campPos = campPoss[0];
             enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosEnemy));
             playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosHero));
 
@@ -81,6 +82,7 @@ namespace Lockstep.Game {
                 _globalStateService.mapMax = mapMax;
                 _globalStateService.enemyBornPoints = enemyBornPoints;
                 _globalStateService.playerBornPoss = playerBornPoss;
+                _globalStateService.campPos = campPos;
             }
 
 
@@ -141,7 +143,7 @@ namespace Lockstep.Game {
             CheckLoadTileIDMap();
             var path = MapManager.GetMapPathFull(level);
             if (!File.Exists(path)) {
-                Debug.LogError("Have no map file" + level + " path:"+path);
+                Debug.LogError("Have no map file" + level + " path:" + path);
                 return null;
             }
 

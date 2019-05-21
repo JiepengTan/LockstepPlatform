@@ -19,9 +19,9 @@ namespace Lockstep.Game.Systems.Game {
         public void Execute(){
             foreach (var entity in _moveRequest.GetEntities()) {
                 var mover = entity.move;
-                var pos = mover.pos;
+                var pos = entity.pos.value;
                 if (mover.isChangedDir) {
-                    var idir = (int) (mover.dir);
+                    var idir = (int) (entity.dir.value);
                     var isUD = idir % 2 == 0;
                     if (isUD) {
                         pos.x = CollisionUtil.RoundIfNear(pos.x, TankUtil.SNAP_DIST);
@@ -31,7 +31,7 @@ namespace Lockstep.Game.Systems.Game {
                     }
                 }
 
-                mover.pos = pos;
+                entity.pos.value = pos;
                 mover.isChangedDir = false;
                 entity.RemoveMoveRequest();
             }

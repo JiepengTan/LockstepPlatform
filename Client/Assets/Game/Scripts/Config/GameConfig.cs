@@ -13,10 +13,16 @@ namespace Lockstep.Game {
     public class GameConfig : UnityEngine.ScriptableObject {
         public class Unit : BaseEntitySetter{
             public AssetComponent asset = new AssetComponent();
+            public DirComponent dir = new DirComponent();
+            public PosComponent pos = new PosComponent();
         }
         [System.Serializable]
         public class Item : Unit {
             public ItemTypeComponent type = new ItemTypeComponent();
+        }
+        [System.Serializable]
+        public class Camp : Unit { 
+            public UnitComponent unit = new UnitComponent();
         }
         [System.Serializable]
         public class Mover : Unit {
@@ -40,8 +46,6 @@ namespace Lockstep.Game {
             public SkillComponent skill = new SkillComponent();
         }
 
-        [System.Serializable]
-        public class Camp : Mover { }
 
         [System.Serializable]
         public class Bullet : Mover {

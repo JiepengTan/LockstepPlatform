@@ -6,8 +6,7 @@ namespace Lockstep.ECS.Game {
     [Game]
     [System.Serializable]
     public class DelayCallComponent :IComponent {
-        public LFloat timer;
-        public LFloat delay;
+        public LFloat delayTimer;
         public Action callBack;
     }
 }

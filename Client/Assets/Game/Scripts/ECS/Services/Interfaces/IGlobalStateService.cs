@@ -17,6 +17,7 @@ namespace Lockstep.Game {
 
         List<LVector2> enemyBornPoints { get; set; }
         List<LVector2> playerBornPoss { get; set; }
+        LVector2 campPos { get; set; }
 
         int curLevel { get; set; }
     }

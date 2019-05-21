@@ -19,8 +19,8 @@ namespace Lockstep.Game.Systems.Game   {
             foreach (var entity in _moveRequest.GetEntities()) {
                 var deltaTime = Define.DeltaTime;
                 var mover = entity.move;
-                var dir = mover.dir;
-                var pos = mover.pos;
+                var dir = entity.dir.value;
+                var pos = entity.pos.value;
                 var moveSpd = mover.moveSpd;
 
                 //can move 判定
@@ -37,7 +37,7 @@ namespace Lockstep.Game.Systems.Game   {
 
                 var diffPos = maxMoveDist * dirVec;
                 pos = pos + diffPos;
-                mover.pos = pos;
+                entity.pos.value = pos;
             }
         }
     }

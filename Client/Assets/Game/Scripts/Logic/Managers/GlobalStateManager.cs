@@ -34,6 +34,8 @@ namespace Lockstep.Game {
             get { return _playerBornPoss; }
             set { _playerBornPoss = value; }
         }
+        
+        public  LVector2 campPos { get; set; }
 
         //game info 
         [ShowNativeProperty] public int curLevel { get; set; }

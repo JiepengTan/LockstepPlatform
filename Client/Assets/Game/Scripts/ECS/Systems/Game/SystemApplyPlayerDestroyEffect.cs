@@ -16,7 +16,7 @@ namespace Lockstep.Game.Systems.Game {
 
         public void Execute(){
             foreach (var entity in _destroyedGroup.GetEntities()) {
-                _resourceService.ShowDiedEffect(entity.move.pos);
+                _resourceService.ShowDiedEffect(entity.pos.value);
                 _audioService.PlayClipDied();
                 var actor = _actorContext.GetEntityWithId(entity.actorId.value);
                 UnityEngine.Debug.Assert(actor != null, " player's tank have no owner");

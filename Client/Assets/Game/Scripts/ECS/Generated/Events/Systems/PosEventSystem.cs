@@ -6,26 +6,26 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-public sealed class PositionEventSystem : Entitas.ReactiveSystem<GameEntity> {
+public sealed class PosEventSystem : Entitas.ReactiveSystem<GameEntity> {
 
-    public PositionEventSystem(Contexts contexts) : base(contexts.game) {
+    public PosEventSystem(Contexts contexts) : base(contexts.game) {
     }
 
     protected override Entitas.ICollector<GameEntity> GetTrigger(Entitas.IContext<GameEntity> context) {
         return Entitas.CollectorContextExtension.CreateCollector(
-            context, Entitas.TriggerOnEventMatcherExtension.Added(GameMatcher.Position)
+            context, Entitas.TriggerOnEventMatcherExtension.Added(GameMatcher.Pos)
         );
     }
 
     protected override bool Filter(GameEntity entity) {
-        return entity.hasPosition && entity.hasPositionListener;
+        return entity.hasPos && entity.hasPosListener;
     }
 
     protected override void Execute(System.Collections.Generic.List<GameEntity> entities) {
         foreach (var e in entities) {
-            var component = e.position;
-            foreach (var listener in e.positionListener.value) {
-                listener.OnPosition(e, component.value);
+            var component = e.pos;
+            foreach (var listener in e.posListener.value) {
+                listener.OnPos(e, component.value);
             }
         }
     }

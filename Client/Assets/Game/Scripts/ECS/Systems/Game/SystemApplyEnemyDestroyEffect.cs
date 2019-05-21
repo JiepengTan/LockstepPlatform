@@ -17,7 +17,7 @@ namespace Lockstep.Game.Systems.Game {
         public void Execute(){
             foreach (var entity in _destroyedGroup.GetEntities()) {
                 var tank = entity.unit;
-                _resourceService.ShowDiedEffect(entity.move.pos);
+                _resourceService.ShowDiedEffect(entity.pos.value);
                 _audioService.PlayClipDied();
                 var killerGameEntity = _gameContext.GetEntityWithLocalId(tank.killerLocalId);
                 if (entity.hasDropRate) {

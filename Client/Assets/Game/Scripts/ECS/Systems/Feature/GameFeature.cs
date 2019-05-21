@@ -3,6 +3,7 @@
 namespace Lockstep.Game.Features {
     sealed class GameFeature : Feature {
         public GameFeature(Contexts contexts, IServiceContainer services) : base("Game"){
+            Add(new SystemDelayCall(contexts, services));
             //Spawn
             Add(new SystemEnemyBorn(contexts, services));
             //AI

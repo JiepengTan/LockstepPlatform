@@ -23,7 +23,7 @@ namespace Lockstep.Game.Systems.Game {
                     continue;
                 }
                 skill.cdTimer = skill.cd;
-                _unitService.CreateBullet(entity.position.value,entity.dir.value,(int)skill.bulletId,entity);
+                _unitService.CreateBullet(entity.pos.value,entity.dir.value,(int)skill.bulletId,entity);
             }
         }
     }

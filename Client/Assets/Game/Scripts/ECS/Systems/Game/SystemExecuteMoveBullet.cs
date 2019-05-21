@@ -20,7 +20,7 @@ namespace Lockstep.Game.Systems.Game  {
                 var move = entity.move;
                 var dirVec = DirUtil.GetDirLVec(entity.dir.value);
                 var offset = (move.moveSpd * Define.DeltaTime) * dirVec;
-                entity.position.value = offset;
+                entity.pos.value = offset;
             }
         }
     }

@@ -13,11 +13,12 @@ namespace Lockstep.Game {
         private GameConfig _config;
         public override void DoStart(){
             base.DoStart();
+            _config = Resources.Load<GameConfig>(Define.ConfigPath);
             transParent = new GameObject("GoParents").transform;
             prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
             prefab.SetActive(false);
             prefab.transform.SetParent(transParent, false);
-            prefab.AddComponent<PositionListener>();
+            prefab.AddComponent<PosListener>();
         }
 
         protected GameObject InstantiatePrefab(int configId){

@@ -22,12 +22,14 @@ namespace Lockstep.Game {
         ItemBoom,
         ItemUpgrade,
         
-        PlayerTank0 = 30,
+        Camp = 30,
+        
+        PlayerTank0 = 40,
         PlayerTank1,
         PlayerTank2,
         PlayerTank3,
         
-        Bullet0 = 40,
+        Bullet0 = 50,
         Bullet1,
         Bullet2,
             
@@ -56,6 +58,10 @@ namespace Lockstep.Game {
             {(ushort)EAssetID.ItemAddLife, "Prefabs/Items/ItemAddLife"},
             {(ushort)EAssetID.ItemBoom, "Prefabs/Items/ItemBoom"},
             {(ushort)EAssetID.ItemUpgrade, "Prefabs/Items/ItemUpgrade"},
+            
+            {(ushort)EAssetID.Camp, "Prefabs/Camp/Camp"},
+            
+            
         };
 
         public static string GetAssetPath(EAssetID assetId){
@@ -73,5 +79,7 @@ namespace Lockstep.Game {
         public static LVector2 TankBornOffset = LVector2.one;
         public static LFloat TankBornDelay = LFloat.one;
         public static LFloat DeltaTime = new LFloat(true,16);
+
+        public static string ConfigPath = "GameConfig";
     }
 }

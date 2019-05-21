@@ -117,8 +117,8 @@ public static class CollisionUtil {
     public static bool CheckCollision(GameEntity a, GameEntity b){
         var cola = a.collider;
         var colb = b.collider;
-        var posa = a.move.pos;
-        var posb = b.move.pos;
+        var posa = a.pos.value;
+        var posb = b.pos.value;
         return CollisionUtil.CheckCollision(
             posa, cola.radius, cola.size,
             posb, colb.radius, colb.size);

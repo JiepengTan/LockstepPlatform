@@ -66,8 +66,8 @@ namespace Lockstep.Game.Systems.Game {
             HashSet<Vector2Int> tempPoss = new HashSet<Vector2Int>();
             // bullet and map
             foreach (var bullet in allBullet) {
-                var pos = bullet.move.pos;
-                var borderDir = DirUtil.GetBorderDir(bullet.move.dir).ToLVector2();
+                var pos = bullet.pos.value;
+                var borderDir = DirUtil.GetBorderDir(bullet.dir.value).ToLVector2();
                 var borderPos1 = pos + borderDir * bullet.collider.radius;
                 var borderPos2 = pos - borderDir * bullet.collider.radius;
                 tempPoss.Add(pos.Floor());
@@ -84,7 +84,7 @@ namespace Lockstep.Game.Systems.Game {
             var max = _globalStateService.mapMax.ToLVector2();
             // bullet bound detected 
             foreach (var bullet in allBullet) {
-                if (CollisionUtil.IsOutOfBound(bullet.move.pos, min, max)) {
+                if (CollisionUtil.IsOutOfBound(bullet.pos.value, min, max)) {
                     bullet.isDestroyed = true;
                 }
             }

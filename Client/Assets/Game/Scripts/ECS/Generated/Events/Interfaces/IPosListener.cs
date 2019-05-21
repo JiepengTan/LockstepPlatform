@@ -6,6 +6,6 @@
 //     the code is regenerated.
 // </auto-generated>
 //------------------------------------------------------------------------------
-public interface IPositionListener {
-    void OnPosition(GameEntity entity, Lockstep.Math.LVector2 value);
+public interface IPosListener {
+    void OnPos(GameEntity entity, Lockstep.Math.LVector2 value);
 }
