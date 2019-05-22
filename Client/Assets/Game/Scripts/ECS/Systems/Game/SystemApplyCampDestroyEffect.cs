@@ -16,9 +16,7 @@ namespace Lockstep.Game.Systems.Game {
 
 
         public void Execute(){
-            if (_destroyedGroup.GetEntities().Length > 0) {
-                _gameStateContext.ReplaceGameResult(EGameResult.Failed);
-            }
+            
         }
     }
 }

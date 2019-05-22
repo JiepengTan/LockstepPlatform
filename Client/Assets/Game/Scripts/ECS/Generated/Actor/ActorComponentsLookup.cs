@@ -14,11 +14,10 @@ public static class ActorComponentsLookup {
     public const int GameLocalId = 3;
     public const int Id = 4;
     public const int Life = 5;
-    public const int Name = 6;
-    public const int Score = 7;
-    public const int ScoreListener = 8;
+    public const int Score = 6;
+    public const int ScoreListener = 7;
 
-    public const int TotalComponents = 9;
+    public const int TotalComponents = 8;
 
     public static readonly string[] componentNames = {
         "LifeListener",
@@ -27,7 +26,6 @@ public static class ActorComponentsLookup {
         "GameLocalId",
         "Id",
         "Life",
-        "Name",
         "Score",
         "ScoreListener"
     };
@@ -39,7 +37,6 @@ public static class ActorComponentsLookup {
         typeof(Lockstep.ECS.Actor.GameLocalIdComponent),
         typeof(Lockstep.ECS.Actor.IdComponent),
         typeof(Lockstep.ECS.Game.LifeComponent),
-        typeof(Lockstep.ECS.Game.NameComponent),
         typeof(Lockstep.ECS.Game.ScoreComponent),
         typeof(ScoreListenerComponent)
     };

@@ -21,7 +21,7 @@ public class UIGameState : MonoBehaviour {
     }
 
     void ShowText(Transform parent, string txt){
-        if(parent == null) return;
+        if (parent == null) return;
         var text = parent.Find("txtContent")?.GetComponent<Text>();
         if (text != null) {
             text.text = txt;
@@ -42,6 +42,6 @@ public class UIGameState : MonoBehaviour {
         var game = Contexts.sharedInstance.game;
         var gameStateMgr = GameStateManager.Instance;
         ShowText(tranEnemy, (gameStateMgr.remainCountToBorn).ToString());
-        ShowText(tranLevel, (gameState.curLevelEntity?.curLevel?.value ?? 0).ToString());
+        ShowText(tranLevel, (gameStateMgr.curLevel).ToString());
     }
 }

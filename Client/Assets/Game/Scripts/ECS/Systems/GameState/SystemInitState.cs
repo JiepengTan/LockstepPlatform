@@ -17,7 +17,6 @@ namespace Lockstep.Game.Systems.GameState {
             for (int i = 0; i < _constStateService.actorCount; i++) {
                 var entity = _actorContext.CreateEntity();
                 entity.AddId(_constStateService.allActorIds[i]);
-                entity.AddName("" + i);
                 entity.AddScore(0);
                 entity.AddLife(_constStateService.playerInitLifeCount);
             }
@@ -28,7 +27,6 @@ namespace Lockstep.Game.Systems.GameState {
             }
 
             //reset status
-            _gameStateContext.ReplaceGameResult(EGameResult.Playing);
             _constStateService.MaxEnemyCountInScene = 6;
             _constStateService.TotalEnemyCountToBorn = 20;
             _gameStateService.remainCountToBorn = _constStateService.TotalEnemyCountToBorn;

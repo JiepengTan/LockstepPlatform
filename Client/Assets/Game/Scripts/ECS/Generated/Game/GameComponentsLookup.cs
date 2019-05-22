@@ -32,12 +32,10 @@ public static class GameComponentsLookup {
     public const int TagCamp = 21;
     public const int TagEnemy = 22;
     public const int TagTank = 23;
-    public const int Tilemap = 24;
-    public const int Unit = 25;
-    public const int UpgradeDestroyed = 26;
-    public const int PosListener = 27;
+    public const int Unit = 24;
+    public const int PosListener = 25;
 
-    public const int TotalComponents = 28;
+    public const int TotalComponents = 26;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -64,9 +62,7 @@ public static class GameComponentsLookup {
         "TagCamp",
         "TagEnemy",
         "TagTank",
-        "Tilemap",
         "Unit",
-        "UpgradeDestroyed",
         "PosListener"
     };
 
@@ -95,9 +91,7 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.TagCampComponent),
         typeof(Lockstep.ECS.Game.TagEnemyComponent),
         typeof(Lockstep.ECS.Game.TagTankComponent),
-        typeof(Lockstep.ECS.Game.TilemapComponent),
         typeof(Lockstep.ECS.Game.UnitComponent),
-        typeof(Lockstep.ECS.Game.UpgradeDestroyedComponent),
         typeof(PosListenerComponent)
     };
 }
