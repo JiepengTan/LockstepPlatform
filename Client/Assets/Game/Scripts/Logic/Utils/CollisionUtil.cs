@@ -21,8 +21,6 @@ public static class CollisionUtil {
     
     public static LFloat TANK_BORDER_SIZE =new LFloat(true, 900);
     
-  
-
 
     public static LFloat RoundIfNear(LFloat val, LFloat roundDist){
         var roundVal = LMath.Round(val);
@@ -98,7 +96,7 @@ public static class CollisionUtil {
 
     public static bool HasCollider(LVector2 pos){
         var iPos = pos.Floor();
-        var id = MapManager.Instance.Pos2TileID(iPos, true);
+        var id = MapManager.Instance.Pos2TileId(iPos, true);
         return id != 0;
     }
 

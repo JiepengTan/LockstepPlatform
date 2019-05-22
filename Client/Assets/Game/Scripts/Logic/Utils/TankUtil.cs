@@ -7,9 +7,6 @@ namespace Lockstep.Game {
         public static LFloat FORWARD_HEAD_DIST = new LFloat(true, 20);
         public static LFloat SNAP_DIST = new LFloat(true, 400);
 
-        public static LVector2 FireOffsetPos(EDir dir){
-            return DirUtil.GetDirLVec(dir);
-        }
         public static LVector2 GetHeadPos(LVector2 pos, EDir dir){
             var dirVec = DirUtil.GetDirLVec(dir);
             var fTargetHead = pos + (TANK_HALF_LEN + FORWARD_HEAD_DIST) * dirVec;
@@ -19,10 +16,6 @@ namespace Lockstep.Game {
             var dirVec = DirUtil.GetDirLVec(dir);
             var fTargetHead = pos + (TANK_HALF_LEN + len) * dirVec;
             return fTargetHead;
-        }
-        
-        public static void DoUpdate(LFloat deltaTime,GameEntity entity){
-            
         }
     }
 }

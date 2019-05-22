@@ -11,11 +11,12 @@ using Debug = UnityEngine.Debug;
 namespace Lockstep.Game {
     public interface IEventRegisterService : IService {
         void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
-            Action<TEnum, TDelegate> callBack)where TDelegate : Delegate
+            Action<TEnum, TDelegate> callBack) where TDelegate : Delegate
             where TEnum : struct;
     }
 
     public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, IEventRegisterService {
+        public uint CurTick { get; set; }
         public static Main Instance { get; private set; }
         public Contexts contexts;
         private Dictionary<string, BaseManager> name2Mgr = new Dictionary<string, BaseManager>();
@@ -48,6 +49,7 @@ namespace Lockstep.Game {
         }
 
         #endregion
+
         #region IServiceContainer
 
         public void RegisterService(IService service, bool overwriteExisting = true){
@@ -85,6 +87,7 @@ namespace Lockstep.Game {
         #endregion
 
         #region IEventRegisterService
+
         public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
             return Delegate.CreateDelegate(typeof(T), instance, method) as T;
         }
@@ -95,7 +98,8 @@ namespace Lockstep.Game {
             where TEnum : struct{
             if (callBack == null) return;
             foreach (var mgr in allMgrs) {
-                var methods = mgr.GetType().GetMethods(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance|BindingFlags.DeclaredOnly);
+                var methods = mgr.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
+                                                       BindingFlags.Instance | BindingFlags.DeclaredOnly);
                 foreach (var method in methods) {
                     var methodName = method.Name;
                     if (methodName.StartsWith(prefix)) {
@@ -108,12 +112,11 @@ namespace Lockstep.Game {
                 }
             }
         }
-        
 
         #endregion
+
         #region LifeCycle
-        
-        
+
         private void Awake(){
             if (Instance != null) {
                 Debug.LogError("Error: has 2 main scripts!!");
@@ -124,9 +127,24 @@ namespace Lockstep.Game {
             contexts = Contexts.sharedInstance;
             Log.OnMessage += OnLog;
             DoAwake();
+            AutoCreateManagers();
             RegisterService(this);
         }
 
+        void AutoCreateManagers(){
+            var types = typeof(Main).Assembly.GetTypes();
+            foreach (var ty in types) {
+                if (ty.IsSubclassOf(typeof(BaseManager)) && !ty.IsAbstract) {
+                    if (ty.GetInterfaces().Any(t => t == typeof(IRollbackable))) {
+                        var property = ty.GetProperty("Instance",
+                            BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
+                        if (property != null) {
+                            property.GetValue(null, null);
+                        }
+                    }
+                }
+            }
+        }
 
         private void Start(){
             this.AssignReference(contexts, this, this);

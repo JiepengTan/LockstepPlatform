@@ -17,7 +17,7 @@ namespace Lockstep.Game.Systems.Game {
             foreach (var entity in _delayGroup.GetEntities()) {
                 if(entity.isDestroyed) return;
                 var delayCall = entity.delayCall;
-                delayCall.delayTimer -= Define.DeltaTime;
+                delayCall.delayTimer -= GameConfig.DeltaTime;
                 if (delayCall.delayTimer <= LFloat.zero) {
                     entity.isDestroyed = true;
                     delayCall.callBack?.Invoke();

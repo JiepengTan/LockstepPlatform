@@ -17,8 +17,61 @@ namespace Lockstep.Game {
         Vector2Int mapMax { get; }
     }
 
+    //        ushort Pos2TileID(Vector2Int pos, bool isCollider);
+    //void ReplaceTile(Vector2Int pos, ushort srcID, ushort dstID);
+    public partial class MapManager :  IMapService ,IRollbackable{
+        public class CmdSetTile : BaseCommand<MapManager> {
+            public TileInfos tilemap;
+            public Vector2Int pos;
+            public ushort srcId;
+            public ushort dstId;
+            public CmdSetTile(TileInfos tilemap, Vector2Int pos, ushort srcId, ushort dstId){
+                this.tilemap = tilemap;
+                this.pos = pos;
+                this.srcId = srcId;
+                this.dstId = dstId;
+            }
+            
+            public override void Do(MapManager param){
+                tilemap.SetTileID(pos, dstId);
+            }
+
+            public override void Undo(MapManager param){
+                tilemap.SetTileID(pos, srcId);
+            }
+
+        }
+
+        
+        
+        public ushort Pos2TileId(Vector2 pos, bool isCollider){
+            return Pos2TileId(pos.Floor(), isCollider);
+        }
+        public ushort Pos2TileId(Vector2Int pos, bool isCollider){
+            for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
+                var tilemap = gridInfo.tileMaps[i];
+                if (tilemap.isTagMap) continue;
+                if (isCollider && !tilemap.hasCollider) continue;
+                var tile = tilemap.GetTileID(pos);
+                if (tile != 0)
+                    return tile;
+            }
+
+            return 0;
+        }
+        public void ReplaceTile(Vector2Int pos, ushort srcId, ushort dstId){
+            for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
+                var tilemap = gridInfo.tileMaps[i];
+                var tile = tilemap.GetTileID(pos);
+                if (tile == srcId) {
+                    cmdBuffer.Execute(CurTick,new CmdSetTile(tilemap,pos,srcId,dstId));
+                }
+            }
+        }
+    }
+
     [System.Serializable]
-    public class MapManager : SingletonManager<MapManager>, IMapManager, IMapService {
+    public partial class MapManager : SingletonManager<MapManager>, IMapManager {
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -70,12 +123,12 @@ namespace Lockstep.Game {
             mapMin = min;
             mapMax = max;
 
-            var tileInfo = GetMapInfo(Global.TileMapName_BornPos);
-            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_Camp));
+            var tileInfo = GetMapInfo(TilemapUtil.TileMapName_BornPos);
+            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
             campPos = campPoss[0];
-            enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosEnemy));
-            playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(Global.TileID_BornPosHero));
+            enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
+            playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosHero));
 
             if (_globalStateService != null) {
                 _globalStateService.mapMin = mapMin;
@@ -83,11 +136,11 @@ namespace Lockstep.Game {
                 _globalStateService.enemyBornPoints = enemyBornPoints;
                 _globalStateService.playerBornPoss = playerBornPoss;
                 _globalStateService.campPos = campPos;
+                Debug.Assert(_globalStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
+                    "Map should has 2 player born pos");
             }
 
 
-            Debug.Assert(_globalStateService.playerBornPoss.Count == Define.MAX_PLAYER_COUNT,
-                "Map should has 2 player born pos");
 
 
             EventHelper.Trigger(EEvent.LoadMapDone, level);
@@ -98,46 +151,7 @@ namespace Lockstep.Game {
         }
 
 
-        public TileBase Pos2Tile(Vector2 pos, bool isCollider){
-            return Pos2Tile(pos.Floor(), isCollider);
-        }
-
-        public ushort Pos2TileID(Vector2 pos, bool isCollider){
-            return Pos2TileID(pos.Floor(), isCollider);
-        }
-
-        public void ReplaceTile(Vector2Int pos, ushort srcID, ushort targetID){
-            foreach (var tilemap in gridInfo.tileMaps) {
-                var tile = tilemap.GetTileID(pos);
-                if (tile == srcID) {
-                    tilemap.SetTileID(pos, targetID);
-                }
-            }
-        }
-
-        public TileBase Pos2TileIDPos2Tile(Vector2Int pos, bool isCollider){
-            foreach (var tilemap in gridInfo.tileMaps) {
-                if (isCollider && !tilemap.hasCollider) continue;
-                var tile = tilemap.GetTile(pos);
-                if (tile != null)
-                    return tile;
-            }
-
-            return null;
-        }
-
-        public ushort Pos2TileID(Vector2Int pos, bool isCollider){
-            for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
-                var tilemap = gridInfo.tileMaps[i];
-                if (tilemap.isTagMap) continue;
-                if (isCollider && !tilemap.hasCollider) continue;
-                var tile = tilemap.GetTileID(pos);
-                if (tile != 0)
-                    return tile;
-            }
-
-            return 0;
-        }
+  
 
         public static GridInfo LoadMap(Grid grid, int level){
             CheckLoadTileIDMap();

@@ -5,31 +5,33 @@ namespace Lockstep.Game {
 
     [System.Serializable]
     public class AudioManager : SingletonManager<AudioManager>,IAudioService {
-        public void PlayClipDestroyGrass(){ PlayClip(destroyGrass); }
-        public void PlayClipBorn(){ PlayClip(born); }
-        public void PlayClipDied(){ PlayClip(died); }
-        public void PlayClipHitTank(){ PlayClip(hitTank); }
-        public void PlayClipHitIron(){ PlayClip(hitIron); }
-        public void PlayClipHitBrick(){ PlayClip(hitBrick); }
-        public void PlayClipDestroyIron(){ PlayClip(destroyIron); }
-        public void PlayMusicBG(){ PlayClip(bgMusic); }
-        public void PlayMusicStart(){ PlayClip(startMusic); }
-        public void PlayMusicGetItem(){ PlayClip(addItem); }
-        public AudioClip born; 
-        public AudioClip died;
-        public AudioClip hitTank;
-        public AudioClip hitBrick;
-        public AudioClip hitIron;
-        public AudioClip destroyIron;
-        public AudioClip destroyGrass;
-        public AudioClip addItem;
-        public AudioClip bgMusic;
-        public AudioClip startMusic;
-        public AudioSource Source;
 
+        public static string AudioConfigPath = "AudioConfig";
+        private AudioConfig _config;
+        public AudioSource _source;
+        public override void DoStart(){
+            base.DoStart();
+            _config =   Resources.Load<AudioConfig>(AudioConfigPath);
+            _source = GetComponent<AudioSource>();
+            if ( _source== null) {
+                _source = gameObject.AddComponent<AudioSource>();
+            }
+        }
+
+        public void PlayClipDestroyGrass(){ PlayClip(_config.destroyGrass); }
+        public void PlayClipBorn(){ PlayClip(_config.born); }
+        public void PlayClipDied(){ PlayClip(_config.died); }
+        public void PlayClipHitTank(){ PlayClip(_config.hitTank); }
+        public void PlayClipHitIron(){ PlayClip(_config.hitIron); }
+        public void PlayClipHitBrick(){ PlayClip(_config.hitBrick); }
+        public void PlayClipDestroyIron(){ PlayClip(_config.destroyIron); }
+        public void PlayMusicBG(){ PlayClip(_config.bgMusic); }
+        public void PlayMusicStart(){ PlayClip(_config.startMusic); }
+        public void PlayMusicGetItem(){ PlayClip(_config.addItem); }
+        
         public void PlayClip(AudioClip clip){
             if (clip != null) {
-                Source.PlayOneShot(clip);
+                _source.PlayOneShot(clip);
             }
         }
 

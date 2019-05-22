@@ -14,7 +14,7 @@ namespace Lockstep.Game.Systems.Game  {
         public void Execute(){
             foreach (var entity in _skillGroup.GetEntities()) {
                 var skill = entity.skill;
-                skill.cdTimer -= Define.DeltaTime;
+                skill.cdTimer -= GameConfig.DeltaTime;
                 if (skill.cdTimer < 0) {
                     skill.cdTimer = LFloat.zero;
                 }

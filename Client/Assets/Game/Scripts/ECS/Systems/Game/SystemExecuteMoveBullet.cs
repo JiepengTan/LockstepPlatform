@@ -18,7 +18,7 @@ namespace Lockstep.Game.Systems.Game  {
             foreach (var entity in _bulletGroup.GetEntities()) {
                 var move = entity.move;
                 var dirVec = DirUtil.GetDirLVec(entity.dir.value);
-                var offset = (move.moveSpd * Define.DeltaTime) * dirVec;
+                var offset = (move.moveSpd * GameConfig.DeltaTime) * dirVec;
                 entity.pos.value = entity.pos.value + offset;
             }
         }

@@ -5,24 +5,17 @@ namespace Lockstep.Game {
 
     public partial class ManagerReferenceHolder : MonoBehaviour { }
 
-    public partial class BaseManager : ManagerReferenceHolder, IRollbackable, IService {
+    public partial class BaseManager : ManagerReferenceHolder, IService {
+        public uint CurTick { get; set; }
         public Main main { get; private set; }
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
         public virtual void DoUpdate(float deltaTime){ }
         public virtual void DoFixedUpdate(){ }
         public virtual void DoDestroy(){ }
-
-        ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
-        public virtual void RevertTo(uint tick){ }
-
-        public virtual void BackUp(uint tick){ }
-
-        ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
-        public virtual void Clean(uint maxVerifiedTick){ }
     }
 
-    public partial class SingletonManager<T> : BaseManager where T : SingletonManager<T> {
+    public abstract class SingletonManager<T> : BaseManager, IRollbackable where T : SingletonManager<T> {
         private static T _instance;
 
         public static T Instance {
@@ -42,8 +35,21 @@ namespace Lockstep.Game {
             }
 
             _instance = (T) this;
+            _instance.transform.SetParent(Main.Instance.transform,false);
             Main.Instance.RegisterManager(this);
+            cmdBuffer = new CommandBuffer<T>(_instance);
             GameObject.DontDestroyOnLoad(_instance.gameObject);
+        }
+
+        protected CommandBuffer<T> cmdBuffer;
+        public virtual void BackUp(uint tick){ }
+
+        public void RevertTo(uint tick){
+            cmdBuffer?.RevertTo(tick);
+        }
+
+        public void Clean(uint maxVerifiedTick){
+            cmdBuffer?.Clean(maxVerifiedTick);
         }
     }
 }

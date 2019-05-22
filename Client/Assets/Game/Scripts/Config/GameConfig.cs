@@ -10,7 +10,7 @@ using Debug = UnityEngine.Debug;
 namespace Lockstep.Game {
    
     [CreateAssetMenu]
-    public class GameConfig : UnityEngine.ScriptableObject {
+    public partial class GameConfig : UnityEngine.ScriptableObject {
         public class Unit : BaseEntitySetter{
             public AssetComponent asset = new AssetComponent();
             public DirComponent dir = new DirComponent();
@@ -67,7 +67,8 @@ namespace Lockstep.Game {
         public GameObject BornPrefab;
         public GameObject DiedPrefab;
 
-        [Header("SpawnerInfos")] public float bornEnemyInterval = 3;
+        [Header("SpawnerInfos")] 
+        public float bornEnemyInterval = 3;
         public int MAX_ENEMY_COUNT = 6;
         public int initEnemyCount = 20;
     }

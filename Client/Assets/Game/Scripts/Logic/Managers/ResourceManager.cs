@@ -7,23 +7,10 @@ namespace Lockstep.Game {
  
 
     public partial class ResourceManager :IResourceService{
-        private GameObject prefab;
-        private Transform transParent;
-
         private GameConfig _config;
         public override void DoStart(){
             base.DoStart();
-            _config = Resources.Load<GameConfig>(Define.ConfigPath);
-            transParent = new GameObject("GoParents").transform;
-            prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            prefab.SetActive(false);
-            prefab.transform.SetParent(transParent, false);
-            prefab.AddComponent<PosListener>();
-        }
-
-        protected GameObject InstantiatePrefab(int configId){
-            return UnityEngine.Object.Instantiate(prefab, transParent).gameObject;
-            ;
+            _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
         }
         
         public void ShowDiedEffect(LVector2 pos){
@@ -32,7 +19,5 @@ namespace Lockstep.Game {
         public void ShowBornEffect(LVector2 pos){
             GameObject.Instantiate(_config.BornPrefab, transform.position + pos.ToVector3(), Quaternion.identity);
         }
-        
-        
     }
 }

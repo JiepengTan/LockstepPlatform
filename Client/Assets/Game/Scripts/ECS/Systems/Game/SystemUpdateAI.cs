@@ -18,7 +18,7 @@ namespace Lockstep.Game.Systems.Game {
         public void Execute(){
             foreach (var entity in _AIGroup.GetEntities()) {
                 var aiInfo = entity.aI;
-                aiInfo.timer += Define.DeltaTime;
+                aiInfo.timer += GameConfig.DeltaTime;
                 if (aiInfo.timer < aiInfo.updateInterval) {
                     continue;
                 }

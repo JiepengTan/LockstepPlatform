@@ -17,7 +17,7 @@ namespace Lockstep.Game.Systems.Game   {
 
         public void Execute(){
             foreach (var entity in _moveRequest.GetEntities()) {
-                var deltaTime = Define.DeltaTime;
+                var deltaTime = GameConfig.DeltaTime;
                 var mover = entity.move;
                 var dir = entity.dir.value;
                 var pos = entity.pos.value;

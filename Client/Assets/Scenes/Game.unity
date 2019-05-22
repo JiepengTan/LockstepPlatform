@@ -787,15 +787,10 @@ PrefabInstance:
       propertyPath: txtScore2
       value: 
       objectReference: {fileID: 752491594}
-    - target: {fileID: 8028312660570146560, guid: 80545df8adf084ac08ba96ce0258d0b5,
+    - target: {fileID: 8028312659699102354, guid: 80545df8adf084ac08ba96ce0258d0b5,
         type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8028312661449727472, guid: 80545df8adf084ac08ba96ce0258d0b5,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
+      propertyPath: m_Name
+      value: GlobalStateManager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 80545df8adf084ac08ba96ce0258d0b5, type: 3}

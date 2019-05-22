@@ -2,6 +2,22 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public static class TilemapUtil {
+        public const string TileMapName_BornPos = "BornPos";
+        public const int TileID_Brick = 1;
+        public const int TileID_Camp = 2;
+        public const int TileID_Grass = 3;
+        public const int TileID_Iron = 4;
+        public const int TileID_Water = 5;
+        public const int TileID_Wall = 8;
+        public const int TileID_BornPosEnemy = 6;
+        public const int TileID_BornPosHero = 7;
+    
+    
+        public const int ItemTankType = 4;
+        public const int EnemyCamp = 1;
+        public const int PlayerCamp = 2;
+        
+        
         private const byte AirId = 0;
         private const byte GrassId = 1;
         private const byte WaterId = 2;
@@ -12,10 +28,10 @@ namespace Lockstep.Game {
         public static void CheckBulletWithMap(Vector2Int iPos, GameEntity entity,IAudioService audioService,IMapService mapService){
             var unit = entity.unit;
             var bullet = entity.bullet;
-            var id = mapService.Pos2TileID(iPos, false);
+            var id = mapService.Pos2TileId(iPos, false);
             if (id != 0 && unit.health > 0) {
                 //collide bullet with world
-                if (id == Global.TileID_Brick) {
+                if (id == TilemapUtil.TileID_Brick) {
                     if (unit.camp == ECampType.Player) {
                         audioService.PlayClipHitBrick();
                     }
@@ -23,7 +39,7 @@ namespace Lockstep.Game {
                     mapService.ReplaceTile(iPos, id, 0);
                     unit.health--;
                 }
-                else if (id == Global.TileID_Iron) {
+                else if (id == TilemapUtil.TileID_Iron) {
                     if (!bullet.canDestoryIron) {
                         if (unit.camp == ECampType.Player) {
                             audioService.PlayClipHitIron();
@@ -40,7 +56,7 @@ namespace Lockstep.Game {
                         mapService.ReplaceTile(iPos, id, 0);
                     }
                 }
-                else if (id == Global.TileID_Grass) {
+                else if (id == TilemapUtil.TileID_Grass) {
                     if (bullet.canDestoryGrass) {
                         if (unit.camp == ECampType.Player) {
                             audioService.PlayClipDestroyGrass();
@@ -50,7 +66,7 @@ namespace Lockstep.Game {
                         mapService.ReplaceTile(iPos, id, 0);
                     }
                 }
-                else if (id == Global.TileID_Wall) {
+                else if (id == TilemapUtil.TileID_Wall) {
                     unit.health = 0;
                 }
             }

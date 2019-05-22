@@ -1,5 +1,6 @@
 using System;
 using Entitas;
+using Lockstep.Logging;
 
 namespace Lockstep.Game {
     public interface ICommand<T> {
@@ -32,9 +33,14 @@ namespace Lockstep.Game {
         private T _param;
         private Action<CommandNode, CommandNode, T> _funcUndoCommand;
 
-        public CommandBuffer(T param, Action<CommandNode, CommandNode, T> funcUndoCommand){
+        public void SetUndoCmdsFunc(Action<CommandNode, CommandNode, T> funcUndoCommand){
+            Debug.Assert(funcUndoCommand != null,"SetUndoCmdsFunc should not be null");
+            _funcUndoCommand = funcUndoCommand;
+        }
+
+        public CommandBuffer(T param){
             _param = param;
-            _funcUndoCommand = funcUndoCommand ?? UndoCommands;
+            _funcUndoCommand = UndoCommands;
         }
 
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo

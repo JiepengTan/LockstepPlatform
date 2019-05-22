@@ -11,7 +11,7 @@ namespace Lockstep.Game.Systems.Game {
         public void Execute(){
             var state = _gameStateContext.enemyCountState;
             if (state.CurEnemyCountInScene < state.MaxEnemyCountInScene && state.RemainCountToBorn > 0) {
-                state.bornTimer -= Define.DeltaTime;
+                state.bornTimer -= GameConfig.DeltaTime;
                 if (state.bornTimer < 0) {
                     state.bornTimer = state.bornInterval;
                     state.RemainCountToBorn--;

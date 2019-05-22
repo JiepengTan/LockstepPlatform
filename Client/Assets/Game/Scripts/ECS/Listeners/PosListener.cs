@@ -14,7 +14,7 @@ namespace Lockstep.Game {
             _entity.RemovePosListener(this);
         }
 
-        public void OnPos(GameEntity entity, Lockstep.Math.LVector2 newPosition){
+        public void OnPos(GameEntity entity, LVector2 newPosition){
             var dst = newPosition.ToVector3();
             var src = transform.localPosition;
             transform.localPosition = dst;// Vector3.Lerp(src, dst, 0.3f);
