@@ -35,18 +35,6 @@
     <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\LiteNetLib.dll</HintPath>
     </Reference>
-    <Reference Include="Lockstep.Logging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\Lockstep.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Lockstep.Serializaition, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\Lockstep.Serializaition.dll</HintPath>
-    </Reference>
-    <Reference Include="NetMsg.Game.Tank, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\NetMsg.Game.Tank.dll</HintPath>
-    </Reference>
-    <Reference Include="NetMsg.Lobby, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\NetMsg.Lobby.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -56,6 +44,22 @@
     <Compile Include="Src\Room.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetMsg.Game\NetMsg.Game.csproj">
+      <Project>{5195d0de-4ce6-4d29-a72f-373df69d1c46}</Project>
+      <Name>NetMsg.Game</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetMsg.Lobby\NetMsg.Lobby.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Lobby</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
       <Name>Server.Common</Name>

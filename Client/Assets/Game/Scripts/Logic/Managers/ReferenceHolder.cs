@@ -4,40 +4,20 @@ namespace Lockstep.Game {
     public partial class ManagerReferenceHolder {
         #region Mgrs
 
-        protected AudioManager _audioMgr;
-        protected InputManager _inputMgr;
-        protected MapManager MapMgr;
-        protected GameManager _gameMgr;
-        protected UIManager _uiMgr;
-        protected SimulationManager _simulationMgr;
-        protected NetworkManager _networkMgr;
+ 
 
-
-        protected Contexts _contexts;
-        protected IServiceContainer _serviceContainer;
-
+        #endregion
         public void AssignReference(Contexts contexts, IServiceContainer serviceContainer,
             IManagerContainer mgrContainer
         ){
-            _contexts = contexts;
-            _serviceContainer = serviceContainer;
-            InitReference(mgrContainer);
+            //_contexts = contexts;
+            //_serviceContainer = serviceContainer;
+            //InitReference(mgrContainer);
             InitReference(contexts);
             InitReference(serviceContainer);
         }
-
-        public void InitReference(IManagerContainer mgrContainer){
-            _audioMgr = mgrContainer.GetManager<AudioManager>();
-            _inputMgr = mgrContainer.GetManager<InputManager>();
-            MapMgr = mgrContainer.GetManager<MapManager>();
-            _gameMgr = mgrContainer.GetManager<GameManager>();
-            _uiMgr = mgrContainer.GetManager<UIManager>();
-            _simulationMgr = mgrContainer.GetManager<SimulationManager>();
-            _networkMgr = mgrContainer.GetManager<NetworkManager>();
-        }
-
-        #endregion
-
+        
+        
         protected InputContext _inputContext;
         protected ActorContext _actorContext;
         protected GameContext _gameContext;
@@ -47,24 +27,29 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IGlobalStateService _globalStateService;
         protected IEventRegisterService _eventRegisterService;
         protected IViewService _viewService;
         protected IUnitService _unitService;
         protected IRandomService _randomService;
         protected ITimeMachineService _timeMachineService;
+        protected IConstGameStateService _constStateService;
+        protected IGameStateService _gameStateService;
+        protected INetworkService _networkService;
+        
         
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _globalStateService = serviceContainer.GetService<IGlobalStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
             _viewService = serviceContainer.GetService<IViewService>();
             _unitService = serviceContainer.GetService<IUnitService>();
             _randomService = serviceContainer.GetService<IRandomService>();
             _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
+            _constStateService = serviceContainer.GetService<IConstGameStateService>();
+            _gameStateService = serviceContainer.GetService<IGameStateService>();
+            _networkService = serviceContainer.GetService<INetworkService>();
         }
 
         public void InitReference(Contexts contexts){
@@ -85,23 +70,29 @@ namespace Lockstep.Game {
         protected IAudioService _audioService;
         protected IInputService _inputService;
         protected IMapService _mapService;
-        protected IGlobalStateService _globalStateService;
         protected IEventRegisterService _eventRegisterService;
         protected IViewService _viewService;
         protected IUnitService _unitService;
         protected IRandomService _randomService;
-
-
+        protected ITimeMachineService _timeMachineService;
+        protected IConstGameStateService _constStateService;
+        protected IGameStateService _gameStateService;
+        protected INetworkService _networkService;
+        
+        
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
             _audioService = serviceContainer.GetService<IAudioService>();
             _inputService = serviceContainer.GetService<IInputService>();
             _mapService = serviceContainer.GetService<IMapService>();
-            _globalStateService = serviceContainer.GetService<IGlobalStateService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
             _viewService = serviceContainer.GetService<IViewService>();
             _unitService = serviceContainer.GetService<IUnitService>();
             _randomService = serviceContainer.GetService<IRandomService>();
+            _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
+            _constStateService = serviceContainer.GetService<IConstGameStateService>();
+            _gameStateService = serviceContainer.GetService<IGameStateService>();
+            _networkService = serviceContainer.GetService<INetworkService>();
         }
 
         public void InitReference(Contexts contexts){

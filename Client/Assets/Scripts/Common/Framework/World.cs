@@ -56,7 +56,7 @@ namespace Lockstep.Core.Logic {
         /// 清理无效的快照
         public void CleanUselessSnapshot(uint checkedTick){
             if(checkedTick < 2u) return;
-            _timeMachineService.Clean(checkedTick-1);
+            //_timeMachineService.Clean(checkedTick-1);
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= checkedTick).Select(entity => entity.tick.value).ToList();
             snapshotIndices.Sort();

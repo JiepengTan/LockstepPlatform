@@ -13,6 +13,7 @@ namespace Lockstep.Core {
         LoadMapDone,
         OnRoomGameStart,
         OnSimulationInited,
+        OnLoadingProgress,
         OnAllPlayerFinishedLoad,
         OnSimulationStart,
         OnServerFrame

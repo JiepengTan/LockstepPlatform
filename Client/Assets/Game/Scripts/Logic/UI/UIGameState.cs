@@ -39,7 +39,9 @@ public class UIGameState : MonoBehaviour {
         ShowPlayerInfo(player1, tranScore1, tranLife1);
         ShowPlayerInfo(player2, tranScore2, tranLife2);
         var gameState = Contexts.sharedInstance.gameState;
-        ShowText(tranEnemy, (gameState.enemyCountStateEntity?.enemyCountState?.RemainCountToBorn ?? 0).ToString());
+        var game = Contexts.sharedInstance.game;
+        var gameStateMgr = GameStateManager.Instance;
+        ShowText(tranEnemy, (gameStateMgr.remainCountToBorn).ToString());
         ShowText(tranLevel, (gameState.curLevelEntity?.curLevel?.value ?? 0).ToString());
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Lockstep.Game {
@@ -36,12 +37,14 @@ namespace Lockstep.Game {
             _instance = (T) this;
             _instance.transform.SetParent(Main.Instance.transform,false);
             Main.Instance.RegisterManager(this);
-            cmdBuffer = new CommandBuffer<T>(_instance);
+            cmdBuffer = new CommandBuffer<T>(_instance,GetRollbackFunc());
             GameObject.DontDestroyOnLoad(_instance.gameObject);
         }
 
         protected CommandBuffer<T> cmdBuffer;
         public uint CurTick { get; set; }
+
+        protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){return null;}
         public virtual void Backup(uint tick){ }
 
         public void RollbackTo(uint tick){

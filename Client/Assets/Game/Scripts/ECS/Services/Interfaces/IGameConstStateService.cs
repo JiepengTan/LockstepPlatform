@@ -3,8 +3,8 @@ using Lockstep.Math;
 using UnityEngine;
 
 namespace Lockstep.Game {
-
-    public interface IGlobalStateService : IService {
+    
+    public interface IConstGameStateService : IService {
         //room info
         byte[] allActorIds { get; set; }
         int roomId { get; set; }
@@ -20,5 +20,19 @@ namespace Lockstep.Game {
         LVector2 campPos { get; set; }
 
         int curLevel { get; set; }
+        
+        
+        int MaxEnemyCountInScene{ get; set; }
+        int TotalEnemyCountToBorn{ get; set; }
+    }
+    
+    
+    public interface IGameStateService : IService {
+        
+        //changed in the game
+        int curEnemyCountInScene{ get; set; }
+        int remainCountToBorn{ get; set; }
+        LFloat bornTimer{ get; set; }
+        LFloat bornInterval{ get; set; }
     }
 }

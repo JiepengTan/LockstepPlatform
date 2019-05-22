@@ -46,15 +46,12 @@ namespace Lockstep.Game {
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
             Debug.Log($"OnEvent_OnAllPlayerFinishedLoad");
-            Running = true;
+            if (Running) return;
             _world.StartSimulate();
+            Running = true;
             EventHelper.Trigger(EEvent.OnSimulationStart,null);
         }
-
-        public void OnEvent_AllPlayerFinishedLoad(object param){
-            OnLoadFinished();
-        }
-
+        
         public override void DoAwake(IServiceContainer services){
             _services = services;
             _context = Main.Instance.contexts;
@@ -81,7 +78,7 @@ namespace Lockstep.Game {
                 localFrame.inputs = inputs;
                 FillInputWithLastFrame(localFrame);
                 cmdBuffer.PushLocalFrame(localFrame);
-                _networkMgr.SendInput(input);
+                _networkService.SendInput(input);
 
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
@@ -153,9 +150,9 @@ namespace Lockstep.Game {
             Debug.Log($"hehe OnGameStart simulation");
             FrameBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
-            _globalStateService.roomId = roomId;
-            _globalStateService.allActorIds = allActors;
-            _globalStateService.actorCount = allActors.Length;
+            _constStateService.roomId = roomId;
+            _constStateService.allActorIds = allActors;
+            _constStateService.actorCount = allActors.Length;
 
             _localActorId = localActorId;
             _allActors = allActors;
@@ -170,14 +167,6 @@ namespace Lockstep.Game {
             _world = new World(_context,_timeMachineService, allActors, new GameLogicSystems(_context, _services));
             
         }
-
-
-        public void OnLoadFinished(){
-            _world.StartSimulate();
-            Running = true;
-        }
-
-
 
         private void FillInputWithLastFrame(ServerFrame frame){
             uint tick = frame.tick;
@@ -204,7 +193,7 @@ namespace Lockstep.Game {
                         msg.hashCodes[i] = allHashCodes[i];
                     }
 
-                    _networkMgr.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
+                    _networkService.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
                     firstHashTick = firstHashTick + (uint) count;
                     allHashCodes.RemoveRange(0, count);
                 }

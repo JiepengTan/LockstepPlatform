@@ -10,12 +10,12 @@ namespace Lockstep.Core.Logic.Systems {
             Add(new InitializeEntityCount(contexts));
             // after game has init, backup before game logic
             Add(new OnNewPredictionCreateSnapshot(contexts));
-            Add(new CalculateHashCode(contexts));
             //game logic
             if (logicFeature != null) {
                 Add(logicFeature);    
             }
             Add(new GameEventSystems(contexts));
+            Add(new CalculateHashCode(contexts));
             //Performance-hit, only use for serious debugging
             //Add(new VerifyNoDuplicateBackups(contexts));             
 

@@ -23,7 +23,7 @@ namespace Lockstep.Game.Systems.Game {
                 if (entity.hasDropRate) {
                     this._unitService.DropItem(entity.dropRate.value);
                 }
-                _gameStateContext.enemyCountState.CurEnemyCountInScene--;
+                _gameStateService.curEnemyCountInScene--;
 
                 if (killerGameEntity == null) return;
                 var killerActor = _actorContext.GetEntityWithId(killerGameEntity.actorId.value);

@@ -347,7 +347,29 @@ namespace Lockstep.Serialization
             for (int i = 0; i < len; i++)
                 Put(value[i], maxLength);
         }
-
+       
+        /// len should less then ushort.MaxValue
+        public void PutArray_65535(byte[] value)
+        {
+            var isNull = value == null;
+            Put(isNull);
+            if(isNull) return;
+            if (value.Length > ushort.MaxValue) {
+                throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
+            }
+            Put((ushort) value.Length);
+            Put(value);
+        }
+        
+        public void PutArray(byte[] value)
+        {
+            var isNull = value == null;
+            Put(isNull);
+            if(isNull) return;
+            Put(value.Length);
+            Put(value);
+        }
+        
         public void Put(IPEndPoint endPoint)
         {
             Put(endPoint.Address.ToString());

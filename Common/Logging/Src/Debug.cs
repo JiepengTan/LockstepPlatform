@@ -1,4 +1,6 @@
 
+using System.Diagnostics;
+
 namespace Lockstep.Logging {
     public class Debug {
         public static void Log(string format, params object[] args){

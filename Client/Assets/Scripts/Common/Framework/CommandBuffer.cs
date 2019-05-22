@@ -1,4 +1,6 @@
+#define DEBUG_SIMPLE_CHECK
 using System;
+using System.Collections.Generic;
 using Entitas;
 using Lockstep.Logging;
 
@@ -33,18 +35,19 @@ namespace Lockstep.Game {
         private T _param;
         private Action<CommandNode, CommandNode, T> _funcUndoCommand;
 
-        public void SetUndoCmdsFunc(Action<CommandNode, CommandNode, T> funcUndoCommand){
-            Debug.Assert(funcUndoCommand != null,"SetUndoCmdsFunc should not be null");
-            _funcUndoCommand = funcUndoCommand;
+        public CommandBuffer(T param, Action<CommandNode, CommandNode, T> funcUndoCommand){
+            _param = param;
+            _funcUndoCommand = funcUndoCommand ?? UndoCommands;
         }
 
-        public CommandBuffer(T param){
-            _param = param;
-            _funcUndoCommand = UndoCommands;
-        }
+        public List<CommandNode> allCmds = new List<CommandNode>();
 
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
         public void RevertTo(uint tick){
+            if(allCmds.Count == 0) return;
+#if DEBUG_SIMPLE_CHECK
+            allCmds[(int) tick].cmd.Undo(_param);
+#else
             if (_tail == null || _tail.Tick < tick) {
                 return;
             }
@@ -69,10 +72,13 @@ namespace Lockstep.Game {
             }
 
             _funcUndoCommand(from, to, _param);
+#endif
         }
 
         ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
         public void Clean(uint maxVerifiedTick){
+#if DEBUG_SIMPLE_CHECK
+#else
             if (_head == null || _head.Tick > maxVerifiedTick) {
                 return;
             }
@@ -92,9 +98,20 @@ namespace Lockstep.Game {
                 _head.pre = null;
                 newHead.next = null;
             }
+#endif
         }
 
         public void Execute(uint tick, ICommand<T> cmd){
+#if DEBUG_SIMPLE_CHECK
+            var iTick = (int) tick;
+            for (int i = allCmds.Count; i <= iTick; i++) {
+                allCmds.Add(null);
+            }
+
+            cmd.Do(_param);
+            var node = new CommandNode(tick, cmd, _tail, null);
+            allCmds[iTick] = node;
+#else
             if (cmd == null) return;
             cmd.Do(_param);
             var node = new CommandNode(tick, cmd, _tail, null);
@@ -106,6 +123,7 @@ namespace Lockstep.Game {
 
             _tail.next = node;
             _tail = node;
+#endif
         }
 
         /// 只需执行undo 不需要顾虑指针的维护  //如果有性能需要可以考虑合并Cmd 

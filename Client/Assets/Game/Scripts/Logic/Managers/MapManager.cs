@@ -125,13 +125,13 @@ namespace Lockstep.Game {
             enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
             playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosHero));
 
-            if (_globalStateService != null) {
-                _globalStateService.mapMin = mapMin;
-                _globalStateService.mapMax = mapMax;
-                _globalStateService.enemyBornPoints = enemyBornPoints;
-                _globalStateService.playerBornPoss = playerBornPoss;
-                _globalStateService.campPos = campPos;
-                Debug.Assert(_globalStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
+            if (_constStateService != null) {
+                _constStateService.mapMin = mapMin;
+                _constStateService.mapMax = mapMax;
+                _constStateService.enemyBornPoints = enemyBornPoints;
+                _constStateService.playerBornPoss = playerBornPoss;
+                _constStateService.campPos = campPos;
+                Debug.Assert(_constStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
             EventHelper.Trigger(EEvent.LoadMapDone, level);

@@ -22,14 +22,17 @@ namespace Lockstep.Logic.Server {
 
         public bool IsMatchered => count == sendResult.Length;
     }
-    public enum ERoomState{
+
+    public enum ERoomState {
         Idle,
         WaitingToPlay,
         PartLoading,
+        PartLoaded,
         Playing,
         PartFinished,
         FinishAll,
     }
+
 
     public class Room : IRoom {
         public ERoomState State = ERoomState.Idle;
@@ -61,7 +64,6 @@ namespace Lockstep.Logic.Server {
 
         //hashcode 
         private Dictionary<uint, HashCodeMatcher> allHashCodes = new Dictionary<uint, HashCodeMatcher>();
-        private bool haveStart = false; //是否已经开始游戏
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
 
@@ -98,7 +100,7 @@ namespace Lockstep.Logic.Server {
 
         private void BorderServerFrame(int deltaTime){
             waitTimer += deltaTime;
-            if (!haveStart) return;
+            if (State != ERoomState.Playing) return;
             while (true) { // 如果落后太多 就一直追帧
                 var iTick = (int) Tick;
                 if (allHistoryFrames.Count <= iTick) {
@@ -215,6 +217,8 @@ namespace Lockstep.Logic.Server {
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady,
                 (reader) => { return ParseData<Msg_PlayerReady>(reader); });
+            RegisterNetMsgHandler(EMsgCS.C2S_LoadingProgress, OnNet_LoadingProgress,
+                (reader) => { return ParseData<Msg_LoadingProgress>(reader); });
         }
 
         private void RegisterNetMsgHandler(EMsgCS type, DealNetMsg func, ParseNetMsg parseFunc){
@@ -272,6 +276,9 @@ namespace Lockstep.Logic.Server {
         #region player operator
 
         public void OnPlayerEnter(Player player){
+            if (State == ERoomState.Idle) {
+                State = ERoomState.WaitingToPlay;    
+            }
             if (_allPlayers.Contains(player)) {
                 Debug.LogError("Player already exist" + player.PlayerId);
                 return;
@@ -313,6 +320,7 @@ namespace Lockstep.Logic.Server {
             if (netId2LocalId.Count == 0) {
                 Console.WriteLine("All players left, stopping current simulation...");
                 IsRunning = false;
+                State = ERoomState.Idle;
                 _lobby.RemoveRoom(this);
             }
             else {
@@ -342,6 +350,7 @@ namespace Lockstep.Logic.Server {
                 allNeedWaitInputPlayerIds.Add(val);
             }
 
+            State = ERoomState.PartLoading;
             StartSimulationOnConnectedPeers();
         }
 
@@ -360,7 +369,11 @@ namespace Lockstep.Logic.Server {
         #region Net msg handler
 
         void OnNet_PlayerInput(Player player, BaseFormater data){
-            haveStart = true;
+            if (State != ERoomState.PartLoaded && State != ERoomState.Playing) return;
+            if (State == ERoomState.PartLoaded) {
+                State = ERoomState.Playing;
+            }
+
             var input = data as Msg_PlayerInput;
             //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Count}");
             if (input.Tick < Tick) {
@@ -439,6 +452,7 @@ namespace Lockstep.Logic.Server {
             if (isMatched) {
                 allHashCodes[tick] = null;
             }
+
             if (!isMatched) {
                 Debug.Log($"!!!!!!!!!!!! Hash not match tick{tick} hash{hash} ");
             }
@@ -446,6 +460,40 @@ namespace Lockstep.Logic.Server {
 
         void OnNet_PlayerReady(Player player, BaseFormater data){
             OnPlayerReady(player);
+        }
+
+        private byte[] playerLoadingProgress;
+
+        void OnNet_LoadingProgress(Player player, BaseFormater data){
+            if (State != ERoomState.PartLoading) return;
+            var msg = data as Msg_LoadingProgress;
+            if (playerLoadingProgress == null) {
+                playerLoadingProgress = new byte[MaxPlayerCount];
+            }
+
+            playerLoadingProgress[player.localId] = msg.progress;
+            
+            Debug.Log($"palyer{player.localId} Load {msg.progress}");
+            var isDone = true;
+            foreach (var progress in playerLoadingProgress) {
+                if (progress < 100) {
+                    isDone = false;
+                    break;
+                }
+            }
+
+            var retmsg = new Msg_AllLoadingProgress();
+            retmsg.isAllDone = isDone;
+            retmsg.progress = playerLoadingProgress;
+            SendToAll(EMsgCS.S2C_LoadingProgress, retmsg);
+            if (isDone) {
+                for (int i = 0; i < playerLoadingProgress.Length; i++) {
+                    playerLoadingProgress[i] = 0;
+                }
+
+                State = ERoomState.PartLoaded;
+                Debug.Log("All Load done");
+            }
         }
 
         #endregion

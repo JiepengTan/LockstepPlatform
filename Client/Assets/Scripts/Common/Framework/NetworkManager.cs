@@ -5,30 +5,35 @@ using NetMsg.Lobby;
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public partial class NetworkManager :SingletonManager<NetworkManager>{
+    public partial class NetworkManager : SingletonManager<NetworkManager>,INetworkService {
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
         public const string ClientKey = "LockstepPlatform";
-        
+
         private BaseNetProxy _netProxyLobby;
         private BaseNetProxy _netProxyRoom;
 
         private long _playerID;
         private int _roomId;
+
         public bool IsConnected {
-            get { return _netProxyLobby!=null && _netProxyLobby.Connected; }
+            get { return _netProxyLobby != null && _netProxyLobby.Connected; }
         }
 
         public override void DoAwake(IServiceContainer services){
             _netProxyRoom = new BaseNetProxy((int) EMsgCS.EnumCount);
             _netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
-            _eventRegisterService.RegisterEvent<EMsgCL,NetMsgHandler>("OnMsg_L2C","OnMsg_".Length,RegisterMsgHandler);
-            _eventRegisterService.RegisterEvent<EMsgCS,NetMsgHandler>("OnMsg_S2C","OnMsg_".Length,RegisterMsgHandler);
+            _eventRegisterService.RegisterEvent<EMsgCL, NetMsgHandler>("OnMsg_L2C", "OnMsg_".Length,
+                RegisterMsgHandler);
+            _eventRegisterService.RegisterEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
+                RegisterMsgHandler);
             InitLobby(ServerIp, ServerPort, ClientKey);
         }
+
         public override void DoStart(){
             StartLobby();
         }
+
         public override void DoUpdate(float elapsedMilliseconds){
             _netProxyLobby?.DoUpdate();
             _netProxyRoom?.DoUpdate();
@@ -40,10 +45,11 @@ namespace Lockstep.Game {
         }
 
         public void RegisterMsgHandler(EMsgCL type, NetMsgHandler handler){
-            _netProxyLobby.RegisterMsgHandler((byte)type, handler);
-        }   
+            _netProxyLobby.RegisterMsgHandler((byte) type, handler);
+        }
+
         public void RegisterMsgHandler(EMsgCS type, NetMsgHandler handler){
-            _netProxyRoom.RegisterMsgHandler((byte)type, handler);
+            _netProxyRoom.RegisterMsgHandler((byte) type, handler);
         }
 
         private void InitLobby(string ip, int port, string key){
@@ -51,7 +57,6 @@ namespace Lockstep.Game {
             _netProxyLobby.Init(ip, port, key);
             //_netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_ReqInit, OnMsg_L2C_ReqInit);
             //_netProxyLobby.RegisterMsgHandler((byte) EMsgCL.L2C_RoomMsg, OnMsg_L2C_RoomMsg);
-            
         }
 
         public void InitRoom(string ip, int port, string key){
@@ -81,7 +86,7 @@ namespace Lockstep.Game {
 
         public void OnConnectedRoom(){
             Logging.Debug.Log("OnConnected room");
-            SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady(){roomId = _roomId});
+            SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady() {roomId = _roomId});
         }
 
         public void SendInput(Msg_PlayerInput msg){
@@ -103,7 +108,7 @@ namespace Lockstep.Game {
             body.Serialize(writer);
             _netProxyRoom.Send(Compressor.Compress(writer));
         }
-        
+
         void OnMsg_L2C_RoomMsg(Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
@@ -111,7 +116,7 @@ namespace Lockstep.Game {
             InitRoom(msg.ip, msg.port, ClientKey);
             StartRoom();
         }
-        
+
         void OnMsg_L2C_ReqInit(Deserializer reader){
             var msg = reader.Parse<Msg_RepInit>();
             _playerID = msg.playerId;
@@ -125,7 +130,7 @@ namespace Lockstep.Game {
 
         void SendCreateRoomMsg(){
             UnityEngine.Debug.Log("SendCreateRoomMsg");
-            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom",size = 2});
+            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom", size = 2});
         }
 
 
@@ -139,6 +144,24 @@ namespace Lockstep.Game {
             _roomId = msg.RoomID;
             Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
             EventHelper.Trigger(EEvent.OnRoomGameStart, msg);
+        }
+
+        public void OnMsg_S2C_LoadingProgress(Deserializer reader){
+            var msg = reader.Parse<Msg_AllLoadingProgress>();
+            var isDone = msg.isAllDone;
+            if (isDone) {
+                EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
+            }
+            else {
+                EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
+            }
+            
+        }
+
+        public void OnEvent_LoadMapDone(object param){
+            var level = (int) param;
+            _constStateService.curLevel = level;
+            SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
         }
     }
 }

@@ -27,26 +27,12 @@ namespace NetMsg.Game {
         
         public override void Serialize(Serializer writer){
             writer.Put(type);
-            var isNull = content == null;
-            writer.Put(isNull);
-            if(isNull) return;
-            if (content.Length > ushort.MaxValue) {
-                throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
-            }
-            writer.Put((byte) content.Length);
-            writer.Put(content);
+            writer.PutArray_65535(content);
         }
 
         public override void Deserialize(Deserializer reader){
             type = reader.GetByte();
-            var isNull = reader.GetBool();
-            if (isNull) {
-                content = null;
-                return;
-            }
-            var len = reader.GetUShort();
-            content = new byte[len];
-            reader.GetBytes(content, len);
+            content = reader.GetBytes_65535();
         }
     }
 }

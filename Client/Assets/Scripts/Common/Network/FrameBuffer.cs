@@ -1,4 +1,5 @@
 #define DEBUG_FRAME_DELAY
+using System;
 using System.Collections.Generic;
 using NetMsg.Game;
 using UnityEngine;
@@ -39,11 +40,10 @@ namespace Lockstep.Game {
 
         /// 是否可以执行下一帧
         public bool CanExcuteNextFrame(){
-            var isOverFrame = (nextClientTic - waitCheckTick) >= MAX_OVERRIDE_COUNT;
+            var isOverFrame = ((int)nextClientTic - (int)waitCheckTick) >= MAX_OVERRIDE_COUNT;
             var isServerFrameUpdate = IsServerFrameFlush();
             return !isOverFrame || isServerFrameUpdate;
         }
-
         //is return true need revert to (waitCheckTick -1)
         public bool CheckHistoryCmds(){
             UnityEngine.Debug.Assert(waitCheckTick <= nextClientTic, "localServerTick <= localClientTick ");
@@ -51,11 +51,19 @@ namespace Lockstep.Game {
                 var sIdx = waitCheckTick % MAX_FRAME_BUFFER_COUNT;
                 var cFrame = clientFrames[sIdx];
                 var sFrame = serverFrames[sIdx];
-                if (sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
+                if (cFrame == null || sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
                     return false;
 
-                UnityEngine.Debug.Assert(cFrame != null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
+                try {  
+                    UnityEngine.Debug.Assert(cFrame != null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
                     $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick} checking:{waitCheckTick}");
+                    
+                }
+                catch (Exception e) {
+                    int ss = 0;
+                    throw;
+                }
+               
                 //Check client guess input match the real input
                 if (sFrame.IsSame(cFrame)) {
                     //serverFrames[sIdx] = null;
@@ -103,9 +111,9 @@ namespace Lockstep.Game {
             if (tick != nextClientTic) {
                 UnityEngine.Debug.LogError($"PushLocalFrame error tick: {tick} :nextClientTic:{nextClientTic}");
             }
-
-            UnityEngine.Debug.Assert(tick == nextClientTic);
-            UnityEngine.Debug.Assert(((int) nextClientTic - (int) waitCheckTick) < MAX_OVERRIDE_COUNT,
+            
+             Logging.Debug.Assert(tick == nextClientTic);
+             Logging.Debug.Assert(((int) nextClientTic - (int) waitCheckTick) < MAX_OVERRIDE_COUNT,
                 $"ring out of range cTick:{nextClientTic}  waitCheck:{waitCheckTick} ");
             var sIdx = nextClientTic % MAX_FRAME_BUFFER_COUNT;
             clientFrames[sIdx] = frame;

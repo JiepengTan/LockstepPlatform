@@ -52,7 +52,8 @@ namespace Lockstep.Game {
 
         public void OnEvent_LoadMapDone(object param){
             var level = (int) param;
-            StartGame(level);
+            IsGameOver = false;
+            _constStateService.curLevel = level;
         }
 
         private GameConfig _config;
@@ -81,8 +82,8 @@ namespace Lockstep.Game {
                 return;
             }
 
-            var min = _globalStateService.mapMin;
-            var max = _globalStateService.mapMax;
+            var min = _constStateService.mapMin;
+            var max = _constStateService.mapMax;
             var x = _randomService.Range(min.x + 1, max.x - 3);
             var y = _randomService.Range(min.y + 1, max.y - 3);
             CreateItem(new LVector2(x, y), _randomService.Range(0, _config.itemPrefabs.Count));
@@ -122,7 +123,7 @@ namespace Lockstep.Game {
         }
 
         public void CreatePlayer(byte actorId, int type){
-            var bornPos = _globalStateService.playerBornPoss[actorId];
+            var bornPos = _constStateService.playerBornPoss[actorId];
             var createPos = bornPos + GameConfig.TankBornOffset;
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();
@@ -182,15 +183,6 @@ namespace Lockstep.Game {
 
         public override void DoUpdate(float deltaTime){
             if (IsGameOver) return;
-        }
-
-        /// <summary>
-        /// 正式开始游戏
-        /// </summary>
-        public void StartGame(int level){
-            IsGameOver = false;
-            _globalStateService.curLevel = level;
-            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
         }
 
         public void OnEvent_OnSimulationStart(object param){

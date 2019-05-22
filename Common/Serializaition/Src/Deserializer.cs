@@ -374,7 +374,28 @@ namespace Lockstep.Serialization
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
-
+        public byte[] GetBytes_65535()
+        {
+            var isNull = GetBool();
+            if (isNull) {
+                return null;
+            }
+            var len = GetUShort();
+            var values = new byte[len];
+            GetBytes(values, len);
+            return values;
+        }
+        public byte[] GetBytes()
+        {
+            var isNull = GetBool();
+            if (isNull) {
+                return null;
+            }
+            var len = GetInt();
+            var values = new byte[len];
+            GetBytes(values, len);
+            return values;
+        }
         public byte[] GetBytesWithLength()
         {
             int length = GetInt();

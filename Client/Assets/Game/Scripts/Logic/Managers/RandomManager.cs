@@ -1,5 +1,7 @@
+using System;
 using Lockstep.Logging;
 using Lockstep.Math;
+using Random = Lockstep.Math.Random;
 
 namespace Lockstep.Game {
     public class RandomManager : SingletonManager<RandomManager>, IRandomService {
@@ -43,8 +45,9 @@ namespace Lockstep.Game {
             }
         }
 
-        public override void DoStart(){
-            cmdBuffer.SetUndoCmdsFunc((from, to, param) => { from.cmd.Undo(param); });
+        protected override Action<CommandBuffer<RandomManager>.CommandNode, 
+            CommandBuffer<RandomManager>.CommandNode,RandomManager> GetRollbackFunc(){
+            return (from, to, param) => { from.cmd.Undo(param); };
         }
 
         public override void Backup(uint tick){
