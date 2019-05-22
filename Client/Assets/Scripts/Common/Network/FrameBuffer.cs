@@ -8,7 +8,7 @@ namespace Lockstep.Game {
     /// <summary>
     /// 滑动窗口 msg buffer
     /// </summary>
-    public class CommandBuffer {
+    public class FrameBuffer {
         /// for debug
         public static byte DebugMainActorID;
         

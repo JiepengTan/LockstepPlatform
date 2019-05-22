@@ -23,7 +23,7 @@ namespace Lockstep.Game {
         private float _tickDt;
         private float _accumulatedTime;
         private World _world;
-        private CommandBuffer cmdBuffer = new CommandBuffer();
+        private FrameBuffer cmdBuffer = new FrameBuffer();
         private uint _localTick;
         private int _roomId;
         private List<long> allHashCodes = new List<long>();
@@ -150,7 +150,7 @@ namespace Lockstep.Game {
         public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors,
             bool isNeedRender = true){
             Debug.Log($"hehe OnGameStart simulation");
-            CommandBuffer.DebugMainActorID = localActorId;
+            FrameBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
             _globalStateService.roomId = roomId;
             _globalStateService.allActorIds = allActors;

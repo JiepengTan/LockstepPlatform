@@ -25,7 +25,7 @@ namespace Lockstep.Core.Logic {
         }
 
         public void Predict(){
-            if (Tick % CommandBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+            if (Tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
                 Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
                 Contexts.gameState.isPredicting = true;
             }
@@ -38,7 +38,7 @@ namespace Lockstep.Core.Logic {
 
         public void Simulate(bool isNeedGenSnap = true){
             if ( isNeedGenSnap ) {
-                if (Tick % CommandBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                if (Tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
                     Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
                     Contexts.gameState.isPredicting = true;
                 }
