@@ -119,6 +119,10 @@ namespace Lockstep.Core.Logic {
                 Contexts.actor.GetEntities(ActorMatcher.Backup).Where(e => e.backup.tick == resultTick);
             foreach (var backedUpActor in backedUpActors) {
                 var target = Contexts.actor.GetEntityWithId(backedUpActor.backup.actorId);
+                if (target == null) {
+                    target = Contexts.actor.CreateEntity();
+                    target.AddId(backedUpActor.backup.actorId);
+                }
 
                 //CopyTo does NOT remove additional existing components, so remove them first
                 var additionalComponentIndices = target.GetComponentIndices().Except(
@@ -171,7 +175,10 @@ namespace Lockstep.Core.Logic {
             //Copy old state to the entity                                      
             foreach (var backupEntity in backupEntities) {
                 var target = Contexts.game.GetEntityWithLocalId(backupEntity.backup.localEntityId);
-
+                if (target == null) {
+                    target = Contexts.game.CreateEntity();
+                    target.AddLocalId(backupEntity.backup.localEntityId);
+                }
                 //CopyTo does NOT remove additional existing components, so remove them first
                 var additionalComponentIndices = target.GetComponentIndices().Except(
                     backupEntity.GetComponentIndices()

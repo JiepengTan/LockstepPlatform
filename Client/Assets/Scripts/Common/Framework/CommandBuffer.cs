@@ -1,4 +1,4 @@
-#define DEBUG_SIMPLE_CHECK
+//#define DEBUG_SIMPLE_CHECK  暴力检测 不同步
 using System;
 using System.Collections.Generic;
 using Entitas;
@@ -25,8 +25,8 @@ namespace Lockstep.Game {
             public CommandNode(uint tick, ICommand<T> cmd, CommandNode pre = null, CommandNode next = null){
                 this.Tick = tick;
                 this.cmd = cmd;
-                this.pre = null;
-                this.next = null;
+                this.pre = pre;
+                this.next = next;
             }
         }
 
@@ -39,13 +39,13 @@ namespace Lockstep.Game {
             _param = param;
             _funcUndoCommand = funcUndoCommand ?? UndoCommands;
         }
-
+#if DEBUG_SIMPLE_CHECK
         public List<CommandNode> allCmds = new List<CommandNode>();
-
+#endif
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
         public void RevertTo(uint tick){
-            if(allCmds.Count == 0) return;
 #if DEBUG_SIMPLE_CHECK
+            if(allCmds.Count == 0) return;
             allCmds[(int) tick].cmd.Undo(_param);
 #else
             if (_tail == null || _tail.Tick < tick) {
@@ -57,8 +57,11 @@ namespace Lockstep.Game {
                 newTail = newTail.pre;
             }
 
-            var from = newTail;
-            var to = _tail;
+            Debug.Assert(newTail.Tick == tick ,$"newTail must be the first cmd executed in that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
+            Debug.Assert(newTail.pre == null || newTail.pre.Tick < tick ,$"newTail must be the first cmd executed in that tick : tick:{tick}  newTail.pre.Tick:{newTail.pre.Tick}");
+            
+            var minTickNode = newTail;
+            var maxTickNode = _tail;
 
             if (newTail.pre == null) {
                 _head = null;
@@ -70,8 +73,7 @@ namespace Lockstep.Game {
                 _tail.next = null;
                 newTail.pre = null;
             }
-
-            _funcUndoCommand(from, to, _param);
+            _funcUndoCommand(minTickNode, maxTickNode, _param);
 #endif
         }
 
@@ -79,6 +81,7 @@ namespace Lockstep.Game {
         public void Clean(uint maxVerifiedTick){
 #if DEBUG_SIMPLE_CHECK
 #else
+            return;
             if (_head == null || _head.Tick > maxVerifiedTick) {
                 return;
             }
@@ -127,14 +130,14 @@ namespace Lockstep.Game {
         }
 
         /// 只需执行undo 不需要顾虑指针的维护  //如果有性能需要可以考虑合并Cmd 
-        protected void UndoCommands(CommandNode from, CommandNode to, T param){
-            if (to == null) return;
-            while (to != from) {
-                to.cmd.Undo(_param);
-                to = to.pre;
+        protected void UndoCommands(CommandNode minTickNode, CommandNode maxTickNode, T param){
+            if (maxTickNode == null) return;
+            while (maxTickNode != minTickNode) {
+                maxTickNode.cmd.Undo(_param);
+                maxTickNode = maxTickNode.pre;
             }
 
-            to.cmd.Undo(_param);
+            maxTickNode.cmd.Undo(_param);
         }
     }
 }

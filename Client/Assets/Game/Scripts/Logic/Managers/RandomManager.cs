@@ -47,7 +47,7 @@ namespace Lockstep.Game {
 
         protected override Action<CommandBuffer<RandomManager>.CommandNode, 
             CommandBuffer<RandomManager>.CommandNode,RandomManager> GetRollbackFunc(){
-            return (from, to, param) => { from.cmd.Undo(param); };
+            return (minTickNode, maxTickNode, param) => { minTickNode.cmd.Undo(param); };
         }
 
         public override void Backup(uint tick){

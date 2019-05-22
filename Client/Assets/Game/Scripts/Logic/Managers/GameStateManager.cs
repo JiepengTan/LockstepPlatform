@@ -73,7 +73,7 @@ namespace Lockstep.Game {
 
         protected override Action<CommandBuffer<GameStateManager>.CommandNode,
             CommandBuffer<GameStateManager>.CommandNode, GameStateManager> GetRollbackFunc(){
-            return (from, to, param) => { from.cmd.Undo(param); };
+            return (minTickNode, maxTickNode, param) => { minTickNode.cmd.Undo(param); };
         }
         
         public struct GameState {
