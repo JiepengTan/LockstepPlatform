@@ -6,20 +6,16 @@ using Lockstep.Game.Systems;
 
 namespace Lockstep.Core.Logic.Systems {
     public sealed class WorldSystems : Feature {
-        public WorldSystems(Contexts contexts, Feature initFeature, Feature logicFeature){
+        public WorldSystems(Contexts contexts, Feature logicFeature){
             Add(new InitializeEntityCount(contexts));
-            //init game state 
-            if (initFeature != null) {
-                Add(initFeature);
-            }
             // after game has init, backup before game logic
             Add(new OnNewPredictionCreateSnapshot(contexts));
+            Add(new CalculateHashCode(contexts));
             //game logic
             if (logicFeature != null) {
                 Add(logicFeature);    
             }
             Add(new GameEventSystems(contexts));
-            Add(new CalculateHashCode(contexts));
             //Performance-hit, only use for serious debugging
             //Add(new VerifyNoDuplicateBackups(contexts));             
 

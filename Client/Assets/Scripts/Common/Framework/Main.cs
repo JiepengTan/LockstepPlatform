@@ -15,105 +15,15 @@ namespace Lockstep.Game {
             where TEnum : struct;
     }
 
-    public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, IEventRegisterService {
+    public interface ITimeMachineService : ITimeMachine,IService {
+        void RegisterTimeMachine(ITimeMachine roll);
+    }
+
+    public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, ITimeMachineService,
+        IEventRegisterService {
         public uint CurTick { get; set; }
         public static Main Instance { get; private set; }
         public Contexts contexts;
-        private Dictionary<string, BaseManager> name2Mgr = new Dictionary<string, BaseManager>();
-        private List<BaseManager> allMgrs = new List<BaseManager>();
-        private Dictionary<string, IService> allServices = new Dictionary<string, IService>();
-        HashSet<IRollbackable> allRollbackablesServices = new HashSet<IRollbackable>();
-
-
-        #region IManagerContainer
-
-        public void RegisterManager(BaseManager manager){
-            var name = manager.GetType().Name;
-            if (name2Mgr.ContainsKey(name)) {
-                Debug.LogError(
-                    $"Duplicate register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.name ?? ""}");
-                return;
-            }
-
-            name2Mgr.Add(name, manager);
-            allMgrs.Add(manager);
-            RegisterService(manager);
-        }
-
-        public T GetManager<T>() where T : BaseManager{
-            if (name2Mgr.TryGetValue(typeof(T).Name, out var val)) {
-                return val as T;
-            }
-
-            return null;
-        }
-
-        #endregion
-
-        #region IServiceContainer
-
-        public void RegisterService(IService service, bool overwriteExisting = true){
-            var interfaceNames = service.GetType().FindInterfaces((type, criteria) =>
-                    type.GetInterfaces()
-                        .Any(t => t.FullName == typeof(IService).FullName), service)
-                .Select(type => type.FullName).ToArray();
-
-            foreach (var name in interfaceNames) {
-                if (!allServices.ContainsKey(name))
-                    allServices.Add(name, service);
-                else if (overwriteExisting) {
-                    allServices[name] = service;
-                }
-            }
-
-            if (((object) service) is IRollbackable roll) {
-                allRollbackablesServices.Add(roll);
-            }
-        }
-
-        public T GetService<T>() where T : IService{
-            var key = typeof(T).FullName;
-            if (key == null) {
-                return default(T);
-            }
-
-            if (!allServices.ContainsKey(key)) {
-                return default(T);
-            }
-
-            return (T) allServices[key];
-        }
-
-        #endregion
-
-        #region IEventRegisterService
-
-        public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
-            return Delegate.CreateDelegate(typeof(T), instance, method) as T;
-        }
-
-        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
-            Action<TEnum, TDelegate> callBack)
-            where TDelegate : Delegate
-            where TEnum : struct{
-            if (callBack == null) return;
-            foreach (var mgr in allMgrs) {
-                var methods = mgr.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
-                                                       BindingFlags.Instance | BindingFlags.DeclaredOnly);
-                foreach (var method in methods) {
-                    var methodName = method.Name;
-                    if (methodName.StartsWith(prefix)) {
-                        var eventTypeStr = methodName.Substring(ignorePrefixLen);
-                        if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
-                            var hanlder = CreateDelegateFromMethodInfo<TDelegate>(mgr, method);
-                            callBack(eType, hanlder);
-                        }
-                    }
-                }
-            }
-        }
-
-        #endregion
 
         #region LifeCycle
 
@@ -127,15 +37,11 @@ namespace Lockstep.Game {
             contexts = Contexts.sharedInstance;
             Log.OnMessage += OnLog;
             DoAwake();
-            AutoCreateManagers();
-            RegisterService(this);
-        }
-
-        void AutoCreateManagers(){
+            //AutoCreateManagers;
             var types = typeof(Main).Assembly.GetTypes();
             foreach (var ty in types) {
                 if (ty.IsSubclassOf(typeof(BaseManager)) && !ty.IsAbstract) {
-                    if (ty.GetInterfaces().Any(t => t == typeof(IRollbackable))) {
+                    if (ty.GetInterfaces().Any(t => t == typeof(ITimeMachine))) {
                         var property = ty.GetProperty("Instance",
                             BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
                         if (property != null) {
@@ -144,23 +50,26 @@ namespace Lockstep.Game {
                     }
                 }
             }
+            
+            RegisterService(this);
         }
+
 
         private void Start(){
             this.AssignReference(contexts, this, this);
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.AssignReference(contexts, this, this);
             }
 
             //bind events
             RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
                 (eType, handler) => { EventHelper.AddListener(eType, handler); });
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.DoAwake(this);
             }
 
             DoStart();
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.DoStart();
             }
         }
@@ -169,25 +78,156 @@ namespace Lockstep.Game {
         void Update(){
             var deltaTime = Time.deltaTime;
             DoUpdate(deltaTime);
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.DoUpdate(deltaTime);
             }
         }
 
         private void FixedUpdate(){
             DoFixedUpdate();
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.DoFixedUpdate();
             }
         }
 
 
         private void OnDestroy(){
-            foreach (var mgr in allMgrs) {
+            foreach (var mgr in _allMgrs) {
                 mgr.DoDestroy();
             }
 
             DoDestroy();
+        }
+
+        #endregion
+        
+        #region ITimeMachineContainer
+
+        private HashSet<ITimeMachine> _timeMachineHash = new HashSet<ITimeMachine>();
+        private ITimeMachine[] _allTimeMachines;
+        private ITimeMachine[] GetAllTimeMachines(){
+            if (_allTimeMachines == null) {
+                _allTimeMachines = _timeMachineHash.ToArray();
+            }
+
+            return _allTimeMachines;
+        }
+
+        public void RegisterTimeMachine(ITimeMachine roll){
+            if (roll != null && _timeMachineHash.Add(roll)) ;
+            {
+                _allTimeMachines = null;
+            }
+        }
+
+        public void RollbackTo(uint tick){
+            foreach (var timeMachine in GetAllTimeMachines()) {
+                timeMachine.RollbackTo(tick);
+                timeMachine.CurTick = tick;
+            }
+        }
+
+        public void Backup(uint tick){
+            foreach (var timeMachine in GetAllTimeMachines()) {
+                timeMachine.CurTick = tick;
+                timeMachine.Backup(tick);
+            }
+        }
+        public void Clean(uint maxVerifiedTick){
+            foreach (var timeMachine in GetAllTimeMachines()) {
+                timeMachine.Clean(maxVerifiedTick);
+            }
+        }
+
+        #endregion
+        
+        #region IManagerContainer
+
+        private Dictionary<string, BaseManager> _name2Mgr = new Dictionary<string, BaseManager>();
+        private List<BaseManager> _allMgrs = new List<BaseManager>();
+        public void RegisterManager(BaseManager manager){
+            var name = manager.GetType().Name;
+            if (_name2Mgr.ContainsKey(name)) {
+                Debug.LogError(
+                    $"Duplicate register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.name ?? ""}");
+                return;
+            }
+
+            _name2Mgr.Add(name, manager);
+            _allMgrs.Add(manager);
+            RegisterService(manager);
+            RegisterTimeMachine(manager as ITimeMachine);
+        }
+
+        public T GetManager<T>() where T : BaseManager{
+            if (_name2Mgr.TryGetValue(typeof(T).Name, out var val)) {
+                return val as T;
+            }
+
+            return null;
+        }
+
+        #endregion
+        
+        #region IServiceContainer
+
+        private Dictionary<string, IService> _allServices = new Dictionary<string, IService>();
+        public void RegisterService(IService service, bool overwriteExisting = true){
+            var interfaceNames = service.GetType().FindInterfaces((type, criteria) =>
+                    type.GetInterfaces()
+                        .Any(t => t.FullName == typeof(IService).FullName), service)
+                .Select(type => type.FullName).ToArray();
+
+            foreach (var name in interfaceNames) {
+                if (!_allServices.ContainsKey(name))
+                    _allServices.Add(name, service);
+                else if (overwriteExisting) {
+                    _allServices[name] = service;
+                }
+            }
+        }
+
+
+        public T GetService<T>() where T : IService{
+            var key = typeof(T).FullName;
+            if (key == null) {
+                return default(T);
+            }
+
+            if (!_allServices.ContainsKey(key)) {
+                return default(T);
+            }
+
+            return (T) _allServices[key];
+        }
+
+        #endregion
+        
+        #region IEventRegisterService
+
+        public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
+            return Delegate.CreateDelegate(typeof(T), instance, method) as T;
+        }
+
+        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+            Action<TEnum, TDelegate> callBack)
+            where TDelegate : Delegate
+            where TEnum : struct{
+            if (callBack == null) return;
+            foreach (var mgr in _allMgrs) {
+                var methods = mgr.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
+                                                       BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                foreach (var method in methods) {
+                    var methodName = method.Name;
+                    if (methodName.StartsWith(prefix)) {
+                        var eventTypeStr = methodName.Substring(ignorePrefixLen);
+                        if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
+                            var hanlder = CreateDelegateFromMethodInfo<TDelegate>(mgr, method);
+                            callBack(eType, hanlder);
+                        }
+                    }
+                }
+            }
         }
 
         #endregion

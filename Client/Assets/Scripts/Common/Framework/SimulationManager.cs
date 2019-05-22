@@ -79,16 +79,17 @@ namespace Lockstep.Game {
                 var inputs = new Msg_PlayerInput[_actorCount];
                 inputs[_localActorId] = input;
                 localFrame.inputs = inputs;
+                FillInputWithLastFrame(localFrame);
                 cmdBuffer.PushLocalFrame(localFrame);
                 _networkMgr.SendInput(input);
 
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 var isNeedRevert = cmdBuffer.CheckHistoryCmds();
                 if (isNeedRevert) {
-                    //UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
+                    UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
                     var curTick = _world.Tick;
                     var revertTargetTick = (cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick);
-                    _world.RevertToTick(revertTargetTick);
+                    _world.RollbackTo(revertTargetTick);
                     //  _world.Tick -> nextMissServerFrame simulation
                     var waitCheckTick = cmdBuffer.GetMissServerFrameTick(); //服务器 可能超前
                     //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
@@ -166,7 +167,7 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context, allActors,new GameInitStateFeature(_context, _services), new GameLogicSystems(_context, _services));
+            _world = new World(_context,_timeMachineService, allActors, new GameLogicSystems(_context, _services));
             
         }
 

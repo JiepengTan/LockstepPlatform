@@ -125,7 +125,7 @@ namespace Lockstep.Game {
 
         void SendCreateRoomMsg(){
             UnityEngine.Debug.Log("SendCreateRoomMsg");
-            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom",size = 1});
+            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom",size = 2});
         }
 
 

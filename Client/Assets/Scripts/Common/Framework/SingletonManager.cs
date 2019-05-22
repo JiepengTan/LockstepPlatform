@@ -6,7 +6,6 @@ namespace Lockstep.Game {
     public partial class ManagerReferenceHolder : MonoBehaviour { }
 
     public partial class BaseManager : ManagerReferenceHolder, IService {
-        public uint CurTick { get; set; }
         public Main main { get; private set; }
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
@@ -15,7 +14,7 @@ namespace Lockstep.Game {
         public virtual void DoDestroy(){ }
     }
 
-    public abstract class SingletonManager<T> : BaseManager, IRollbackable where T : SingletonManager<T> {
+    public abstract class SingletonManager<T> : BaseManager, ITimeMachine where T : SingletonManager<T> {
         private static T _instance;
 
         public static T Instance {
@@ -42,12 +41,12 @@ namespace Lockstep.Game {
         }
 
         protected CommandBuffer<T> cmdBuffer;
-        public virtual void BackUp(uint tick){ }
+        public uint CurTick { get; set; }
+        public virtual void Backup(uint tick){ }
 
-        public void RevertTo(uint tick){
+        public void RollbackTo(uint tick){
             cmdBuffer?.RevertTo(tick);
         }
-
         public void Clean(uint maxVerifiedTick){
             cmdBuffer?.Clean(maxVerifiedTick);
         }

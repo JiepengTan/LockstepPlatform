@@ -52,8 +52,8 @@ namespace Lockstep.Game {
         protected IViewService _viewService;
         protected IUnitService _unitService;
         protected IRandomService _randomService;
-
-
+        protected ITimeMachineService _timeMachineService;
+        
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
             _audioService = serviceContainer.GetService<IAudioService>();
@@ -64,6 +64,7 @@ namespace Lockstep.Game {
             _viewService = serviceContainer.GetService<IViewService>();
             _unitService = serviceContainer.GetService<IUnitService>();
             _randomService = serviceContainer.GetService<IRandomService>();
+            _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
         }
 
         public void InitReference(Contexts contexts){

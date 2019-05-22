@@ -13,11 +13,11 @@ namespace Lockstep.Core.Logic {
         public uint Tick => Contexts.gameState.tick.value;
 
         private readonly WorldSystems _systems;
-
-        public World(Contexts contexts, IEnumerable<byte> actorIds, Feature initFeature, Feature logicFeature){
+        private ITimeMachineService _timeMachineService;
+        public World(Contexts contexts,ITimeMachineService timeMachineService, IEnumerable<byte> actorIds, Feature logicFeature){
             Contexts = contexts;
-
-            _systems = new WorldSystems(Contexts, initFeature,logicFeature);
+            _timeMachineService = timeMachineService;
+            _systems = new WorldSystems(Contexts, logicFeature);
         }
 
         public void StartSimulate(){
@@ -31,7 +31,7 @@ namespace Lockstep.Core.Logic {
             }
 
             Log.Trace(this, "Predict " + Contexts.gameState.tick.value);
-
+            _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
         }
@@ -48,7 +48,7 @@ namespace Lockstep.Core.Logic {
             }
 
             Log.Trace(this, "Simulate " + Contexts.gameState.tick.value);
-
+            _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
         }
@@ -56,6 +56,7 @@ namespace Lockstep.Core.Logic {
         /// 清理无效的快照
         public void CleanUselessSnapshot(uint checkedTick){
             if(checkedTick < 2u) return;
+            _timeMachineService.Clean(checkedTick-1);
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= checkedTick).Select(entity => entity.tick.value).ToList();
             snapshotIndices.Sort();
@@ -88,7 +89,7 @@ namespace Lockstep.Core.Logic {
         /// <summary>
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
-        public void RevertToTick(uint tick){
+        public void RollbackTo(uint tick){
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
             snapshotIndices.Sort();
@@ -189,6 +190,7 @@ namespace Lockstep.Core.Logic {
 
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
+            _timeMachineService.RollbackTo(resultTick);
             Contexts.gameState.ReplaceTick(resultTick);
         }
     }

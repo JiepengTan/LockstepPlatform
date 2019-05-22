@@ -17,9 +17,7 @@ namespace Lockstep.Game {
         Vector2Int mapMax { get; }
     }
 
-    //        ushort Pos2TileID(Vector2Int pos, bool isCollider);
-    //void ReplaceTile(Vector2Int pos, ushort srcID, ushort dstID);
-    public partial class MapManager :  IMapService ,IRollbackable{
+    public partial class MapManager :  IMapService ,ITimeMachine{
         public class CmdSetTile : BaseCommand<MapManager> {
             public TileInfos tilemap;
             public Vector2Int pos;
@@ -41,9 +39,6 @@ namespace Lockstep.Game {
             }
 
         }
-
-        
-        
         public ushort Pos2TileId(Vector2 pos, bool isCollider){
             return Pos2TileId(pos.Floor(), isCollider);
         }
@@ -77,12 +72,12 @@ namespace Lockstep.Game {
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
         private static Dictionary<TileBase, ushort> tile2ID = new Dictionary<TileBase, ushort>();
 
-
         private static string TILE_MAP_NAME_BORN_POS = "BornPos";
         private static string TILE_MAP_NAME_GRASS = "Grass";
 
         public static string GetMapPathFull(int level){
-            return Path.Combine(Application.dataPath, "Game/Resources/Maps/" + level + ".bytes");
+            //return Path.Combine(Application.dataPath, "Game/Resources/Maps/" + level + ".bytes");
+            return "Maps/" + level ;
         }
 
 
@@ -139,10 +134,6 @@ namespace Lockstep.Game {
                 Debug.Assert(_globalStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
-
-
-
-
             EventHelper.Trigger(EEvent.LoadMapDone, level);
         }
 
@@ -150,18 +141,16 @@ namespace Lockstep.Game {
             LoadLevel(1);
         }
 
-
-  
-
         public static GridInfo LoadMap(Grid grid, int level){
             CheckLoadTileIDMap();
             var path = MapManager.GetMapPathFull(level);
-            if (!File.Exists(path)) {
-                Debug.LogError("Have no map file" + level + " path:" + path);
-                return null;
-            }
-
-            var bytes = File.ReadAllBytes(path);
+            //if (!File.Exists(path)) {
+            //    Debug.LogError("Have no map file" + level + " path:" + path);
+            //    return null;
+            //}
+//
+            //var bytes = File.ReadAllBytes(path);
+            var bytes = Resources.Load<TextAsset>(path)?.bytes;
             var reader = new BinaryReader(new MemoryStream(bytes));
             var info = TileMapSerializer.ReadGrid(reader);
             if (grid != null) {

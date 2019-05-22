@@ -47,8 +47,8 @@ namespace Lockstep.Game {
             cmdBuffer.SetUndoCmdsFunc((from, to, param) => { from.cmd.Undo(param); });
         }
 
-        public override void BackUp(uint tick){
-            Debug.Assert(tick == CurTick);
+        public override void Backup(uint tick){
+            Debug.Assert(tick == CurTick,$"CurTick{CurTick} tick {tick}");
             cmdBuffer.Execute(tick, new RandomCmd());
         }
     }
