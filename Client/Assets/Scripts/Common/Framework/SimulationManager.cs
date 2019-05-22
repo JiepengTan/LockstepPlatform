@@ -19,7 +19,7 @@ namespace Lockstep.Game {
         private GameLog GameLog = new GameLog();
         private byte _localActorId;
         private bool Running;
-        private IServiceContainer Services;
+        private IServiceContainer _services;
         private float _tickDt;
         private float _accumulatedTime;
         private World _world;
@@ -56,9 +56,9 @@ namespace Lockstep.Game {
         }
 
         public override void DoAwake(IServiceContainer services){
-            Services = services;
+            _services = services;
             _context = Main.Instance.contexts;
-            _inputService = Services.GetService<IInputService>();
+            _inputService = _services.GetService<IInputService>();
         }
 
 
@@ -166,7 +166,7 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context, allActors, new GameLogicSystems(_context, Services));
+            _world = new World(_context, allActors,new GameInitStateFeature(_context, _services), new GameLogicSystems(_context, _services));
             
         }
 

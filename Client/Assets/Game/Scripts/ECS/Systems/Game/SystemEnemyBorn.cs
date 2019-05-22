@@ -19,7 +19,7 @@ namespace Lockstep.Game.Systems.Game {
                     //born enemy
                     var allPoints = _globalStateService.enemyBornPoints;
                     var bornPointCount = allPoints.Count;
-                    var idx = LRandom.Range(0, bornPointCount);
+                    var idx = _randomService.Range(0, bornPointCount);
                     var bornPoint = allPoints[idx];
                     _unitService.CreateEnemy(bornPoint);
                 }

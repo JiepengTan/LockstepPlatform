@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public partial class ReferenceHolder { }
-    public partial class ManagerReferenceHolder:MonoBehaviour { }
+
+    public partial class ManagerReferenceHolder : MonoBehaviour { }
 
     public partial class BaseManager : ManagerReferenceHolder, IRollbackable, IService {
         public Main main { get; private set; }
@@ -11,11 +12,14 @@ namespace Lockstep.Game {
         public virtual void DoUpdate(float deltaTime){ }
         public virtual void DoFixedUpdate(){ }
         public virtual void DoDestroy(){ }
+
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
-        public virtual   void RevertTo(uint tick){ }
-        public virtual   void BackUp(uint tick){ }
+        public virtual void RevertTo(uint tick){ }
+
+        public virtual void BackUp(uint tick){ }
+
         ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
-        public virtual   void Clean(uint maxVerifiedTick){ }
+        public virtual void Clean(uint maxVerifiedTick){ }
     }
 
     public partial class SingletonManager<T> : BaseManager where T : SingletonManager<T> {

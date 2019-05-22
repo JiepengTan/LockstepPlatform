@@ -1,9 +1,9 @@
 using UnityEngine;
 
 namespace Lockstep.Game {
-
     public partial class ManagerReferenceHolder {
         #region Mgrs
+
         protected AudioManager _audioMgr;
         protected InputManager _inputMgr;
         protected MapManager MapMgr;
@@ -15,7 +15,7 @@ namespace Lockstep.Game {
 
         protected Contexts _contexts;
         protected IServiceContainer _serviceContainer;
-        
+
         public void AssignReference(Contexts contexts, IServiceContainer serviceContainer,
             IManagerContainer mgrContainer
         ){
@@ -35,9 +35,9 @@ namespace Lockstep.Game {
             _simulationMgr = mgrContainer.GetManager<SimulationManager>();
             _networkMgr = mgrContainer.GetManager<NetworkManager>();
         }
-        
+
         #endregion
-        
+
         protected InputContext _inputContext;
         protected ActorContext _actorContext;
         protected GameContext _gameContext;
@@ -51,6 +51,9 @@ namespace Lockstep.Game {
         protected IEventRegisterService _eventRegisterService;
         protected IViewService _viewService;
         protected IUnitService _unitService;
+        protected IRandomService _randomService;
+
+
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
             _audioService = serviceContainer.GetService<IAudioService>();
@@ -60,6 +63,7 @@ namespace Lockstep.Game {
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
             _viewService = serviceContainer.GetService<IViewService>();
             _unitService = serviceContainer.GetService<IUnitService>();
+            _randomService = serviceContainer.GetService<IRandomService>();
         }
 
         public void InitReference(Contexts contexts){
@@ -69,7 +73,7 @@ namespace Lockstep.Game {
             _gameStateContext = contexts.gameState;
         }
     }
-    
+
     public partial class ReferenceHolder {
         protected InputContext _inputContext;
         protected ActorContext _actorContext;
@@ -84,8 +88,8 @@ namespace Lockstep.Game {
         protected IEventRegisterService _eventRegisterService;
         protected IViewService _viewService;
         protected IUnitService _unitService;
-        
-        
+        protected IRandomService _randomService;
+
 
         public void InitReference(IServiceContainer serviceContainer){
             _resourceService = serviceContainer.GetService<IResourceService>();
@@ -96,6 +100,7 @@ namespace Lockstep.Game {
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
             _viewService = serviceContainer.GetService<IViewService>();
             _unitService = serviceContainer.GetService<IUnitService>();
+            _randomService = serviceContainer.GetService<IRandomService>();
         }
 
         public void InitReference(Contexts contexts){

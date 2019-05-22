@@ -21,6 +21,7 @@ namespace Lockstep.Game {
         private Dictionary<string, BaseManager> name2Mgr = new Dictionary<string, BaseManager>();
         private List<BaseManager> allMgrs = new List<BaseManager>();
         private Dictionary<string, IService> allServices = new Dictionary<string, IService>();
+        HashSet<IRollbackable> allRollbackablesServices = new HashSet<IRollbackable>();
 
 
         #region IManagerContainer
@@ -47,7 +48,6 @@ namespace Lockstep.Game {
         }
 
         #endregion
-
         #region IServiceContainer
 
         public void RegisterService(IService service, bool overwriteExisting = true){
@@ -64,14 +64,8 @@ namespace Lockstep.Game {
                 }
             }
 
-            //自身也注册
-            if (interfaceNames.Length > 0) {
-                var name = service.GetType().FullName;
-                if (!allServices.ContainsKey(name))
-                    allServices.Add(name, service);
-                else if (overwriteExisting) {
-                    allServices[name] = service;
-                }
+            if (((object) service) is IRollbackable roll) {
+                allRollbackablesServices.Add(roll);
             }
         }
 
@@ -118,7 +112,8 @@ namespace Lockstep.Game {
 
         #endregion
         #region LifeCycle
-
+        
+        
         private void Awake(){
             if (Instance != null) {
                 Debug.LogError("Error: has 2 main scripts!!");

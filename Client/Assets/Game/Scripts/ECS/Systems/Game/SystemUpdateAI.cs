@@ -40,13 +40,13 @@ namespace Lockstep.Game.Systems.Game {
 
                     var count = allWalkableDir.Count;
                     if (count > 0) {
-                        entity.dir.value = (EDir) (allWalkableDir[LRandom.Range(0, count)]);
+                        entity.dir.value = (EDir) (allWalkableDir[_randomService.Range(0, count)]);
                         entity.move.isChangedDir = true;
                     }
                 }
 
                 //Fire skill
-                var isNeedFire = LRandom.value < aiInfo.fireRate;
+                var isNeedFire = _randomService.value < aiInfo.fireRate;
                 if (isNeedFire) {
                     if (entity.skill.cdTimer <= LFloat.zero) {
                         entity.skill.cdTimer = entity.skill.cd;

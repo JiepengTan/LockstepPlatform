@@ -14,10 +14,10 @@ namespace Lockstep.Core.Logic {
 
         private readonly WorldSystems _systems;
 
-        public World(Contexts contexts, IEnumerable<byte> actorIds, params Feature[] features){
+        public World(Contexts contexts, IEnumerable<byte> actorIds, Feature initFeature, Feature logicFeature){
             Contexts = contexts;
 
-            _systems = new WorldSystems(Contexts, features);
+            _systems = new WorldSystems(Contexts, initFeature,logicFeature);
         }
 
         public void StartSimulate(){
