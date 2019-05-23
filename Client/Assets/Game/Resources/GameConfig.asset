@@ -42,7 +42,7 @@ MonoBehaviour:
       isChangedDir: 0
     skill:
       cd:
-        _val: 1111000
+        _val: 2000
       cdTimer:
         _val: 0
       bulletId: 0
@@ -53,7 +53,130 @@ MonoBehaviour:
       updateInterval:
         _val: 0
       fireRate:
+        _val: 200
+  - asset:
+      assetId: 11
+    dir:
+      value: 0
+    pos:
+      value:
+        _x: 0
+        _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 1414
+    unit:
+      name: Enmy
+      camp: 1
+      detailType: 0
+      health: 1
+      damage: 1
+      killerLocalId: 0
+    move:
+      moveSpd:
+        _val: 5000
+      maxMoveSpd:
+        _val: 5000
+      isChangedDir: 0
+    skill:
+      cd:
+        _val: 2000
+      cdTimer:
         _val: 0
+      bulletId: 0
+      isNeedFire: 0
+    ai:
+      timer:
+        _val: 1000
+      updateInterval:
+        _val: 0
+      fireRate:
+        _val: 200
+  - asset:
+      assetId: 12
+    dir:
+      value: 0
+    pos:
+      value:
+        _x: 0
+        _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 1414
+    unit:
+      name: Enmy
+      camp: 1
+      detailType: 0
+      health: 2
+      damage: 1
+      killerLocalId: 0
+    move:
+      moveSpd:
+        _val: 5000
+      maxMoveSpd:
+        _val: 5000
+      isChangedDir: 0
+    skill:
+      cd:
+        _val: 1000
+      cdTimer:
+        _val: 0
+      bulletId: 0
+      isNeedFire: 0
+    ai:
+      timer:
+        _val: 1000
+      updateInterval:
+        _val: 0
+      fireRate:
+        _val: 500
+  - asset:
+      assetId: 13
+    dir:
+      value: 0
+    pos:
+      value:
+        _x: 0
+        _y: 0
+    collider:
+      size:
+        _x: 1000
+        _y: 1000
+      radius:
+        _val: 1414
+    unit:
+      name: Enmy
+      camp: 1
+      detailType: 0
+      health: 3
+      damage: 1
+      killerLocalId: 0
+    move:
+      moveSpd:
+        _val: 5000
+      maxMoveSpd:
+        _val: 5000
+      isChangedDir: 0
+    skill:
+      cd:
+        _val: 1000
+      cdTimer:
+        _val: 0
+      bulletId: 0
+      isNeedFire: 0
+    ai:
+      timer:
+        _val: 1000
+      updateInterval:
+        _val: 0
+      fireRate:
+        _val: 800
   playerPrefabs:
   - asset:
       assetId: 40
