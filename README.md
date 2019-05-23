@@ -1,7 +1,7 @@
 # LockstepPlatform 
-基于ECS 可回滚 帧同步解决方案，含demo  FC Tank 
-A lockstep soulution base on ECS Framework for rollback ,Include a demo FCTank 
+- A lockstep soulution base on ECS Framework for rollback ,Include a demo FCTank 
 
+- 基于ECS 可回滚 帧同步解决方案，含demo  FC Tank 
 <p align="center"> <img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/Show/game_pic.png?raw=true" width="512"/></p>
 
 ## **Done**
