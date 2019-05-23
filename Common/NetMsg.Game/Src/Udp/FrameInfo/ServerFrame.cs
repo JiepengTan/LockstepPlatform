@@ -4,7 +4,7 @@ using Lockstep.Serialization;
 
 namespace NetMsg.Game {
     public partial class ServerFrame : BaseFormater {
-        public uint tick;
+        public int tick;
         public Msg_PlayerInput[] inputs;
 
         public override void Serialize(Serializer writer){
@@ -21,7 +21,7 @@ namespace NetMsg.Game {
         }
 
         public override void Deserialize(Deserializer reader){
-            tick = reader.GetUInt();
+            tick = reader.GetInt();
             var len = reader.GetInt();
             inputs = new Msg_PlayerInput[len];
             for (int i = 0; i < len; i++) {

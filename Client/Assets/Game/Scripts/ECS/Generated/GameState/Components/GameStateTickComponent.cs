@@ -12,7 +12,7 @@ public partial class GameStateContext {
     public Lockstep.ECS.GameState.TickComponent tick { get { return tickEntity.tick; } }
     public bool hasTick { get { return tickEntity != null; } }
 
-    public GameStateEntity SetTick(uint newValue) {
+    public GameStateEntity SetTick(int newValue) {
         if (hasTick) {
             throw new Entitas.EntitasException("Could not set Tick!\n" + this + " already has an entity with Lockstep.ECS.GameState.TickComponent!",
                 "You should check if the context already has a tickEntity before setting it or use context.ReplaceTick().");
@@ -22,7 +22,7 @@ public partial class GameStateContext {
         return entity;
     }
 
-    public void ReplaceTick(uint newValue) {
+    public void ReplaceTick(int newValue) {
         var entity = tickEntity;
         if (entity == null) {
             entity = SetTick(newValue);
@@ -49,14 +49,14 @@ public partial class GameStateEntity {
     public Lockstep.ECS.GameState.TickComponent tick { get { return (Lockstep.ECS.GameState.TickComponent)GetComponent(GameStateComponentsLookup.Tick); } }
     public bool hasTick { get { return HasComponent(GameStateComponentsLookup.Tick); } }
 
-    public void AddTick(uint newValue) {
+    public void AddTick(int newValue) {
         var index = GameStateComponentsLookup.Tick;
         var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceTick(uint newValue) {
+    public void ReplaceTick(int newValue) {
         var index = GameStateComponentsLookup.Tick;
         var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
         component.value = newValue;

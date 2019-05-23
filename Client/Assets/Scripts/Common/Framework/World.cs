@@ -10,7 +10,7 @@ namespace Lockstep.Core.Logic {
     public class World {
         public Contexts Contexts { get; }
 
-        public uint Tick => Contexts.gameState.tick.value;
+        public int Tick => Contexts.gameState.tick.value;
 
         private readonly WorldSystems _systems;
         private ITimeMachineService _timeMachineService;
@@ -24,29 +24,28 @@ namespace Lockstep.Core.Logic {
             _systems.Initialize();
         }
 
-        public void Predict(){
-            if (Tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
-                Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
-                Contexts.gameState.isPredicting = true;
-            }
-
+        public void Predict(bool isNeedGenSnap = true){
+            SetNeedGenSnapShot(isNeedGenSnap);
             Log.Trace(this, "Predict " + Contexts.gameState.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
         }
 
-        public void Simulate(bool isNeedGenSnap = true){
+        private void SetNeedGenSnapShot(bool isNeedGenSnap){
             if ( isNeedGenSnap ) {
                 if (Tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
-                    Contexts.gameState.isPredicting = false;//确保一定会触发AddEvent
-                    Contexts.gameState.isPredicting = true;
+                    Contexts.gameState.isBackupCurFrame = false;//确保一定会触发AddEvent
+                    Contexts.gameState.isBackupCurFrame = true;
                 }
             }
             else {
-                Contexts.gameState.isPredicting = false;
+                Contexts.gameState.isBackupCurFrame = false;
             }
+        }
 
+        public void Simulate(bool isNeedGenSnap = true){
+            SetNeedGenSnapShot(isNeedGenSnap);
             Log.Trace(this, "Simulate " + Contexts.gameState.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
@@ -54,8 +53,8 @@ namespace Lockstep.Core.Logic {
         }
         
         /// 清理无效的快照
-        public void CleanUselessSnapshot(uint checkedTick){
-            if(checkedTick < 2u) return;
+        public void CleanUselessSnapshot(int checkedTick){
+            if(checkedTick < 2) return;
             //_timeMachineService.Clean(checkedTick-1);
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= checkedTick).Select(entity => entity.tick.value).ToList();
@@ -89,12 +88,12 @@ namespace Lockstep.Core.Logic {
         /// <summary>
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
-        public void RollbackTo(uint tick){
+        public void RollbackTo(int tick){
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
             snapshotIndices.Sort();
             UnityEngine.Debug.Assert(snapshotIndices.Count > 0 && snapshotIndices[0] <= tick,
-                $"Error! no correct history frame to revert minTick{(snapshotIndices.Count > 0 ? snapshotIndices[0] : 0u)} targetTick {tick}");
+                $"Error! no correct history frame to revert minTick{(snapshotIndices.Count > 0 ? snapshotIndices[0] : 0)} targetTick {tick}");
             int i = snapshotIndices.Count - 1;
             for (; i >= 0; i--) {
                 if (snapshotIndices[i] <= tick) {

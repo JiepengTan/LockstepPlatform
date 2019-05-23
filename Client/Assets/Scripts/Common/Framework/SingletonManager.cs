@@ -42,15 +42,15 @@ namespace Lockstep.Game {
         }
 
         protected CommandBuffer<T> cmdBuffer;
-        public uint CurTick { get; set; }
+        public int CurTick { get; set; }
 
         protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){return null;}
-        public virtual void Backup(uint tick){ }
+        public virtual void Backup(int tick){ }
 
-        public void RollbackTo(uint tick){
+        public void RollbackTo(int tick){
             cmdBuffer?.RevertTo(tick);
         }
-        public void Clean(uint maxVerifiedTick){
+        public void Clean(int maxVerifiedTick){
             cmdBuffer?.Clean(maxVerifiedTick);
         }
     }

@@ -67,7 +67,7 @@ namespace Lockstep.Game {
             }
         }
 
-        public override void Backup(uint tick){
+        public override void Backup(int tick){
             cmdBuffer.Execute(tick, new CopyStateCmd());
         }
 

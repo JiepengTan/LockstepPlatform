@@ -21,7 +21,7 @@ namespace Lockstep.Game {
 
     public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, ITimeMachineService,
         IEventRegisterService {
-        public uint CurTick { get; set; }
+        public int CurTick { get; set; }
         public static Main Instance { get; private set; }
         public Contexts contexts;
 
@@ -120,20 +120,20 @@ namespace Lockstep.Game {
             }
         }
 
-        public void RollbackTo(uint tick){
+        public void RollbackTo(int tick){
             foreach (var timeMachine in GetAllTimeMachines()) {
                 timeMachine.RollbackTo(tick);
                 timeMachine.CurTick = tick;
             }
         }
 
-        public void Backup(uint tick){
+        public void Backup(int tick){
             foreach (var timeMachine in GetAllTimeMachines()) {
                 timeMachine.CurTick = tick;
                 timeMachine.Backup(tick);
             }
         }
-        public void Clean(uint maxVerifiedTick){
+        public void Clean(int maxVerifiedTick){
             foreach (var timeMachine in GetAllTimeMachines()) {
                 timeMachine.Clean(maxVerifiedTick);
             }

@@ -7,111 +7,52 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Game {
     /// <summary>
-    /// 滑动窗口 msg buffer
+    /// frame buffer
     /// </summary>
     public class FrameBuffer {
         /// for debug
         public static byte DebugMainActorID;
 
-        public const int SERVER_FRAME_RATE = 60;
-        public const int MAX_FRAME_BUFFER_COUNT = SERVER_FRAME_RATE;
-
         /// 进行备份的帧间隔
         public const int SNAPSHORT_FRAME_INTERVAL = 2;
 
-        ///最大的可以超前的Frame数量
-        public const int MAX_OVERRIDE_COUNT = MAX_FRAME_BUFFER_COUNT - SNAPSHORT_FRAME_INTERVAL;
+        /// 回滚需要的空间
+        public const int ROLLBACK_NEED_SPACE = SNAPSHORT_FRAME_INTERVAL * 2;
 
-        public ServerFrame[] serverFrames = new ServerFrame[MAX_FRAME_BUFFER_COUNT];
-        public ServerFrame[] clientFrames = new ServerFrame[MAX_FRAME_BUFFER_COUNT];
+        /// 客户度FrameBuffer Size 
+        public const int BUFFER_SIZE = NetworkDefine.FRAME_RATE * 30 + MAX_CLIENT_PREDICT_FRAME_COUNT;
 
-        /// <summary>
+        /// 客户端最大可以超前的frame 数量
+        public const int MAX_CLIENT_PREDICT_FRAME_COUNT =
+            NetworkDefine.MAX_FRAME_DATA_DELAY / NetworkDefine.UPDATE_DELTATIME;
+
+        /// 最大的可以超前的Frame数量
+        public const int MAX_SERVER_OVERRIDE_FRAME_COUNT = BUFFER_SIZE - ROLLBACK_NEED_SPACE;
+
+        public ServerFrame[] serverBuffer = new ServerFrame[BUFFER_SIZE];
+        public ServerFrame[] clientBuffer = new ServerFrame[BUFFER_SIZE];
+
         /// 下一个需要验证的tick
-        /// </summary>
-        public uint waitCheckTick; //本地服务器 tick 比真正的服务器慢，表示在这个tick 之前的所有的Frame 都是验证过的
+        public int nextTickToCheck;
 
-        /// <summary>
         /// 下一步需要执行的客户端tick
-        /// </summary>
-        public uint nextClientTic; //本地客户端Tick 比服务器超前，很多输入是客户端的预判 需要验证 
+        public int nextClientTick;
 
-        public uint maxServerTick; //当前最大接收到的frame tick
+        /// 当前服务器的Tick (从接收到的消息中分析出来的)
+        public int curServerTick;
+
+        /// 当前Buffer中最大的服务器Tick
+        public int maxServerTickInBuffer;
 
 
-        /// 是否可以执行下一帧
-        public bool CanExcuteNextFrame(){
-            var isOverFrame = ((int) nextClientTic - (int) waitCheckTick) >= MAX_OVERRIDE_COUNT;
-            var isServerFrameUpdate = IsServerFrameFlush();
-            return !isOverFrame || isServerFrameUpdate;
+        public void SetClientTick(int tick){
+            nextClientTick = tick + 1;
         }
-
-        //is return true need revert to (waitCheckTick -1)
-        public bool CheckHistoryCmds(){
-            UnityEngine.Debug.Assert(waitCheckTick <= nextClientTic, "localServerTick <= localClientTick ");
-            while (waitCheckTick <= maxServerTick) {
-                var sIdx = waitCheckTick % MAX_FRAME_BUFFER_COUNT;
-                var cFrame = clientFrames[sIdx];
-                var sFrame = serverFrames[sIdx];
-                if (cFrame == null || sFrame == null || sFrame.tick < waitCheckTick) //服务器帧还没到
-                    return false;
-
-                UnityEngine.Debug.Assert(cFrame != null && cFrame.tick == sFrame.tick && cFrame.tick == waitCheckTick,
-                    $" Logic Error cs tick is diff s:{sFrame.tick} c:{cFrame.tick} checking:{waitCheckTick}");
-
-                //Check client guess input match the real input
-                if (sFrame.IsSame(cFrame)) {
-                    //serverFrames[sIdx] = null;
-                    //clientFrames[sIdx] = null;
-                    waitCheckTick++;
-                }
-                else {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public uint GetMissServerFrameTick(){
-            uint tick = waitCheckTick;
-            for (; tick <= maxServerTick; tick++) {
-                var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                if (serverFrames[idx] == null || serverFrames[idx].tick != tick) {
-                    break;
-                }
-            }
-
-            waitCheckTick = tick;
-            return tick;
-        }
-
-        public ServerFrame GetFrame(uint tick){
-            var sFrame = GetServerFrame(tick);
-            if (sFrame != null && sFrame.tick == tick) {
-                return sFrame;
-            }
-
-            return GetLocalFrame(tick);
-        }
-
-        public bool IsServerFrameFlush(){
-            var idx = waitCheckTick % MAX_FRAME_BUFFER_COUNT;
-            return serverFrames[idx] != null && serverFrames[idx].tick == waitCheckTick;
-        }
-
 
         public void PushLocalFrame(ServerFrame frame){
-            var tick = frame.tick;
-            if (tick != nextClientTic) {
-                UnityEngine.Debug.LogError($"PushLocalFrame error tick: {tick} :nextClientTic:{nextClientTic}");
-            }
-
-            Logging.Debug.Assert(tick == nextClientTic);
-            Logging.Debug.Assert(((int) nextClientTic - (int) waitCheckTick) < MAX_OVERRIDE_COUNT,
-                $"ring out of range cTick:{nextClientTic}  waitCheck:{waitCheckTick} ");
-            var sIdx = nextClientTic % MAX_FRAME_BUFFER_COUNT;
-            clientFrames[sIdx] = frame;
-            nextClientTic++;
+            var sIdx = frame.tick % BUFFER_SIZE;
+            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick < frame.tick, "Push local frame error!");
+            clientBuffer[sIdx] = frame;
 #if DEBUG_FRAME_DELAY
             var time = 0;
             foreach (var input in frame.inputs) {
@@ -122,89 +63,161 @@ namespace Lockstep.Game {
 #endif
         }
 
+        ///1.push server frames
         public void PushServerFrames(ServerFrame[] frames){
-            lock (this) {
-                var count = frames.Length;
-                for (int i = 0; i < count; i++) {
-                    var data = frames[i];
+            var count = frames.Length;
+            for (int i = 0; i < count; i++) {
+                var data = frames[i];
 
-                    if (data == null || data.tick < waitCheckTick) {
-                        //已经验证过的帧 直接抛弃
-                        return;
-                    }
+                if (data == null || data.tick < nextTickToCheck) {
+                    //已经验证过的帧 直接抛弃
+                    return;
+                }
 
-                    if (data.tick >= waitCheckTick + MAX_OVERRIDE_COUNT - 1) {
-                        //本地服务器落后太多  需要本地验证完成后再统一叫服务器下发
-                        return;
-                    }
+                if (data.tick > curServerTick) {
+                    curServerTick = data.tick;
+                }
 
-                    if (data.tick > maxServerTick) { //记录最大服务帧
-                        maxServerTick = data.tick;
-                    }
+                if (data.tick >= nextTickToCheck + MAX_SERVER_OVERRIDE_FRAME_COUNT - 1) {
+                    //本地服务器落后太多 需要本地验证完成后再统一叫服务器下发
+                    return;
+                }
 
-                    var targetIdx = data.tick % MAX_FRAME_BUFFER_COUNT;
-                    if (serverFrames[targetIdx] == null || serverFrames[targetIdx].tick != data.tick) {
-                        serverFrames[targetIdx] = data;
-                        foreach (var input in data.inputs) {
-                            if (input.Commands.Length > 0) {
-                                //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
-                            }
-                        }
+                if (data.tick > maxServerTickInBuffer) { //记录最大服务帧
+                    maxServerTickInBuffer = data.tick;
+                }
+
+                var targetIdx = data.tick % BUFFER_SIZE;
+                if (serverBuffer[targetIdx] == null || serverBuffer[targetIdx].tick != data.tick) {
+                    serverBuffer[targetIdx] = data;
 #if DEBUG_FRAME_DELAY
-                        var time = 0;
-                        foreach (var input in data.inputs) {
-                            if (input.ActorId == DebugMainActorID) {
-                                var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
-                                if (delay > 0.2f) {
-                                    UnityEngine.Debug.Log(
-                                        $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
-                                }
+                    foreach (var input in data.inputs) {
+                        if (input.Commands.Length > 0) {
+                            //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                        }
+                    }
+
+                    var time = 0;
+                    foreach (var input in data.inputs) {
+                        if (input.ActorId == DebugMainActorID) {
+                            var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
+                            if (delay > 0.2f) {
+                                UnityEngine.Debug.Log(
+                                    $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
                             }
                         }
-#endif
                     }
+#endif
                 }
             }
         }
 
-        public ServerFrame GetServerFrame(uint tick){
+        ///2.confirm frames=> (nextTickToCheck,hasMissedFrame,CanClientSimulate)
+        public void UpdateFramesInfo(){
+            //不考虑追帧
+            //UnityEngine.Debug.Assert(nextTickToCheck <= nextClientTick, "localServerTick <= localClientTick ");
+            //Confirm frames
+            while (nextTickToCheck <= maxServerTickInBuffer) {
+                var sIdx = nextTickToCheck % BUFFER_SIZE;
+                var cFrame = clientBuffer[sIdx];
+                var sFrame = serverBuffer[sIdx];
+                //服务器帧 或者客户端帧 还没到
+                if (cFrame == null || cFrame.tick != nextTickToCheck || sFrame == null ||
+                    sFrame.tick != nextTickToCheck)
+                    break;
+                //Check client guess input match the real input
+                if (object.ReferenceEquals(sFrame, cFrame) || sFrame.IsSame(cFrame)) {
+                    nextTickToCheck++;
+                }
+                else {
+                    IsNeedRevert = true;
+                    break;
+                }
+            }
+        }
+
+        public bool IsNeedRevert = false;
+        private int firstMissFrameTick;
+
+        public int GetMissServerFrameTick(){
+            UpdateMissServerFrameTick();
+            return firstMissFrameTick;
+        }
+
+        private void UpdateMissServerFrameTick(){
+            int tick = nextTickToCheck;
+            for (; tick <= maxServerTickInBuffer; tick++) {
+                var idx = tick % BUFFER_SIZE;
+                if (serverBuffer[idx] == null || serverBuffer[idx].tick != tick) {
+                    break;
+                }
+            }
+
+            firstMissFrameTick = tick;
+        }
+
+        public bool CanExecuteNextFrame(){
+            return (nextClientTick - firstMissFrameTick) < MAX_CLIENT_PREDICT_FRAME_COUNT;
+        }
+
+        public bool IsNeedReqMissFrame(){
+            return (curServerTick > nextClientTick);
+        }
+
+        public int Ping = 50;
+
+        public int GetTargetTick(){
+            return curServerTick + (Ping * 2) / NetworkDefine.UPDATE_DELTATIME + 2;
+        }
+
+        public ServerFrame GetFrame(int tick){
+            var sFrame = GetServerFrame(tick);
+            if (sFrame != null) {
+                return sFrame;
+            }
+
+            return GetLocalFrame(tick);
+        }
+
+        public ServerFrame GetServerFrame(int tick){
+            if (tick > maxServerTickInBuffer) {
+                return null;
+            }
+
+            var idx = tick % BUFFER_SIZE;
+            var frame =  serverBuffer[idx];
+            if (frame == null) return null;
+            if (frame.tick != tick) return null;
+            return frame;
+        }
+
+        public ServerFrame GetLocalFrame(int tick){
             lock (this) {
-                if (tick > maxServerTick) {
+                if (tick >= nextClientTick) {
                     return null;
                 }
 
-                var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                return serverFrames[idx];
+                var idx = tick % BUFFER_SIZE;
+                return clientBuffer[idx];
             }
         }
 
-        public ServerFrame GetLocalFrame(uint tick){
-            lock (this) {
-                if (tick >= nextClientTic) {
-                    return null;
-                }
-
-                var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                return clientFrames[idx];
-            }
-        }
-
-        public uint[] GetMissFrames(){ //check miss frame msg
+        public int[] GetMissFrames(){ //check miss frame msg
             lock (this) {
                 int missCount = 0;
-                for (uint tick = waitCheckTick; tick < maxServerTick; tick++) {
-                    var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                    if (serverFrames[idx] == null) { //有空窗口
+                for (int tick = nextTickToCheck; tick < maxServerTickInBuffer; tick++) {
+                    var idx = tick % BUFFER_SIZE;
+                    if (serverBuffer[idx] == null) { //有空窗口
                         ++missCount;
                     }
                 }
 
                 if (missCount > 0) {
-                    var missFrames = new uint[missCount];
+                    var missFrames = new int[missCount];
                     int missFrameIdx = 0;
-                    for (uint tick = waitCheckTick; tick < maxServerTick; tick++) {
-                        var idx = tick % MAX_FRAME_BUFFER_COUNT;
-                        if (serverFrames[idx] == null) { //有空窗口
+                    for (int tick = nextTickToCheck; tick < maxServerTickInBuffer; tick++) {
+                        var idx = tick % BUFFER_SIZE;
+                        if (serverBuffer[idx] == null) { //有空窗口
                             missFrames[missFrameIdx++] = tick;
                         }
                     }

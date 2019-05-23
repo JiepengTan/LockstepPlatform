@@ -16,6 +16,7 @@ namespace Lockstep.Core {
         OnLoadingProgress,
         OnAllPlayerFinishedLoad,
         OnSimulationStart,
+        OnServerMissFrame,
         OnServerFrame
     }
 

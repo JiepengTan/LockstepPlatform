@@ -14,16 +14,16 @@ namespace Lockstep.Game {
         public byte LocalActorId { get; set; }
         public byte[] AllActorIds { get; set; }
 
-        public Dictionary<uint, Dictionary<uint, Dictionary<byte, List<InputCmd>>>> InputLog { get; } =
-            new Dictionary<uint, Dictionary<uint, Dictionary<byte, List<InputCmd>>>>();
+        public Dictionary<int, Dictionary<int, Dictionary<byte, List<InputCmd>>>> InputLog { get; } =
+            new Dictionary<int, Dictionary<int, Dictionary<byte, List<InputCmd>>>>();
 
-        public void Add(uint tick, uint targetTick, byte actorId, List<InputCmd> commands){
+        public void Add(int tick, int targetTick, byte actorId, List<InputCmd> commands){
             Add(tick, new Msg_PlayerInput(tick, actorId, commands));
         }
 
-        public void Add(uint tick, Msg_PlayerInput msg){
+        public void Add(int tick, Msg_PlayerInput msg){
             if (!InputLog.ContainsKey(tick)) {
-                InputLog.Add(tick, new Dictionary<uint, Dictionary<byte, List<InputCmd>>>());
+                InputLog.Add(tick, new Dictionary<int, Dictionary<byte, List<InputCmd>>>());
             }
 
             if (!InputLog[tick].ContainsKey(msg.Tick)) {

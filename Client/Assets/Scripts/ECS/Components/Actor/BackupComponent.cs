@@ -8,6 +8,6 @@ namespace Lockstep.ECS.Actor
     {
         public byte actorId;
 
-        public uint tick;
+        public int tick;
     }
 }

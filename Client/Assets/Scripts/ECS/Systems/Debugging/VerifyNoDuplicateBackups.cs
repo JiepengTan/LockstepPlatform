@@ -14,7 +14,7 @@ namespace Lockstep.Core.Logic.Systems.Debugging
         }
         public void Execute()
         {
-            var temp = new Dictionary<uint, List<uint>>();
+            var temp = new Dictionary<int, List<uint>>();
             foreach (var entity in _backups)
             {
                 if (temp.ContainsKey(entity.backup.tick))

@@ -6,7 +6,7 @@ namespace Lockstep.ECS.GameState
     [GameState, Unique]
     public class TickComponent : IComponent
     {                         
-        public uint value;
+        public int value;
     }     
     
 }

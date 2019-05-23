@@ -32,12 +32,12 @@ namespace Lockstep.Core.Logic.Systems.GameState
         protected override ICollector<GameStateEntity> GetTrigger(IContext<GameStateEntity> context)
         {   
             //Create a snapshot as soon as prediction starts
-            return context.CreateCollector(GameStateMatcher.Predicting.Added());
+            return context.CreateCollector(GameStateMatcher.BackupCurFrame.Added());
         }
 
         protected override bool Filter(GameStateEntity gameState)
         {
-            return gameState.isPredicting;
+            return gameState.isBackupCurFrame;
         }
 
         protected override void Execute(List<GameStateEntity> entities)

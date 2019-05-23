@@ -24,24 +24,30 @@ namespace Lockstep.Game {
         private float _accumulatedTime;
         private World _world;
         private FrameBuffer cmdBuffer = new FrameBuffer();
-        private uint _localTick;
+        private int _localTick;
         private int _roomId;
         private List<long> allHashCodes = new List<long>();
-        private uint firstHashTick = 0;
-        
+        private int firstHashTick = 0;
+
         private byte[] _allActors;
         private int _actorCount;
-        private uint CurTick = 0;
+        private int CurTick = 0;
 
         void OnEvent_OnServerFrame(object param){
             var msg = param as Msg_ServerFrames;
             cmdBuffer.PushServerFrames(msg.frames);
         }
 
+        void OnEvent_OnServerMissFrame(object param){
+            var msg = param as Msg_RepMissFrame;
+            cmdBuffer.PushServerFrames(msg.frames);
+            _networkService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
+        }
+
         void OnEvent_OnRoomGameStart(object param){
             var msg = param as Msg_StartGame;
             OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
-            EventHelper.Trigger(EEvent.OnSimulationInited,null);
+            EventHelper.Trigger(EEvent.OnSimulationInited, null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
@@ -49,96 +55,151 @@ namespace Lockstep.Game {
             if (Running) return;
             _world.StartSimulate();
             Running = true;
-            EventHelper.Trigger(EEvent.OnSimulationStart,null);
+            EventHelper.Trigger(EEvent.OnSimulationStart, null);
         }
-        
+
         public override void DoAwake(IServiceContainer services){
             _services = services;
             _context = Main.Instance.contexts;
             _inputService = _services.GetService<IInputService>();
         }
 
+        public const int MinMissFrameReqTickDiff = 10;
+
+        public const int MaxSimulationMsPerFrame = 20;
+
+        private bool IsTimeout(){
+            return Time.realtimeSinceStartup > _frameDeadline;
+        }
+
+        private float _frameDeadline;
+
+        public float timestampOnPurchase;
+        public int tickOnPurchase;
+
+        public bool PurchaseServer(int minTickToBackup){
+            if (_world.Tick > cmdBuffer.curServerTick)
+                return true;
+            while (_world.Tick <= cmdBuffer.curServerTick) {
+                var tick = _world.Tick;
+                var sFrame = cmdBuffer.GetServerFrame(tick);
+                if (sFrame == null)
+                    return false;
+                cmdBuffer.PushLocalFrame(sFrame);
+                Simulate(sFrame, tick >= minTickToBackup);
+                if (IsTimeout()) {
+                    return false;
+                }
+            }
+
+            var ping = 35;
+            var tickClientShouldPredict = (ping * 2) / NetworkDefine.UPDATE_DELTATIME + 1;
+            tickOnPurchase = _world.Tick + tickClientShouldPredict;
+            timestampOnPurchase = Time.realtimeSinceStartup;
+            return true;
+        }
 
         public override void DoUpdate(float deltaTime){
             if (!Running) {
                 return;
             }
-            if (!cmdBuffer.CanExcuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
+
+            cmdBuffer.Ping = _networkService.Ping;
+            cmdBuffer.UpdateFramesInfo();
+            var missFrameTick = cmdBuffer.GetMissServerFrameTick();
+            //客户端落后服务器太多帧 请求丢失帧
+            if (cmdBuffer.IsNeedReqMissFrame()) {
+                _networkService.SendMissFrameReq(missFrameTick);
+            }
+
+            if (!cmdBuffer.CanExecuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
                 return;
             }
 
-            _accumulatedTime += deltaTime * 1000;
-            while (_accumulatedTime >= _tickDt) {
-                var tick = _world.Tick;
-                var input = new Msg_PlayerInput(tick, _localActorId, _inputService.GetInputCmds());
-                var localFrame = new ServerFrame();
-                localFrame.tick = tick;
-                var inputs = new Msg_PlayerInput[_actorCount];
-                inputs[_localActorId] = input;
-                localFrame.inputs = inputs;
-                FillInputWithLastFrame(localFrame);
-                cmdBuffer.PushLocalFrame(localFrame);
-                _networkService.SendInput(input);
+            _frameDeadline = Time.realtimeSinceStartup + MaxSimulationMsPerFrame;
 
+            var minTickToBackup = missFrameTick - FrameBuffer.SNAPSHORT_FRAME_INTERVAL;
+            //追帧 无输入
+            if (PurchaseServer(minTickToBackup)) {
+                return;
+            }
+
+            var frameDeltaTime = Time.realtimeSinceStartup - timestampOnPurchase;
+            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPurchase;
+            //正常跑帧
+            while (_world.Tick < targetTick) {
+                var curTick = _world.Tick;
                 //校验服务器包  如果有预测失败 则需要进行回滚
-                var isNeedRevert = cmdBuffer.CheckHistoryCmds();
-                if (isNeedRevert) {
-                    UnityEngine.Debug.Log($" Need revert from curTick {_world.Tick} to {cmdBuffer.waitCheckTick}");
-                    var curTick = _world.Tick;
-                    var revertTargetTick = (cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick);
-                    _world.RollbackTo(revertTargetTick);
-                    //  _world.Tick -> nextMissServerFrame simulation
-                    var waitCheckTick = cmdBuffer.GetMissServerFrameTick(); //服务器 可能超前
+                if (cmdBuffer.IsNeedRevert) {
+                    UnityEngine.Debug.Log($" Need revert from curTick {curTick} to {cmdBuffer.nextTickToCheck}");
+                    _world.RollbackTo(cmdBuffer.nextTickToCheck);
                     //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
                     var snapTick = _world.Tick;
-                    while (_world.Tick < waitCheckTick) {
-                        var frame = cmdBuffer.GetServerFrame(_world.Tick);
-                        if (!(frame != null && frame.tick == _world.Tick)) {
-                            Debug.LogError("cmdBuffer Mgr error");
-                        }
-
+                    while (_world.Tick < missFrameTick) {
+                        var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
+                        Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
+                            $" logic error: server Frame  must exist tick {_world.Tick}");
                         //服务器超前 客户端 应该追上去 将服务器中的输入作为客户端输入
-                        if (_world.Tick > curTick) {
-                            cmdBuffer.PushLocalFrame(frame);
-                        }
-
-                        //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
-                        ProcessInputQueue(frame);
-                        _world.Simulate(_world.Tick != snapTick);
-                        SetHashCode();
+                        cmdBuffer.PushLocalFrame(sFrame);
+                        Simulate(sFrame, _world.Tick >= minTickToBackup);
                     }
 
-                    // cmdBuffer.waitCheckTick -> lastTick Predict
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
-                        if (!(frame != null && frame.tick == _world.Tick)) {
-                            Debug.LogError("cmdBuffer Mgr error");
-                        }
-
-                        //UnityEngine.Debug.Assert(frame != null && frame.tick == _world.Tick, "cmdBuffer Mgr error");
-                        FillInputWithLastFrame(frame);
-                        ProcessInputQueue(frame);
-                        _world.Predict();
-                        SetHashCode();
+                        Logging.Debug.Assert(frame != null && frame.tick == _world.Tick,
+                            $" logic error: local frame must exist tick {_world.Tick}");
+                        Predict(frame);
                     }
                 }
 
                 {
-                    var frame = localFrame;
-                    if (_world.Tick <= frame.tick) {
-                        FillInputWithLastFrame(frame);
-                        ProcessInputQueue(frame);
-                        _world.Predict();
-                        SetHashCode();
+                    if (_world.Tick == curTick) { //当前帧 没有被执行 需要执行之
+                        var input = new Msg_PlayerInput(curTick, _localActorId, _inputService.GetInputCmds());
+                        ServerFrame cFrame = new ServerFrame();
+                        var inputs = new Msg_PlayerInput[_actorCount];
+                        inputs[_localActorId] = input;
+                        cFrame.inputs = inputs;
+                        cFrame.tick = curTick;
+                        FillInputWithLastFrame(cFrame);
+                        cmdBuffer.PushLocalFrame(cFrame);
+                        Predict(cFrame);
+                        if (curTick > cmdBuffer.maxServerTickInBuffer) { //服务器的输入还没到 需要同步输入到服务器
+                            SendInput(input);
+                        }
                     }
                 }
+            } //end of while(_world.Tick < targetTick)
 
-                _accumulatedTime -= _tickDt;
-            }
-
-            //清理无用 snapshot
-            _world.CleanUselessSnapshot((cmdBuffer.waitCheckTick <= 1 ? 0u : cmdBuffer.waitCheckTick));
             CheckAndSendHashCodes();
+        }
+
+
+        private void SendInput(Msg_PlayerInput input){
+            //TODO 合批次 一起发送 且连同历史未确认包一起发送
+            _networkService.SendInput(input);
+        }
+
+        private void Simulate(ServerFrame frame, bool isNeedGenSnap = true){
+            ProcessInputQueue(frame);
+            _world.Simulate(isNeedGenSnap);
+            var tick = _world.Tick;
+            cmdBuffer.SetClientTick(tick);
+            SetHashCode();
+            if (isNeedGenSnap && tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
+            }
+        }
+
+        private void Predict(ServerFrame frame, bool isNeedGenSnap = true){
+            ProcessInputQueue(frame);
+            _world.Predict(isNeedGenSnap);
+            var tick = _world.Tick;
+            cmdBuffer.SetClientTick(tick);
+            SetHashCode();
+            //清理无用 snapshot
+            if (isNeedGenSnap && tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
+            }
         }
 
         public override void DoDestroy(){
@@ -164,12 +225,11 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context,_timeMachineService, allActors, new GameLogicSystems(_context, _services));
-            
+            _world = new World(_context, _timeMachineService, allActors, new GameLogicSystems(_context, _services));
         }
 
         private void FillInputWithLastFrame(ServerFrame frame){
-            uint tick = frame.tick;
+            int tick = frame.tick;
             var inputs = frame.inputs;
             var lastFrameInputs = tick == 0 ? null : cmdBuffer.GetFrame(tick - 1)?.inputs;
             var curFrameInput = inputs[_localActorId];
@@ -183,24 +243,17 @@ namespace Lockstep.Game {
 
 
         public void CheckAndSendHashCodes(){
-            if (cmdBuffer.waitCheckTick > firstHashTick) {
-                var count = System.Math.Min(allHashCodes.Count, (int) (cmdBuffer.waitCheckTick - firstHashTick));
+            if (cmdBuffer.nextTickToCheck > firstHashTick) {
+                var count = System.Math.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick));
                 if (count > 0) {
-                    Msg_HashCode msg = new Msg_HashCode();
-                    msg.startTick = firstHashTick;
-                    msg.hashCodes = new long[count];
-                    for (int i = 0; i < count; i++) {
-                        msg.hashCodes[i] = allHashCodes[i];
-                    }
-
-                    _networkService.SendMsgRoom(EMsgCS.C2S_HashCode, msg);
-                    firstHashTick = firstHashTick + (uint) count;
+                    _networkService.SendHashCodes(firstHashTick, allHashCodes, 0, count);
+                    firstHashTick = firstHashTick + count;
                     allHashCodes.RemoveRange(0, count);
                 }
             }
         }
 
-        public void SetHash(uint tick, long hash){
+        public void SetHash(int tick, long hash){
             if (tick < firstHashTick) {
                 return;
             }

@@ -84,7 +84,7 @@ public partial class Contexts {
             game.GetGroup(GameMatcher.LocalId),
             (e, c) => ((Lockstep.ECS.Game.LocalIdComponent)c).value));
 
-        snapshot.AddEntityIndex(new Entitas.PrimaryEntityIndex<SnapshotEntity, uint>(
+        snapshot.AddEntityIndex(new Entitas.PrimaryEntityIndex<SnapshotEntity, int>(
             Tick,
             snapshot.GetGroup(SnapshotMatcher.Tick),
             (e, c) => ((Lockstep.ECS.Snapshot.TickComponent)c).value));
@@ -101,8 +101,8 @@ public static class ContextsExtensions {
         return ((Entitas.PrimaryEntityIndex<GameEntity, uint>)context.GetEntityIndex(Contexts.LocalId)).GetEntity(value);
     }
 
-    public static SnapshotEntity GetEntityWithTick(this SnapshotContext context, uint value) {
-        return ((Entitas.PrimaryEntityIndex<SnapshotEntity, uint>)context.GetEntityIndex(Contexts.Tick)).GetEntity(value);
+    public static SnapshotEntity GetEntityWithTick(this SnapshotContext context, int value) {
+        return ((Entitas.PrimaryEntityIndex<SnapshotEntity, int>)context.GetEntityIndex(Contexts.Tick)).GetEntity(value);
     }
 }
 //------------------------------------------------------------------------------

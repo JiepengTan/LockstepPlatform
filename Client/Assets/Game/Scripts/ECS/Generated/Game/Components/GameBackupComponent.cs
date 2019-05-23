@@ -11,7 +11,7 @@ public partial class GameEntity {
     public Lockstep.ECS.Game.BackupComponent backup { get { return (Lockstep.ECS.Game.BackupComponent)GetComponent(GameComponentsLookup.Backup); } }
     public bool hasBackup { get { return HasComponent(GameComponentsLookup.Backup); } }
 
-    public void AddBackup(uint newLocalEntityId, uint newTick) {
+    public void AddBackup(uint newLocalEntityId, int newTick) {
         var index = GameComponentsLookup.Backup;
         var component = CreateComponent<Lockstep.ECS.Game.BackupComponent>(index);
         component.localEntityId = newLocalEntityId;
@@ -19,7 +19,7 @@ public partial class GameEntity {
         AddComponent(index, component);
     }
 
-    public void ReplaceBackup(uint newLocalEntityId, uint newTick) {
+    public void ReplaceBackup(uint newLocalEntityId, int newTick) {
         var index = GameComponentsLookup.Backup;
         var component = CreateComponent<Lockstep.ECS.Game.BackupComponent>(index);
         component.localEntityId = newLocalEntityId;

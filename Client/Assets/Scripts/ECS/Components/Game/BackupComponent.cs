@@ -8,6 +8,6 @@ namespace Lockstep.ECS.Game
     {
         public uint localEntityId;
 
-        public uint tick;
+        public int tick;
     }
 }

@@ -11,14 +11,14 @@ public partial class SnapshotEntity {
     public Lockstep.ECS.Snapshot.TickComponent tick { get { return (Lockstep.ECS.Snapshot.TickComponent)GetComponent(SnapshotComponentsLookup.Tick); } }
     public bool hasTick { get { return HasComponent(SnapshotComponentsLookup.Tick); } }
 
-    public void AddTick(uint newValue) {
+    public void AddTick(int newValue) {
         var index = SnapshotComponentsLookup.Tick;
         var component = CreateComponent<Lockstep.ECS.Snapshot.TickComponent>(index);
         component.value = newValue;
         AddComponent(index, component);
     }
 
-    public void ReplaceTick(uint newValue) {
+    public void ReplaceTick(int newValue) {
         var index = SnapshotComponentsLookup.Tick;
         var component = CreateComponent<Lockstep.ECS.Snapshot.TickComponent>(index);
         component.value = newValue;

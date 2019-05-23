@@ -7,6 +7,6 @@ namespace Lockstep.ECS.Snapshot
     public class TickComponent : IComponent
     {
         [PrimaryEntityIndex]
-        public uint value;
+        public int value;
     }
 }

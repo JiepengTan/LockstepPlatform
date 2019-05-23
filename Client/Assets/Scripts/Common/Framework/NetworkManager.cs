@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Lockstep.Core;
 using Lockstep.Serialization;
 using NetMsg.Game;
@@ -5,10 +6,9 @@ using NetMsg.Lobby;
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public partial class NetworkManager : SingletonManager<NetworkManager>,INetworkService {
+    public partial class NetworkManager : SingletonManager<NetworkManager>, INetworkService {
         public string ServerIp = "127.0.0.1";
         public int ServerPort = 9050;
-        public const string ClientKey = "LockstepPlatform";
 
         private BaseNetProxy _netProxyLobby;
         private BaseNetProxy _netProxyRoom;
@@ -16,9 +16,8 @@ namespace Lockstep.Game {
         private long _playerID;
         private int _roomId;
 
-        public bool IsConnected {
-            get { return _netProxyLobby != null && _netProxyLobby.Connected; }
-        }
+        public int Ping => _netProxyRoom.IsInit ? _netProxyRoom.Ping : _netProxyLobby.Ping;
+        public bool IsConnected => _netProxyLobby != null && _netProxyLobby.Connected;
 
         public override void DoAwake(IServiceContainer services){
             _netProxyRoom = new BaseNetProxy((int) EMsgCS.EnumCount);
@@ -27,7 +26,7 @@ namespace Lockstep.Game {
                 RegisterMsgHandler);
             _eventRegisterService.RegisterEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
                 RegisterMsgHandler);
-            InitLobby(ServerIp, ServerPort, ClientKey);
+            InitLobby(ServerIp, ServerPort, NetworkDefine.NetKey);
         }
 
         public override void DoStart(){
@@ -61,7 +60,7 @@ namespace Lockstep.Game {
 
         public void InitRoom(string ip, int port, string key){
             _netProxyRoom.OnConnected += OnConnectedRoom;
-            _netProxyRoom.Init(ip, port, ClientKey);
+            _netProxyRoom.Init(ip, port, NetworkDefine.NetKey);
             //register msgs
 
             //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_StartGame, OnMsg_S2C_StartGame);
@@ -109,11 +108,37 @@ namespace Lockstep.Game {
             _netProxyRoom.Send(Compressor.Compress(writer));
         }
 
+        public void SendMissFrameReq(int missFrameTick){
+            SendMsgRoom(EMsgCS.C2S_ReqMissFrame,
+                new Msg_ReqMissFrame() {missFrames = new int[missFrameTick], isRequireAll = true});
+        }
+
+        public void SendMissFrameRepAck(int missFrameTick){
+            SendMsgRoom(EMsgCS.C2S_RepMissFrameAck, new Msg_RepMissFrameAck() {missFrameTick = missFrameTick});
+        }
+
+        public void SendHashCodes(int firstHashTick, List<long> allHashCodes, int startIdx, int count){
+            Msg_HashCode msg = new Msg_HashCode();
+            msg.startTick = firstHashTick;
+            msg.hashCodes = new long[count];
+            for (int i = startIdx; i < count; i++) {
+                msg.hashCodes[i] = allHashCodes[i];
+            }
+
+            SendMsgRoom(EMsgCS.C2S_HashCode, msg);
+        }
+
+        private void OnMsg_S2C_RepMissFrame(Deserializer reader){
+            Debug.Log($"OnMsg_S2C_RepMissFrame");
+            var msg = reader.Parse<Msg_RepMissFrame>();
+            EventHelper.Trigger(EEvent.OnServerMissFrame, msg);
+        }
+
         void OnMsg_L2C_RoomMsg(Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
             UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + msg.port);
-            InitRoom(msg.ip, msg.port, ClientKey);
+            InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
             StartRoom();
         }
 
@@ -155,7 +180,6 @@ namespace Lockstep.Game {
             else {
                 EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
             }
-            
         }
 
         public void OnEvent_LoadMapDone(object param){

@@ -5,12 +5,12 @@ using Lockstep.Serialization;
 namespace NetMsg.Game {
     public partial class Msg_PlayerInput : BaseFormater {
         public byte ActorId;
-        public uint Tick;
+        public int Tick;
         public InputCmd[] Commands = new InputCmd[0];
 #if DEBUG_FRAME_DELAY
         public float timeSinceStartUp;
 #endif
-        public Msg_PlayerInput(uint tick, byte actorID, List<InputCmd> inputs){
+        public Msg_PlayerInput(int tick, byte actorID, List<InputCmd> inputs){
             this.Tick = tick;
             this.ActorId = actorID;
             if (inputs != null) {
@@ -57,7 +57,7 @@ namespace NetMsg.Game {
             timeSinceStartUp = reader.GetFloat();
 #endif
             ActorId = reader.GetByte();
-            Tick = reader.GetUInt();
+            Tick = reader.GetInt();
             int count = reader.GetByte();
             Commands = new InputCmd[count];
             for (int i = 0; i < count; i++) {

@@ -26,7 +26,13 @@ namespace Lockstep.Game {
         //所有的消息处理函数
         protected NetMsgHandler[] _allMsgDealFuncs;
 
-
+        public int Ping {
+            get {
+                return _peer?.Ping ?? 35;
+            }
+        }
+        private bool _isInit = false;
+        public bool IsInit => _isInit;
         public Action OnConnected;
 
         public void RegisterMsgHandler(int msgType, NetMsgHandler handler){
@@ -37,7 +43,6 @@ namespace Lockstep.Game {
             _allMsgDealFuncs = new NetMsgHandler[maxMsgHandlerIdx];
         }
 
-        private bool _isInit = false;
         public void Init(string ip, int port, string key){
             _key = key;
             this._ip = ip;

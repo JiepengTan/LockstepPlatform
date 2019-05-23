@@ -11,7 +11,7 @@ public class UIECSDebugInfo : MonoBehaviour {
     public Text CurrentTickText;
 
     bool IsConnected => NetworkManager.Instance?.IsConnected ?? false;
-    uint CurTick => SimulationManager.Instance?.World?.Tick ?? 0;
+    int CurTick => SimulationManager.Instance?.World?.Tick ?? 0;
     long HashCode => Main.Instance.contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
     int AgentCount => Main.Instance.contexts.game.count;
 

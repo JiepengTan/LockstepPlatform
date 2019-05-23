@@ -47,7 +47,7 @@ namespace Lockstep.Logic.Server {
 
         public bool IsRunning { get; private set; }
         public string name;
-        public uint Tick = 0;
+        public int Tick = 0;
 
         private readonly Dictionary<int, byte> netId2LocalId = new Dictionary<int, byte>();
         private readonly Dictionary<byte, Player> _localId2Player = new Dictionary<byte, Player>();
@@ -63,7 +63,7 @@ namespace Lockstep.Logic.Server {
         private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgCS.EnumCount];
 
         //hashcode 
-        private Dictionary<uint, HashCodeMatcher> allHashCodes = new Dictionary<uint, HashCodeMatcher>();
+        private Dictionary<int, HashCodeMatcher> allHashCodes = new Dictionary<int, HashCodeMatcher>();
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
 
@@ -219,6 +219,10 @@ namespace Lockstep.Logic.Server {
                 (reader) => { return ParseData<Msg_PlayerReady>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_LoadingProgress, OnNet_LoadingProgress,
                 (reader) => { return ParseData<Msg_LoadingProgress>(reader); });
+            RegisterNetMsgHandler(EMsgCS.C2S_ReqMissFrame, OnNet_ReqMissFrame,
+                (reader) => { return ParseData<Msg_ReqMissFrame>(reader); });
+            RegisterNetMsgHandler(EMsgCS.C2S_RepMissFrameAck, OnNet_RepMissFrameAck,
+                (reader) => { return ParseData<Msg_RepMissFrameAck>(reader); });
         }
 
         private void RegisterNetMsgHandler(EMsgCS type, DealNetMsg func, ParseNetMsg parseFunc){
@@ -277,8 +281,9 @@ namespace Lockstep.Logic.Server {
 
         public void OnPlayerEnter(Player player){
             if (State == ERoomState.Idle) {
-                State = ERoomState.WaitingToPlay;    
+                State = ERoomState.WaitingToPlay;
             }
+
             if (_allPlayers.Contains(player)) {
                 Debug.LogError("Player already exist" + player.PlayerId);
                 return;
@@ -417,7 +422,7 @@ namespace Lockstep.Logic.Server {
         void OnNet_HashCode(Player player, BaseFormater data){
             var hashInfo = data as Msg_HashCode;
             var id = player.localId;
-            for (uint i = 0; i < hashInfo.hashCodes.Length; i++) {
+            for (int i = 0; i < hashInfo.hashCodes.Length; i++) {
                 var code = hashInfo.hashCodes[i];
                 var tick = hashInfo.startTick + i;
                 if (allHashCodes.TryGetValue(tick, out HashCodeMatcher matcher1)) {
@@ -448,7 +453,7 @@ namespace Lockstep.Logic.Server {
             }
         }
 
-        void OnHashMatchResult(uint tick, long hash, bool isMatched){
+        void OnHashMatchResult(int tick, long hash, bool isMatched){
             if (isMatched) {
                 allHashCodes[tick] = null;
             }
@@ -464,6 +469,27 @@ namespace Lockstep.Logic.Server {
 
         private byte[] playerLoadingProgress;
 
+        public const int MaxRepMissFrameCountPerPack = 200;
+        void OnNet_ReqMissFrame(Player player, BaseFormater data){
+            var reqMsg = data as Msg_ReqMissFrame;
+            var nextCheckTick = (int) reqMsg.missFrames[0];
+            Debug.Log($"OnNet_ReqMissFrame nextCheckTick :{nextCheckTick}");
+            var msg = new Msg_RepMissFrame();;
+            int count = Math.Min(allHistoryFrames.Count - nextCheckTick, MaxRepMissFrameCountPerPack);
+            var frames = new ServerFrame[count];
+            for (int i = nextCheckTick; i < count; i++) {
+                frames[i] = allHistoryFrames[nextCheckTick + i];
+            }
+            msg.frames = frames;
+            SendTo(player,EMsgCS.S2C_RepMissFrame, msg);
+        }
+
+        void OnNet_RepMissFrameAck(Player player, BaseFormater data){
+            var msg = data as Msg_RepMissFrameAck;
+            Debug.Log($"OnNet_RepMissFrameAck missFrameTick:{msg.missFrameTick}");
+        }
+
+
         void OnNet_LoadingProgress(Player player, BaseFormater data){
             if (State != ERoomState.PartLoading) return;
             var msg = data as Msg_LoadingProgress;
@@ -472,7 +498,7 @@ namespace Lockstep.Logic.Server {
             }
 
             playerLoadingProgress[player.localId] = msg.progress;
-            
+
             Debug.Log($"palyer{player.localId} Load {msg.progress}");
             var isDone = true;
             foreach (var progress in playerLoadingProgress) {

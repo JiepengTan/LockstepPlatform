@@ -50,7 +50,7 @@ namespace Lockstep.Game {
             return (minTickNode, maxTickNode, param) => { minTickNode.cmd.Undo(param); };
         }
 
-        public override void Backup(uint tick){
+        public override void Backup(int tick){
             Debug.Assert(tick == CurTick,$"CurTick{CurTick} tick {tick}");
             cmdBuffer.Execute(tick, new RandomCmd());
         }

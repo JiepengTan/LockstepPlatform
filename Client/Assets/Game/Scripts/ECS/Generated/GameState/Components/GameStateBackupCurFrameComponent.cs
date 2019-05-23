@@ -8,15 +8,15 @@
 //------------------------------------------------------------------------------
 public partial class GameStateContext {
 
-    public GameStateEntity predictingEntity { get { return GetGroup(GameStateMatcher.Predicting).GetSingleEntity(); } }
+    public GameStateEntity backupCurFrameEntity { get { return GetGroup(GameStateMatcher.BackupCurFrame).GetSingleEntity(); } }
 
-    public bool isPredicting {
-        get { return predictingEntity != null; }
+    public bool isBackupCurFrame {
+        get { return backupCurFrameEntity != null; }
         set {
-            var entity = predictingEntity;
+            var entity = backupCurFrameEntity;
             if (value != (entity != null)) {
                 if (value) {
-                    CreateEntity().isPredicting = true;
+                    CreateEntity().isBackupCurFrame = true;
                 } else {
                     entity.Destroy();
                 }
@@ -35,18 +35,18 @@ public partial class GameStateContext {
 //------------------------------------------------------------------------------
 public partial class GameStateEntity {
 
-    static readonly Lockstep.ECS.GameState.PredictingComponent predictingComponent = new Lockstep.ECS.GameState.PredictingComponent();
+    static readonly Lockstep.ECS.GameState.BackupCurFrameComponent backupCurFrameComponent = new Lockstep.ECS.GameState.BackupCurFrameComponent();
 
-    public bool isPredicting {
-        get { return HasComponent(GameStateComponentsLookup.Predicting); }
+    public bool isBackupCurFrame {
+        get { return HasComponent(GameStateComponentsLookup.BackupCurFrame); }
         set {
-            if (value != isPredicting) {
-                var index = GameStateComponentsLookup.Predicting;
+            if (value != isBackupCurFrame) {
+                var index = GameStateComponentsLookup.BackupCurFrame;
                 if (value) {
                     var componentPool = GetComponentPool(index);
                     var component = componentPool.Count > 0
                             ? componentPool.Pop()
-                            : predictingComponent;
+                            : backupCurFrameComponent;
 
                     AddComponent(index, component);
                 } else {
@@ -67,17 +67,17 @@ public partial class GameStateEntity {
 //------------------------------------------------------------------------------
 public sealed partial class GameStateMatcher {
 
-    static Entitas.IMatcher<GameStateEntity> _matcherPredicting;
+    static Entitas.IMatcher<GameStateEntity> _matcherBackupCurFrame;
 
-    public static Entitas.IMatcher<GameStateEntity> Predicting {
+    public static Entitas.IMatcher<GameStateEntity> BackupCurFrame {
         get {
-            if (_matcherPredicting == null) {
-                var matcher = (Entitas.Matcher<GameStateEntity>)Entitas.Matcher<GameStateEntity>.AllOf(GameStateComponentsLookup.Predicting);
+            if (_matcherBackupCurFrame == null) {
+                var matcher = (Entitas.Matcher<GameStateEntity>)Entitas.Matcher<GameStateEntity>.AllOf(GameStateComponentsLookup.BackupCurFrame);
                 matcher.componentNames = GameStateComponentsLookup.componentNames;
-                _matcherPredicting = matcher;
+                _matcherBackupCurFrame = matcher;
             }
 
-            return _matcherPredicting;
+            return _matcherBackupCurFrame;
         }
     }
 }

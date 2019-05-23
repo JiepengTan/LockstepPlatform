@@ -11,7 +11,7 @@ public partial class ActorEntity {
     public Lockstep.ECS.Actor.BackupComponent backup { get { return (Lockstep.ECS.Actor.BackupComponent)GetComponent(ActorComponentsLookup.Backup); } }
     public bool hasBackup { get { return HasComponent(ActorComponentsLookup.Backup); } }
 
-    public void AddBackup(byte newActorId, uint newTick) {
+    public void AddBackup(byte newActorId, int newTick) {
         var index = ActorComponentsLookup.Backup;
         var component = CreateComponent<Lockstep.ECS.Actor.BackupComponent>(index);
         component.actorId = newActorId;
@@ -19,7 +19,7 @@ public partial class ActorEntity {
         AddComponent(index, component);
     }
 
-    public void ReplaceBackup(byte newActorId, uint newTick) {
+    public void ReplaceBackup(byte newActorId, int newTick) {
         var index = ActorComponentsLookup.Backup;
         var component = CreateComponent<Lockstep.ECS.Actor.BackupComponent>(index);
         component.actorId = newActorId;

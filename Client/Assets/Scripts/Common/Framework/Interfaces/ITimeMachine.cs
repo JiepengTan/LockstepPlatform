@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public interface ITimeMachine {
-        uint CurTick { get; set; }
+        int CurTick { get; set; }
         ///Rollback to tick , so all cmd between [tick,~)(Include tick) should undo
-        void RollbackTo(uint tick);
-        void Backup(uint tick);
+        void RollbackTo(int tick);
+        void Backup(int tick);
         ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
-        void Clean(uint maxVerifiedTick);
+        void Clean(int maxVerifiedTick);
     }
 }

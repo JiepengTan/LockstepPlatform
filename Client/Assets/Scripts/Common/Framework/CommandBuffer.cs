@@ -19,10 +19,10 @@ namespace Lockstep.Game {
         public class CommandNode {
             public CommandNode pre;
             public CommandNode next;
-            public uint Tick;
+            public int Tick;
             public ICommand<T> cmd;
 
-            public CommandNode(uint tick, ICommand<T> cmd, CommandNode pre = null, CommandNode next = null){
+            public CommandNode(int tick, ICommand<T> cmd, CommandNode pre = null, CommandNode next = null){
                 this.Tick = tick;
                 this.cmd = cmd;
                 this.pre = pre;
@@ -43,7 +43,7 @@ namespace Lockstep.Game {
         public List<CommandNode> allCmds = new List<CommandNode>();
 #endif
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
-        public void RevertTo(uint tick){
+        public void RevertTo(int tick){
 #if DEBUG_SIMPLE_CHECK
             if(allCmds.Count == 0) return;
             allCmds[(int) tick].cmd.Undo(_param);
@@ -78,7 +78,7 @@ namespace Lockstep.Game {
         }
 
         ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
-        public void Clean(uint maxVerifiedTick){
+        public void Clean(int maxVerifiedTick){
 #if DEBUG_SIMPLE_CHECK
 #else
             return;
@@ -104,7 +104,7 @@ namespace Lockstep.Game {
 #endif
         }
 
-        public void Execute(uint tick, ICommand<T> cmd){
+        public void Execute(int tick, ICommand<T> cmd){
 #if DEBUG_SIMPLE_CHECK
             var iTick = (int) tick;
             for (int i = allCmds.Count; i <= iTick; i++) {

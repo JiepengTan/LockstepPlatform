@@ -1,15 +1,18 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
-    public partial  class Msg_ReqMissFrame : BaseFormater {
-        public uint[] missFrames;
+    public partial class Msg_ReqMissFrame : BaseFormater {
+        public bool isRequireAll;
+        public int[] missFrames;
 
         public override void Serialize(Serializer writer){
+            writer.Put(isRequireAll);
             writer.PutArray(missFrames);
         }
 
         public override void Deserialize(Deserializer reader){
-            missFrames = reader.GetUIntArray();
+            isRequireAll = reader.GetBool();
+            missFrames = reader.GetIntArray();
         }
     }
 }
