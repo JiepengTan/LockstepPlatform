@@ -19,6 +19,7 @@ namespace Lockstep.Game {
         [ShowNativeProperty] public int playerInitLifeCount { get; set; }
 
 
+        [ShowNativeProperty] public   bool isPurchaseFrame { get;set; }
         //map info
         [ShowNativeProperty] public Vector2Int mapMin { get; set; }
         [ShowNativeProperty] public Vector2Int mapMax { get; set; }

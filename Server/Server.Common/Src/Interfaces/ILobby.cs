@@ -4,7 +4,7 @@ namespace Server.Common {
     public interface ILobby {
         
         //life cycle
-        void DoStart(int tcpPort,int udpPort);
+        void DoStart(ushort tcpPort,ushort udpPort);
         void DoUpdate(int deltaTime);
         void DoDestroy();
         
@@ -14,8 +14,8 @@ namespace Server.Common {
         IRoom GetRoomByUserID(int id);
         IRoom CreateRoom(int type, Player master, string roomName,byte size);
         void RemoveRoom(IRoom room);
-        bool JoinRoom(long playerID, int roomID);
-        bool LeaveRoom(long playerID);
+        bool JoinRoom(Player player, int roomID);
+        bool LeaveRoom(Player player);
         
         //players
         void TickOut(Player player,int reason);

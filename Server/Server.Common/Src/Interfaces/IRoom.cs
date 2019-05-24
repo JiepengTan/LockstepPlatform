@@ -3,7 +3,7 @@ using Lockstep.Serialization;
 namespace Server.Common {
     public interface IRecyclable {
         void OnReuse();
-        void OnRecyle();
+        void OnRecycle();
     }
 
     public interface IRoom : IRecyclable {
@@ -11,6 +11,9 @@ namespace Server.Common {
         int RoomId { get; }
         int CurPlayerCount { get; }
         int MaxPlayerCount { get; }
+
+        long[] GetAllPlayerIDs();
+        byte[] GetReconnectMsg(Player player);
 
         //room life cycle
         void DoStart(int type,int roomId, ILobby server, int size, string name);

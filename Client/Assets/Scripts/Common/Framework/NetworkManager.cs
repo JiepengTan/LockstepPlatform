@@ -16,6 +16,7 @@ namespace Lockstep.Game {
         private long _playerID;
         private int _roomId;
 
+        private bool isReconnected = false;//是否是重连
         public int Ping => _netProxyRoom.IsInit ? _netProxyRoom.Ping : _netProxyLobby.Ping;
         public bool IsConnected => _netProxyLobby != null && _netProxyLobby.Connected;
 
@@ -85,7 +86,12 @@ namespace Lockstep.Game {
 
         public void OnConnectedRoom(){
             Logging.Debug.Log("OnConnected room");
-            SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady() {roomId = _roomId});
+            if (!isReconnected) {
+                SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady() {roomId = _roomId});
+            }
+            else {
+                EventHelper.Trigger(EEvent.OnRoomGameStart, reconnectedInfo);
+            }
         }
 
         public void SendInput(Msg_PlayerInput msg){
@@ -95,7 +101,6 @@ namespace Lockstep.Game {
         public void SendMsgLobby(EMsgCL msgId, ISerializable body){
             var writer = new Serializer();
             writer.Put((byte) msgId);
-            writer.Put(_playerID);
             body.Serialize(writer);
             _netProxyLobby.Send(Compressor.Compress(writer));
         }
@@ -111,7 +116,7 @@ namespace Lockstep.Game {
         public void SendMissFrameReq(int missFrameTick){
             Debug.Log($"SendMissFrameReq");
             SendMsgRoom(EMsgCS.C2S_ReqMissFrame,
-                new Msg_ReqMissFrame() {missFrames = new int[missFrameTick], isRequireAll = true});
+                new Msg_ReqMissFrame() {missFrames = new int[1]{missFrameTick}, isRequireAll = true});
         }
 
         public void SendMissFrameRepAck(int missFrameTick){
@@ -144,15 +149,26 @@ namespace Lockstep.Game {
             StartRoom();
         }
 
+        private object reconnectedInfo;
         void OnMsg_L2C_ReqInit(Deserializer reader){
-            var msg = reader.Parse<Msg_RepInit>();
+            var msg = reader.Parse<NetMsg.Lobby.Msg_RepInit>();
             _playerID = msg.playerId;
-            Debug.Log("PlayerID " + _playerID);
-            SendCreateRoomMsg();
+            Debug.Log("PlayerID " + _playerID + " roomId:" + msg.roomId);
+            if (msg.roomId > 0) {
+                isReconnected = true;
+                InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
+                var subMsg = new Msg_StartGame();
+                subMsg.Deserialize(new Deserializer(msg.childMsg));
+                reconnectedInfo = subMsg;
+                StartRoom();
+            }
+            else { 
+                SendCreateRoomMsg();
+            }
         }
 
         void SendInitMsg(){
-            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_RoomInitMsg() {name = "FishMan"});
+            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
         }
 
         void SendCreateRoomMsg(){
@@ -183,11 +199,16 @@ namespace Lockstep.Game {
                 EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
             }
         }
-
         public void OnEvent_LoadMapDone(object param){
             var level = (int) param;
             _constStateService.curLevel = level;
-            SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
+            Debug.Log($"hehe OnEvent_LoadMapDone isReconnected {isReconnected} ");
+            if (isReconnected) {
+                EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
+            }
+            else {
+                SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});    
+            }
         }
     }
 }

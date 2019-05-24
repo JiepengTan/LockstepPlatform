@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Logging;
@@ -11,18 +12,23 @@ using Server.Common;
 
 namespace Lockstep.Logic.Server {
     public class Lobby : ILobby {
-        //TCP
+        //account map
+        private Dictionary<string, long> account2PlayerId = new Dictionary<string, long>();
+        private long PlayerAutoIncId = 1;
+        private Dictionary<long, IRoom> playerId2Room = new Dictionary<long, IRoom>();
+
+        //Player map
         private Dictionary<long, Player> playerID2Player = new Dictionary<long, Player>();
-        private Dictionary<int, NetPeer> netId2NetPeer = new Dictionary<int, NetPeer>();
-        private Dictionary<int, Player> netID2Player = new Dictionary<int, Player>();
+        private Dictionary<int, Player> netId2Player = new Dictionary<int, Player>();
+        private Dictionary<int, Player> netId2PlayerRoom = new Dictionary<int, Player>();
 
-
-        private Dictionary<int, IRoom> roomId2Room = new Dictionary<int, IRoom>();
+        //room map
+        private int RoomAutoIncId = 1;
         private List<IRoom> _allRooms = new List<IRoom>();
+        private Dictionary<int, IRoom> roomId2Room = new Dictionary<int, IRoom>();
         private Dictionary<int, List<IRoom>> gameId2Rooms = new Dictionary<int, List<IRoom>>();
 
-        private static long PlayerAutoIncID = 1;
-        private static int RoomAutoIncID = 0;
+
         private const int MAX_NAME_LEN = 30;
 
         public NetServer serverLobby;
@@ -38,6 +44,9 @@ namespace Lockstep.Logic.Server {
 
         private Dictionary<int, FuncCreateRoom> _roomFactoryFuncs = new Dictionary<int, FuncCreateRoom>();
 
+        private string RoomIP = "";
+        private ushort RoomPort = 0;
+
         //TODO read from config
         string RoomType2DllPath(int type){
             return "Game.Tank" + ".dll";
@@ -46,16 +55,15 @@ namespace Lockstep.Logic.Server {
 
         #region LifeCycle
 
-        private int _udpPort;
-
-        public void DoStart(int tcpPort, int udpPort){
+        public void DoStart(ushort tcpPort, ushort udpPort){
             RegisterMsgHandlers();
             serverLobby = new NetServer(Define.ClientKey);
             serverLobby.DataReceived += OnDataReceived;
             serverLobby.ClientConnected += OnClientConnected;
             serverLobby.ClientDisconnected += OnCilentDisconnected;
             serverLobby.Run(tcpPort);
-            this._udpPort = udpPort;
+            this.RoomPort = udpPort;
+            this.RoomIP = "127.0.0.1";
             serverRoom = new NetServer(Define.ClientKey);
             serverRoom.DataReceived += OnDataReceivedRoom;
             serverRoom.ClientConnected += OnClientConnectedRoom;
@@ -72,6 +80,7 @@ namespace Lockstep.Logic.Server {
                 var player = GetPlayer(playerID);
                 if (player.gameSock == null) {
                     player.gameSock = peer;
+                    netId2PlayerRoom.Add(peer.Id, player);
                 }
 
                 var room = player.room;
@@ -89,16 +98,15 @@ namespace Lockstep.Logic.Server {
 
         public void OnClientConnectedRoom(object objPeer){
             var peer = (NetPeer) objPeer;
-            Debug.Log($"OnClientConnected netID = {peer.Id}");
+            Debug.Log($"OnClientConnectedRoom netID = {peer.Id}");
         }
 
         public void OnCilentDisconnectedRoom(object objPeer){
             var peer = (NetPeer) objPeer;
-            Debug.Log($"OnCilentDisconnected netID = {peer.Id}");
+            Debug.Log($"OnCilentDisconnectedRoom netID = {peer.Id}");
             var player = GetPlayerRoom(peer.Id);
             if (player != null) {
-                LeaveRoom(player.PlayerId);
-                RemovePlayer(peer.Id);
+                RemovePlayer(player);
             }
         }
 
@@ -134,7 +142,7 @@ namespace Lockstep.Logic.Server {
         }
 
         public IRoom GetRoomByUserID(int id){
-            var player = GetPlayer(id);
+            var player = GetPlayerLobby(id);
             if (player != null) {
                 return player.room;
             }
@@ -143,6 +151,17 @@ namespace Lockstep.Logic.Server {
         }
 
         public void RemoveRoom(IRoom room){
+            var ids = room.GetAllPlayerIDs();
+            if (ids != null) {
+                foreach (var playerId in ids) {
+                    if (playerId2Room.TryGetValue(playerId, out var tRoom)) {
+                        if (tRoom.RoomId == room.RoomId) {
+                            playerId2Room.Remove(playerId);
+                        }
+                    }
+                }
+            }
+
             roomId2Room.Remove(room.RoomId);
             _allRooms.Remove(room);
             gameId2Rooms[room.TypeId].Remove(room);
@@ -188,11 +207,11 @@ namespace Lockstep.Logic.Server {
 
 
         public IRoom CreateRoom(int type, Player master, string roomName, byte size){
-            if (RoomAutoIncID == int.MaxValue - 1) {
-                RoomAutoIncID = 0;
+            if (RoomAutoIncId == int.MaxValue - 1) {
+                RoomAutoIncId = 0;
             }
 
-            var id = ++RoomAutoIncID;
+            var id = ++RoomAutoIncId;
 
             IRoom room = CreateRoom(type);
             if (room == null) {
@@ -222,54 +241,33 @@ namespace Lockstep.Logic.Server {
         private void SendCreateRoomResult(Player player){
             var writer = new Serializer();
             writer.Put((byte) EMsgCL.L2C_RoomMsg);
-            new Msg_CreateRoomResult() {ip = "127.0.0.1", port = _udpPort, roomId = player.RoomId}.Serialize(writer);
+            new Msg_CreateRoomResult() {ip = RoomIP, port = RoomPort, roomId = player.RoomId}.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             player.SendLobby(bytes);
         }
 
-        public bool JoinRoom(long playerID, int roomID){
-            var player = GetPlayer(playerID);
-            if (player == null) {
-                Debug.LogError($"null player  {playerID} join room {roomID} ");
-                return false;
-            }
-
-            var room = GetRoom(roomID);
+        public bool JoinRoom(Player player, int roomId){
+            var room = GetRoom(roomId);
             if (room == null) {
-                Debug.LogError($"player{playerID} try to enter a room which not exist {roomID} ");
+                Debug.Log($"player{player.PlayerId} try to enter a room which not exist {roomId} ");
                 return false;
             }
 
             if (player.status != EPlayerStatus.Idle) {
-                Debug.LogError($"player status {player.status} can not sit down");
+                Debug.Log($"player status {player.status} can not sit down");
                 return false;
             }
 
             if (player.room != null) {
-                Debug.LogError($"player  {playerID} already in room, should leave the room first");
+                Debug.Log($"player  {player.PlayerId} already in room, should leave the room first");
                 return false;
             }
-
+            playerId2Room[player.PlayerId] = room;
             room.OnPlayerEnter(player);
             return true;
         }
 
-        public bool LeaveRoom(long playerID){
-            var player = GetPlayer(playerID);
-            if (player == null) {
-                Debug.LogError($"null player  {playerID} leave room ");
-                return false;
-            }
-
-            var room = player.room;
-            if (room == null) {
-                Debug.LogError($"player {playerID} not in room, can not leave");
-                return false;
-            }
-
-            player.room.OnPlayerLeave(player);
-            player.room = null;
-            player.status = EPlayerStatus.Idle;
+        public bool LeaveRoom(Player player){
             return true;
         }
 
@@ -286,39 +284,42 @@ namespace Lockstep.Logic.Server {
             return playerID2Player.GetRefVal(playerId);
         }
 
-        public Player GetPlayer(int netID){
-            return netID2Player.GetRefVal(netID);
+        public Player GetPlayerLobby(int netId){
+            return netId2Player.GetRefVal(netId);
         }
 
-        public Player GetPlayerRoom(int netID){
-            return netID2Player.GetRefVal(netID);
+        public Player GetPlayerRoom(int netId){
+            return netId2PlayerRoom.GetRefVal(netId);
         }
 
-        public Player AddPlayer(int netID){
-            if (PlayerAutoIncID >= long.MaxValue - 1) {
-                PlayerAutoIncID = 1;
+
+        public void RemovePlayer(Player player){
+            if (player.lobbySock == null) return;
+            playerID2Player.Remove(player.PlayerId);
+            netId2Player.Remove(player.lobbySock.Id);
+            if (player.gameSock != null) netId2PlayerRoom.Remove(player.gameSock.Id);
+            player.gameSock = null;
+            player.lobbySock = null;
+            player.room?.OnDisconnect(player);
+            player.room = null;
+            player.status = EPlayerStatus.Idle;
+        }
+
+        public Player AddPlayer(NetPeer peer){
+            if (PlayerAutoIncId >= long.MaxValue - 1) {
+                PlayerAutoIncId = 1;
             }
 
-            var playerID = PlayerAutoIncID++;
-            return CreatePlayer(playerID, netID);
+            var playerID = PlayerAutoIncId++;
+            return CreatePlayer(playerID, peer);
         }
 
-        public void RemovePlayer(int netID){
-            if (netId2NetPeer.ContainsKey(netID)) {
-                netId2NetPeer.Remove(netID);
-                if (netID2Player.TryGetValue(netID, out var player)) {
-                    netID2Player.Remove(netID);
-                    playerID2Player.Remove(player.PlayerId);
-                }
-            }
-        }
-
-        public Player CreatePlayer(long playerID, int netID){
+        public Player CreatePlayer(long playerID, NetPeer peer){
+            var netID = peer.Id;
             var player = new Player();
             player.PlayerId = playerID;
-            player.netID = netID;
-            player.lobbySock = netId2NetPeer[netID];
-            netID2Player[netID] = player;
+            player.lobbySock = peer;
+            netId2Player[netID] = player;
             playerID2Player[playerID] = player;
             return player;
         }
@@ -331,16 +332,14 @@ namespace Lockstep.Logic.Server {
         public void OnClientConnected(object objPeer){
             var peer = (NetPeer) objPeer;
             Debug.Log($"OnClientConnected netID = {peer.Id}");
-            netId2NetPeer[peer.Id] = peer;
         }
 
         public void OnCilentDisconnected(object objPeer){
             var peer = (NetPeer) objPeer;
             Debug.Log($"OnCilentDisconnected netID = {peer.Id}");
-            var player = GetPlayer(peer.Id);
+            var player = GetPlayerLobby(peer.Id);
             if (player != null) {
-                LeaveRoom(player.PlayerId);
-                RemovePlayer(peer.Id);
+                RemovePlayer(player);
             }
         }
 
@@ -351,37 +350,90 @@ namespace Lockstep.Logic.Server {
         public void OnDataReceived(NetPeer peer, byte[] data){
             int netID = peer.Id;
             try {
-                realOnDataReceived(netID, data);
+                var reader = new Deserializer(Compressor.Decompress(data));
+                var msgType = reader.GetByte();
+                if (msgType >= MAX_HANDLER_IDX) {
+                    Debug.LogError("msgType out of range " + msgType);
+                    return;
+                }
+
+                if (msgType == (byte) EMsgCL.C2L_InitMsg) {
+                    Msg_InitMsg initMsg = null;
+                    try {
+                        initMsg = reader.Parse<Msg_InitMsg>();
+                    }
+#pragma warning disable 168
+                    catch (Exception _e) {
+#pragma warning restore 168
+                        return;
+                    }
+
+                    DealInitMsg(initMsg, peer, reader);
+                    return;
+                }
+
+                //Debug.Log($"OnDataReceived netID = {netID}  type:{(EMsgCL)msgType}");
+                {
+                    if (!CheckMsg(reader, netID, out var player)) return;
+                    var _func = allMsgDealFuncs[msgType];
+                    if (_func != null) {
+                        _func(player, reader);
+                    }
+                    else {
+                        Debug.LogError("ErrorMsg type :no msgHnadler" + msgType);
+                    }
+                }
             }
             catch (Exception e) {
                 Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
             }
         }
 
-        public void realOnDataReceived(int netID, byte[] data){
-            var reader = new Deserializer(Compressor.Decompress(data));
-            var msgType = reader.GetByte();
-            var playerID = reader.GetLong();
-            if (msgType >= MAX_HANDLER_IDX) {
-                Debug.LogError("msgType outof range");
-                return;
+
+        private void DealInitMsg(Msg_InitMsg initMsg, NetPeer peer, Deserializer reader){
+            var netId = peer.Id;
+            var account = initMsg.account;
+            Player player = null;
+            if (account2PlayerId.TryGetValue(account, out long id)) {
+                player = GetPlayer(id);
+                if (player == null) {
+                    player = CreatePlayer(id, peer);
+                }
+            }
+            else {
+                player = AddPlayer(peer);
+                account2PlayerId.Add(account, player.PlayerId);
             }
 
-            //Debug.Log($"OnDataReceived netID = {netID}  type:{(EMsgCL)msgType}");
-            {
-                if (CheckMsg(reader, netID, playerID, msgType == (byte) EMsgCL.C2L_InitMsg, out var player)) return;
-                var _func = allMsgDealFuncs[msgType];
-                if (_func != null) {
-                    _func(player, reader);
-                }
-                else {
-                    Debug.LogError("ErrorMsg type :no msgHnadler" + msgType);
-                }
+            IRoom room = null;
+            if (playerId2Room.TryGetValue(player.PlayerId, out IRoom tRoom)) {
+                room = tRoom;
+                player.room = room;
+                room.OnReconnect(player);
             }
+            
+            var writer = new Serializer();
+            writer.Put((byte) EMsgCL.L2C_ReqInit);
+            var msg = new Msg_RepInit() {playerId = player.PlayerId};
+            if (room != null) {
+                msg.roomId = room.RoomId;
+                msg.port = RoomPort;
+                msg.ip = RoomIP;
+                msg.childMsg = room.GetReconnectMsg(player);
+            }
+            else {
+                msg.roomId = -1;
+                msg.ip = "";
+            }
+
+            Debug.Log($"Deal Init msg roomId {msg.roomId} isReconnect {room != null}");
+            msg.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            player.SendLobby(bytes);
         }
 
+
         private void RegisterMsgHandlers(){
-            RegisterNetMsgHandler(EMsgCL.C2L_InitMsg, OnMsg_InitMsg);
             RegisterNetMsgHandler(EMsgCL.C2L_JoinRoom, OnMsg_JoinRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_CreateRoom, OnMsg_CreateRoom);
             RegisterNetMsgHandler(EMsgCL.C2L_LeaveRoom, OnMsg_LeaveRoom);
@@ -392,55 +444,19 @@ namespace Lockstep.Logic.Server {
             allMsgDealFuncs[(int) type] = func;
         }
 
-        private bool CheckMsg(Deserializer reader, int netID, long playerID, bool isInit, out Player player){
-            if (isInit) { //初始化信息处理
-                var isReconn = playerID > 0;
-                player = GetPlayer(playerID);
-                if (isReconn) {
-                    if (player == null) {
-                        player = CreatePlayer(playerID, netID);
-                    }
-                }
-                else {
-                    player = AddPlayer(netID);
-                }
-            }
-            else {
-                player = GetPlayer(playerID);
-            }
-
+        private bool CheckMsg(Deserializer reader, int netID, out Player player){
+            player = GetPlayerLobby(netID);
             if (player == null) {
-                Debug.LogError($"ErrorMsg: have no player {playerID}");
-                return true;
+                Debug.LogError($"ErrorMsg: have no player {netID}");
             }
 
-            if (player.netID != netID) {
-                Debug.LogError($"ErrorMsg: netID error: faker? netID{netID}!= player.netID = {player.netID}");
-                return true;
-            }
-
-            return false;
+            return player != null;
         }
-
-        private void OnMsg_InitMsg(Player player, Deserializer reader){
-            var initMsg = reader.Parse<Msg_InitMsg>();
-            player.name = initMsg.name;
-            SendReqInit(player);
-        }
-
-        private void SendReqInit(Player player){
-            var writer = new Serializer();
-            writer.Put((byte) EMsgCL.L2C_ReqInit);
-            new Msg_ReqInit() {playerId = player.PlayerId}.Serialize(writer);
-            var bytes = Compressor.Compress(writer);
-            player.SendLobby(bytes);
-        }
-
 
         private void OnMsg_CreateRoom(Player player, Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoom>();
             if (_allRooms.Count > 0) {
-                JoinRoom(player.PlayerId, _allRooms[0].RoomId);
+                JoinRoom(player, _allRooms[0].RoomId);
                 SendCreateRoomResult(player);
             }
             else {
@@ -448,8 +464,19 @@ namespace Lockstep.Logic.Server {
             }
         }
 
-        private void OnMsg_LeaveRoom(Player player, Deserializer reader){ }
-        private void OnMsg_JoinRoom(Player player, Deserializer reader){ }
+        private void OnMsg_LeaveRoom(Player player, Deserializer reader){
+            var room = player.room;
+            if (room == null) {
+                Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
+            }
+
+            room.OnPlayerLeave(player);
+        }
+
+        private void OnMsg_JoinRoom(Player player, Deserializer reader){
+            var msg = reader.Parse<Msg_JoinRoom>();
+            JoinRoom(player, msg.roomId);
+        }
 
         private void OnMsg_RoomMsg(Player player, Deserializer reader){
             var room = player.room;

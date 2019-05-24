@@ -123,10 +123,13 @@ namespace Lockstep.Game {
 
             var minTickToBackup = missFrameTick - FrameBuffer.SNAPSHORT_FRAME_INTERVAL;
             //追帧 无输入
+            _constStateService.isPurchaseFrame = true;
             if (!PurchaseServer(minTickToBackup)) {
-                Debug.LogError($"hehe PurchaseServering");
+                _constStateService.isPurchaseFrame = false;
+                Debug.Log($"PurchaseServering curTick:"  + _world.Tick);
                 return;
             }
+            _constStateService.isPurchaseFrame = false;
 
             var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurchase) * 1000;
             var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPurchase;

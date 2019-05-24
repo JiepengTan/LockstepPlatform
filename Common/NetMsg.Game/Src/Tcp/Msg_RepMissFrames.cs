@@ -1,3 +1,4 @@
+using System;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
@@ -7,7 +8,11 @@ namespace NetMsg.Game {
         public override void Serialize(Serializer writer){
             writer.Put(frames.Length);
             for (int i = 0; i < frames.Length; i++) {
-                frames[i].Serialize(writer);
+                try { 
+                    frames[i].Serialize(writer);}
+                catch (Exception e) {
+                    Console.WriteLine(e);
+                }
             }
         }
 

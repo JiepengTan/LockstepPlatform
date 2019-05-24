@@ -18,4 +18,16 @@ namespace NetMsg.Lobby {
             name = reader.GetString();
         }
     }
+    
+    public partial class Msg_JoinRoom : BaseFormater {
+        public int roomId;
+
+        public override void Serialize(Serializer writer){
+            writer.Put(roomId);
+        }
+
+        public override void Deserialize(Deserializer reader){
+            roomId = reader.GetInt();
+        }
+    }
 }

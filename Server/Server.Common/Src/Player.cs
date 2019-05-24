@@ -13,7 +13,6 @@ namespace Server.Common {
 
     public class Player {
         public string name;
-        public int netID;
         public long PlayerId;
         public EPlayerStatus status = EPlayerStatus.Idle;
         public IRoom room;

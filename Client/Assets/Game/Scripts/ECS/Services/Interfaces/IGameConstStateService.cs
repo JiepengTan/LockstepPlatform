@@ -12,6 +12,8 @@ namespace Lockstep.Game {
         int playerInitLifeCount { get; }
 
 
+        /// 是否正在追帧
+        bool isPurchaseFrame { get;set; }
         Vector2Int mapMin { get; set; }
         Vector2Int mapMax { get; set; }
 

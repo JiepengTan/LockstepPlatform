@@ -57,6 +57,7 @@
     <Compile Include="Src\Global.cs" />
     <Compile Include="Src\Lobby.cs" />
     <Compile Include="Src\Program.cs" />
+    <Compile Include="Src\SimpleDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
