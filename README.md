@@ -16,10 +16,10 @@
     - IService autoregister
     - NetworkMsg auto parse and register
     - Event auto register
+    - Pursue frame after reconnected
 
 
 ## **TODO**
-    - pursue frame after reconnected
     - changed Server API to PUN API
     - using UDP for Lockstep frame msg
 
