@@ -1,14 +1,12 @@
-﻿using System;
+﻿#define DEBUG_FRAME_DELAY
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Lockstep.Core;
 using Lockstep.Core.Logic;
 using Lockstep.Logging;
-using Lockstep.Game.Features;
 using Lockstep.Serialization;
 using NetMsg.Game;
-using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -138,14 +136,9 @@ namespace Lockstep.Game {
                 cmdBuffer.UpdateFramesInfo();
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 if (cmdBuffer.IsNeedRevert) {
-                    UnityEngine.Debug.Log($" Need revert from curTick {curTick} to {cmdBuffer.nextTickToCheck} missFrameTick:{missFrameTick}");
-                    _world.RollbackTo(cmdBuffer.nextTickToCheck);
-
+                    _world.RollbackTo(cmdBuffer.nextTickToCheck,missFrameTick);
                     _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
-                    //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
-
                     minTickToBackup = System.Math.Max(minTickToBackup, _world.Tick + 1);
-                    Debug.Log($"_world.Tick < missFrameTick wTick{_world.Tick} missFrameTick:{missFrameTick}");
                     while (_world.Tick < missFrameTick) {
                         var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
                         Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
@@ -155,9 +148,9 @@ namespace Lockstep.Game {
                         Simulate(sFrame, _world.Tick >= minTickToBackup);
                     }
 
-                    Debug.Log($"_world.Tick < curTick wTick{_world.Tick} curTick:{missFrameTick}");
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
+                        FillInputWithLastFrame(frame);//加上输入预判 减少回滚
                         Logging.Debug.Assert(frame != null && frame.tick == _world.Tick,
                             $" logic error: local frame must exist tick {_world.Tick}");
                         Predict(frame, _world.Tick > minTickToBackup);
@@ -166,26 +159,31 @@ namespace Lockstep.Game {
 
                 {
                     if (_world.Tick == curTick) { //当前帧 没有被执行 需要执行之
-                        var input = new Msg_PlayerInput(curTick, _localActorId, _inputService.GetInputCmds());
-                        ServerFrame cFrame = new ServerFrame();
-                        var inputs = new Msg_PlayerInput[_actorCount];
-                        inputs[_localActorId] = input;
-                        cFrame.inputs = inputs;
-                        cFrame.tick = curTick;
+                        ServerFrame cFrame = null;
                         var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
                         if (sFrame != null) {
                             cFrame = sFrame;
                         }
-                        FillInputWithLastFrame(cFrame);
+                        else {
+                            var input = new Msg_PlayerInput(curTick, _localActorId, _inputService.GetInputCmds());
+                            cFrame = new ServerFrame();
+                            var inputs = new Msg_PlayerInput[_actorCount];
+                            inputs[_localActorId] = input;
+                            cFrame.inputs = inputs;
+                            cFrame.tick = curTick;
+                            FillInputWithLastFrame(cFrame);
+#if DEBUG_FRAME_DELAY
+                            input.timeSinceStartUp = Time.realtimeSinceStartup;
+#endif
+                            if (curTick > cmdBuffer.maxServerTickInBuffer) { //服务器的输入还没到 需要同步输入到服务器
+                                SendInput(input);
+                            }
+                        }
                         cmdBuffer.PushLocalFrame(cFrame);
                         Predict(cFrame);
-                        if (curTick > cmdBuffer.maxServerTickInBuffer) { //服务器的输入还没到 需要同步输入到服务器
-                            SendInput(input);
-                        }
                     }
                 }
             } //end of while(_world.Tick < targetTick)
-
             CheckAndSendHashCodes();
         }
 

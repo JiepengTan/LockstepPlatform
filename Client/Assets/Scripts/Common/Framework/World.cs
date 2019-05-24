@@ -93,7 +93,7 @@ namespace Lockstep.Core.Logic {
         /// <summary>
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
-        public void RollbackTo(int tick){
+        public void RollbackTo(int tick,int missFrameTick){
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
             snapshotIndices.Sort();
@@ -113,7 +113,7 @@ namespace Lockstep.Core.Logic {
             }
 
             Debug.Log(
-                $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  total:{Tick - resultTick} snaps {snaps}");
+                $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  missTick:{missFrameTick} total:{Tick - resultTick} snaps {snaps}");
 
             /*
              * ====================== Revert actors ======================

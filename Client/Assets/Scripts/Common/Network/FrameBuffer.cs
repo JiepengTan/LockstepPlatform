@@ -56,14 +56,6 @@ namespace Lockstep.Game {
             var sIdx = frame.tick % BUFFER_SIZE;
             Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick, "Push local frame error!");
             clientBuffer[sIdx] = frame;
-#if DEBUG_FRAME_DELAY
-            var time = 0;
-            foreach (var input in frame.inputs) {
-                if (input != null && input.ActorId == DebugMainActorID) {
-                    input.timeSinceStartUp = Time.realtimeSinceStartup;
-                }
-            }
-#endif
         }
 
         ///1.push server frames
