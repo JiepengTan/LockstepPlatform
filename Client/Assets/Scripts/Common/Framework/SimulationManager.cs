@@ -54,7 +54,7 @@ namespace Lockstep.Game {
             if (Running) return;
             _world.StartSimulate();
             Running = true;
-            SetPurchaseTimestamp();
+            SetPursueTimestamp();
             EventHelper.Trigger(EEvent.OnSimulationStart, null);
         }
 
@@ -74,10 +74,10 @@ namespace Lockstep.Game {
 
         private float _frameDeadline;
 
-        public float timestampOnPurchase;
-        public int tickOnPurchase;
+        public float timestampOnPursue;
+        public int tickOnPursue;
 
-        public bool PurchaseServer(int minTickToBackup){
+        public bool PursueServer(int minTickToBackup){
             if (_world.Tick >= cmdBuffer.curServerTick)
                 return true;
             while (_world.Tick <= cmdBuffer.curServerTick) {
@@ -92,15 +92,15 @@ namespace Lockstep.Game {
                 }
             }
 
-            SetPurchaseTimestamp();
+            SetPursueTimestamp();
             return true;
         }
 
-        private void SetPurchaseTimestamp(){
+        private void SetPursueTimestamp(){
             var ping = 35;
             var tickClientShouldPredict = 2; //(ping * 2) / NetworkDefine.UPDATE_DELTATIME + 1;
-            tickOnPurchase = _world.Tick + tickClientShouldPredict;
-            timestampOnPurchase = Time.realtimeSinceStartup;
+            tickOnPursue = _world.Tick + tickClientShouldPredict;
+            timestampOnPursue = Time.realtimeSinceStartup;
         }
 
         public override void DoUpdate(float deltaTime){
@@ -123,16 +123,16 @@ namespace Lockstep.Game {
 
             var minTickToBackup = missFrameTick - FrameBuffer.SNAPSHORT_FRAME_INTERVAL;
             //追帧 无输入
-            _constStateService.isPurchaseFrame = true;
-            if (!PurchaseServer(minTickToBackup)) {
-                _constStateService.isPurchaseFrame = false;
-                Debug.Log($"PurchaseServering curTick:"  + _world.Tick);
+            _constStateService.isPursueFrame = true;
+            if (!PursueServer(minTickToBackup)) {
+                _constStateService.isPursueFrame = false;
+                Debug.Log($"PursueServering curTick:"  + _world.Tick);
                 return;
             }
-            _constStateService.isPurchaseFrame = false;
+            _constStateService.isPursueFrame = false;
 
-            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurchase) * 1000;
-            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPurchase;
+            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPursue) * 1000;
+            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPursue;
             //正常跑帧
             while (_world.Tick < targetTick) {
                 var curTick = _world.Tick;

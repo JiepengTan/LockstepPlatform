@@ -13,7 +13,7 @@ namespace Lockstep.Game {
 
 
         /// 是否正在追帧
-        bool isPurchaseFrame { get;set; }
+        bool isPursueFrame { get;set; }
         Vector2Int mapMin { get; set; }
         Vector2Int mapMax { get; set; }
 

@@ -32,7 +32,7 @@ namespace Lockstep.Game {
         public void PlayClip(AudioClip clip){
             if (clip != null) {
                 //追帧 不播放音效
-                if (_constStateService.isPurchaseFrame) {  return;}
+                if (_constStateService.isPursueFrame) {  return;}
                 _source.PlayOneShot(clip);
             }
         }
