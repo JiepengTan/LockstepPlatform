@@ -57,7 +57,7 @@ namespace Lockstep.Game {
                 newTail = newTail.pre;
             }
 
-            Debug.Assert(newTail.Tick == tick ,$"newTail must be the first cmd executed in that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
+            Debug.Assert(newTail.Tick >= tick ,$"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
             Debug.Assert(newTail.pre == null || newTail.pre.Tick < tick ,$"newTail must be the first cmd executed in that tick : tick:{tick}  newTail.pre.Tick:{newTail.pre.Tick}");
             
             var minTickNode = newTail;

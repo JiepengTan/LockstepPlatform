@@ -39,8 +39,9 @@ namespace Lockstep.Game {
         }
 
         void OnEvent_OnServerMissFrame(object param){
+            Debug.Log($"OnEvent_OnServerMissFrame");
             var msg = param as Msg_RepMissFrame;
-            cmdBuffer.PushServerFrames(msg.frames);
+            cmdBuffer.PushServerFrames(msg.frames,false);
             _networkService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
         }
 
@@ -55,6 +56,7 @@ namespace Lockstep.Game {
             if (Running) return;
             _world.StartSimulate();
             Running = true;
+            SetPurchaseTimestamp();
             EventHelper.Trigger(EEvent.OnSimulationStart, null);
         }
 
@@ -78,7 +80,7 @@ namespace Lockstep.Game {
         public int tickOnPurchase;
 
         public bool PurchaseServer(int minTickToBackup){
-            if (_world.Tick > cmdBuffer.curServerTick)
+            if (_world.Tick >= cmdBuffer.curServerTick)
                 return true;
             while (_world.Tick <= cmdBuffer.curServerTick) {
                 var tick = _world.Tick;
@@ -92,11 +94,15 @@ namespace Lockstep.Game {
                 }
             }
 
+            SetPurchaseTimestamp();
+            return true;
+        }
+
+        private void SetPurchaseTimestamp(){
             var ping = 35;
-            var tickClientShouldPredict = (ping * 2) / NetworkDefine.UPDATE_DELTATIME + 1;
+            var tickClientShouldPredict = 2; //(ping * 2) / NetworkDefine.UPDATE_DELTATIME + 1;
             tickOnPurchase = _world.Tick + tickClientShouldPredict;
             timestampOnPurchase = Time.realtimeSinceStartup;
-            return true;
         }
 
         public override void DoUpdate(float deltaTime){
@@ -112,29 +118,34 @@ namespace Lockstep.Game {
                 _networkService.SendMissFrameReq(missFrameTick);
             }
 
-            if (!cmdBuffer.CanExecuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
-                return;
-            }
-
+            //if (!cmdBuffer.CanExecuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
+            //    return;
+            //}
             _frameDeadline = Time.realtimeSinceStartup + MaxSimulationMsPerFrame;
 
             var minTickToBackup = missFrameTick - FrameBuffer.SNAPSHORT_FRAME_INTERVAL;
             //追帧 无输入
-            if (PurchaseServer(minTickToBackup)) {
+            if (!PurchaseServer(minTickToBackup)) {
+                Debug.LogError($"hehe PurchaseServering");
                 return;
             }
 
-            var frameDeltaTime = Time.realtimeSinceStartup - timestampOnPurchase;
+            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurchase) * 1000;
             var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPurchase;
             //正常跑帧
             while (_world.Tick < targetTick) {
                 var curTick = _world.Tick;
+                cmdBuffer.UpdateFramesInfo();
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 if (cmdBuffer.IsNeedRevert) {
-                    UnityEngine.Debug.Log($" Need revert from curTick {curTick} to {cmdBuffer.nextTickToCheck}");
+                    UnityEngine.Debug.Log($" Need revert from curTick {curTick} to {cmdBuffer.nextTickToCheck} missFrameTick:{missFrameTick}");
                     _world.RollbackTo(cmdBuffer.nextTickToCheck);
+
+                    _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
                     //Debug.Assert(nextMissServerFrame <= curTick,$"curTick {curTick} nextMissServerFrame{nextMissServerFrame}");
-                    var snapTick = _world.Tick;
+
+                    minTickToBackup = System.Math.Max(minTickToBackup, _world.Tick + 1);
+                    Debug.Log($"_world.Tick < missFrameTick wTick{_world.Tick} missFrameTick:{missFrameTick}");
                     while (_world.Tick < missFrameTick) {
                         var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
                         Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
@@ -144,11 +155,12 @@ namespace Lockstep.Game {
                         Simulate(sFrame, _world.Tick >= minTickToBackup);
                     }
 
+                    Debug.Log($"_world.Tick < curTick wTick{_world.Tick} curTick:{missFrameTick}");
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
                         Logging.Debug.Assert(frame != null && frame.tick == _world.Tick,
                             $" logic error: local frame must exist tick {_world.Tick}");
-                        Predict(frame);
+                        Predict(frame, _world.Tick > minTickToBackup);
                     }
                 }
 
@@ -160,6 +172,10 @@ namespace Lockstep.Game {
                         inputs[_localActorId] = input;
                         cFrame.inputs = inputs;
                         cFrame.tick = curTick;
+                        var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
+                        if (sFrame != null) {
+                            cFrame = sFrame;
+                        }
                         FillInputWithLastFrame(cFrame);
                         cmdBuffer.PushLocalFrame(cFrame);
                         Predict(cFrame);

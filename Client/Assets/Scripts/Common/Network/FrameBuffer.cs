@@ -42,16 +42,19 @@ namespace Lockstep.Game {
         public int curServerTick;
 
         /// 当前Buffer中最大的服务器Tick
-        public int maxServerTickInBuffer;
+        public int maxServerTickInBuffer = -1;
 
 
+        public bool IsNeedRevert = false;
+        private int firstMissFrameTick;
+        
         public void SetClientTick(int tick){
             nextClientTick = tick + 1;
         }
 
         public void PushLocalFrame(ServerFrame frame){
             var sIdx = frame.tick % BUFFER_SIZE;
-            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick < frame.tick, "Push local frame error!");
+            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick, "Push local frame error!");
             clientBuffer[sIdx] = frame;
 #if DEBUG_FRAME_DELAY
             var time = 0;
@@ -64,7 +67,7 @@ namespace Lockstep.Game {
         }
 
         ///1.push server frames
-        public void PushServerFrames(ServerFrame[] frames){
+        public void PushServerFrames(ServerFrame[] frames,bool isNeedDebugCheck = true){
             var count = frames.Length;
             for (int i = 0; i < count; i++) {
                 var data = frames[i];
@@ -91,19 +94,21 @@ namespace Lockstep.Game {
                 if (serverBuffer[targetIdx] == null || serverBuffer[targetIdx].tick != data.tick) {
                     serverBuffer[targetIdx] = data;
 #if DEBUG_FRAME_DELAY
-                    foreach (var input in data.inputs) {
-                        if (input.Commands.Length > 0) {
-                            //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                    if (isNeedDebugCheck) {
+                        foreach (var input in data.inputs) {
+                            if (input.Commands.Length > 0) {
+                                //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
+                            }
                         }
-                    }
 
-                    var time = 0;
-                    foreach (var input in data.inputs) {
-                        if (input.ActorId == DebugMainActorID) {
-                            var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
-                            if (delay > 0.2f) {
-                                UnityEngine.Debug.Log(
-                                    $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
+                        var time = 0;
+                        foreach (var input in data.inputs) {
+                            if (input.ActorId == DebugMainActorID) {
+                                var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
+                                if (delay > 0.2f) {
+                                    UnityEngine.Debug.Log(
+                                        $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
+                                }
                             }
                         }
                     }
@@ -117,6 +122,7 @@ namespace Lockstep.Game {
             //不考虑追帧
             //UnityEngine.Debug.Assert(nextTickToCheck <= nextClientTick, "localServerTick <= localClientTick ");
             //Confirm frames
+            IsNeedRevert = false;
             while (nextTickToCheck <= maxServerTickInBuffer) {
                 var sIdx = nextTickToCheck % BUFFER_SIZE;
                 var cFrame = clientBuffer[sIdx];
@@ -136,8 +142,6 @@ namespace Lockstep.Game {
             }
         }
 
-        public bool IsNeedRevert = false;
-        private int firstMissFrameTick;
 
         public int GetMissServerFrameTick(){
             UpdateMissServerFrameTick();

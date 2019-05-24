@@ -109,11 +109,13 @@ namespace Lockstep.Game {
         }
 
         public void SendMissFrameReq(int missFrameTick){
+            Debug.Log($"SendMissFrameReq");
             SendMsgRoom(EMsgCS.C2S_ReqMissFrame,
                 new Msg_ReqMissFrame() {missFrames = new int[missFrameTick], isRequireAll = true});
         }
 
         public void SendMissFrameRepAck(int missFrameTick){
+            Debug.Log($"SendMissFrameRepAck");
             SendMsgRoom(EMsgCS.C2S_RepMissFrameAck, new Msg_RepMissFrameAck() {missFrameTick = missFrameTick});
         }
 

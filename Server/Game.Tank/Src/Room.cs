@@ -91,7 +91,6 @@ namespace Lockstep.Logic.Server {
 
         public long timeSinceLoaded;
         private long firstFrameTimeStamp = 0;
-        private int MaxWaitTime = 300; //最多等待事时间
         private int waitTimer = 0;
 
         //所有需要等待输入到来的Ids
@@ -114,7 +113,7 @@ namespace Lockstep.Logic.Server {
 
                 var inputs = frame.inputs;
                 //超时等待 移除超时玩家
-                if (waitTimer > MaxWaitTime) {
+                if (waitTimer > NetworkDefine.MAX_DELAY_TIME_MS) {
                     waitTimer = 0;
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
@@ -212,7 +211,6 @@ namespace Lockstep.Logic.Server {
         private void RegisterMsgHandlers(){
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerInput, OnNet_PlayerInput,
                 (reader) => { return ParseData<Msg_PlayerInput>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_ReqMissFrame, OnNet_ReqMissPack, null);
             RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode,
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady,
@@ -380,7 +378,7 @@ namespace Lockstep.Logic.Server {
             }
 
             var input = data as Msg_PlayerInput;
-            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Count}");
+            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Length}");
             if (input.Tick < Tick) {
                 return;
             }
@@ -415,8 +413,6 @@ namespace Lockstep.Logic.Server {
             //    Debug.Log($"RecvInput actorID:{input.ActorId}  inputTick:{input.Tick}  cmd:{(ECmdType)(input.Commands[0].type)}");
             //}
         }
-
-        void OnNet_ReqMissPack(Player player, BaseFormater data){ }
 
 
         void OnNet_HashCode(Player player, BaseFormater data){
@@ -473,7 +469,7 @@ namespace Lockstep.Logic.Server {
         void OnNet_ReqMissFrame(Player player, BaseFormater data){
             var reqMsg = data as Msg_ReqMissFrame;
             var nextCheckTick = (int) reqMsg.missFrames[0];
-            Debug.Log($"OnNet_ReqMissFrame nextCheckTick :{nextCheckTick}");
+            Debug.Log($"OnNet_ReqMissFrame nextCheckTick id:{player.localId}:{nextCheckTick}");
             var msg = new Msg_RepMissFrame();;
             int count = Math.Min(allHistoryFrames.Count - nextCheckTick, MaxRepMissFrameCountPerPack);
             var frames = new ServerFrame[count];
