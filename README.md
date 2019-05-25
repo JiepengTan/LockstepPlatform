@@ -1,5 +1,5 @@
 # LockstepPlatform 
-- A lockstep soulution base on ECS Framework for rollback ,Include a demo FCTank 
+- A lockstep solution base on ECS Framework,Include a demo FCTank 
 - 基于ECS 可回滚 帧同步解决方案，含demo  FC Tank 
 
 
