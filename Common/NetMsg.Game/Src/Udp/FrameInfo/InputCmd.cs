@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
+    
+    [System.Serializable]
     public partial class InputCmd : BaseFormater {
         public byte type {
             get { return content[0]; }

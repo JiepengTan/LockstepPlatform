@@ -44,6 +44,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a28dd800d2c249d3840fdb333aaf01e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pre: {fileID: 0}
+  next: {fileID: 0}
+  createTick: 0
+  diedTick: 0
+  liveTime:
+    _val: 500
   sprites:
   - {fileID: 21300000, guid: 30fe9be73369e4ca08f777daf9b5e2fc, type: 3}
   - {fileID: 21300000, guid: da8c756447f5547ed911c25e35d2c8d0, type: 3}

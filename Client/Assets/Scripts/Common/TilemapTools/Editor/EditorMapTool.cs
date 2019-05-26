@@ -1,4 +1,5 @@
 using System.IO;
+using Lockstep.Core;
 using Lockstep.Game;
 using Lockstep.Serialization;
 using NetMsg.Game;
@@ -15,11 +16,15 @@ namespace Editor {
             owner = target as MapTool;
             ShowLoadLevel();
             ShowSaveLevel();
-            ShowLoadRecord();
+            //ShowLoadRecord();
             ShowRecordInfo();
         }
 
         public void ShowRecordInfo(){
+            if (GUILayout.Button("StopSimulate")) {
+                EditorApplication.update -= owner.EditorUpdate;
+                owner.StopEditorSimulate();
+            }
             var tick = EditorGUILayout.IntSlider("Tick ", owner.curTick, 0, owner.maxTick);
             owner.curTick = tick;
         }
@@ -45,33 +50,6 @@ namespace Editor {
             }
         }
 
-        private void ShowLoadRecord(){
-            if (GUILayout.Button("LoadGameRecord")) {
-                var path = EditorUtility.OpenFilePanelWithFilters("SelectGameRecord",
-                    Path.Combine(Application.dataPath, "../../Record"), new[] {"*.record"});
-                if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-                    OpenRecordFile(path);
-                }
-            }
-        }
-
-        void OpenRecordFile(string path){
-            var bytes = File.ReadAllBytes(path);
-            var reader = new Deserializer(bytes);
-          var TypeId =   reader.GetInt();
-          var RoomId =  reader.GetInt();
-          var seed =   reader.GetInt();
-          var allLocalId =  reader.GetBytes_255();
-          
-          var msg = new Msg_RepMissFrame();
-          msg.startTick = 0;
-          msg.Deserialize(reader);
-          
-        }
-
-        void StartGame(Msg_RepMissFrame allFrames,int typeid,int roomid,int seed,byte[] allActorIds){
-            
-            
-        }
+      
     }
 }

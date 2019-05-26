@@ -16,12 +16,12 @@ namespace Lockstep.Game {
         private Contexts _context;
         private GameLog GameLog = new GameLog();
         private byte _localActorId;
-        private bool Running;
+        public bool Running;
         private IServiceContainer _services;
         private float _tickDt;
         private float _accumulatedTime;
         private World _world;
-        private FrameBuffer cmdBuffer = new FrameBuffer();
+        private FrameBuffer cmdBuffer;
         private int _localTick;
         private int _roomId;
         private List<long> allHashCodes = new List<long>();
@@ -31,6 +31,17 @@ namespace Lockstep.Game {
         private int _actorCount;
         private int CurTick = 0;
 
+        public override void DoStart(){
+            cmdBuffer = new FrameBuffer();
+        }
+
+//重播 消息
+        private Msg_RepMissFrame _videoFrames;
+
+        private void OnEvent_BorderVideoFrame(object param){
+            _videoFrames = param as Msg_RepMissFrame;
+        }
+
         void OnEvent_OnServerFrame(object param){
             var msg = param as Msg_ServerFrames;
             cmdBuffer.PushServerFrames(msg.frames);
@@ -39,7 +50,7 @@ namespace Lockstep.Game {
         void OnEvent_OnServerMissFrame(object param){
             Debug.Log($"OnEvent_OnServerMissFrame");
             var msg = param as Msg_RepMissFrame;
-            cmdBuffer.PushServerFrames(msg.frames,false);
+            cmdBuffer.PushServerFrames(msg.frames, false);
             _networkService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
         }
 
@@ -108,6 +119,10 @@ namespace Lockstep.Game {
                 return;
             }
 
+            if (_constStateService.IsVideoMode) {
+                return;
+            }
+
             cmdBuffer.Ping = _networkService.Ping;
             cmdBuffer.UpdateFramesInfo();
             var missFrameTick = cmdBuffer.GetMissServerFrameTick();
@@ -121,14 +136,15 @@ namespace Lockstep.Game {
             //}
             _frameDeadline = Time.realtimeSinceStartup + MaxSimulationMsPerFrame;
 
-            var minTickToBackup = missFrameTick - FrameBuffer.SNAPSHORT_FRAME_INTERVAL;
+            var minTickToBackup = missFrameTick - FrameBuffer.SnapshotFrameInterval;
             //追帧 无输入
             _constStateService.isPurchaseFrame = true;
             if (!PurchaseServer(minTickToBackup)) {
                 _constStateService.isPurchaseFrame = false;
-                Debug.Log($"PurchaseServering curTick:"  + _world.Tick);
+                Debug.Log($"PurchaseServering curTick:" + _world.Tick);
                 return;
             }
+
             _constStateService.isPurchaseFrame = false;
 
             var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurchase) * 1000;
@@ -139,8 +155,9 @@ namespace Lockstep.Game {
                 cmdBuffer.UpdateFramesInfo();
                 //校验服务器包  如果有预测失败 则需要进行回滚
                 if (cmdBuffer.IsNeedRevert) {
-                    _world.RollbackTo(cmdBuffer.nextTickToCheck,missFrameTick);
+                    _world.RollbackTo(cmdBuffer.nextTickToCheck, missFrameTick);
                     _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
+
                     minTickToBackup = System.Math.Max(minTickToBackup, _world.Tick + 1);
                     while (_world.Tick < missFrameTick) {
                         var sFrame = cmdBuffer.GetServerFrame(_world.Tick);
@@ -153,7 +170,7 @@ namespace Lockstep.Game {
 
                     while (_world.Tick < curTick) {
                         var frame = cmdBuffer.GetLocalFrame(_world.Tick);
-                        FillInputWithLastFrame(frame);//加上输入预判 减少回滚
+                        FillInputWithLastFrame(frame); //加上输入预判 减少回滚
                         Logging.Debug.Assert(frame != null && frame.tick == _world.Tick,
                             $" logic error: local frame must exist tick {_world.Tick}");
                         Predict(frame, _world.Tick > minTickToBackup);
@@ -182,11 +199,13 @@ namespace Lockstep.Game {
                                 SendInput(input);
                             }
                         }
+
                         cmdBuffer.PushLocalFrame(cFrame);
                         Predict(cFrame);
                     }
                 }
             } //end of while(_world.Tick < targetTick)
+
             CheckAndSendHashCodes();
         }
 
@@ -196,13 +215,36 @@ namespace Lockstep.Game {
             _networkService.SendInput(input);
         }
 
+        private bool isInitVideo = false;
+
+        public void JumpTo(int tick){
+            if (!isInitVideo) {
+                while (_world.Tick < _videoFrames.frames.Length) {
+                    var sFrame = _videoFrames.frames[_world.Tick];
+                    Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
+                        $" logic error: server Frame  must exist worldTick {_world.Tick}  frameTick{sFrame.tick}");
+                    Simulate(sFrame, true);
+                }
+
+                isInitVideo = true;
+            }
+
+            _world.RollbackTo(tick, _videoFrames.frames.Length, false);
+            while (_world.Tick <= tick) {
+                var sFrame = _videoFrames.frames[_world.Tick];
+                Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
+                    $" logic error: server Frame  must exist worldTick {_world.Tick}  frameTick{sFrame.tick}");
+                Simulate(sFrame, false);
+            }
+        }
+
         private void Simulate(ServerFrame frame, bool isNeedGenSnap = true){
             ProcessInputQueue(frame);
             _world.Simulate(isNeedGenSnap);
             var tick = _world.Tick;
             cmdBuffer.SetClientTick(tick);
             SetHashCode();
-            if (isNeedGenSnap && tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+            if ( isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
                 _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
             }
         }
@@ -214,7 +256,7 @@ namespace Lockstep.Game {
             cmdBuffer.SetClientTick(tick);
             SetHashCode();
             //清理无用 snapshot
-            if (isNeedGenSnap && tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+            if ( isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
                 _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
             }
         }
@@ -315,7 +357,7 @@ namespace Lockstep.Game {
             var inputs = frame.Inputs;
             foreach (var input in inputs) {
                 GameLog.Add(frame.tick, input);
-                if(input.Commands == null) continue;
+                if (input.Commands == null) continue;
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
                     var inputEntity = _context.input.CreateEntity();

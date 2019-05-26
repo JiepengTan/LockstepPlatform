@@ -27,28 +27,34 @@ namespace Lockstep.Game {
             }
         }
 
-        public virtual void Awake(){
-            if (_instance != null) {
-                GameObject.Destroy(this);
+        public void Awake(){
+            if (_instance != null && _instance != (T) this) {
+                GameObject.Destroy(_instance);
                 return;
             }
 
             _instance = (T) this;
-            _instance.transform.SetParent(Main.Instance.transform,false);
+            _instance.transform.SetParent(Main.Instance.transform, false);
             Main.Instance.RegisterManager(this);
-            cmdBuffer = new CommandBuffer<T>(_instance,GetRollbackFunc());
-            GameObject.DontDestroyOnLoad(_instance.gameObject);
+            cmdBuffer = new CommandBuffer<T>(_instance, GetRollbackFunc());
+            if (Application.isPlaying) {
+                GameObject.DontDestroyOnLoad(_instance.gameObject);    
+            }
         }
 
         protected CommandBuffer<T> cmdBuffer;
         public int CurTick { get; set; }
 
-        protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){return null;}
+        protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){
+            return null;
+        }
+
         public virtual void Backup(int tick){ }
 
         public void RollbackTo(int tick){
             cmdBuffer?.RevertTo(tick);
         }
+
         public void Clean(int maxVerifiedTick){
             cmdBuffer?.Clean(maxVerifiedTick);
         }

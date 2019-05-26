@@ -10,7 +10,28 @@ public class MapTool : UnityEngine.MonoBehaviour {
 
     public int maxTick = 100;
 
-    public int curTick = 0;
+    public int curTick {
+        get { return mainMgr?.CurTick ?? 0; }
+        set {
+            if (mainMgr != null) {
+                mainMgr.CurTick = curTick;    
+            }
+        }
+    }
+    
+    
+
+    [HideInInspector] public Main mainMgr;
+
+
+    public void EditorUpdate(){
+        mainMgr?.Update();
+        mainMgr?.FixedUpdate();
+    }
+
+    public void StopEditorSimulate(){
+        if (mainMgr != null) GameObject.DestroyImmediate(mainMgr);
+    }
 #if false
     [Button("LoadLevel")]
     void LoadLevel(){

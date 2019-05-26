@@ -15,7 +15,7 @@ namespace Lockstep.Game {
             where TEnum : struct;
     }
 
-    public interface ITimeMachineService : ITimeMachine,IService {
+    public interface ITimeMachineService : ITimeMachine, IService {
         void RegisterTimeMachine(ITimeMachine roll);
     }
 
@@ -27,7 +27,7 @@ namespace Lockstep.Game {
 
         #region LifeCycle
 
-        private void Awake(){
+        public void Awake(){
             if (Instance != null) {
                 Debug.LogError("Error: has 2 main scripts!!");
                 GameObject.Destroy(this.gameObject);
@@ -36,7 +36,6 @@ namespace Lockstep.Game {
             Instance = this;
             contexts = Contexts.sharedInstance;
             Log.OnMessage += OnLog;
-            DoAwake();
             //AutoCreateManagers;
             var types = typeof(Main).Assembly.GetTypes();
             foreach (var ty in types) {
@@ -45,17 +44,30 @@ namespace Lockstep.Game {
                         var property = ty.GetProperty("Instance",
                             BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public);
                         if (property != null) {
-                            property.GetValue(null, null);
+                            var inst = property.GetValue(null, null);
+#if UNITY_EDITOR
+                            //call Awake method
+                            if (!Application.isPlaying) {
+                                if (inst != null) {
+                                    var method = ty.GetMethod("Awake",
+                                        BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
+                                    if (method != null) {
+                                        method.Invoke(inst, new object[] { });
+                                    }
+                                }
+                            }
+#endif
                         }
                     }
                 }
             }
-            
+
             RegisterService(this);
         }
 
 
-        private void Start(){
+        public void Start(){
+            DoAwake();
             this.AssignReference(contexts, this, this);
             foreach (var mgr in _allMgrs) {
                 mgr.AssignReference(contexts, this, this);
@@ -72,18 +84,24 @@ namespace Lockstep.Game {
             foreach (var mgr in _allMgrs) {
                 mgr.DoStart();
             }
+
+            AfterStart();
         }
 
+        public void Update(){
+            if (!IsVideoMode) {
+                _Update(Time.deltaTime);
+            }
+        }
 
-        void Update(){
-            var deltaTime = Time.deltaTime;
+        void _Update(float deltaTime){
             DoUpdate(deltaTime);
             foreach (var mgr in _allMgrs) {
                 mgr.DoUpdate(deltaTime);
             }
         }
 
-        private void FixedUpdate(){
+        public void FixedUpdate(){
             DoFixedUpdate();
             foreach (var mgr in _allMgrs) {
                 mgr.DoFixedUpdate();
@@ -91,20 +109,22 @@ namespace Lockstep.Game {
         }
 
 
-        private void OnDestroy(){
+        public void OnDestroy(){
             foreach (var mgr in _allMgrs) {
                 mgr.DoDestroy();
             }
 
             DoDestroy();
+            Instance = null;
         }
 
         #endregion
-        
+
         #region ITimeMachineContainer
 
         private HashSet<ITimeMachine> _timeMachineHash = new HashSet<ITimeMachine>();
         private ITimeMachine[] _allTimeMachines;
+
         private ITimeMachine[] GetAllTimeMachines(){
             if (_allTimeMachines == null) {
                 _allTimeMachines = _timeMachineHash.ToArray();
@@ -133,6 +153,7 @@ namespace Lockstep.Game {
                 timeMachine.Backup(tick);
             }
         }
+
         public void Clean(int maxVerifiedTick){
             foreach (var timeMachine in GetAllTimeMachines()) {
                 timeMachine.Clean(maxVerifiedTick);
@@ -140,11 +161,12 @@ namespace Lockstep.Game {
         }
 
         #endregion
-        
+
         #region IManagerContainer
 
         private Dictionary<string, BaseManager> _name2Mgr = new Dictionary<string, BaseManager>();
         private List<BaseManager> _allMgrs = new List<BaseManager>();
+
         public void RegisterManager(BaseManager manager){
             var name = manager.GetType().Name;
             if (_name2Mgr.ContainsKey(name)) {
@@ -168,10 +190,11 @@ namespace Lockstep.Game {
         }
 
         #endregion
-        
+
         #region IServiceContainer
 
         private Dictionary<string, IService> _allServices = new Dictionary<string, IService>();
+
         public void RegisterService(IService service, bool overwriteExisting = true){
             var interfaceNames = service.GetType().FindInterfaces((type, criteria) =>
                     type.GetInterfaces()
@@ -202,7 +225,7 @@ namespace Lockstep.Game {
         }
 
         #endregion
-        
+
         #region IEventRegisterService
 
         public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{

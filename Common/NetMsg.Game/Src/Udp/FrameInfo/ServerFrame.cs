@@ -1,6 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
+    [System.Serializable]
     public partial class ServerFrame : BaseFormater {
         public byte[] inputDatas; //包含玩家的输入& 游戏输入
         public int tick;

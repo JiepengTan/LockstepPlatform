@@ -111,7 +111,7 @@ namespace Lockstep.Game {
         }
 
         public void Send(byte[] data){
-            _client.FirstPeer.Send(data, DeliveryMethod.ReliableOrdered);
+            _client?.FirstPeer.Send(data, DeliveryMethod.ReliableOrdered);
         }
     }
 }

@@ -1,4 +1,5 @@
 //#define DEBUG_SIMPLE_CHECK  暴力检测 不同步
+
 using System;
 using System.Collections.Generic;
 using Entitas;
@@ -57,9 +58,19 @@ namespace Lockstep.Game {
                 newTail = newTail.pre;
             }
 
-            Debug.Assert(newTail.Tick >= tick ,$"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
-            Debug.Assert(newTail.pre == null || newTail.pre.Tick < tick ,$"newTail must be the first cmd executed in that tick : tick:{tick}  newTail.pre.Tick:{newTail.pre.Tick}");
-            
+            try {
+                Debug.Assert(newTail.Tick >= tick,
+                    $"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
+                Debug.Assert(newTail.pre == null
+                             || newTail.pre.Tick < tick,
+                    $"newTail must be the first cmd executed in that tick : tick:{tick}  " +
+                    $"newTail.pre.Tick:{newTail.pre?.Tick ?? tick}");
+            }
+            catch (Exception e) {
+                Console.WriteLine(e);
+                throw;
+            }
+
             var minTickNode = newTail;
             var maxTickNode = _tail;
 
@@ -73,6 +84,7 @@ namespace Lockstep.Game {
                 _tail.next = null;
                 newTail.pre = null;
             }
+
             _funcUndoCommand(minTickNode, maxTickNode, _param);
 #endif
         }

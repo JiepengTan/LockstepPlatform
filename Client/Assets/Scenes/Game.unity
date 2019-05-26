@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.496413, b: 0.5748175, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731196, g: 0.38074002, b: 0.35872713, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -494,6 +494,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc38e554e1b949dba62ef2fab47e561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsVideoMode: 0
+  RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190526205136_1_4.record
+  MaxRunTick: 3063
+  gameInfo:
+    RoomID: 4
+    Seed: -465598826
+    ActorID: 0
+    AllActors: 0001
+    SimulationSpeed: 60
+  JumpToTick: 90
 --- !u!114 &1880518437 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4361871072760846455, guid: 497051785eb2b42a1a417b6d3c0b41c4,

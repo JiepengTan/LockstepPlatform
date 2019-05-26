@@ -1,17 +1,18 @@
-﻿using Lockstep.Serialization;
+﻿using System;
+using Lockstep.Serialization;
 
 namespace NetMsg.Game
 {
-    public class Msg_StartGame : ISerializable
-    {
-        public int RoomID { get; set; }
-        public int Seed { get; set; }
+    [Serializable]
+    public class Msg_StartGame : ISerializable {
+        public int RoomID;
+        public int Seed;
 
-        public byte ActorID { get; set; }
+        public byte ActorID;
 
-        public byte[] AllActors { get; set; }
+        public byte[] AllActors;
 
-        public int SimulationSpeed { get; set; } 
+        public int SimulationSpeed;
                                               
         public void Serialize(Serializer writer)
         {

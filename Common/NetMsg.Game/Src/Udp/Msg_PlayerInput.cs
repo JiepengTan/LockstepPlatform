@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
-
+[System.Serializable]
     public partial class Msg_PlayerInput : BaseFormater {
         public byte[] inputDatas; //real data
         public byte ActorId;

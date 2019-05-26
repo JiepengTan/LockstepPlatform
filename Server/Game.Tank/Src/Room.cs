@@ -186,8 +186,12 @@ namespace Lockstep.Logic.Server {
             msg.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                "../../Record/" + System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "Type:" + TypeId + "Room:" + RoomId +
-                ".bytes");
+                "../../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + TypeId + "_" + RoomId +
+                ".record");
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir)) {
+                Directory.CreateDirectory(dir);
+            }
             Debug.Log("Create Record " + path);
             File.WriteAllBytes(path, bytes);
         }

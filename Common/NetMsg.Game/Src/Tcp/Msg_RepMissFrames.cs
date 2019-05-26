@@ -19,6 +19,7 @@ namespace NetMsg.Game {
         }
     }
 
+    [System.Serializable]
     public partial class MutilFrames : BaseFormater {
         public int startTick;
         public ServerFrame[] frames;

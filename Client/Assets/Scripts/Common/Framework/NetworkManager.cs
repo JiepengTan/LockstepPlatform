@@ -16,7 +16,7 @@ namespace Lockstep.Game {
         private long _playerID;
         private int _roomId;
 
-        private bool isReconnected = false; //是否是重连
+        private bool IsReconnected = false; //是否是重连
         public int Ping => _netProxyRoom.IsInit ? _netProxyRoom.Ping : _netProxyLobby.Ping;
         public bool IsConnected => _netProxyLobby != null && _netProxyLobby.Connected;
 
@@ -27,6 +27,8 @@ namespace Lockstep.Game {
                 RegisterMsgHandler);
             _eventRegisterService.RegisterEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
                 RegisterMsgHandler);
+            //Editor mode don't need network
+            if (_constStateService.IsVideoMode) return;
             InitLobby(ServerIp, ServerPort, NetworkDefine.NetKey);
         }
 
@@ -86,7 +88,7 @@ namespace Lockstep.Game {
 
         public void OnConnectedRoom(){
             Logging.Debug.Log("OnConnected room");
-            if (!isReconnected) {
+            if (!IsReconnected) {
                 SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady() {roomId = _roomId});
             }
             else {
@@ -156,7 +158,7 @@ namespace Lockstep.Game {
             _playerID = msg.playerId;
             Debug.Log("PlayerID " + _playerID + " roomId:" + msg.roomId);
             if (msg.roomId > 0) {
-                isReconnected = true;
+                IsReconnected = true;
                 InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
                 var subMsg = new Msg_StartGame();
                 subMsg.Deserialize(new Deserializer(msg.childMsg));
@@ -205,8 +207,8 @@ namespace Lockstep.Game {
         public void OnEvent_LoadMapDone(object param){
             var level = (int) param;
             _constStateService.curLevel = level;
-            Debug.Log($"hehe OnEvent_LoadMapDone isReconnected {isReconnected} ");
-            if (isReconnected) {
+            Debug.Log($"OnEvent_LoadMapDone isReconnected {IsReconnected}  isPlaying:{Application.isPlaying} ");
+            if (IsReconnected || _constStateService.IsVideoMode) {
                 EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
             }
             else {
