@@ -27,13 +27,10 @@ namespace Lockstep.Game {
 
     public partial class ResourceManager : IResourceService {
         private GameConfig _config;
-        public RollbackableRes head;
-        public RollbackableRes tail;
+        private RollbackableRes head;
+        private RollbackableRes tail;
 
-        public override void DoStart(){
-            base.DoStart();
-            _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
-        }
+       
 
         public void ShowDiedEffect(LVector2 pos){
             CreateEffect(_config.DiedPrefab, pos);

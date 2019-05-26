@@ -6,6 +6,8 @@ namespace Lockstep.Game {
     public interface IConstGameStateService : IService {
         bool IsVideoMode { get; set; }
 
+        bool IsRunVideo { get; set; }
+
         //room info
         byte[] allActorIds { get; set; }
         int roomId { get; set; }

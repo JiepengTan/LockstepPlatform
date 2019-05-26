@@ -494,12 +494,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc38e554e1b949dba62ef2fab47e561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsVideoMode: 0
-  RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190526205136_1_4.record
-  MaxRunTick: 3063
+  IsVideoMode: 1
+  RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190526211809_1_2.record
+  MaxRunTick: 3139
   gameInfo:
-    RoomID: 4
-    Seed: -465598826
+    RoomID: 2
+    Seed: 1033459272
     ActorID: 0
     AllActors: 0001
     SimulationSpeed: 60

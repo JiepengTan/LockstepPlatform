@@ -27,6 +27,8 @@ namespace Lockstep.Game {
         public Msg_StartGame gameInfo;
         public Msg_RepMissFrame framesInfo;
 
+        public bool isRunVideo;
+        
         public int JumpToTick = 10;
         public void OpenRecordFile(string path){
             var bytes = File.ReadAllBytes(path);
@@ -74,7 +76,11 @@ namespace Lockstep.Game {
             }
         }
 
-        private void DoUpdate(float deltaTime){ }
+        private void DoUpdate(float deltaTime){
+            if (IsVideoMode && isRunVideo && CurTick < MaxRunTick) {
+                _simulationService.RunVideo();
+            }
+        }
         private void DoFixedUpdate(){ }
         private void DoDestroy(){ }
 

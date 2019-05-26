@@ -21,13 +21,11 @@ namespace Editor {
 
         private void ShowLoadRecord(){
             if (GUILayout.Button("LoadRecord")) {
-#if UNITY_EDITOR
                 var path = owner.RecordPath = EditorUtility.OpenFilePanel("SelectGameRecord",
                     Path.Combine(Application.dataPath, "../../Record"), "record");
                 if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
                     owner.OpenRecordFile(path);
                 }
-#endif
             }
         }
 

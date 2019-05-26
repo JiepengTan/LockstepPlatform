@@ -89,9 +89,7 @@ namespace Lockstep.Game {
         }
 
         public void Update(){
-            if (!IsVideoMode) {
-                _Update(Time.deltaTime);
-            }
+            _Update(Time.deltaTime);
         }
 
         void _Update(float deltaTime){

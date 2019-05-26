@@ -40,15 +40,11 @@ namespace Lockstep.Game {
             _param = param;
             _funcUndoCommand = funcUndoCommand ?? UndoCommands;
         }
-#if DEBUG_SIMPLE_CHECK
-        public List<CommandNode> allCmds = new List<CommandNode>();
-#endif
+
+        public List<CommandNode> heads = new List<CommandNode>();
+
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
         public void RevertTo(int tick){
-#if DEBUG_SIMPLE_CHECK
-            if(allCmds.Count == 0) return;
-            allCmds[(int) tick].cmd.Undo(_param);
-#else
             if (_tail == null || _tail.Tick < tick) {
                 return;
             }
@@ -58,18 +54,12 @@ namespace Lockstep.Game {
                 newTail = newTail.pre;
             }
 
-            try {
-                Debug.Assert(newTail.Tick >= tick,
-                    $"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
-                Debug.Assert(newTail.pre == null
-                             || newTail.pre.Tick < tick,
-                    $"newTail must be the first cmd executed in that tick : tick:{tick}  " +
-                    $"newTail.pre.Tick:{newTail.pre?.Tick ?? tick}");
-            }
-            catch (Exception e) {
-                Console.WriteLine(e);
-                throw;
-            }
+            Debug.Assert(newTail.Tick >= tick,
+                $"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
+            Debug.Assert(newTail.pre == null
+                         || newTail.pre.Tick < tick,
+                $"newTail must be the first cmd executed in that tick : tick:{tick}  " +
+                $"newTail.pre.Tick:{newTail.pre?.Tick ?? tick}");
 
             var minTickNode = newTail;
             var maxTickNode = _tail;
@@ -86,7 +76,6 @@ namespace Lockstep.Game {
             }
 
             _funcUndoCommand(minTickNode, maxTickNode, _param);
-#endif
         }
 
         ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)

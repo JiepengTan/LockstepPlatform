@@ -5,13 +5,19 @@ using System.Linq;
 using Lockstep.Core;
 using Lockstep.Core.Logic;
 using Lockstep.Logging;
+using Lockstep.Math;
 using Lockstep.Serialization;
 using NetMsg.Game;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
-    public class SimulationManager : SingletonManager<SimulationManager> {
+    public interface ISimulation :IService {
+        void RunVideo();
+        void JumpTo(int tick);
+    }
+
+    public class SimulationManager : SingletonManager<SimulationManager> ,ISimulation{
         public World World => _world;
         private Contexts _context;
         private GameLog GameLog = new GameLog();
@@ -221,8 +227,6 @@ namespace Lockstep.Game {
             if (!isInitVideo) {
                 while (_world.Tick < _videoFrames.frames.Length) {
                     var sFrame = _videoFrames.frames[_world.Tick];
-                    Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
-                        $" logic error: server Frame  must exist worldTick {_world.Tick}  frameTick{sFrame.tick}");
                     Simulate(sFrame, true);
                 }
 
@@ -232,9 +236,29 @@ namespace Lockstep.Game {
             _world.RollbackTo(tick, _videoFrames.frames.Length, false);
             while (_world.Tick <= tick) {
                 var sFrame = _videoFrames.frames[_world.Tick];
-                Logging.Debug.Assert(sFrame != null && sFrame.tick == _world.Tick,
-                    $" logic error: server Frame  must exist worldTick {_world.Tick}  frameTick{sFrame.tick}");
                 Simulate(sFrame, false);
+            }
+
+            _viewService.RebindAllEntities();
+            timestampOnLastJumpTo = Time.realtimeSinceStartup;
+            tickOnLastJumpTo = tick;
+        }
+
+        private float timestampOnLastJumpTo;
+        private int tickOnLastJumpTo;
+
+        public void RunVideo(){
+            if (timestampOnLastJumpTo < 0.1f) {
+                timestampOnLastJumpTo = Time.realtimeSinceStartup;
+                tickOnLastJumpTo = 0;
+            }
+            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnLastJumpTo) * 1000;
+            var targetTick = frameDeltaTime / NetworkDefine.FRAME_RATE + tickOnLastJumpTo;
+            while (_world.Tick <= targetTick) {
+                if (_world.Tick < _videoFrames.frames.Length) {
+                    var sFrame = _videoFrames.frames[_world.Tick];
+                    Simulate(sFrame, false);
+                }
             }
         }
 
@@ -244,7 +268,7 @@ namespace Lockstep.Game {
             var tick = _world.Tick;
             cmdBuffer.SetClientTick(tick);
             SetHashCode();
-            if ( isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
+            if (isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
                 _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
             }
         }
@@ -256,7 +280,7 @@ namespace Lockstep.Game {
             cmdBuffer.SetClientTick(tick);
             SetHashCode();
             //清理无用 snapshot
-            if ( isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
+            if (isNeedGenSnap && tick % FrameBuffer.SnapshotFrameInterval == 0) {
                 _world.CleanUselessSnapshot(System.Math.Min(cmdBuffer.nextTickToCheck - 1, _world.Tick));
             }
         }
