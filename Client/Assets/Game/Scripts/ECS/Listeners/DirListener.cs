@@ -17,5 +17,9 @@ namespace Lockstep.Game {
             var deg = DirUtil.GetDirDeg(value);
             transform.localRotation = Quaternion.Euler(0,0,deg);
         }
+        private void Update(){
+            var deg = DirUtil.GetDirDeg(_entity.dir.value);
+            transform.localRotation = Quaternion.Euler(0,0,deg);
+        }
     }
 }

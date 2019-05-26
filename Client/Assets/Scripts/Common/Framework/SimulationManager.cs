@@ -240,7 +240,7 @@ namespace Lockstep.Game {
             }
 
             _viewService.RebindAllEntities();
-            timestampOnLastJumpTo = Time.realtimeSinceStartup;
+            timestampOnLastJumpTo = Time.timeSinceLevelLoad;
             tickOnLastJumpTo = tick;
         }
 
@@ -252,12 +252,15 @@ namespace Lockstep.Game {
                 timestampOnLastJumpTo = Time.realtimeSinceStartup;
                 tickOnLastJumpTo = 0;
             }
-            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnLastJumpTo) * 1000;
-            var targetTick = frameDeltaTime / NetworkDefine.FRAME_RATE + tickOnLastJumpTo;
+            var frameDeltaTime = (Time.timeSinceLevelLoad - timestampOnLastJumpTo) * 1000;
+            var targetTick = frameDeltaTime / NetworkDefine.UPDATE_DELTATIME + tickOnLastJumpTo;
             while (_world.Tick <= targetTick) {
                 if (_world.Tick < _videoFrames.frames.Length) {
                     var sFrame = _videoFrames.frames[_world.Tick];
                     Simulate(sFrame, false);
+                }
+                else {
+                    break;
                 }
             }
         }

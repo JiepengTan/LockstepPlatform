@@ -19,5 +19,9 @@ namespace Lockstep.Game {
             var src = transform.localPosition;
             transform.localPosition = dst;// Vector3.Lerp(src, dst, 0.3f);
         }
+
+        private void Update(){
+            transform.localPosition = _entity.pos.value.ToVector3();
+        }
     }
 }
