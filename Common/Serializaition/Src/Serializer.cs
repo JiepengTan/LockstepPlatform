@@ -349,16 +349,39 @@ namespace Lockstep.Serialization
         }
        
         /// len should less then ushort.MaxValue
-        public void PutArray_65535(byte[] value)
-        {
-            var isNull = value == null;
-            Put(isNull);
-            if(isNull) return;
+        public void PutBytes_65535(byte[] value){
+            if (value == null) {
+                Put((ushort)0);
+                return;
+            }
             if (value.Length > ushort.MaxValue) {
                 throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
             }
             Put((ushort) value.Length);
             Put(value);
+        }
+        public void PutBytes_255(byte[] value){
+            if (value == null) {
+                Put((byte)0);
+                return;
+            }
+            if (value.Length > byte.MaxValue) {
+                throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
+            }
+            Put((byte) value.Length);
+            Put(value);
+        }
+        
+        
+        public void PutArray(BaseFormater[] value)
+        {
+            ushort len = (ushort)(value?.Length??0);
+            Put(len);
+            for (int i = 0; i < len; i++) {
+                var val = value[i];
+                Put(val == null);
+                val?.Serialize(this);
+            }
         }
         
         public void PutArray(byte[] value)

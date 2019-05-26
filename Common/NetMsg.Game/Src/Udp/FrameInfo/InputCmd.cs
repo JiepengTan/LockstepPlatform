@@ -1,59 +1,52 @@
 using System;
+using System.Diagnostics;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
     public partial class InputCmd : BaseFormater {
-        public byte type;
+        public byte type {
+            get { return content[0]; }
+        }
+
         public byte[] content;
+        public InputCmd(){ }
+
+        public InputCmd(byte type){
+            content = new byte[1] {type};
+        }
+
+        public InputCmd(byte[] bytes){
+            content = bytes;
+        }
 
         public bool Equals(InputCmd cmdb){
             if (cmdb == null) return false;
-            if (type != cmdb.type) return false;
-            var arrb = cmdb.content;
-            if ((content == null) != (arrb == null)) return false;
-            if (content == null) return true;
-            var count = arrb.Length;
-            for (int i = 0; i < count; i++) {
-                if (content[i] != arrb[i]) return false;
-            }
-            return true;
+            return content.EqualsEx(cmdb.content);
         }
-        
+
         public override bool Equals(object obj){
             var cmdb = obj as InputCmd;
             return Equals(cmdb);
         }
+
         public override int GetHashCode(){
-            return type;
+            return content.GetHashCode();
         }
+
         public override string ToString(){
-            return $"t:{type} content:{content?.Length ?? 0}";
+            return $"t:{content[0]} content:{content?.Length ?? 0}";
         }
-        
-        
-        
+
+
         public override void Serialize(Serializer writer){
-            writer.Put(type);
-            var isNull = content == null;
-            writer.Put(isNull);
-            if(isNull) return;
-            if (content.Length > byte.MaxValue) {
-                throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
-            }
-            writer.Put((byte) content.Length);
-            writer.Put(content);
+            Debug.Assert(content != null && content.Length>0&& content.Length < byte.MaxValue
+                , $"!!!!!!!!! Input Cmd len{content?.Length ?? 0} should less then {byte.MaxValue}");
+            writer.PutBytes_255(content);
         }
 
         public override void Deserialize(Deserializer reader){
-            type = reader.GetByte();
-            var isNull = reader.GetBool();
-            if (isNull) {
-                content = null;
-                return;
-            }
-            var len = reader.GetByte();
-            content = new byte[len];
-            reader.GetBytes(content, len);
+            content = reader.GetBytes_255();
+            Debug.Assert(content != null && content.Length > 0,"!!!!!!!!! Input Cmd len{content?.Length ?? 0} should less then {byte.MaxValue}");
         }
     }
 }

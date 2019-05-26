@@ -7,7 +7,6 @@ namespace Lockstep.Game {
     public partial class ManagerReferenceHolder : MonoBehaviour { }
 
     public partial class BaseManager : ManagerReferenceHolder, IService {
-        public Main main { get; private set; }
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
         public virtual void DoUpdate(float deltaTime){ }
@@ -16,7 +15,7 @@ namespace Lockstep.Game {
     }
 
     public abstract class SingletonManager<T> : BaseManager, ITimeMachine where T : SingletonManager<T> {
-        private static T _instance;
+        protected static T _instance;
 
         public static T Instance {
             get {
@@ -28,7 +27,7 @@ namespace Lockstep.Game {
             }
         }
 
-        protected void Awake(){
+        public virtual void Awake(){
             if (_instance != null) {
                 GameObject.Destroy(this);
                 return;

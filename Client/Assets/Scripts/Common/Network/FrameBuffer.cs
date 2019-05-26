@@ -47,19 +47,20 @@ namespace Lockstep.Game {
 
         public bool IsNeedRevert = false;
         private int firstMissFrameTick;
-        
+
         public void SetClientTick(int tick){
             nextClientTick = tick + 1;
         }
 
         public void PushLocalFrame(ServerFrame frame){
             var sIdx = frame.tick % BUFFER_SIZE;
-            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick, "Push local frame error!");
+            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick,
+                "Push local frame error!");
             clientBuffer[sIdx] = frame;
         }
 
         ///1.push server frames
-        public void PushServerFrames(ServerFrame[] frames,bool isNeedDebugCheck = true){
+        public void PushServerFrames(ServerFrame[] frames, bool isNeedDebugCheck = true){
             var count = frames.Length;
             for (int i = 0; i < count; i++) {
                 var data = frames[i];
@@ -87,17 +88,17 @@ namespace Lockstep.Game {
                     serverBuffer[targetIdx] = data;
 #if DEBUG_FRAME_DELAY
                     if (isNeedDebugCheck) {
-                        foreach (var input in data.inputs) {
-                            if (input.Commands.Length > 0) {
+                        foreach (var input in data.Inputs) {
+                            if (input.Commands != null && input.Commands.Length > 0) {
                                 //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
                             }
                         }
 
                         var time = 0;
-                        foreach (var input in data.inputs) {
+                        foreach (var input in data.Inputs) {
                             if (input.ActorId == DebugMainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
-                                if (delay > 0.2f) {
+                                if (delay > 0.2f && input.timeSinceStartUp > 1) {
                                     UnityEngine.Debug.Log(
                                         $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
                                 }
@@ -124,7 +125,7 @@ namespace Lockstep.Game {
                     sFrame.tick != nextTickToCheck)
                     break;
                 //Check client guess input match the real input
-                if (object.ReferenceEquals(sFrame, cFrame) || sFrame.IsSame(cFrame)) {
+                if (object.ReferenceEquals(sFrame, cFrame) || sFrame.Equals(cFrame)) {
                     nextTickToCheck++;
                 }
                 else {
@@ -181,7 +182,7 @@ namespace Lockstep.Game {
             }
 
             var idx = tick % BUFFER_SIZE;
-            var frame =  serverBuffer[idx];
+            var frame = serverBuffer[idx];
             if (frame == null) return null;
             if (frame.tick != tick) return null;
             return frame;

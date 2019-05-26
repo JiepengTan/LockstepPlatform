@@ -16,7 +16,7 @@ namespace Lockstep.Game {
         private long _playerID;
         private int _roomId;
 
-        private bool isReconnected = false;//是否是重连
+        private bool isReconnected = false; //是否是重连
         public int Ping => _netProxyRoom.IsInit ? _netProxyRoom.Ping : _netProxyLobby.Ping;
         public bool IsConnected => _netProxyLobby != null && _netProxyLobby.Connected;
 
@@ -116,7 +116,7 @@ namespace Lockstep.Game {
         public void SendMissFrameReq(int missFrameTick){
             Debug.Log($"SendMissFrameReq");
             SendMsgRoom(EMsgCS.C2S_ReqMissFrame,
-                new Msg_ReqMissFrame() {missFrames = new int[1]{missFrameTick}, isRequireAll = true});
+                new Msg_ReqMissFrame() {startTick = missFrameTick});
         }
 
         public void SendMissFrameRepAck(int missFrameTick){
@@ -136,7 +136,7 @@ namespace Lockstep.Game {
         }
 
         private void OnMsg_S2C_RepMissFrame(Deserializer reader){
-            Debug.Log($"OnMsg_S2C_RepMissFrame");
+            Debug.Log($"OnMsg_S2C_RepMissFrame  RawDataSize" + reader.RawDataSize);
             var msg = reader.Parse<Msg_RepMissFrame>();
             EventHelper.Trigger(EEvent.OnServerMissFrame, msg);
         }
@@ -150,6 +150,7 @@ namespace Lockstep.Game {
         }
 
         private object reconnectedInfo;
+
         void OnMsg_L2C_ReqInit(Deserializer reader){
             var msg = reader.Parse<NetMsg.Lobby.Msg_RepInit>();
             _playerID = msg.playerId;
@@ -162,13 +163,14 @@ namespace Lockstep.Game {
                 reconnectedInfo = subMsg;
                 StartRoom();
             }
-            else { 
+            else {
                 SendCreateRoomMsg();
             }
         }
 
         void SendInitMsg(){
-            SendMsgLobby(EMsgCL.C2L_InitMsg, new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
+            SendMsgLobby(EMsgCL.C2L_InitMsg,
+                new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
         }
 
         void SendCreateRoomMsg(){
@@ -199,6 +201,7 @@ namespace Lockstep.Game {
                 EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
             }
         }
+
         public void OnEvent_LoadMapDone(object param){
             var level = (int) param;
             _constStateService.curLevel = level;
@@ -207,7 +210,7 @@ namespace Lockstep.Game {
                 EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
             }
             else {
-                SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});    
+                SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
             }
         }
     }

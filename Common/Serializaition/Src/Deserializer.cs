@@ -252,6 +252,24 @@ namespace Lockstep.Serialization
             }
             return arr;
         }
+        
+        public T[] GetArray<T>() where T:BaseFormater ,new ()
+        {
+            ushort len = GetUShort();
+            if (len == 0)
+                return null;
+            var formatters = new T[len];
+            for (int i = 0; i < len; i++) {
+                if (GetBool())
+                    formatters[i] = null;
+                else {
+                    var val = new T();
+                    val.Deserialize(this);
+                    formatters[i] = val;
+                }
+            }
+            return formatters;
+        }
 
         public bool GetBool()
         {
@@ -376,26 +394,23 @@ namespace Lockstep.Serialization
         }
         public byte[] GetBytes_65535()
         {
-            var isNull = GetBool();
-            if (isNull) {
-                return null;
-            }
-            var len = GetUShort();
-            var values = new byte[len];
-            GetBytes(values, len);
-            return values;
-        }
-        public byte[] GetBytes()
+            ushort size = GetUShort();
+            if (size == 0) return null;
+            var outgoingData = new byte[size];
+            Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
+            _position += size;
+            return outgoingData;
+        }      
+        public byte[] GetBytes_255()
         {
-            var isNull = GetBool();
-            if (isNull) {
-                return null;
-            }
-            var len = GetInt();
-            var values = new byte[len];
-            GetBytes(values, len);
-            return values;
+            ushort size = GetByte();
+            if (size == 0) return null;
+            var outgoingData = new byte[size];
+            Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
+            _position += size;
+            return outgoingData;
         }
+        
         public byte[] GetBytesWithLength()
         {
             int length = GetInt();

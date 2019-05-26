@@ -37,11 +37,11 @@ namespace Lockstep.Game {
             }
 
             if (dir != ECmdType.Fire) {
-                cmds.Add(new InputCmd() {type = BitUtil.ToByte(dir)});
+                cmds.Add(new InputCmd(BitUtil.ToByte(dir)));
             }
 
             if (isFire) {
-                cmds.Add(new InputCmd() {type = BitUtil.ToByte(ECmdType.Fire)});
+                cmds.Add(new InputCmd(BitUtil.ToByte(ECmdType.Fire)));
             }
 
             return cmds;
@@ -58,12 +58,17 @@ namespace Lockstep.Game {
         }
 
         public void Execute(InputCmd cmd, InputEntity entity){
-            var type = (ECmdType) cmd.type;
-            if (BitUtil.HasBit(cmd.type, ECmdType.Up)) entity.AddMoveDir(EDir.Up);
-            if (BitUtil.HasBit(cmd.type, ECmdType.Left)) entity.AddMoveDir(EDir.Left);
-            if (BitUtil.HasBit(cmd.type, ECmdType.Down)) entity.AddMoveDir(EDir.Down);
-            if (BitUtil.HasBit(cmd.type, ECmdType.Right)) entity.AddMoveDir(EDir.Right);
-            if (BitUtil.HasBit(cmd.type, ECmdType.Fire)) {
+            if (cmd.content == null) {
+                int ss = 0;
+                return;
+            }
+
+            var type = cmd.content[0];
+            if (BitUtil.HasBit(type, ECmdType.Up)) entity.AddMoveDir(EDir.Up);
+            if (BitUtil.HasBit(type, ECmdType.Left)) entity.AddMoveDir(EDir.Left);
+            if (BitUtil.HasBit(type, ECmdType.Down)) entity.AddMoveDir(EDir.Down);
+            if (BitUtil.HasBit(type, ECmdType.Right)) entity.AddMoveDir(EDir.Right);
+            if (BitUtil.HasBit(type, ECmdType.Fire)) {
                 entity.isFire = true;
             }
         }

@@ -27,7 +27,7 @@ namespace NetMsg.Game {
         
         public override void Serialize(Serializer writer){
             writer.Put(type);
-            writer.PutArray_65535(content);
+            writer.PutBytes_65535(content);
         }
 
         public override void Deserialize(Deserializer reader){

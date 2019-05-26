@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
+
     public partial class Msg_PlayerInput : BaseFormater {
+        public byte[] inputDatas; //real data
         public byte ActorId;
         public int Tick;
-        public InputCmd[] Commands = new InputCmd[0];
+        public InputCmd[] Commands;
 #if DEBUG_FRAME_DELAY
         public float timeSinceStartUp;
 #endif
+
         public Msg_PlayerInput(int tick, byte actorID, List<InputCmd> inputs){
             this.Tick = tick;
             this.ActorId = actorID;
-            if (inputs != null) {
+            if (inputs != null && inputs.Count>0) {
                 this.Commands = inputs.ToArray();
             }
         }
+
         public Msg_PlayerInput(){ }
-        
+
         public override bool Equals(object obj){
             return Equals(obj as Msg_PlayerInput);
         }
@@ -45,7 +49,7 @@ namespace NetMsg.Game {
 #endif
             writer.Put(ActorId);
             writer.Put(Tick);
-            int count = Commands.Length;
+            int count = Commands?.Length ?? 0;
             writer.Put((byte) count);
             for (int i = 0; i < count; i++) {
                 Commands[i].Serialize(writer);
@@ -59,12 +63,15 @@ namespace NetMsg.Game {
             ActorId = reader.GetByte();
             Tick = reader.GetInt();
             int count = reader.GetByte();
+            if (count == 0) { 
+                Commands = null;
+                return;
+            }
             Commands = new InputCmd[count];
             for (int i = 0; i < count; i++) {
                 var cmd = reader.Parse<InputCmd>();
                 Commands[i] = cmd;
             }
         }
-
     }
 }

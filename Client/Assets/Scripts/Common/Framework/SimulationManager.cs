@@ -172,7 +172,7 @@ namespace Lockstep.Game {
                             cFrame = new ServerFrame();
                             var inputs = new Msg_PlayerInput[_actorCount];
                             inputs[_localActorId] = input;
-                            cFrame.inputs = inputs;
+                            cFrame.Inputs = inputs;
                             cFrame.tick = curTick;
                             FillInputWithLastFrame(cFrame);
 #if DEBUG_FRAME_DELAY
@@ -247,8 +247,8 @@ namespace Lockstep.Game {
 
         private void FillInputWithLastFrame(ServerFrame frame){
             int tick = frame.tick;
-            var inputs = frame.inputs;
-            var lastFrameInputs = tick == 0 ? null : cmdBuffer.GetFrame(tick - 1)?.inputs;
+            var inputs = frame.Inputs;
+            var lastFrameInputs = tick == 0 ? null : cmdBuffer.GetFrame(tick - 1)?.Inputs;
             var curFrameInput = inputs[_localActorId];
             //将所有角色 给予默认的输入
             for (int i = 0; i < _actorCount; i++) {
@@ -312,10 +312,10 @@ namespace Lockstep.Game {
         }
 
         private void ProcessInputQueue(ServerFrame frame){
-            var inputs = frame.inputs;
+            var inputs = frame.Inputs;
             foreach (var input in inputs) {
                 GameLog.Add(frame.tick, input);
-
+                if(input.Commands == null) continue;
                 foreach (var command in input.Commands) {
                     Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
                     var inputEntity = _context.input.CreateEntity();

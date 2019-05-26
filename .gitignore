@@ -3,6 +3,8 @@ bin/
 obj/  
 #忽略build 
 Build/
+#Game Record data
+Record/
 # Nuget packages directory  
 packages/  
 # ide

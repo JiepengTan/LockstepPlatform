@@ -24,7 +24,7 @@ namespace NetMsg.Lobby {
             writer.Put(roomId);
             writer.Put(port);
             writer.Put(ip);
-            writer.PutArray_65535(childMsg);
+            writer.PutBytes_65535(childMsg);
         }
 
         public override void Deserialize(Deserializer reader){
