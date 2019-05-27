@@ -123,7 +123,7 @@ namespace Lockstep.Game {
         }
 
         public void CreatePlayer(byte actorId, int type){
-            var bornPos = _constStateService.playerBornPoss[actorId];
+            var bornPos = _constStateService.playerBornPoss[actorId%_constStateService.playerBornPoss.Count];
             var createPos = bornPos + GameConfig.TankBornOffset;
             _resourceService.ShowBornEffect(createPos);
             _audioService.PlayClipBorn();

@@ -26,7 +26,7 @@ namespace NetMsg.Game {
 
         public override void Serialize(Serializer writer){
             writer.Put(isAllDone);
-            writer.PutArray_65535(progress);
+            writer.PutBytes_65535(progress);
         }
 
         public override void Deserialize(Deserializer reader){

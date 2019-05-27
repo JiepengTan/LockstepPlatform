@@ -17,7 +17,8 @@ namespace Lockstep.Core {
         OnAllPlayerFinishedLoad,
         OnSimulationStart,
         OnServerMissFrame,
-        OnServerFrame
+        OnServerFrame,
+        BorderVideoFrame,
     }
 
     public delegate void GlobalEventHandler(object param);
@@ -62,7 +63,7 @@ namespace Lockstep.Core {
             Debug.LogError("Try remove a not exist listner " + type);
         }
 
-        public static void Trigger(EEvent type, object param){
+        public static void Trigger(EEvent type, object param = null){
             var itype  = (int)type;
             if (allListeners.TryGetValue(itype, out var tmplst)) {
                 IsTriggingEvent = true;

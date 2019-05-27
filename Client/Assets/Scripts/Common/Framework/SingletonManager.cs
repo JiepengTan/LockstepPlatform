@@ -7,7 +7,6 @@ namespace Lockstep.Game {
     public partial class ManagerReferenceHolder : MonoBehaviour { }
 
     public partial class BaseManager : ManagerReferenceHolder, IService {
-        public Main main { get; private set; }
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
         public virtual void DoUpdate(float deltaTime){ }
@@ -16,7 +15,7 @@ namespace Lockstep.Game {
     }
 
     public abstract class SingletonManager<T> : BaseManager, ITimeMachine where T : SingletonManager<T> {
-        private static T _instance;
+        protected static T _instance;
 
         public static T Instance {
             get {
@@ -28,28 +27,35 @@ namespace Lockstep.Game {
             }
         }
 
-        protected void Awake(){
-            if (_instance != null) {
-                GameObject.Destroy(this);
+        public void Awake(){
+            if (_instance != null && _instance != (T) this) {
+                GameObject.Destroy(_instance);
                 return;
             }
 
             _instance = (T) this;
-            _instance.transform.SetParent(Main.Instance.transform,false);
+            _instance.transform.SetParent(Main.Instance.transform, false);
             Main.Instance.RegisterManager(this);
-            cmdBuffer = new CommandBuffer<T>(_instance,GetRollbackFunc());
-            GameObject.DontDestroyOnLoad(_instance.gameObject);
+            cmdBuffer = new CommandBuffer<T>();
+            cmdBuffer.Init(_instance, GetRollbackFunc());
+            if (Application.isPlaying) {
+                GameObject.DontDestroyOnLoad(_instance.gameObject);    
+            }
         }
 
-        protected CommandBuffer<T> cmdBuffer;
+        protected ICommandBuffer<T> cmdBuffer;
         public int CurTick { get; set; }
 
-        protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){return null;}
+        protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){
+            return null;
+        }
+
         public virtual void Backup(int tick){ }
 
         public void RollbackTo(int tick){
-            cmdBuffer?.RevertTo(tick);
+            cmdBuffer?.Jump(CurTick,tick);
         }
+
         public void Clean(int maxVerifiedTick){
             cmdBuffer?.Clean(maxVerifiedTick);
         }

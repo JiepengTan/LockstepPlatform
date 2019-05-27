@@ -33,6 +33,8 @@ namespace Lockstep.Game {
             if (clip != null) {
                 //追帧 不播放音效
                 if (_constStateService.isPursueFrame) {  return;}
+                //回放 不播放音效
+                if (_constStateService.IsVideoMode && !_constStateService.IsRunVideo) {  return;}
                 _source.PlayOneShot(clip);
             }
         }

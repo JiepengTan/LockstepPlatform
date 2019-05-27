@@ -36,10 +36,10 @@ namespace Lockstep.Logic.Server {
 
 
     public class Room : IRoom {
-
         public ERoomState State = ERoomState.Idle;
         public int TypeId { get; protected set; }
         public int RoomId { get; protected set; }
+        
 
         public int CurPlayerCount {
             get { return _allPlayers.Count; }
@@ -50,7 +50,6 @@ namespace Lockstep.Logic.Server {
         public bool IsRunning { get; private set; }
         public string name;
 
-        private byte _curLocalId = 0;
         private Dictionary<long, byte> _playerId2LocalId = new Dictionary<long, byte>();
         private Dictionary<byte, Player> _localId2Player = new Dictionary<byte, Player>();
         private List<Player> _allPlayers = new List<Player>();
@@ -66,16 +65,18 @@ namespace Lockstep.Logic.Server {
         private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgCS.EnumCount];
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
+
         private delegate BaseFormater ParseNetMsg(Deserializer reader);
-        
+
         public long timeSinceLoaded;
         private long firstFrameTimeStamp = 0;
         private int waitTimer = 0;
+        private int seed;
 
         //所有需要等待输入到来的Ids
         public List<byte> allNeedWaitInputPlayerIds;
         List<ServerFrame> allHistoryFrames = new List<ServerFrame>(); //所有的历史帧
-        
+
 
         #region  life cycle
 
@@ -111,7 +112,7 @@ namespace Lockstep.Logic.Server {
                     return;
                 }
 
-                var inputs = frame.inputs;
+                var inputs = frame.Inputs;
                 //超时等待 移除超时玩家
                 if (waitTimer > NetworkDefine.MAX_DELAY_TIME_MS) {
                     waitTimer = 0;
@@ -146,6 +147,7 @@ namespace Lockstep.Logic.Server {
                     frames[count - i - 1] = allHistoryFrames[iTick - i];
                 }
 
+                msg.startTick = frames[0].tick;
                 msg.frames = frames;
                 SendToAll(EMsgCS.S2C_FrameData, msg);
                 if (firstFrameTimeStamp <= 0) {
@@ -159,6 +161,38 @@ namespace Lockstep.Logic.Server {
 
         public void DoDestroy(){
             Debug.Log($"Room {RoomId} Destroy");
+            DumpGameFrames();
+        }
+
+        private void DumpGameFrames(){
+            var msg = new Msg_RepMissFrame();
+            int count = Math.Min((Tick - 1), allHistoryFrames.Count);
+            if (count <= 0) return;
+            var frames = new ServerFrame[count];
+            for (int i = 0; i < count; i++) {
+                frames[i] = allHistoryFrames[i];
+                Debug.Assert(frames[i] != null, "!!!!!!!!!!!!!!!!!");
+            }
+
+            msg.startTick = frames[0].tick;
+            msg.frames = frames;
+            var writer = new Serializer();
+            writer.Put(TypeId);
+            writer.Put(RoomId);
+            writer.Put(seed);
+            writer.PutBytes_255(_playerId2LocalId.Values.ToArray());
+
+            msg.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+                "../../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + TypeId + "_" + RoomId +
+                ".record");
+            var dir = Path.GetDirectoryName(path);
+            if (!Directory.Exists(dir)) {
+                Directory.CreateDirectory(dir);
+            }
+            Debug.Log("Create Record " + path);
+            File.WriteAllBytes(path, bytes);
         }
 
         #endregion
@@ -255,11 +289,15 @@ namespace Lockstep.Logic.Server {
             }
         }
 
-        public void SendTo(Player player, EMsgCS type, ISerializable body){
+        public void SendTo(Player player, EMsgCS type, ISerializable body, bool isNeedDebugSize = false){
             var writer = new Serializer();
             writer.Put((byte) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
+            if (isNeedDebugSize) {
+                Debug.Log($"msg :type {type} size{bytes.Length}");
+            }
+
             player.SendRoom(bytes);
         }
 
@@ -279,7 +317,7 @@ namespace Lockstep.Logic.Server {
             return _playerId2LocalId.Keys.ToArray();
         }
 
-        public  byte[] GetReconnectMsg(Player player){
+        public byte[] GetReconnectMsg(Player player){
             var ids = _playerId2LocalId.Values.ToArray();
             var body = CreateStartGame(player.localId, ids);
             var writer = new Serializer();
@@ -293,7 +331,7 @@ namespace Lockstep.Logic.Server {
             if (State == ERoomState.Idle) {
                 State = ERoomState.WaitingToPlay;
             }
-
+            if(State != ERoomState.WaitingToPlay) return;
             if (_allPlayers.Contains(player)) {
                 Debug.LogError("Player already exist" + player.PlayerId);
                 return;
@@ -301,10 +339,6 @@ namespace Lockstep.Logic.Server {
 
             Debug.Log($"Player{player.PlayerId} Enter room {RoomId}");
             player.room = this;
-            var localId = _curLocalId++;
-            player.localId = localId;
-            _playerId2LocalId[player.PlayerId] = localId;
-            _localId2Player[localId] = player;
             _allPlayers.Add(player);
         }
 
@@ -372,16 +406,19 @@ namespace Lockstep.Logic.Server {
 
         #region game status
 
-        public bool CanStartGame(){
-            return true;
-        }
-
         public void StartGame(){
+            byte localId = 0;
+            foreach (var player in _allPlayers) {
+                player.localId = localId;
+                _playerId2LocalId[player.PlayerId] = localId;
+                _localId2Player[localId] = player;
+                localId++;
+            }
+            
             allNeedWaitInputPlayerIds = new List<byte>();
             foreach (var val in _playerId2LocalId.Values) {
                 allNeedWaitInputPlayerIds.Add(val);
             }
-
             State = ERoomState.PartLoading;
             StartSimulationOnConnectedPeers();
         }
@@ -400,7 +437,6 @@ namespace Lockstep.Logic.Server {
             _localId2Player.Clear();
             _allPlayers.Clear();
             _hashCodes.Clear();
-            _curLocalId = 0;
             Tick = 0;
         }
 
@@ -436,8 +472,8 @@ namespace Lockstep.Logic.Server {
             }
 
             var frame = allHistoryFrames[iTick];
-            if (frame.inputs == null || frame.inputs.Length != MaxPlayerCount) {
-                frame.inputs = new Msg_PlayerInput[MaxPlayerCount];
+            if (frame.Inputs == null || frame.Inputs.Length != MaxPlayerCount) {
+                frame.Inputs = new Msg_PlayerInput[MaxPlayerCount];
             }
 
             var id = input.ActorId;
@@ -445,7 +481,7 @@ namespace Lockstep.Logic.Server {
                 allNeedWaitInputPlayerIds.Add(id);
             }
 
-            frame.inputs[id] = input;
+            frame.Inputs[id] = input;
             //if (input.Commands.Count > 0) {
             //    Debug.Log($"RecvInput actorID:{input.ActorId}  inputTick:{input.Tick}  cmd:{(ECmdType)(input.Commands[0].type)}");
             //}
@@ -502,24 +538,25 @@ namespace Lockstep.Logic.Server {
 
         private byte[] playerLoadingProgress;
 
-        public const int MaxRepMissFrameCountPerPack = 200;
+        public const int MaxRepMissFrameCountPerPack = 600;
 
         void OnNet_ReqMissFrame(Player player, BaseFormater data){
             var reqMsg = data as Msg_ReqMissFrame;
-            var nextCheckTick = (int) reqMsg.missFrames[0];
+            var nextCheckTick = reqMsg.startTick;
             Debug.Log($"OnNet_ReqMissFrame nextCheckTick id:{player.localId}:{nextCheckTick}");
             var msg = new Msg_RepMissFrame();
-            int count = Math.Min(Math.Min((Tick-1),allHistoryFrames.Count) - nextCheckTick, MaxRepMissFrameCountPerPack);
+            int count = Math.Min(Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
+                MaxRepMissFrameCountPerPack);
             if (count <= 0) return;
             var frames = new ServerFrame[count];
             for (int i = 0; i < count; i++) {
                 frames[i] = allHistoryFrames[nextCheckTick + i];
-                if (frames[i] == null) {
-                    int ss = 09;
-                }
+                Debug.Assert(frames[i] != null);
             }
+
+            msg.startTick = frames[0].tick;
             msg.frames = frames;
-            SendTo(player, EMsgCS.S2C_RepMissFrame, msg);
+            SendTo(player, EMsgCS.S2C_RepMissFrame, msg, true);
         }
 
         void OnNet_RepMissFrameAck(Player player, BaseFormater data){
@@ -562,16 +599,16 @@ namespace Lockstep.Logic.Server {
 
         #endregion
 
-        private int seed;
+
         private void StartSimulationOnConnectedPeers(){
             seed = new Random().Next(int.MinValue, int.MaxValue);
             var ids = _playerId2LocalId.Values.ToArray();
             foreach (var player in _allPlayers) {
-                SendTo(player, EMsgCS.S2C_StartGame, CreateStartGame(player.localId,ids));
+                SendTo(player, EMsgCS.S2C_StartGame, CreateStartGame(player.localId, ids));
             }
         }
 
-        Msg_StartGame CreateStartGame(byte playerId,byte[] ids){
+        Msg_StartGame CreateStartGame(byte playerId, byte[] ids){
             return new Msg_StartGame {
                 RoomID = RoomId,
                 Seed = seed,

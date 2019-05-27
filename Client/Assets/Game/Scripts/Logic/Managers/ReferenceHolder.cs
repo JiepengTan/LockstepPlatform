@@ -35,6 +35,7 @@ namespace Lockstep.Game {
         protected IConstGameStateService _constStateService;
         protected IGameStateService _gameStateService;
         protected INetworkService _networkService;
+        protected ISimulation _simulationService;
         
         
         public void InitReference(IServiceContainer serviceContainer){
@@ -50,6 +51,7 @@ namespace Lockstep.Game {
             _constStateService = serviceContainer.GetService<IConstGameStateService>();
             _gameStateService = serviceContainer.GetService<IGameStateService>();
             _networkService = serviceContainer.GetService<INetworkService>();
+            _simulationService = serviceContainer.GetService<ISimulation>();
         }
 
         public void InitReference(Contexts contexts){
@@ -78,6 +80,7 @@ namespace Lockstep.Game {
         protected IConstGameStateService _constStateService;
         protected IGameStateService _gameStateService;
         protected INetworkService _networkService;
+        protected ISimulation _simulationService;
         
         
         public void InitReference(IServiceContainer serviceContainer){
@@ -93,6 +96,7 @@ namespace Lockstep.Game {
             _constStateService = serviceContainer.GetService<IConstGameStateService>();
             _gameStateService = serviceContainer.GetService<IGameStateService>();
             _networkService = serviceContainer.GetService<INetworkService>();
+            _simulationService = serviceContainer.GetService<ISimulation>();
         }
 
         public void InitReference(Contexts contexts){

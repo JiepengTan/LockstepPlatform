@@ -12,25 +12,21 @@ namespace Lockstep.Game {
     public class FrameBuffer {
         /// for debug
         public static byte DebugMainActorID;
+        /// 客户端最大可以超前的frame 数量
+        public const int MaxClientPredictFrameCount =
+            NetworkDefine.MAX_FRAME_DATA_DELAY / NetworkDefine.UPDATE_DELTATIME;
+        /// 客户度FrameBuffer Size 
+        public static int BufferSize = NetworkDefine.FRAME_RATE * 30 + MaxClientPredictFrameCount;
 
         /// 进行备份的帧间隔
-        public const int SNAPSHORT_FRAME_INTERVAL = 2;
-
+        public static int SnapshotFrameInterval = 2;
         /// 回滚需要的空间
-        public const int ROLLBACK_NEED_SPACE = SNAPSHORT_FRAME_INTERVAL * 2;
-
-        /// 客户度FrameBuffer Size 
-        public const int BUFFER_SIZE = NetworkDefine.FRAME_RATE * 30 + MAX_CLIENT_PREDICT_FRAME_COUNT;
-
-        /// 客户端最大可以超前的frame 数量
-        public const int MAX_CLIENT_PREDICT_FRAME_COUNT =
-            NetworkDefine.MAX_FRAME_DATA_DELAY / NetworkDefine.UPDATE_DELTATIME;
-
+        public static int RollbackNeedSpace = SnapshotFrameInterval * 2;
         /// 最大的可以超前的Frame数量
-        public const int MAX_SERVER_OVERRIDE_FRAME_COUNT = BUFFER_SIZE - ROLLBACK_NEED_SPACE;
+        public static int MaxServerOverrideFrameCount = BufferSize - RollbackNeedSpace;
 
-        public ServerFrame[] serverBuffer = new ServerFrame[BUFFER_SIZE];
-        public ServerFrame[] clientBuffer = new ServerFrame[BUFFER_SIZE];
+        public ServerFrame[] serverBuffer;
+        public ServerFrame[] clientBuffer;
 
         /// 下一个需要验证的tick
         public int nextTickToCheck;
@@ -47,19 +43,27 @@ namespace Lockstep.Game {
 
         public bool IsNeedRevert = false;
         private int firstMissFrameTick;
-        
+
+        public FrameBuffer(){
+            RollbackNeedSpace = SnapshotFrameInterval * 2;
+            MaxServerOverrideFrameCount = BufferSize - RollbackNeedSpace;
+            serverBuffer = new ServerFrame[BufferSize];
+            clientBuffer = new ServerFrame[BufferSize];
+        }
+
         public void SetClientTick(int tick){
             nextClientTick = tick + 1;
         }
 
         public void PushLocalFrame(ServerFrame frame){
-            var sIdx = frame.tick % BUFFER_SIZE;
-            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick, "Push local frame error!");
+            var sIdx = frame.tick % BufferSize;
+            Debug.Assert(clientBuffer[sIdx] == null || clientBuffer[sIdx].tick <= frame.tick,
+                "Push local frame error!");
             clientBuffer[sIdx] = frame;
         }
 
         ///1.push server frames
-        public void PushServerFrames(ServerFrame[] frames,bool isNeedDebugCheck = true){
+        public void PushServerFrames(ServerFrame[] frames, bool isNeedDebugCheck = true){
             var count = frames.Length;
             for (int i = 0; i < count; i++) {
                 var data = frames[i];
@@ -73,7 +77,7 @@ namespace Lockstep.Game {
                     curServerTick = data.tick;
                 }
 
-                if (data.tick >= nextTickToCheck + MAX_SERVER_OVERRIDE_FRAME_COUNT - 1) {
+                if (data.tick >= nextTickToCheck + MaxServerOverrideFrameCount - 1) {
                     //本地服务器落后太多 需要本地验证完成后再统一叫服务器下发
                     return;
                 }
@@ -82,22 +86,22 @@ namespace Lockstep.Game {
                     maxServerTickInBuffer = data.tick;
                 }
 
-                var targetIdx = data.tick % BUFFER_SIZE;
+                var targetIdx = data.tick % BufferSize;
                 if (serverBuffer[targetIdx] == null || serverBuffer[targetIdx].tick != data.tick) {
                     serverBuffer[targetIdx] = data;
 #if DEBUG_FRAME_DELAY
                     if (isNeedDebugCheck) {
-                        foreach (var input in data.inputs) {
-                            if (input.Commands.Length > 0) {
+                        foreach (var input in data.Inputs) {
+                            if (input.Commands != null && input.Commands.Length > 0) {
                                 //UnityEngine.Debug.Log($"self:{input.ActorId == Simulation.MainActorID} id{input.ActorId} RecvInput actorID:{input.ActorId}  cmd:{(ECmdType) (input.Commands[0].type)}");
                             }
                         }
 
                         var time = 0;
-                        foreach (var input in data.inputs) {
+                        foreach (var input in data.Inputs) {
                             if (input.ActorId == DebugMainActorID) {
                                 var delay = Time.realtimeSinceStartup - input.timeSinceStartUp;
-                                if (delay > 0.2f) {
+                                if (delay > 0.2f && input.timeSinceStartUp > 1) {
                                     UnityEngine.Debug.Log(
                                         $"Tick {data.tick} input.Tick:{input.Tick} recv Delay {delay} rawTime{input.timeSinceStartUp}");
                                 }
@@ -116,7 +120,7 @@ namespace Lockstep.Game {
             //Confirm frames
             IsNeedRevert = false;
             while (nextTickToCheck <= maxServerTickInBuffer) {
-                var sIdx = nextTickToCheck % BUFFER_SIZE;
+                var sIdx = nextTickToCheck % BufferSize;
                 var cFrame = clientBuffer[sIdx];
                 var sFrame = serverBuffer[sIdx];
                 //服务器帧 或者客户端帧 还没到
@@ -124,7 +128,7 @@ namespace Lockstep.Game {
                     sFrame.tick != nextTickToCheck)
                     break;
                 //Check client guess input match the real input
-                if (object.ReferenceEquals(sFrame, cFrame) || sFrame.IsSame(cFrame)) {
+                if (object.ReferenceEquals(sFrame, cFrame) || sFrame.Equals(cFrame)) {
                     nextTickToCheck++;
                 }
                 else {
@@ -143,7 +147,7 @@ namespace Lockstep.Game {
         private void UpdateMissServerFrameTick(){
             int tick = nextTickToCheck;
             for (; tick <= maxServerTickInBuffer; tick++) {
-                var idx = tick % BUFFER_SIZE;
+                var idx = tick % BufferSize;
                 if (serverBuffer[idx] == null || serverBuffer[idx].tick != tick) {
                     break;
                 }
@@ -153,7 +157,7 @@ namespace Lockstep.Game {
         }
 
         public bool CanExecuteNextFrame(){
-            return (nextClientTick - firstMissFrameTick) < MAX_CLIENT_PREDICT_FRAME_COUNT;
+            return (nextClientTick - firstMissFrameTick) < MaxClientPredictFrameCount;
         }
 
         public bool IsNeedReqMissFrame(){
@@ -180,8 +184,8 @@ namespace Lockstep.Game {
                 return null;
             }
 
-            var idx = tick % BUFFER_SIZE;
-            var frame =  serverBuffer[idx];
+            var idx = tick % BufferSize;
+            var frame = serverBuffer[idx];
             if (frame == null) return null;
             if (frame.tick != tick) return null;
             return frame;
@@ -193,7 +197,7 @@ namespace Lockstep.Game {
                     return null;
                 }
 
-                var idx = tick % BUFFER_SIZE;
+                var idx = tick % BufferSize;
                 return clientBuffer[idx];
             }
         }
@@ -202,7 +206,7 @@ namespace Lockstep.Game {
             lock (this) {
                 int missCount = 0;
                 for (int tick = nextTickToCheck; tick < maxServerTickInBuffer; tick++) {
-                    var idx = tick % BUFFER_SIZE;
+                    var idx = tick % BufferSize;
                     if (serverBuffer[idx] == null) { //有空窗口
                         ++missCount;
                     }
@@ -212,7 +216,7 @@ namespace Lockstep.Game {
                     var missFrames = new int[missCount];
                     int missFrameIdx = 0;
                     for (int tick = nextTickToCheck; tick < maxServerTickInBuffer; tick++) {
-                        var idx = tick % BUFFER_SIZE;
+                        var idx = tick % BufferSize;
                         if (serverBuffer[idx] == null) { //有空窗口
                             missFrames[missFrameIdx++] = tick;
                         }

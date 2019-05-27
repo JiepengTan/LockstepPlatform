@@ -36,9 +36,12 @@ namespace Lockstep.Core.Logic {
 
         private void SetNeedGenSnapShot(bool isNeedGenSnap){
             if (isNeedGenSnap) {
-                if (Tick % FrameBuffer.SNAPSHORT_FRAME_INTERVAL == 0) {
+                if (Tick % FrameBuffer.SnapshotFrameInterval == 0) {
                     Contexts.gameState.isBackupCurFrame = false; //确保一定会触发AddEvent
                     Contexts.gameState.isBackupCurFrame = true;
+                }
+                else {
+                    Contexts.gameState.isBackupCurFrame = false;
                 }
             }
             else {
@@ -93,9 +96,10 @@ namespace Lockstep.Core.Logic {
         /// <summary>
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
-        public void RollbackTo(int tick,int missFrameTick){
+        public void RollbackTo(int tick, int missFrameTick, bool isNeedClear = true){
             var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
+            if (snapshotIndices.Count <= 0) return;
             snapshotIndices.Sort();
             UnityEngine.Debug.Assert(snapshotIndices.Count > 0 && snapshotIndices[0] <= tick,
                 $"Error! no correct history frame to revert minTick{(snapshotIndices.Count > 0 ? snapshotIndices[0] : 0)} targetTick {tick}");
@@ -113,7 +117,8 @@ namespace Lockstep.Core.Logic {
             }
 
             Debug.Log(
-                $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  missTick:{missFrameTick} total:{Tick - resultTick} snaps {snaps}");
+                $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  " +
+                $"missTick:{missFrameTick} total:{Tick - resultTick} ");
 
             /*
              * ====================== Revert actors ======================
@@ -159,20 +164,23 @@ namespace Lockstep.Core.Logic {
             }
 
             //将太后 和太前的snapshot 删除掉
-            foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
-                .Where(e => e.backup.tick != resultTick)) {
-                invalidBackupEntity.Destroy();
+            if (isNeedClear) {
+                foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
+                    .Where(e => e.backup.tick != resultTick)) {
+                    invalidBackupEntity.Destroy();
+                }
+
+                foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
+                    .Where(e => e.backup.tick != resultTick)) {
+                    invalidBackupEntity.Destroy();
+                }
+
+                foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+                    .Where(e => e.tick.value != resultTick)) {
+                    snapshotEntity.Destroy();
+                }
             }
 
-            foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
-                .Where(e => e.backup.tick != resultTick)) {
-                invalidBackupEntity.Destroy();
-            }
-
-            foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
-                .Where(e => e.tick.value != resultTick)) {
-                snapshotEntity.Destroy();
-            }
 
             //Copy old state to the entity                                      
             foreach (var backupEntity in backupEntities) {

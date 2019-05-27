@@ -34,7 +34,10 @@ namespace Lockstep.Game {
                 InputLog[tick][msg.Tick].Add(msg.ActorId, new List<InputCmd>());
             }
 
-            InputLog[tick][msg.Tick][msg.ActorId].AddRange(msg.Commands);
+            if (msg.Commands != null) {
+                InputLog[tick][msg.Tick][msg.ActorId].AddRange(msg.Commands);
+            }
+
         }
 
         public void WriteTo(Stream stream){

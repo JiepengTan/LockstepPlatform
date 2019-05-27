@@ -45,14 +45,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a28dd800d2c249d3840fdb333aaf01e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pre: {fileID: 0}
+  next: {fileID: 0}
+  createTick: 0
+  diedTick: 0
+  liveTime:
+    _val: 1000
   sprites:
   - {fileID: 21300000, guid: 62714b940a5c345c59b0a2cca9a58664, type: 3}
   - {fileID: 21300000, guid: 85b1b5879d7054fbda9a85dd3ff0941e, type: 3}
   - {fileID: 21300000, guid: 6a86348b965c5416a8fe1006e988665a, type: 3}
   - {fileID: 21300000, guid: 7576f64cf9ea5437fb2a56c94ed11840, type: 3}
-  renderer: {fileID: 0}
-  interval: 0.33
-  isDestroyAfterFinishPlay: 0
+  interval:
+    _val: 500
 --- !u!212 &2433665004566486539
 SpriteRenderer:
   m_ObjectHideFlags: 0

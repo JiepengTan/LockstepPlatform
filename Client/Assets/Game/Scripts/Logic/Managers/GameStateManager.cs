@@ -9,6 +9,9 @@ namespace Lockstep.Game {
         //room info
         [SerializeField] private byte[] _allActorIds;
 
+        [SerializeField]  public bool IsVideoMode { get; set; }
+        [SerializeField]  public bool IsRunVideo { get; set; }
+        
         public byte[] allActorIds {
             get { return _allActorIds; }
             set { _allActorIds = value; }
