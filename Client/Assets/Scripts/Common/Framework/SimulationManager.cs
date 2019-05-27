@@ -91,8 +91,8 @@ namespace Lockstep.Game {
 
         private float _frameDeadline;
 
-        public float timestampOnPurchase;
-        public int tickOnPurchase;
+        public float timestampOnPurcue;
+        public int tickOnPursue;
 
         public bool PursueServer(int minTickToBackup){
             if (_world.Tick >= cmdBuffer.curServerTick)
@@ -116,8 +116,8 @@ namespace Lockstep.Game {
         private void SetPurchaseTimestamp(){
             var ping = 35;
             var tickClientShouldPredict = 2; //(ping * 2) / NetworkDefine.UPDATE_DELTATIME + 1;
-            tickOnPurchase = _world.Tick + tickClientShouldPredict;
-            timestampOnPurchase = Time.realtimeSinceStartup;
+            tickOnPursue = _world.Tick + tickClientShouldPredict;
+            timestampOnPurcue = Time.realtimeSinceStartup;
         }
 
         public override void DoUpdate(float deltaTime){
@@ -153,8 +153,8 @@ namespace Lockstep.Game {
 
             _constStateService.isPursueFrame = false;
 
-            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurchase) * 1000;
-            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPurchase;
+            var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurcue) * 1000;
+            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnPursue;
             //正常跑帧
             while (_world.Tick < targetTick) {
                 var curTick = _world.Tick;
@@ -304,7 +304,6 @@ namespace Lockstep.Game {
 
         public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors,
             bool isNeedRender = true){
-            Debug.Log($"hehe OnGameStart simulation");
             FrameBuffer.DebugMainActorID = localActorId;
             //初始化全局配置
             _constStateService.roomId = roomId;

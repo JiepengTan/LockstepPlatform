@@ -21,7 +21,7 @@ namespace Lockstep.Game.Systems.Game {
                 _audioService.PlayClipDied();
                 var killerGameEntity = _gameContext.GetEntityWithLocalId(tank.killerLocalId);
                 if (entity.hasDropRate) {
-                    this._unitService.DropItem(entity.dropRate.value);
+                    _unitService.DropItem(entity.dropRate.value);
                 }
                 _gameStateService.curEnemyCountInScene--;
 

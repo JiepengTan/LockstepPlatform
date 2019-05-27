@@ -6,6 +6,7 @@ namespace Lockstep.ECS.Game
 {
 
     [Game]
+    [System.Serializable]
     public class BulletComponent : IComponent {
         
         public bool canDestoryIron = false;

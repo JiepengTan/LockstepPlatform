@@ -49,6 +49,7 @@ namespace Lockstep.Game {
             public AIComponent ai = new AIComponent();
             public TagEnemyComponent tagEnemy = new TagEnemyComponent();
             public MoveRequestComponent moveReq = new MoveRequestComponent();
+            public DropRateComponent dropRate = new DropRateComponent();
         }
 
         [System.Serializable]

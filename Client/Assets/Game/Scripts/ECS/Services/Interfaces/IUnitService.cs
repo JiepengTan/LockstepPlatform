@@ -12,6 +12,7 @@ namespace Lockstep.Game {
         void DropItem(LFloat rate);
         void TakeDamage(GameEntity bullet, GameEntity suffer);
         void DelayCall(LFloat delay, Action callback);
+        void Upgrade(GameEntity entity);
     }
 
 }

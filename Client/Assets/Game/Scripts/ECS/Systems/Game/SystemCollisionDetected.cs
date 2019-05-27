@@ -107,6 +107,7 @@ namespace Lockstep.Game.Systems.Game {
                 foreach (var item in allItem) {
                     if (item.isDestroyed) continue;
                     if (CollisionUtil.CheckCollision(player, item)) {
+                        _audioService.PlayMusicGetItem();
                         item.itemType.killerActorId = player.actorId.value;
                         item.isDestroyed = true;
                     }

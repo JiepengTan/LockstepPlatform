@@ -81,7 +81,6 @@ namespace Lockstep.Game {
             if (_randomService.value >= rate) {
                 return;
             }
-
             var min = _constStateService.mapMin;
             var max = _constStateService.mapMax;
             var x = _randomService.Range(min.x + 1, max.x - 3);
@@ -90,7 +89,6 @@ namespace Lockstep.Game {
         }
 
         private void CreateItem(LVector2 createPos, int type){
-            UnityEngine.Debug.Log($"hehe CreateItem " + type);
             CreateUnit(createPos, _config.itemPrefabs, type, EDir.Up, transParentItem);
         }
 
@@ -171,6 +169,28 @@ namespace Lockstep.Game {
             return entity;
         }
 
+        public void Upgrade(GameEntity entity){
+            var playerCount = _config.playerPrefabs.Count;
+            var targetType = entity.unit.detailType +1;
+            if (targetType >= playerCount) {
+                UnityEngine.Debug.Log($"hehe already max level can not upgrade");
+                return;
+            }
+
+            var ecsPrefab = _config.playerPrefabs[targetType];
+            var rawPos = entity.pos.value;
+            var rawDir = entity.dir.value;
+            ecsPrefab.SetComponentsTo(entity);
+            entity.pos.value = rawPos;
+            entity.dir.value = rawDir;
+            _viewService.DeleteView(entity.localId.value);
+            var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
+            var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
+                Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
+            go.AddComponent<PosListener>();
+            go.AddComponent<DirListener>();
+            _viewService.BindView(entity, _gameContext, go);
+        }
         public void DelayCall(LFloat delay, Action callback){
             var delayEntity = CreateGameEntity();
             delayEntity.AddDelayCall(delay, callback);

@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdc38e554e1b949dba62ef2fab47e561, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsVideoMode: 1
+  IsVideoMode: 0
   RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190527103956_1_2.record
   MaxRunTick: 5635
   gameInfo:
@@ -503,6 +503,7 @@ MonoBehaviour:
     ActorID: 0
     AllActors: 0001
     SimulationSpeed: 60
+  realtimeSinceStartup: 0
   isRunVideo: 0
   JumpToTick: 90
 --- !u!114 &1880518437 stripped
