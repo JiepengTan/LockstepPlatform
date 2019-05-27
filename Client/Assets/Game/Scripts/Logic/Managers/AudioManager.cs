@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Lockstep.Game {
@@ -35,10 +36,21 @@ namespace Lockstep.Game {
                 if (_constStateService.isPursueFrame) {  return;}
                 //回放 不播放音效
                 if (_constStateService.IsVideoMode && !_constStateService.IsRunVideo) {  return;}
+
+                if (curFramePlayeredCount.TryGetValue(clip, out int val)) {
+                    curFramePlayeredCount[clip] = val + 1;
+                }
+                else {
+                    curFramePlayeredCount.Add(clip,1);
+                }
+                if(curFramePlayeredCount[clip] >= 2) return;//不播放大于2个的音效 听不出来
                 _source.PlayOneShot(clip);
             }
         }
-
+        Dictionary<AudioClip,int> curFramePlayeredCount = new Dictionary<AudioClip, int>();
+        public override void Backup(int tick){
+            curFramePlayeredCount.Clear();
+        }
         void OnEvent_OnAllPlayerFinishedLoad(object param){
             PlayMusicStart();
         }
