@@ -15,11 +15,11 @@ namespace Lockstep.Core.Logic {
         private readonly WorldSystems _systems;
         private ITimeMachineService _timeMachineService;
 
-        public World(Contexts contexts, ITimeMachineService timeMachineService, IEnumerable<byte> actorIds,
+        public World(Contexts contexts, IServiceContainer services, IEnumerable<byte> actorIds,
             Feature logicFeature){
             Contexts = contexts;
-            _timeMachineService = timeMachineService;
-            _systems = new WorldSystems(Contexts, logicFeature);
+            _timeMachineService = services.GetService<ITimeMachineService>();
+            _systems = new WorldSystems(Contexts,services, logicFeature);
         }
 
         public void StartSimulate(){
@@ -55,6 +55,7 @@ namespace Lockstep.Core.Logic {
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
+            _timeMachineService.CurTick = Tick;
         }
 
         /// 清理无效的快照
@@ -111,6 +112,10 @@ namespace Lockstep.Core.Logic {
             }
 
             var resultTick = snapshotIndices[i];
+            if (resultTick == Tick) {
+                Logging.Debug.Log("SelfTick should not rollback");
+                return;
+            }
             var snaps = "";
             foreach (var idx in snapshotIndices) {
                 snaps += idx + " ";
@@ -208,8 +213,9 @@ namespace Lockstep.Core.Logic {
 
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
-            _timeMachineService.RollbackTo(resultTick);
             Contexts.gameState.ReplaceTick(resultTick);
+            _timeMachineService.RollbackTo(resultTick);
+            _timeMachineService.CurTick = resultTick;
         }
     }
 }

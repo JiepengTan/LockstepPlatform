@@ -2,11 +2,12 @@
 using Lockstep.Core.Logic.Systems.Actor;
 using Lockstep.Core.Logic.Systems.Debugging;
 using Lockstep.Core.Logic.Systems.GameState;
+using Lockstep.Game;
 using Lockstep.Game.Systems;
 
 namespace Lockstep.Core.Logic.Systems {
     public sealed class WorldSystems : Feature {
-        public WorldSystems(Contexts contexts, Feature logicFeature){
+        public WorldSystems(Contexts contexts,IServiceContainer services, Feature logicFeature){
             Add(new InitializeEntityCount(contexts));
             // after game has init, backup before game logic
             Add(new OnNewPredictionCreateSnapshot(contexts));
@@ -21,7 +22,7 @@ namespace Lockstep.Core.Logic.Systems {
 
             Add(new CleanDestroyedGameEntities(contexts));
             Add(new CleanDestroyedInputEntities(contexts));
-            Add(new IncrementTick(contexts));
+            Add(new IncrementTick(contexts,services));
         }
     }
 }

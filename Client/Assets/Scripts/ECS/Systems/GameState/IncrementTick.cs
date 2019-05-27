@@ -1,23 +1,20 @@
 ﻿using Entitas;
+using Lockstep.Game;
 
-namespace Lockstep.Core.Logic.Systems.GameState
-{
-    public class IncrementTick : IInitializeSystem, IExecuteSystem
-    {
-        private readonly GameStateContext _gameStateContext;
+namespace Lockstep.Core.Logic.Systems.GameState {
+    public class IncrementTick : BaseSystem, IInitializeSystem, IExecuteSystem {
+        public IncrementTick(Contexts contexts, IServiceContainer serviceContainer) :
+            base(contexts, serviceContainer){ }
 
-        public IncrementTick(Contexts contexts)
-        {
-            _gameStateContext = contexts.gameState;
-        }
-        public void Initialize()
-        {
+        public void Initialize(){
             _gameStateContext.SetTick(0);
+            _timeMachineService.CurTick = 0;
         }
 
-        public void Execute()
-        {                                              
-            _gameStateContext.ReplaceTick(_gameStateContext.tick.value + 1);
-        }   
+        public void Execute(){
+            var tick = _gameStateContext.tick.value;
+            _gameStateContext.ReplaceTick(tick + 1);
+            _timeMachineService.CurTick = tick + 1;
+        }
     }
 }

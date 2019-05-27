@@ -77,14 +77,13 @@ namespace Lockstep.Game {
         }
 
         public void DropItem(LFloat rate){
-            UnityEngine.Debug.Log($"hehe DropItem " + rate);
             if (_randomService.value >= rate) {
                 return;
             }
             var min = _constStateService.mapMin;
             var max = _constStateService.mapMax;
-            var x = _randomService.Range(min.x + 1, max.x - 3);
-            var y = _randomService.Range(min.y + 1, max.y - 3);
+            var x = _randomService.Range(min.x + 4, max.x - 4);
+            var y = _randomService.Range(min.y + 4, max.y - 4);
             CreateItem(new LVector2(x, y), _randomService.Range(0, _config.itemPrefabs.Count));
         }
 

@@ -320,7 +320,7 @@ namespace Lockstep.Game {
 
             _actorCount = allActors.Length;
             _tickDt = 1000f / targetFps;
-            _world = new World(_context, _timeMachineService, allActors, new GameLogicSystems(_context, _services));
+            _world = new World(_context, _services, allActors, new GameLogicSystems(_context, _services));
         }
 
         private void FillInputWithLastFrame(ServerFrame frame){
