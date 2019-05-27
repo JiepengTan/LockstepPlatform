@@ -29,7 +29,6 @@ namespace Server.Common {
         void OnPlayerLeave(Player player);
 
         //game status
-        bool CanStartGame();
         void StartGame();
         void FinishedGame();
 

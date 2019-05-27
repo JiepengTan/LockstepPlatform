@@ -12,12 +12,12 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
-    public interface ISimulation :IService {
+    public interface ISimulation : IService {
         void RunVideo();
         void JumpTo(int tick);
     }
 
-    public class SimulationManager : SingletonManager<SimulationManager> ,ISimulation{
+    public class SimulationManager : SingletonManager<SimulationManager>, ISimulation {
         public World World => _world;
         private Contexts _context;
         private GameLog GameLog = new GameLog();
@@ -224,16 +224,25 @@ namespace Lockstep.Game {
         private bool isInitVideo = false;
 
         public void JumpTo(int tick){
+            if (tick + 1 == _world.Tick || tick == _world.Tick) return;
+            tick = Mathf.Min(tick, _videoFrames.frames.Length - 1);
+            var time = Time.realtimeSinceStartup + 0.05f;
             if (!isInitVideo) {
                 while (_world.Tick < _videoFrames.frames.Length) {
                     var sFrame = _videoFrames.frames[_world.Tick];
                     Simulate(sFrame, true);
+                    if (Time.realtimeSinceStartup > time) {
+                        return;
+                    }
                 }
 
                 isInitVideo = true;
             }
 
-            _world.RollbackTo(tick, _videoFrames.frames.Length, false);
+            if (_world.Tick > tick) {
+                _world.RollbackTo(tick, _videoFrames.frames.Length, false);
+            }
+
             while (_world.Tick <= tick) {
                 var sFrame = _videoFrames.frames[_world.Tick];
                 Simulate(sFrame, false);
@@ -248,12 +257,13 @@ namespace Lockstep.Game {
         private int tickOnLastJumpTo;
 
         public void RunVideo(){
-            if (timestampOnLastJumpTo < 0.1f) {
+            if (tickOnLastJumpTo == _world.Tick) {
                 timestampOnLastJumpTo = Time.realtimeSinceStartup;
-                tickOnLastJumpTo = 0;
+                tickOnLastJumpTo = _world.Tick;
             }
+
             var frameDeltaTime = (Time.timeSinceLevelLoad - timestampOnLastJumpTo) * 1000;
-            var targetTick = frameDeltaTime / NetworkDefine.UPDATE_DELTATIME + tickOnLastJumpTo;
+            var targetTick = Mathf.CeilToInt(frameDeltaTime / NetworkDefine.UPDATE_DELTATIME) + tickOnLastJumpTo;
             while (_world.Tick <= targetTick) {
                 if (_world.Tick < _videoFrames.frames.Length) {
                     var sFrame = _videoFrames.frames[_world.Tick];

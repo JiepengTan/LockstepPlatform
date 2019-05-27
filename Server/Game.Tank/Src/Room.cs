@@ -50,7 +50,6 @@ namespace Lockstep.Logic.Server {
         public bool IsRunning { get; private set; }
         public string name;
 
-        private byte _curLocalId = 0;
         private Dictionary<long, byte> _playerId2LocalId = new Dictionary<long, byte>();
         private Dictionary<byte, Player> _localId2Player = new Dictionary<byte, Player>();
         private List<Player> _allPlayers = new List<Player>();
@@ -332,7 +331,7 @@ namespace Lockstep.Logic.Server {
             if (State == ERoomState.Idle) {
                 State = ERoomState.WaitingToPlay;
             }
-
+            if(State != ERoomState.WaitingToPlay) return;
             if (_allPlayers.Contains(player)) {
                 Debug.LogError("Player already exist" + player.PlayerId);
                 return;
@@ -340,10 +339,6 @@ namespace Lockstep.Logic.Server {
 
             Debug.Log($"Player{player.PlayerId} Enter room {RoomId}");
             player.room = this;
-            var localId = _curLocalId++;
-            player.localId = localId;
-            _playerId2LocalId[player.PlayerId] = localId;
-            _localId2Player[localId] = player;
             _allPlayers.Add(player);
         }
 
@@ -411,16 +406,19 @@ namespace Lockstep.Logic.Server {
 
         #region game status
 
-        public bool CanStartGame(){
-            return true;
-        }
-
         public void StartGame(){
+            byte localId = 0;
+            foreach (var player in _allPlayers) {
+                player.localId = localId;
+                _playerId2LocalId[player.PlayerId] = localId;
+                _localId2Player[localId] = player;
+                localId++;
+            }
+            
             allNeedWaitInputPlayerIds = new List<byte>();
             foreach (var val in _playerId2LocalId.Values) {
                 allNeedWaitInputPlayerIds.Add(val);
             }
-
             State = ERoomState.PartLoading;
             StartSimulationOnConnectedPeers();
         }
@@ -439,7 +437,6 @@ namespace Lockstep.Logic.Server {
             _localId2Player.Clear();
             _allPlayers.Clear();
             _hashCodes.Clear();
-            _curLocalId = 0;
             Tick = 0;
         }
 

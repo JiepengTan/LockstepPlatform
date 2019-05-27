@@ -16,7 +16,7 @@ namespace Lockstep.Game {
         public virtual void Undo(T param){ }
     }
 
-    public class CommandBuffer<T> {
+    public class CommandBuffer<T> : ICommandBuffer<T> {
         public class CommandNode {
             public CommandNode pre;
             public CommandNode next;
@@ -31,35 +31,37 @@ namespace Lockstep.Game {
             }
         }
 
-        private CommandNode _head;
-        private CommandNode _tail;
-        private T _param;
-        private Action<CommandNode, CommandNode, T> _funcUndoCommand;
+        protected CommandNode _head;
+        protected CommandNode _tail;
+        protected T _param;
+        protected Action<CommandNode, CommandNode, T> _funcUndoCommand;
 
-        public CommandBuffer(T param, Action<CommandNode, CommandNode, T> funcUndoCommand){
+        public void Init(T param, object funcUndoCommand){
             _param = param;
-            _funcUndoCommand = funcUndoCommand ?? UndoCommands;
+            var func = funcUndoCommand as Action<CommandNode, CommandNode, T>;
+            _funcUndoCommand = func ?? UndoCommands;
         }
 
         public List<CommandNode> heads = new List<CommandNode>();
 
         ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
-        public void RevertTo(int tick){
-            if (_tail == null || _tail.Tick < tick) {
+        public void Jump(int curTick, int dstTick){
+            Debug.Assert(curTick > dstTick, "Not video mode should not roll forward");
+            if (_tail == null || _tail.Tick < dstTick) {
                 return;
             }
 
             var newTail = _tail;
-            while (newTail.pre != null && newTail.pre.Tick >= tick) {
+            while (newTail.pre != null && newTail.pre.Tick >= dstTick) {
                 newTail = newTail.pre;
             }
 
-            Debug.Assert(newTail.Tick >= tick,
-                $"newTail must be the first cmd executed after that tick : tick:{tick}  newTail.Tick:{newTail.Tick}");
+            Debug.Assert(newTail.Tick >= dstTick,
+                $"newTail must be the first cmd executed after that tick : tick:{dstTick}  newTail.Tick:{newTail.Tick}");
             Debug.Assert(newTail.pre == null
-                         || newTail.pre.Tick < tick,
-                $"newTail must be the first cmd executed in that tick : tick:{tick}  " +
-                $"newTail.pre.Tick:{newTail.pre?.Tick ?? tick}");
+                         || newTail.pre.Tick < dstTick,
+                $"newTail must be the first cmd executed in that tick : tick:{dstTick}  " +
+                $"newTail.pre.Tick:{newTail.pre?.Tick ?? dstTick}");
 
             var minTickNode = newTail;
             var maxTickNode = _tail;
@@ -106,16 +108,6 @@ namespace Lockstep.Game {
         }
 
         public void Execute(int tick, ICommand<T> cmd){
-#if DEBUG_SIMPLE_CHECK
-            var iTick = (int) tick;
-            for (int i = allCmds.Count; i <= iTick; i++) {
-                allCmds.Add(null);
-            }
-
-            cmd.Do(_param);
-            var node = new CommandNode(tick, cmd, _tail, null);
-            allCmds[iTick] = node;
-#else
             if (cmd == null) return;
             cmd.Do(_param);
             var node = new CommandNode(tick, cmd, _tail, null);
@@ -127,7 +119,6 @@ namespace Lockstep.Game {
 
             _tail.next = node;
             _tail = node;
-#endif
         }
 
         /// 只需执行undo 不需要顾虑指针的维护  //如果有性能需要可以考虑合并Cmd 
@@ -141,4 +132,17 @@ namespace Lockstep.Game {
             maxTickNode.cmd.Undo(_param);
         }
     }
+
+    public interface ICommandBuffer<T> {
+        void Init(T param, object funcUndoCommand);
+
+        ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
+        void Jump(int curTick, int dstTick);
+
+        ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
+        void Clean(int maxVerifiedTick);
+
+        void Execute(int tick, ICommand<T> cmd);
+    }
+
 }

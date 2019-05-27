@@ -146,6 +146,7 @@ namespace Lockstep.Game {
         }
 
         public void Backup(int tick){
+            CurTick = tick;
             foreach (var timeMachine in GetAllTimeMachines()) {
                 timeMachine.CurTick = tick;
                 timeMachine.Backup(tick);

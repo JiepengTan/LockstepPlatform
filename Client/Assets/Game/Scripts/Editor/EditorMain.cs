@@ -34,6 +34,9 @@ namespace Editor {
 
             if (Application.isPlaying) {
                 var tick = EditorGUILayout.IntSlider("Tick ", owner.CurTick, 0, owner.MaxRunTick);
+                if (tick != owner.CurTick) {
+                    SimulationManager.Instance.JumpTo(tick);
+                }
             }
         }
 

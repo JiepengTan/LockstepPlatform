@@ -36,13 +36,14 @@ namespace Lockstep.Game {
             _instance = (T) this;
             _instance.transform.SetParent(Main.Instance.transform, false);
             Main.Instance.RegisterManager(this);
-            cmdBuffer = new CommandBuffer<T>(_instance, GetRollbackFunc());
+            cmdBuffer = new CommandBuffer<T>();
+            cmdBuffer.Init(_instance, GetRollbackFunc());
             if (Application.isPlaying) {
                 GameObject.DontDestroyOnLoad(_instance.gameObject);    
             }
         }
 
-        protected CommandBuffer<T> cmdBuffer;
+        protected ICommandBuffer<T> cmdBuffer;
         public int CurTick { get; set; }
 
         protected virtual Action<CommandBuffer<T>.CommandNode, CommandBuffer<T>.CommandNode, T> GetRollbackFunc(){
@@ -52,7 +53,7 @@ namespace Lockstep.Game {
         public virtual void Backup(int tick){ }
 
         public void RollbackTo(int tick){
-            cmdBuffer?.RevertTo(tick);
+            cmdBuffer?.Jump(CurTick,tick);
         }
 
         public void Clean(int maxVerifiedTick){

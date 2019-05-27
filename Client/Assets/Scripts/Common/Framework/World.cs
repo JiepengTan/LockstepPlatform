@@ -118,7 +118,7 @@ namespace Lockstep.Core.Logic {
 
             Debug.Log(
                 $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  " +
-                $"missTick:{missFrameTick} total:{Tick - resultTick} snaps {snaps}");
+                $"missTick:{missFrameTick} total:{Tick - resultTick} ");
 
             /*
              * ====================== Revert actors ======================

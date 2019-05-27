@@ -495,14 +495,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsVideoMode: 1
-  RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190526211809_1_2.record
-  MaxRunTick: 3139
+  RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190527103956_1_2.record
+  MaxRunTick: 5635
   gameInfo:
     RoomID: 2
-    Seed: 1033459272
+    Seed: -1457795869
     ActorID: 0
     AllActors: 0001
     SimulationSpeed: 60
+  isRunVideo: 0
   JumpToTick: 90
 --- !u!114 &1880518437 stripped
 MonoBehaviour:
