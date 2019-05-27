@@ -20,7 +20,7 @@
     - NetworkMsg auto parse and register
     - Event auto register
     - Pursue frame after reconnected
-
+    - Record game and replay it offline
 
 ## **TODO**
     - changed Server API to PUN API
