@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddEntityCount(uint newValue) {
         var index = ActorComponentsLookup.EntityCount;
-        var component = CreateComponent<Lockstep.ECS.Actor.EntityCountComponent>(index);
+        var component = (Lockstep.ECS.Actor.EntityCountComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.EntityCountComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceEntityCount(uint newValue) {
         var index = ActorComponentsLookup.EntityCount;
-        var component = CreateComponent<Lockstep.ECS.Actor.EntityCountComponent>(index);
+        var component = (Lockstep.ECS.Actor.EntityCountComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.EntityCountComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

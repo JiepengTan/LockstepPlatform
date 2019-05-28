@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 
 namespace Lockstep.ECS.Game
 {
-    [Game, Event(true)]
+    [Game, Event(EventTarget.Self)]
     [System.Serializable]
     public class PosComponent : IComponent
     {

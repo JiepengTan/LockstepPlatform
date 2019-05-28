@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddBullet(bool newCanDestoryIron, bool newCanDestoryGrass, uint newOwnerLocalId) {
         var index = GameComponentsLookup.Bullet;
-        var component = CreateComponent<Lockstep.ECS.Game.BulletComponent>(index);
+        var component = (Lockstep.ECS.Game.BulletComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.BulletComponent));
         component.canDestoryIron = newCanDestoryIron;
         component.canDestoryGrass = newCanDestoryGrass;
         component.ownerLocalId = newOwnerLocalId;
@@ -22,7 +22,7 @@ public partial class GameEntity {
 
     public void ReplaceBullet(bool newCanDestoryIron, bool newCanDestoryGrass, uint newOwnerLocalId) {
         var index = GameComponentsLookup.Bullet;
-        var component = CreateComponent<Lockstep.ECS.Game.BulletComponent>(index);
+        var component = (Lockstep.ECS.Game.BulletComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.BulletComponent));
         component.canDestoryIron = newCanDestoryIron;
         component.canDestoryGrass = newCanDestoryGrass;
         component.ownerLocalId = newOwnerLocalId;

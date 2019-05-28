@@ -8,7 +8,10 @@
 //------------------------------------------------------------------------------
 public sealed class PosEventSystem : Entitas.ReactiveSystem<GameEntity> {
 
+    readonly System.Collections.Generic.List<IPosListener> _listenerBuffer;
+
     public PosEventSystem(Contexts contexts) : base(contexts.game) {
+        _listenerBuffer = new System.Collections.Generic.List<IPosListener>();
     }
 
     protected override Entitas.ICollector<GameEntity> GetTrigger(Entitas.IContext<GameEntity> context) {
@@ -24,7 +27,9 @@ public sealed class PosEventSystem : Entitas.ReactiveSystem<GameEntity> {
     protected override void Execute(System.Collections.Generic.List<GameEntity> entities) {
         foreach (var e in entities) {
             var component = e.pos;
-            foreach (var listener in e.posListener.value) {
+            _listenerBuffer.Clear();
+            _listenerBuffer.AddRange(e.posListener.value);
+            foreach (var listener in _listenerBuffer) {
                 listener.OnPos(e, component.value);
             }
         }

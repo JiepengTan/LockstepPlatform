@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddScoreListener(System.Collections.Generic.List<IScoreListener> newValue) {
         var index = ActorComponentsLookup.ScoreListener;
-        var component = CreateComponent<ScoreListenerComponent>(index);
+        var component = (ScoreListenerComponent)CreateComponent(index, typeof(ScoreListenerComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceScoreListener(System.Collections.Generic.List<IScoreListener> newValue) {
         var index = ActorComponentsLookup.ScoreListener;
-        var component = CreateComponent<ScoreListenerComponent>(index);
+        var component = (ScoreListenerComponent)CreateComponent(index, typeof(ScoreListenerComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -13,7 +13,7 @@ public partial class ActorEntity {
 
     public void AddBackup(byte newActorId, int newTick) {
         var index = ActorComponentsLookup.Backup;
-        var component = CreateComponent<Lockstep.ECS.Actor.BackupComponent>(index);
+        var component = (Lockstep.ECS.Actor.BackupComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.BackupComponent));
         component.actorId = newActorId;
         component.tick = newTick;
         AddComponent(index, component);
@@ -21,7 +21,7 @@ public partial class ActorEntity {
 
     public void ReplaceBackup(byte newActorId, int newTick) {
         var index = ActorComponentsLookup.Backup;
-        var component = CreateComponent<Lockstep.ECS.Actor.BackupComponent>(index);
+        var component = (Lockstep.ECS.Actor.BackupComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.BackupComponent));
         component.actorId = newActorId;
         component.tick = newTick;
         ReplaceComponent(index, component);

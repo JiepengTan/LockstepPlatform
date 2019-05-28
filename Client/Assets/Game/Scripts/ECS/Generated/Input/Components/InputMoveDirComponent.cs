@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddMoveDir(Lockstep.Game.EDir newValue) {
         var index = InputComponentsLookup.MoveDir;
-        var component = CreateComponent<Lockstep.ECS.Input.MoveDirComponent>(index);
+        var component = (Lockstep.ECS.Input.MoveDirComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.MoveDirComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceMoveDir(Lockstep.Game.EDir newValue) {
         var index = InputComponentsLookup.MoveDir;
-        var component = CreateComponent<Lockstep.ECS.Input.MoveDirComponent>(index);
+        var component = (Lockstep.ECS.Input.MoveDirComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.MoveDirComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -62,6 +62,7 @@ namespace Lockstep.Game {
             if (IsVideoMode) {
                 FrameBuffer.SnapshotFrameInterval = 20;
                 OpenRecordFile(RecordPath);
+                _constStateService.IsVideoMode = true;
             }
 
             //set resolution for debug
@@ -72,7 +73,6 @@ namespace Lockstep.Game {
 
         private void AfterStart(){
             if (IsVideoMode) {
-                _constStateService.IsVideoMode = true;
                 EventHelper.Trigger(EEvent.BorderVideoFrame, framesInfo);
                 EventHelper.Trigger(EEvent.OnRoomGameStart, gameInfo);
             }

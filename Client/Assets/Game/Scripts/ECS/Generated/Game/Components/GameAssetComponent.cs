@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddAsset(Lockstep.Game.EAssetID newAssetId) {
         var index = GameComponentsLookup.Asset;
-        var component = CreateComponent<Lockstep.ECS.Game.AssetComponent>(index);
+        var component = (Lockstep.ECS.Game.AssetComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.AssetComponent));
         component.assetId = newAssetId;
         AddComponent(index, component);
     }
 
     public void ReplaceAsset(Lockstep.Game.EAssetID newAssetId) {
         var index = GameComponentsLookup.Asset;
-        var component = CreateComponent<Lockstep.ECS.Game.AssetComponent>(index);
+        var component = (Lockstep.ECS.Game.AssetComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.AssetComponent));
         component.assetId = newAssetId;
         ReplaceComponent(index, component);
     }

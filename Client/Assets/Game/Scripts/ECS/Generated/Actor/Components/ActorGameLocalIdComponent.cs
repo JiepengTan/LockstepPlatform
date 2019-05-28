@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddGameLocalId(uint newValue) {
         var index = ActorComponentsLookup.GameLocalId;
-        var component = CreateComponent<Lockstep.ECS.Actor.GameLocalIdComponent>(index);
+        var component = (Lockstep.ECS.Actor.GameLocalIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.GameLocalIdComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceGameLocalId(uint newValue) {
         var index = ActorComponentsLookup.GameLocalId;
-        var component = CreateComponent<Lockstep.ECS.Actor.GameLocalIdComponent>(index);
+        var component = (Lockstep.ECS.Actor.GameLocalIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.GameLocalIdComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

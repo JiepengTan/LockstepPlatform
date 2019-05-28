@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddDirListener(System.Collections.Generic.List<IDirListener> newValue) {
         var index = GameComponentsLookup.DirListener;
-        var component = CreateComponent<DirListenerComponent>(index);
+        var component = (DirListenerComponent)CreateComponent(index, typeof(DirListenerComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceDirListener(System.Collections.Generic.List<IDirListener> newValue) {
         var index = GameComponentsLookup.DirListener;
-        var component = CreateComponent<DirListenerComponent>(index);
+        var component = (DirListenerComponent)CreateComponent(index, typeof(DirListenerComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

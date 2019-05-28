@@ -29,7 +29,7 @@ namespace Lockstep.Game {
                     viewGo.SetActive(true);
                 }
 
-                viewGo.Link(entity, ctx);
+                viewGo.Link(entity);
                 var componentSetters = viewGo.GetComponents<IComponentSetter>();
                 foreach (var componentSetter in componentSetters) {
                     componentSetter.SetComponent(entity);

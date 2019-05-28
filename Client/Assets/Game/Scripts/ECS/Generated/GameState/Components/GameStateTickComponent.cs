@@ -51,14 +51,14 @@ public partial class GameStateEntity {
 
     public void AddTick(int newValue) {
         var index = GameStateComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
+        var component = (Lockstep.ECS.GameState.TickComponent)CreateComponent(index, typeof(Lockstep.ECS.GameState.TickComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTick(int newValue) {
         var index = GameStateComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.ECS.GameState.TickComponent>(index);
+        var component = (Lockstep.ECS.GameState.TickComponent)CreateComponent(index, typeof(Lockstep.ECS.GameState.TickComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

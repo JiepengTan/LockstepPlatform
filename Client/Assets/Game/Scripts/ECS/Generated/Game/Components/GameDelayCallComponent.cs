@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddDelayCall(Lockstep.Math.LFloat newDelayTimer, System.Action newCallBack) {
         var index = GameComponentsLookup.DelayCall;
-        var component = CreateComponent<Lockstep.ECS.Game.DelayCallComponent>(index);
+        var component = (Lockstep.ECS.Game.DelayCallComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DelayCallComponent));
         component.delayTimer = newDelayTimer;
         component.callBack = newCallBack;
         AddComponent(index, component);
@@ -21,7 +21,7 @@ public partial class GameEntity {
 
     public void ReplaceDelayCall(Lockstep.Math.LFloat newDelayTimer, System.Action newCallBack) {
         var index = GameComponentsLookup.DelayCall;
-        var component = CreateComponent<Lockstep.ECS.Game.DelayCallComponent>(index);
+        var component = (Lockstep.ECS.Game.DelayCallComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DelayCallComponent));
         component.delayTimer = newDelayTimer;
         component.callBack = newCallBack;
         ReplaceComponent(index, component);

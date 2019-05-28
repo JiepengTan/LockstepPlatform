@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddLife(int newValue) {
         var index = ActorComponentsLookup.Life;
-        var component = CreateComponent<Lockstep.ECS.Game.LifeComponent>(index);
+        var component = (Lockstep.ECS.Game.LifeComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.LifeComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceLife(int newValue) {
         var index = ActorComponentsLookup.Life;
-        var component = CreateComponent<Lockstep.ECS.Game.LifeComponent>(index);
+        var component = (Lockstep.ECS.Game.LifeComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.LifeComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

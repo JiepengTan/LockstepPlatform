@@ -20,7 +20,7 @@ namespace Lockstep.Game {
         protected NetPeer _peer;
         protected float _autoConnTimer;
 
-        public bool Connected => _client.FirstPeer?.ConnectionState == ConnectionState.Connected;
+        public bool Connected => _client?.FirstPeer?.ConnectionState == ConnectionState.Connected;
         public float AutoConnInterval = 1;
 
         //所有的消息处理函数

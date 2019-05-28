@@ -5,7 +5,7 @@ using Lockstep.Game;
 
 namespace Lockstep.ECS.Game
 {
-    [Game, Event(true)]
+    [Game, Event(EventTarget.Self)]
     [System.Serializable]
     public class DirComponent : IComponent
     {

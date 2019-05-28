@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddOwner(uint newLocalId) {
         var index = GameComponentsLookup.Owner;
-        var component = CreateComponent<Lockstep.ECS.Game.OwnerComponent>(index);
+        var component = (Lockstep.ECS.Game.OwnerComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.OwnerComponent));
         component.localId = newLocalId;
         AddComponent(index, component);
     }
 
     public void ReplaceOwner(uint newLocalId) {
         var index = GameComponentsLookup.Owner;
-        var component = CreateComponent<Lockstep.ECS.Game.OwnerComponent>(index);
+        var component = (Lockstep.ECS.Game.OwnerComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.OwnerComponent));
         component.localId = newLocalId;
         ReplaceComponent(index, component);
     }

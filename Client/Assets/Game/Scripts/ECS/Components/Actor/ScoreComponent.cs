@@ -6,7 +6,7 @@ using Lockstep.Game;
 namespace Lockstep.ECS.Game
 {
 
-    [Actor,Event(true)]
+    [Actor,Event(EventTarget.Self)]
     public class ScoreComponent : IComponent {
         public int value;
     }

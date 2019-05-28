@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddPos(Lockstep.Math.LVector2 newValue) {
         var index = GameComponentsLookup.Pos;
-        var component = CreateComponent<Lockstep.ECS.Game.PosComponent>(index);
+        var component = (Lockstep.ECS.Game.PosComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.PosComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplacePos(Lockstep.Math.LVector2 newValue) {
         var index = GameComponentsLookup.Pos;
-        var component = CreateComponent<Lockstep.ECS.Game.PosComponent>(index);
+        var component = (Lockstep.ECS.Game.PosComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.PosComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

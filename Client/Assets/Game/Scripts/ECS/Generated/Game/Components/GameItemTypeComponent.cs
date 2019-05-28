@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddItemType(Lockstep.ECS.Game.EItemType newType, byte newKillerActorId) {
         var index = GameComponentsLookup.ItemType;
-        var component = CreateComponent<Lockstep.ECS.Game.ItemTypeComponent>(index);
+        var component = (Lockstep.ECS.Game.ItemTypeComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ItemTypeComponent));
         component.type = newType;
         component.killerActorId = newKillerActorId;
         AddComponent(index, component);
@@ -21,7 +21,7 @@ public partial class GameEntity {
 
     public void ReplaceItemType(Lockstep.ECS.Game.EItemType newType, byte newKillerActorId) {
         var index = GameComponentsLookup.ItemType;
-        var component = CreateComponent<Lockstep.ECS.Game.ItemTypeComponent>(index);
+        var component = (Lockstep.ECS.Game.ItemTypeComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ItemTypeComponent));
         component.type = newType;
         component.killerActorId = newKillerActorId;
         ReplaceComponent(index, component);

@@ -5,6 +5,7 @@ obj/
 Build/
 #Game Record data
 Record/
+BackEntitas/
 # Nuget packages directory  
 packages/  
 # ide

@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddTick(int newValue) {
         var index = InputComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.ECS.Input.TickComponent>(index);
+        var component = (Lockstep.ECS.Input.TickComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.TickComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceTick(int newValue) {
         var index = InputComponentsLookup.Tick;
-        var component = CreateComponent<Lockstep.ECS.Input.TickComponent>(index);
+        var component = (Lockstep.ECS.Input.TickComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.TickComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

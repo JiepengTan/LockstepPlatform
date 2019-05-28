@@ -16,8 +16,8 @@ namespace Lockstep.Game {
 
         public void OnPos(GameEntity entity, LVector2 newPosition){
             var dst = newPosition.ToVector3();
-            var src = transform.localPosition;
-            transform.localPosition = dst;// Vector3.Lerp(src, dst, 0.3f);
+            //var src = transform.localPosition;
+            //transform.localPosition = dst;// Vector3.Lerp(src, dst, 0.3f);
         }
 
         private void Update(){

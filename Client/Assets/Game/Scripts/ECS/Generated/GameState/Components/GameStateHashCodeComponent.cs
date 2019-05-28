@@ -51,14 +51,14 @@ public partial class GameStateEntity {
 
     public void AddHashCode(long newValue) {
         var index = GameStateComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.ECS.GameState.HashCodeComponent>(index);
+        var component = (Lockstep.ECS.GameState.HashCodeComponent)CreateComponent(index, typeof(Lockstep.ECS.GameState.HashCodeComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceHashCode(long newValue) {
         var index = GameStateComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.ECS.GameState.HashCodeComponent>(index);
+        var component = (Lockstep.ECS.GameState.HashCodeComponent)CreateComponent(index, typeof(Lockstep.ECS.GameState.HashCodeComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

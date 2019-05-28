@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddLifeListener(System.Collections.Generic.List<ILifeListener> newValue) {
         var index = ActorComponentsLookup.LifeListener;
-        var component = CreateComponent<LifeListenerComponent>(index);
+        var component = (LifeListenerComponent)CreateComponent(index, typeof(LifeListenerComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceLifeListener(System.Collections.Generic.List<ILifeListener> newValue) {
         var index = ActorComponentsLookup.LifeListener;
-        var component = CreateComponent<LifeListenerComponent>(index);
+        var component = (LifeListenerComponent)CreateComponent(index, typeof(LifeListenerComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

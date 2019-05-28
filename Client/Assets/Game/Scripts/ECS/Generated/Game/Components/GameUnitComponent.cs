@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, int newDamage, uint newKillerLocalId) {
         var index = GameComponentsLookup.Unit;
-        var component = CreateComponent<Lockstep.ECS.Game.UnitComponent>(index);
+        var component = (Lockstep.ECS.Game.UnitComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.UnitComponent));
         component.name = newName;
         component.camp = newCamp;
         component.detailType = newDetailType;
@@ -25,7 +25,7 @@ public partial class GameEntity {
 
     public void ReplaceUnit(string newName, Lockstep.Game.ECampType newCamp, int newDetailType, int newHealth, int newDamage, uint newKillerLocalId) {
         var index = GameComponentsLookup.Unit;
-        var component = CreateComponent<Lockstep.ECS.Game.UnitComponent>(index);
+        var component = (Lockstep.ECS.Game.UnitComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.UnitComponent));
         component.name = newName;
         component.camp = newCamp;
         component.detailType = newDetailType;

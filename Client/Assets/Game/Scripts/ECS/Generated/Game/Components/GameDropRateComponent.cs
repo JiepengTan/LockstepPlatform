@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddDropRate(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.DropRate;
-        var component = CreateComponent<Lockstep.ECS.Game.DropRateComponent>(index);
+        var component = (Lockstep.ECS.Game.DropRateComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DropRateComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceDropRate(Lockstep.Math.LFloat newValue) {
         var index = GameComponentsLookup.DropRate;
-        var component = CreateComponent<Lockstep.ECS.Game.DropRateComponent>(index);
+        var component = (Lockstep.ECS.Game.DropRateComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DropRateComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

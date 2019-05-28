@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddActorId(byte newValue) {
         var index = InputComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.ECS.Input.ActorIdComponent>(index);
+        var component = (Lockstep.ECS.Input.ActorIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.ActorIdComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceActorId(byte newValue) {
         var index = InputComponentsLookup.ActorId;
-        var component = CreateComponent<Lockstep.ECS.Input.ActorIdComponent>(index);
+        var component = (Lockstep.ECS.Input.ActorIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.ActorIdComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddId(byte newValue) {
         var index = ActorComponentsLookup.Id;
-        var component = CreateComponent<Lockstep.ECS.Actor.IdComponent>(index);
+        var component = (Lockstep.ECS.Actor.IdComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.IdComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceId(byte newValue) {
         var index = ActorComponentsLookup.Id;
-        var component = CreateComponent<Lockstep.ECS.Actor.IdComponent>(index);
+        var component = (Lockstep.ECS.Actor.IdComponent)CreateComponent(index, typeof(Lockstep.ECS.Actor.IdComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

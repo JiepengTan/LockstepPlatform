@@ -13,14 +13,14 @@ public partial class InputEntity {
 
     public void AddEntityConfigId(int newValue) {
         var index = InputComponentsLookup.EntityConfigId;
-        var component = CreateComponent<Lockstep.ECS.Input.EntityConfigIdComponent>(index);
+        var component = (Lockstep.ECS.Input.EntityConfigIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.EntityConfigIdComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceEntityConfigId(int newValue) {
         var index = InputComponentsLookup.EntityConfigId;
-        var component = CreateComponent<Lockstep.ECS.Input.EntityConfigIdComponent>(index);
+        var component = (Lockstep.ECS.Input.EntityConfigIdComponent)CreateComponent(index, typeof(Lockstep.ECS.Input.EntityConfigIdComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

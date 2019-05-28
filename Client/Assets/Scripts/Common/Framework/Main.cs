@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using DesperateDevs.Utils;
 using Lockstep.Core;
 using UnityEngine;
 using Lockstep.Logging;
@@ -76,15 +75,14 @@ namespace Lockstep.Game {
 
 
         public void Start(){
-            DoAwake();
             this.AssignReference(contexts, this, this);
             foreach (var mgr in _allMgrs) {
                 mgr.AssignReference(contexts, this, this);
             }
-
             //bind events
             RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
                 (eType, handler) => { EventHelper.AddListener(eType, handler); });
+            DoAwake();
             foreach (var mgr in _allMgrs) {
                 mgr.DoAwake(this);
             }

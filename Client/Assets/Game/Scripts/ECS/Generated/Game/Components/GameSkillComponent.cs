@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, int newBulletId, bool newIsNeedFire) {
         var index = GameComponentsLookup.Skill;
-        var component = CreateComponent<Lockstep.ECS.Game.SkillComponent>(index);
+        var component = (Lockstep.ECS.Game.SkillComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.SkillComponent));
         component.cd = newCd;
         component.cdTimer = newCdTimer;
         component.bulletId = newBulletId;
@@ -23,7 +23,7 @@ public partial class GameEntity {
 
     public void ReplaceSkill(Lockstep.Math.LFloat newCd, Lockstep.Math.LFloat newCdTimer, int newBulletId, bool newIsNeedFire) {
         var index = GameComponentsLookup.Skill;
-        var component = CreateComponent<Lockstep.ECS.Game.SkillComponent>(index);
+        var component = (Lockstep.ECS.Game.SkillComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.SkillComponent));
         component.cd = newCd;
         component.cdTimer = newCdTimer;
         component.bulletId = newBulletId;

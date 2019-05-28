@@ -8,7 +8,10 @@
 //------------------------------------------------------------------------------
 public sealed class DirEventSystem : Entitas.ReactiveSystem<GameEntity> {
 
+    readonly System.Collections.Generic.List<IDirListener> _listenerBuffer;
+
     public DirEventSystem(Contexts contexts) : base(contexts.game) {
+        _listenerBuffer = new System.Collections.Generic.List<IDirListener>();
     }
 
     protected override Entitas.ICollector<GameEntity> GetTrigger(Entitas.IContext<GameEntity> context) {
@@ -24,7 +27,9 @@ public sealed class DirEventSystem : Entitas.ReactiveSystem<GameEntity> {
     protected override void Execute(System.Collections.Generic.List<GameEntity> entities) {
         foreach (var e in entities) {
             var component = e.dir;
-            foreach (var listener in e.dirListener.value) {
+            _listenerBuffer.Clear();
+            _listenerBuffer.AddRange(e.dirListener.value);
+            foreach (var listener in _listenerBuffer) {
                 listener.OnDir(e, component.value);
             }
         }

@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddMoveRequest(Lockstep.Game.EDir newValue) {
         var index = GameComponentsLookup.MoveRequest;
-        var component = CreateComponent<Lockstep.ECS.Game.MoveRequestComponent>(index);
+        var component = (Lockstep.ECS.Game.MoveRequestComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.MoveRequestComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceMoveRequest(Lockstep.Game.EDir newValue) {
         var index = GameComponentsLookup.MoveRequest;
-        var component = CreateComponent<Lockstep.ECS.Game.MoveRequestComponent>(index);
+        var component = (Lockstep.ECS.Game.MoveRequestComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.MoveRequestComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

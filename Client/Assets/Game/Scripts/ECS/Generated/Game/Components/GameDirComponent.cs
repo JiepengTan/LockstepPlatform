@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddDir(Lockstep.Game.EDir newValue) {
         var index = GameComponentsLookup.Dir;
-        var component = CreateComponent<Lockstep.ECS.Game.DirComponent>(index);
+        var component = (Lockstep.ECS.Game.DirComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DirComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceDir(Lockstep.Game.EDir newValue) {
         var index = GameComponentsLookup.Dir;
-        var component = CreateComponent<Lockstep.ECS.Game.DirComponent>(index);
+        var component = (Lockstep.ECS.Game.DirComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.DirComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

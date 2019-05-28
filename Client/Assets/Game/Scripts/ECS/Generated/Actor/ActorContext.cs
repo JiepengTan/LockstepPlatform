@@ -20,11 +20,11 @@ public sealed partial class ActorContext : Entitas.Context<ActorEntity> {
             (entity) =>
 
 #if (ENTITAS_FAST_AND_UNSAFE)
-                new Entitas.UnsafeAERC()
+                new Entitas.UnsafeAERC(),
 #else
-                new Entitas.SafeAERC(entity)
+                new Entitas.SafeAERC(entity),
 #endif
-
+            () => new ActorEntity()
         ) {
     }
 }

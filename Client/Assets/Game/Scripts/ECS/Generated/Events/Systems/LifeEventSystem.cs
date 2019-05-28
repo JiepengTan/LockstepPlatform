@@ -8,7 +8,10 @@
 //------------------------------------------------------------------------------
 public sealed class LifeEventSystem : Entitas.ReactiveSystem<ActorEntity> {
 
+    readonly System.Collections.Generic.List<ILifeListener> _listenerBuffer;
+
     public LifeEventSystem(Contexts contexts) : base(contexts.actor) {
+        _listenerBuffer = new System.Collections.Generic.List<ILifeListener>();
     }
 
     protected override Entitas.ICollector<ActorEntity> GetTrigger(Entitas.IContext<ActorEntity> context) {
@@ -24,7 +27,9 @@ public sealed class LifeEventSystem : Entitas.ReactiveSystem<ActorEntity> {
     protected override void Execute(System.Collections.Generic.List<ActorEntity> entities) {
         foreach (var e in entities) {
             var component = e.life;
-            foreach (var listener in e.lifeListener.value) {
+            _listenerBuffer.Clear();
+            _listenerBuffer.AddRange(e.lifeListener.value);
+            foreach (var listener in _listenerBuffer) {
                 listener.OnLife(e, component.value);
             }
         }

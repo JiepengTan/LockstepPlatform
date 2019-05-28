@@ -13,14 +13,14 @@ public partial class ActorEntity {
 
     public void AddScore(int newValue) {
         var index = ActorComponentsLookup.Score;
-        var component = CreateComponent<Lockstep.ECS.Game.ScoreComponent>(index);
+        var component = (Lockstep.ECS.Game.ScoreComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ScoreComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceScore(int newValue) {
         var index = ActorComponentsLookup.Score;
-        var component = CreateComponent<Lockstep.ECS.Game.ScoreComponent>(index);
+        var component = (Lockstep.ECS.Game.ScoreComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ScoreComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
         var index = GameComponentsLookup.AI;
-        var component = CreateComponent<Lockstep.ECS.Game.AIComponent>(index);
+        var component = (Lockstep.ECS.Game.AIComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.AIComponent));
         component.timer = newTimer;
         component.updateInterval = newUpdateInterval;
         component.fireRate = newFireRate;
@@ -22,7 +22,7 @@ public partial class GameEntity {
 
     public void ReplaceAI(Lockstep.Math.LFloat newTimer, Lockstep.Math.LFloat newUpdateInterval, Lockstep.Math.LFloat newFireRate) {
         var index = GameComponentsLookup.AI;
-        var component = CreateComponent<Lockstep.ECS.Game.AIComponent>(index);
+        var component = (Lockstep.ECS.Game.AIComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.AIComponent));
         component.timer = newTimer;
         component.updateInterval = newUpdateInterval;
         component.fireRate = newFireRate;

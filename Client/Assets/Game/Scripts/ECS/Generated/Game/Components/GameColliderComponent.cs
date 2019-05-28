@@ -13,7 +13,7 @@ public partial class GameEntity {
 
     public void AddCollider(Lockstep.Math.LVector2 newSize, Lockstep.Math.LFloat newRadius) {
         var index = GameComponentsLookup.Collider;
-        var component = CreateComponent<Lockstep.ECS.Game.ColliderComponent>(index);
+        var component = (Lockstep.ECS.Game.ColliderComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ColliderComponent));
         component.size = newSize;
         component.radius = newRadius;
         AddComponent(index, component);
@@ -21,7 +21,7 @@ public partial class GameEntity {
 
     public void ReplaceCollider(Lockstep.Math.LVector2 newSize, Lockstep.Math.LFloat newRadius) {
         var index = GameComponentsLookup.Collider;
-        var component = CreateComponent<Lockstep.ECS.Game.ColliderComponent>(index);
+        var component = (Lockstep.ECS.Game.ColliderComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.ColliderComponent));
         component.size = newSize;
         component.radius = newRadius;
         ReplaceComponent(index, component);

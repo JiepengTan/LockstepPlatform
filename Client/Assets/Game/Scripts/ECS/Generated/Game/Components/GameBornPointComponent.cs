@@ -13,14 +13,14 @@ public partial class GameEntity {
 
     public void AddBornPoint(Lockstep.Math.LVector2 newCoord) {
         var index = GameComponentsLookup.BornPoint;
-        var component = CreateComponent<Lockstep.ECS.Game.BornPointComponent>(index);
+        var component = (Lockstep.ECS.Game.BornPointComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.BornPointComponent));
         component.coord = newCoord;
         AddComponent(index, component);
     }
 
     public void ReplaceBornPoint(Lockstep.Math.LVector2 newCoord) {
         var index = GameComponentsLookup.BornPoint;
-        var component = CreateComponent<Lockstep.ECS.Game.BornPointComponent>(index);
+        var component = (Lockstep.ECS.Game.BornPointComponent)CreateComponent(index, typeof(Lockstep.ECS.Game.BornPointComponent));
         component.coord = newCoord;
         ReplaceComponent(index, component);
     }

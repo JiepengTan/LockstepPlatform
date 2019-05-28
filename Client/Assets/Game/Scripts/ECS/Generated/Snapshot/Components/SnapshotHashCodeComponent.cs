@@ -13,14 +13,14 @@ public partial class SnapshotEntity {
 
     public void AddHashCode(long newValue) {
         var index = SnapshotComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.ECS.Snapshot.HashCodeComponent>(index);
+        var component = (Lockstep.ECS.Snapshot.HashCodeComponent)CreateComponent(index, typeof(Lockstep.ECS.Snapshot.HashCodeComponent));
         component.value = newValue;
         AddComponent(index, component);
     }
 
     public void ReplaceHashCode(long newValue) {
         var index = SnapshotComponentsLookup.HashCode;
-        var component = CreateComponent<Lockstep.ECS.Snapshot.HashCodeComponent>(index);
+        var component = (Lockstep.ECS.Snapshot.HashCodeComponent)CreateComponent(index, typeof(Lockstep.ECS.Snapshot.HashCodeComponent));
         component.value = newValue;
         ReplaceComponent(index, component);
     }

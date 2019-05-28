@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using DesperateDevs.Utils;
 using Entitas;
+using DesperateDevs.Utils;
 using Lockstep.Logging;
 using Debug = UnityEngine.Debug;
 
