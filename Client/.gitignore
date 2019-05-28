@@ -11,6 +11,7 @@ Assets/AssetStoreTools*
 .idea/
 #不要重复提交相同的Dlls
 [Aa]ssets/Plugins/Libs/
+[Aa]ssets/Scripts/Libs/
 # Visual Studio cache directory
 .vs/
 #不提交Jenny
