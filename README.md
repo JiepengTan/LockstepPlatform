@@ -23,10 +23,15 @@
     - Record game and replay it offline
 
 ## **TODO**
-    - changed Server API to PUN API
+    - Code Generation for the IComponent to reduce GC when backup game status
+    - Behavior Tree 
+    - Collision3D
+    - MeshNavigation & A* 
     - using UDP for Lockstep frame msg
+    - A ARPG Demo
 
 ## **How to run it**
+0. goto [https://github.com/sschmid/Entitas-CSharp/releases][7] download Entitas 1.12.2 and import it into Client
 1. goto release page  [https://github.com/JiepengTan/LockstepPlatform/releases][6] down load the source code 
 2. uncompress it into "your_dir"
 
@@ -62,3 +67,4 @@
  [4]: https://github.com/JiepengTan/LockstepMath
  [5]: https://github.com/JiepengTan/LockstepCollision2D
  [6]: https://github.com/JiepengTan/LockstepPlatform/releases
+ [7]: https://github.com/sschmid/Entitas-CSharp/releases
