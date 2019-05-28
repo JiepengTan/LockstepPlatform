@@ -26,6 +26,26 @@
     - changed Server API to PUN API
     - using UDP for Lockstep frame msg
 
+## **How to run it**
+1. goto release page  [https://github.com/JiepengTan/LockstepPlatform/releases][6] down load the source code 
+2. uncompress it into "your_dir"
+
+### Mac User
+3. do command "cd your_dir"   eg:cd /Users/xxx/LockstepPlatform-0.2.0 
+4. do command "./Tools/Rebuild"
+5. do command "./Tools/CopyLibs"
+6. open unity to build the client and save it to dir: your_dir/Build/    and rename it "LSClient"
+7. do command "./Tools/RunServerAndOneClient"
+8. open unity and hit play button "|>"
+
+### Win user
+3. do command "cd your_dir"   eg:cd D:\xxx\LockstepPlatform-0.2.0 
+4. open your_dir/Server/Server.sln and rebuild and run
+5. copy all dlls in dir "your_dir/Libs/"  to dir "your_dir/Client/Assets/Plugins/Libs"
+6. open unity to build the client and save it to dir: your_dir/Build/  and rename it "LSClient.exe"
+7. run your_dir/Build/LSClient.exe
+8. open unity and hit play button "|>"
+
 
 ## **References：** 
 - Inspired by UnityLockstep:[https://github.com/proepkes/UnityLockstep][1] 
@@ -35,8 +55,10 @@
 - Deterministic Collision2D lib  : [https://github.com/JiepengTan/LockstepCollision2D][5] 
 
 
+
  [1]: https://github.com/proepkes/UnityLockstep
  [2]: https://github.com/RevenantX/LiteNetLib
  [3]: https://github.com/sschmid/Entitas-CSharp
  [4]: https://github.com/JiepengTan/LockstepMath
  [5]: https://github.com/JiepengTan/LockstepCollision2D
+ [6]: https://github.com/JiepengTan/LockstepPlatform/releases
