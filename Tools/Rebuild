@@ -1,7 +1,7 @@
 #!/bin/bash
 clear
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
-cd $dir
+cd $dir/../
 echo "1.building"
 output="$(msbuild /property:Configuration=Debug /verbosity:minimal Server/Server.sln)"
 echo "2.copy libs"
