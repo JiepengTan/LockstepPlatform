@@ -3,7 +3,7 @@
 namespace Lockstep.ECS.Input
 {
     [Input]
-    public class EntityConfigIdComponent : IComponent
+    public partial class EntityConfigIdComponent : IComponent
     {                        
         public int value;  
     }

@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 namespace Lockstep.ECS.Input
 {
     [Input]
-    public class DestroyedComponent : IComponent
+    public partial class DestroyedComponent : IComponent
     {
     }
 }

@@ -6,7 +6,7 @@ namespace Lockstep.ECS.Game
 {
     [Game]
     [System.Serializable]
-    public class OwnerComponent : IComponent {
+    public partial class OwnerComponent : IComponent {
         public uint localId;
     }
 }

@@ -3,7 +3,7 @@
 namespace Lockstep.ECS.Debug
 {
     [Debugging]
-    public sealed class HashCodeComponent : IComponent
+    public partial class HashCodeComponent : IComponent
     {
         public long value;
     }

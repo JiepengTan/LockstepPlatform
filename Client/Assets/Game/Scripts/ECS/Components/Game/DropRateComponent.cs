@@ -5,7 +5,7 @@ namespace Lockstep.ECS.Game {
   
     [Game]
     [System.Serializable]
-    public class DropRateComponent : IComponent {
+    public partial class DropRateComponent : IComponent {
         public LFloat value;
     }
 }

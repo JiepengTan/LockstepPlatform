@@ -6,7 +6,7 @@ using Lockstep.Game;
 namespace Lockstep.ECS.Game
 {
     [Actor,Event(EventTarget.Self)]
-    public class LifeComponent : IComponent {
+    public partial class LifeComponent : IComponent {
         public int value;
     }
 }

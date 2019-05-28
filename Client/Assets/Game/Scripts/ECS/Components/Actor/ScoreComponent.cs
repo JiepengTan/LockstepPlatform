@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Game
 {
 
     [Actor,Event(EventTarget.Self)]
-    public class ScoreComponent : IComponent {
+    public partial class ScoreComponent : IComponent {
         public int value;
     }
 }

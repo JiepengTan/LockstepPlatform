@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Actor
 {
 
     [Actor]
-    public class GameLocalIdComponent : IComponent {
+    public partial class GameLocalIdComponent : IComponent {
         public uint value;
     }
 }

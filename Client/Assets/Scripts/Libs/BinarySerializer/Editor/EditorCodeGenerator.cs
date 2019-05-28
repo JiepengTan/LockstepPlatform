@@ -5,78 +5,70 @@ using System.Linq;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
+
 namespace BinarySerializer {
     public partial class EditorCodeGenerator {
-        
         [MenuItem("Tools/BinarySerializer/-1.Test Generate SerializeCode")]
-        public static void TestGenerateCode() {
-            new EditorCodeGenerator().GenerateCodeNodeData(true, new Type[] { typeof(TestSerializeClassAlone) });
+        public static void TestGenerateCode(){
+            new EditorCodeGenerator().GenerateCodeNodeData(true, new Type[] {typeof(TestSerializeClassAlone)});
         }
-    }
-
-    public partial class EditorCodeGenerator {
-        static string GeneratePath { get { return Path.Combine(Application.dataPath, "Scripts/Libs/BinarySerializer"); } }
-        static string GenerateFilePath { get { return Path.Combine(GeneratePath, "BinarySerializerGeneratedCodes.cs"); } }
-
-        /// <summary>
-        /// Register any type that you can not add a [SerializeAttribute] on it
-        /// </summary>
-        void CustomRegisterTypes() {
-            //RegisterType(typeof(int));
-            //RegisterBaseType(typeof(int));
-            //RegisterTypeWithNamespace(typeof(int));
-            //RegisterBaseTypeWithNamespace(typeof(int));
-        }
-
 
         [MenuItem("Tools/BinarySerializer/0.Hide Compiler Error")]
-        public static void HideCompileError() {
-            HideGenerateCodes(false);
+        public static void HideCompileError(){
+            new EditorCodeGenerator().HideGenerateCodes(false);
         }
 
         [MenuItem("Tools/BinarySerializer/1.Generate SerializeCode")]
-        public static void GenerateCode() {
+        public static void GenerateCode(){
             new EditorCodeGenerator().GenerateCodeNodeData(true);
         }
-        static void HideGenerateCodes(bool isSave = true) {
-            var path = GenerateFilePath;
-            var lines = System.IO.File.ReadAllLines(path);
-            lines[0] = lines[0].Replace("//#define", "#define");
-            System.IO.File.WriteAllLines(path, lines);
-            if (isSave) {
-                AssetDatabase.ImportAsset(path);
-                AssetDatabase.Refresh();
-                UnityEngine.Debug.Log("Done");
+    }
+
+    public partial class EditorCodeGenerator : EditorBaseCodeGenerator {
+        protected override string GeneratePath {
+            get { return Path.Combine(Application.dataPath, "Scripts/Libs/BinarySerializer"); }
+        }
+
+        protected override string GenerateFilePath {
+            get { return Path.Combine(GeneratePath, "BinarySerializerGeneratedCodes.cs"); }
+        }
+
+        protected override ITypeHandler TypeHandler {
+            get { return new TypeHandlerBinary(this); }
+        }
+        public override string prefix {
+            get { return "\t\t"; }
+        }
+        protected override void ReflectRegisterTypes(){
+            var tAttr = typeof(ToBinaryAttribute);
+            var types = ReflectionUtility.GetAttriTypes(tAttr, true);
+            foreach (var t in types) {
+                var atrri = (ToBinaryAttribute) t.GetCustomAttributes(tAttr, true)[0];
+                if (atrri.AllChildClass && atrri.IsNeedNameSpace) {
+                    RegisterBaseTypeWithNamespace(t);
+                }
+                else if (atrri.AllChildClass) {
+                    RegisterBaseType(t);
+                }
+                else {
+                    RegisterType(t);
+                }
             }
         }
-        void GenerateCodeNodeData(bool isRefresh, params Type[] types) {
+
+        void GenerateCodeNodeData(bool isRefresh, params Type[] types){
             var ser = new CodeGenerator();
-            var ignoreTypes = new Type[] { typeof(UnityEngine.Transform), typeof(UnityEngine.GameObject) };
+            var ignoreTypes = new Type[] {typeof(UnityEngine.Transform), typeof(UnityEngine.GameObject)};
             ser.AddIgnoredTypes(ignoreTypes);
             var extensionStr = GenTypeCode(ser);
             var registerStr = GenRegisterCode(ser);
             var finalStr = GenFinalCodes(extensionStr, registerStr, isRefresh);
             //save to file
-            if (!Directory.Exists(GeneratePath)) {
-                Directory.CreateDirectory(GeneratePath);
-            }
-            System.IO.File.WriteAllText(GenerateFilePath, finalStr);
-            if (isRefresh) {
-                //EditorUtility.OpenWithDefaultApp(GenerateFilePath);
-                AssetDatabase.Refresh();
-                UnityEngine.Debug.Log("Done");
-            }
+            SaveFile(isRefresh, finalStr);
         }
 
-        string GenTypeCode(CodeGenerator gen, params Type[] types) {
-            List<Type> allTypes = new List<Type>();
-            allTypes.AddRange(types);
-            var RegisterTypes = GetNeedSerilizeTypes();
-            allTypes.AddRange(RegisterTypes);
-            return gen.GenTypeCode(new TypeHandlerBinary(), allTypes.ToArray());
-        }
 
-        private string GenRegisterCode(CodeGenerator gen) {
+        private string GenRegisterCode(CodeGenerator gen){
             var allGentedTypes = gen.AllGeneratedTypes;
             var prefix = "        ";
             var RegisterType = "{0}RegisterReaderWriter(Read{1}, Write{1});";
@@ -86,18 +78,19 @@ namespace BinarySerializer {
                 var clsFuncName = GetFuncName(t);
                 sb.AppendLine(string.Format(RegisterType, prefix, clsFuncName));
             }
+
             return sb.ToString();
         }
 
-        string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh) {
+        string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh){
             string fileContent =
-    @"//#define UN_USE_GENERATE_CODE 
+                @"//#define DONT_USE_GENERATE_CODE 
 //Auto Gen by code please do not modify it by hand
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 namespace BinarySerializer{
-#if UN_USE_GENERATE_CODE
+#if DONT_USE_GENERATE_CODE
 public static partial class BinarySerializer
 {
     public static void RegisterAutoGeneratedTypes(){}
@@ -112,82 +105,16 @@ public static partial class BinarySerializer
 }
 #endif
 
-#if !UN_USE_GENERATE_CODE
+#if !DONT_USE_GENERATE_CODE
 //#TypesExtension
 #endif
 }
 ";
             return fileContent
-                 .Replace("//#RegisterOtherTypes", RegisterStr)
-                 .Replace("//#TypesExtension", extensionStr)
-                 ;
-        }
-    }
-
-    public partial class EditorCodeGenerator {
-        HashSet<Type> togenCodeTypes = new HashSet<Type>();
-        static HashSet<Type> needNameSpaceTypes = new HashSet<Type>();
-
-        Type[] GetNeedSerilizeTypes() {
-            needNameSpaceTypes.Clear();
-            togenCodeTypes.Clear();
-            CustomRegisterTypes();
-            ReflectRegisterTypes();
-            var list = togenCodeTypes.ToList();
-            list.Sort((a, b) => {
-                return a.Name.CompareTo(b.Name);
-            });
-            return list.ToArray();
+                    .Replace("//#RegisterOtherTypes", RegisterStr)
+                    .Replace("//#TypesExtension", extensionStr)
+                ;
         }
 
-
-        void ReflectRegisterTypes() {
-            var tAttr = typeof(ToBinaryAttribute);
-            var types = ReflectionUtility.GetAttriTypes(tAttr, true);
-            foreach (var t in types) {
-                var atrri = (ToBinaryAttribute)t.GetCustomAttributes(tAttr, true)[0];
-                if (atrri.AllChildClass && atrri.IsNeedNameSpace) {
-                    RegisterBaseTypeWithNamespace(t);
-                } else if (atrri.AllChildClass) {
-                    RegisterBaseType(t);
-                } else {
-                    RegisterType(t);
-                }
-            }
-        }
-
-        void RegisterType(Type type) { togenCodeTypes.Add(type); }
-        void RegisterBaseType(Type type) {
-            var types = ReflectionUtility.GetSubTypes(type);
-            foreach (var t in types) {
-                RegisterType(t);
-            }
-        }
-
-        void RegisterTypeWithNamespace(Type type) { needNameSpaceTypes.Add(type); }
-        void RegisterBaseTypeWithNamespace(Type type) {
-            var types = ReflectionUtility.GetSubTypes(type);
-            foreach (var t in types) {
-                RegisterTypeWithNamespace(t);
-            }
-        }
-
-        static bool IsNeedNameSpace(Type t) { return needNameSpaceTypes.Contains(t); }
-        public static string GetTypeName(Type type) {
-            var str = type.ToString();
-            if (IsNeedNameSpace(type)) {
-                return str.Replace("+", ".");
-            } else {
-                return str.Substring(str.LastIndexOf(".") + 1).Replace("+", ".");
-            }
-        }
-        public static string GetFuncName(Type type) {
-            var str = type.ToString();
-            if (IsNeedNameSpace(type)) {
-                return str.Replace(".", "").Replace("+", "");
-            } else {
-                return str.Substring(str.LastIndexOf(".") + 1).Replace("+", "");
-            }
-        }
     }
 }

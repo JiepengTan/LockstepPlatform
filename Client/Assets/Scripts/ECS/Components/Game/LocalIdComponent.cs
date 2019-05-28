@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Game
     /// 标志 当前Entity 是当前Tick 中存在 非Backup
     /// </summary>
     [Game] 
-    public sealed class LocalIdComponent : IComponent
+    public partial class LocalIdComponent : IComponent
     {    
         [PrimaryEntityIndex]
         public uint value;

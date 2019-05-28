@@ -3,7 +3,7 @@
 namespace Lockstep.ECS.Debug
 {                 
     [Debugging]
-    public class TickComponent : IComponent
+    public partial class TickComponent : IComponent
     {
         public uint value;
     }

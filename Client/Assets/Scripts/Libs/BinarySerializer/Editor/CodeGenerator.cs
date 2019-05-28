@@ -13,13 +13,18 @@ namespace BinarySerializer {
         readonly HashSet<Type> generatedTypes = new HashSet<Type>();
         public List<Type> AllGeneratedTypes = new List<Type>();
 
+        private ITypeHandler typeHandler;
         public string GenTypeCode(ITypeHandler typeHandler, params Type[] types){
+            
+            this.typeHandler = typeHandler;
             foreach (var t in types) {
                 AddType(t);
             }
 
+
             var type = GetNextType();
             StringBuilder sb = new StringBuilder();
+            
             while (type != null) {
                 var typeStr = GenTypeCode(type, typeHandler);
                 sb.AppendLine(typeStr);
@@ -52,6 +57,7 @@ namespace BinarySerializer {
                 Debug.Log("Try to serialize ignore type" + type);
                 return;
             }
+            if(!typeHandler.CanAddType(type)) return;
 
             if (!generatedTypes.Add(type)) {
                 return;

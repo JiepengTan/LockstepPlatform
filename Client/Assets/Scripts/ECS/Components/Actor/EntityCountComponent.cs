@@ -3,7 +3,7 @@
 namespace Lockstep.ECS.Actor
 {
     [Actor]
-    public class EntityCountComponent : IComponent
+    public partial class EntityCountComponent : IComponent
     {
         public uint value;
     }

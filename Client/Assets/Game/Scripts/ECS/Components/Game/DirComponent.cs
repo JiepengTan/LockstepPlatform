@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Game
 {
     [Game, Event(EventTarget.Self)]
     [System.Serializable]
-    public class DirComponent : IComponent
+    public partial class DirComponent : IComponent
     {
         public EDir value;
     }

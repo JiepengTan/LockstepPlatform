@@ -6,5 +6,5 @@ namespace Lockstep.ECS.Game
 {
 
     [Game]
-    public class TagTankComponent : IComponent { }
+    public partial class TagTankComponent : IComponent { }
 }

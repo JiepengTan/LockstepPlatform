@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Game
 
     [Game]
     [System.Serializable]
-    public class SkillComponent : IComponent {
+    public partial class SkillComponent : IComponent {
         public LFloat cd;
         /// <=0 表示cd 冷却
         public LFloat cdTimer;

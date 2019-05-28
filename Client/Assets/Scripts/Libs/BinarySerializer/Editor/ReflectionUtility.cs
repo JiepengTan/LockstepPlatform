@@ -14,7 +14,7 @@ public static class ReflectionUtility
         public ReflectionSearchIgnoreAttribute() { }
     }
     private static Type[] types;
-    private static Type[] GetTypes()
+    public static Type[] GetTypes()
     {
         if (types == null)
         {
@@ -44,6 +44,11 @@ public static class ReflectionUtility
                     (T.IsClass && !T.IsAbstract)
                     && T.IsSubclassOf(baseType)
                     && !T.GetCustomAttributes(typeof(ReflectionSearchIgnoreAttribute), false).Any()).ToArray();
+    }
+    
+    public static Type[] GetInterfaces(Type iType)
+    {
+        return GetTypes().Where((Type T) => iType.IsAssignableFrom(T)).ToArray();
     }
 
     /// <summary>

@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 namespace Lockstep.ECS.GameState
 {
     [GameState, Unique]
-    public class TickComponent : IComponent
+    public partial class TickComponent : IComponent
     {                         
         public int value;
     }     

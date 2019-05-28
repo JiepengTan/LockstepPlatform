@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 namespace Lockstep.ECS.Snapshot
 {                 
     [Snapshot]
-    public class TickComponent : IComponent
+    public partial class TickComponent : IComponent
     {
         [PrimaryEntityIndex]
         public int value;

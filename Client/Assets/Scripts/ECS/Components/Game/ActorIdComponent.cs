@@ -3,7 +3,7 @@
 namespace Lockstep.ECS.Game
 {
     [Game]
-    public class ActorIdComponent : IComponent
+    public partial class ActorIdComponent : IComponent
     {                        
         public byte value;
     }

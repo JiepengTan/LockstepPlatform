@@ -6,5 +6,5 @@ namespace Lockstep.ECS.Game
 {
 
     [Game]
-    public class TagEnemyComponent : IComponent { }
+    public partial class TagEnemyComponent : IComponent { }
 }

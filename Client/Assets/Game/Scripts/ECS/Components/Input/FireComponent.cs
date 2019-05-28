@@ -4,7 +4,7 @@ using Entitas;
 namespace Lockstep.ECS.Input
 {
     [Input]
-    public class FireComponent : IComponent
+    public partial class FireComponent : IComponent
     {                           
     }
 }

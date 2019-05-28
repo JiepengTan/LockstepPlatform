@@ -12,7 +12,7 @@ namespace Lockstep.ECS.Game
 
     [Game]
     [System.Serializable]
-    public class ItemTypeComponent : IComponent {
+    public partial class ItemTypeComponent : IComponent {
         public EItemType type;
         public byte killerActorId;
     }

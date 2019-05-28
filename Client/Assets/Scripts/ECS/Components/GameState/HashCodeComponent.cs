@@ -7,7 +7,7 @@ namespace Lockstep.ECS.GameState
     /// 执行前的hash
     /// </summary>
     [GameState, Unique]
-    public sealed class BeforeExecuteHashCodeComponent : IComponent
+    public partial  class BeforeExecuteHashCodeComponent : IComponent
     {
         public long value;
     }
@@ -15,7 +15,7 @@ namespace Lockstep.ECS.GameState
     /// 执行后的hash
     /// </summary>
     [GameState, Unique]
-    public sealed class HashCodeComponent : IComponent
+    public partial class HashCodeComponent : IComponent
     {
         public long value;
     }

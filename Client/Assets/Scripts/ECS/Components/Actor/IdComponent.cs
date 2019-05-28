@@ -7,7 +7,7 @@ namespace Lockstep.ECS.Actor
     /// 标志 当前Entity 是当前Tick 中存在  非Backup
     /// </summary>
     [Actor] 
-    public sealed class IdComponent : IComponent
+    public partial class IdComponent : IComponent
     {
         [PrimaryEntityIndex]
         public byte value;

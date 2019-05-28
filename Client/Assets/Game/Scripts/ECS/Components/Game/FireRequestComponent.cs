@@ -1,7 +1,7 @@
 using Entitas;
 
 namespace Lockstep.ECS.Game {
-    public class FireRequestComponent:IComponent {
+    public partial class FireRequestComponent:IComponent {
         
     }
 }

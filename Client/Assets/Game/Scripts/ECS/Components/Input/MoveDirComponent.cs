@@ -5,7 +5,7 @@ using Lockstep.Game;
 namespace Lockstep.ECS.Input
 {
     [Input]
-    public class MoveDirComponent : IComponent
+    public partial class MoveDirComponent : IComponent
     {                               
         public EDir value;
     }

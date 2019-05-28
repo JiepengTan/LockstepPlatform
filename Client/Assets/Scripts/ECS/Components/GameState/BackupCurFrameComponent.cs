@@ -4,7 +4,7 @@ using Entitas.CodeGeneration.Attributes;
 namespace Lockstep.ECS.GameState
 {
     [GameState, Unique]
-    public class BackupCurFrameComponent : IComponent
+    public partial class BackupCurFrameComponent : IComponent
     {
     }
 }
