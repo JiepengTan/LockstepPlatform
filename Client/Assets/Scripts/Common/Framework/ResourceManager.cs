@@ -73,7 +73,7 @@ namespace Lockstep.Game {
             var viewGo = _linkedEntities[entityId];
             var eventListeners = viewGo.GetComponents<IEventListener>();
             foreach (var listener in eventListeners) {
-                listener.UnregisterListeners();
+                listener.UnRegisterListeners();
             }
 
             _linkedEntities[entityId].Unlink();

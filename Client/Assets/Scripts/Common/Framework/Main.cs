@@ -9,7 +9,7 @@ using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
     public interface IEventRegisterService : IService {
-        void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+        void Registervent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
             Action<TEnum, TDelegate> callBack) where TDelegate : Delegate
             where TEnum : struct;
     }
@@ -80,7 +80,7 @@ namespace Lockstep.Game {
                 mgr.AssignReference(contexts, this, this);
             }
             //bind events
-            RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
+            Registervent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
                 (eType, handler) => { EventHelper.AddListener(eType, handler); });
             DoAwake();
             foreach (var mgr in _allMgrs) {
@@ -174,7 +174,7 @@ namespace Lockstep.Game {
             var name = manager.GetType().Name;
             if (_name2Mgr.ContainsKey(name)) {
                 Debug.LogError(
-                    $"Duplicate register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.name ?? ""}");
+                    $"Duplicate Register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.name ?? ""}");
                 return;
             }
 
@@ -235,7 +235,7 @@ namespace Lockstep.Game {
             return Delegate.CreateDelegate(typeof(T), instance, method) as T;
         }
 
-        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+        public void Registervent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
             Action<TEnum, TDelegate> callBack)
             where TDelegate : Delegate
             where TEnum : struct{

@@ -9,7 +9,7 @@ namespace Lockstep.Game {
             _entity.AddDirListener(this);
         }
 
-        public void UnregisterListeners(){
+        public void UnRegisterListeners(){
             _entity.RemoveDirListener(this);
         }
 

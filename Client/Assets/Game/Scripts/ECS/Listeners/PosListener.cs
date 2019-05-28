@@ -10,7 +10,7 @@ namespace Lockstep.Game {
             _entity.AddPosListener(this);
         }
 
-        public void UnregisterListeners(){
+        public void UnRegisterListeners(){
             _entity.RemovePosListener(this);
         }
 
