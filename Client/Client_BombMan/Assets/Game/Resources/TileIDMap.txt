@@ -1,0 +1,5 @@
+1=Tiles/TileBrick
+2=Tiles/TileIron
+3=Tiles/TileCamp
+4=Tiles/TileBornPosEnemy
+5=Tiles/TileBornPosHero

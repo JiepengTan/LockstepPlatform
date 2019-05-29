@@ -1,0 +1,7 @@
+#!/bin/bash
+dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
+cd $dir
+pwd
+mkdir Assets/Plugins/Libs
+rm -rf Assets/Plugins/Libs/*
+cp -rf ../../Libs/* Assets/Plugins/Libs
