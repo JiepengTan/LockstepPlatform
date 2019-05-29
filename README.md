@@ -17,13 +17,15 @@
     - ECS rollback
     - IService rollback
     - IService autoregister
+    - Add a demo "Tank"
     - NetworkMsg auto parse and register
     - Event auto register
     - Pursue frame after reconnected
     - Record game and replay it offline
+    - Code Generation for the IComponent to reduce GC when backup game status
+    - Add a Demo "BombMan"
 
 ## **TODO**
-    - Code Generation for the IComponent to reduce GC when backup game status
     - Behavior Tree 
     - Collision3D
     - MeshNavigation & A* 
@@ -36,19 +38,19 @@
 2. uncompress it into "your_dir"
 
 ### Mac User
-3. do command "cd your_dir"   eg:cd /Users/xxx/LockstepPlatform-0.2.0 
+3. do command "cd your_dir"   eg:your_dir = /Users/xxx/LockstepPlatform-0.2.0 
 4. do command "./Tools/Rebuild"
-5. do command "./Tools/CopyLibs"
-6. open unity to build the client and save it to dir: your_dir/Build/    and rename it "LSClient"
-7. do command "./Tools/RunServerAndOneClient"
+5. open unity to build the a client and save it to dir: client_dir/Build/    and rename it "LPClient"  eg:client_dir = /Users/xxx/LockstepPlatform-0.2.0/Client/Client_Tank
+6. do command "client_dir/CopyLibs"
+7. do command "client_dir/RunServerAndOneClient"
 8. open unity and hit play button "|>"
 
 ### Win user
-3. do command "cd your_dir"   eg:cd D:\xxx\LockstepPlatform-0.2.0 
+3. do command "cd your_dir"   eg:your_dir = D:\xxx\LockstepPlatform-0.2.0 
 4. open your_dir/Server/Server.sln and rebuild and run
-5. copy all dlls in dir "your_dir/Libs/"  to dir "your_dir/Client/Assets/Plugins/Libs"
-6. open unity to build the client and save it to dir: your_dir/Build/  and rename it "LSClient.exe"
-7. run your_dir/Build/LSClient.exe
+5. open unity to build the a client and save it to dir: client_dir/Build/    and rename it "LPClient"  eg:client_dir = D:\xxx\LockstepPlatform-0.2.0\Client\Client_Tank
+6. copy all dlls in dir "your_dir/Libs/"  to dir "client_dir/Assets/Plugins/Libs"
+7. run client_dir/Build/LPClient.exe
 8. open unity and hit play button "|>"
 
 
