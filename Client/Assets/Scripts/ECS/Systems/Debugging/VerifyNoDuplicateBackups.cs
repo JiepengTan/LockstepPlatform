@@ -2,7 +2,7 @@
 using Entitas;
 using Lockstep.Logging;
 
-namespace Lockstep.Core.Logic.Systems.Debugging
+namespace Lockstep.ECS.Systems.Debugging
 {
     public class VerifyNoDuplicateBackups : IExecuteSystem
     {                                                       

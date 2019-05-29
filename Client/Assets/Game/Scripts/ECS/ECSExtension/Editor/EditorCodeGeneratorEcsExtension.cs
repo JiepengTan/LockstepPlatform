@@ -29,11 +29,6 @@ namespace BinarySerializer {
         protected override string GenerateFilePath {
             get { return Path.Combine(GeneratePath, "ECSExtention.cs"); }
         }
-
-        protected override ITypeHandler TypeHandler {
-            get { return new TypeHandlerECS(this); }
-        }
-
         public override string prefix {
             get { return "\t\t\t"; }
         }
@@ -55,7 +50,7 @@ namespace BinarySerializer {
 
         public void GenerateCodeNodeData(bool isRefresh, params Type[] types){
             var ser = new CodeGenerator();
-            var extensionStr = GenTypeCode(ser);
+            var extensionStr = GenTypeCode(ser,new TypeHandlerECS(this));
             var registerStr = GenRegisterCode(ser);
             var finalStr = GenFinalCodes(extensionStr, registerStr, isRefresh);
             SaveFile(isRefresh, finalStr);

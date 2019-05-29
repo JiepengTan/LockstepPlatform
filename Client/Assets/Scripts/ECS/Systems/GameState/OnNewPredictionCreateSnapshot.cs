@@ -5,7 +5,7 @@ using DesperateDevs.Utils;
 using Lockstep.Logging;
 using Debug = UnityEngine.Debug;
 
-namespace Lockstep.Core.Logic.Systems.GameState
+namespace Lockstep.ECS.Systems.GameState
 {
     public class OnNewPredictionCreateSnapshot : ReactiveSystem<GameStateEntity>
     {
@@ -48,36 +48,30 @@ namespace Lockstep.Core.Logic.Systems.GameState
             //Register the tick for which a snapshot is created
             _snapshotContext.CreateEntity().AddTick(currentTick);     
 
-            foreach (var e in _activeEntities)
+            foreach (var entity in _activeEntities)
             {
                 var shadowEntity = _gameContext.CreateEntity();
 
                 //LocalId is primary index => don't copy; everything else has to be copied in case a destroyed entity has to be recovered
-                foreach (var index in e.GetComponentIndices().Except(new[] { GameComponentsLookup.LocalId }))
+                foreach (var index in entity.GetComponentIndices().Except(new[] { GameComponentsLookup.LocalId }))
                 {
-                    var component1 = e.GetComponent(index);
-                    var component2 = shadowEntity.CreateComponent(index, component1.GetType());
-                    component1.CopyPublicMemberValues(component2);
-                    shadowEntity.AddComponent(index, component2);
+                    entity.CopyTo(shadowEntity,index);
                 }
 
-                shadowEntity.AddBackup(e.localId.value, currentTick);
+                shadowEntity.AddBackup(entity.localId.value, currentTick);
             }
 
-            foreach (var actor in _activeActors)
+            foreach (var entity in _activeActors)
             {
-                var shadowActor = _actorContext.CreateEntity();
+                var shadowEntity = _actorContext.CreateEntity();
 
                 //Id is primary index => don't copy
-                foreach (var index in actor.GetComponentIndices().Except(new[] { ActorComponentsLookup.Id }))
+                foreach (var index in entity.GetComponentIndices().Except(new[] { ActorComponentsLookup.Id }))
                 {
-                    var actorComponent = actor.GetComponent(index);
-                    var backupComponent = shadowActor.CreateComponent(index, actorComponent.GetType());
-                    actorComponent.CopyPublicMemberValues(backupComponent);
-                    shadowActor.AddComponent(index, backupComponent);
+                    entity.CopyTo(shadowEntity,index);
                 }
 
-                shadowActor.AddBackup(actor.id.value, currentTick);
+                shadowEntity.AddBackup(entity.id.value, currentTick);
             }
 
             Log.Trace(this, "New snapshot for " + currentTick + "(" + _activeActors.count + " actors, " + _activeEntities.count + " entities)");

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Lockstep.ECS {
     public interface ICloneable {
@@ -13,8 +14,7 @@ namespace Lockstep.ECS {
             return null;
         }
     }
-    
-    
+
     public class CopyToUnExceptTypeException : Exception {
         public CopyToUnExceptTypeException(string message, string hint = null)
             : base(hint != null ? message + "\n" + hint : message){ }

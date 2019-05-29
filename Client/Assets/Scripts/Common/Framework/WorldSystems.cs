@@ -1,11 +1,11 @@
 ﻿using Entitas;
-using Lockstep.Core.Logic.Systems.Actor;
-using Lockstep.Core.Logic.Systems.Debugging;
-using Lockstep.Core.Logic.Systems.GameState;
+using Lockstep.ECS.Systems.Actor;
+using Lockstep.ECS.Systems.Debugging;
+using Lockstep.ECS.Systems.GameState;
 using Lockstep.Game;
 using Lockstep.Game.Systems;
 
-namespace Lockstep.Core.Logic.Systems {
+namespace Lockstep.ECS.Systems {
     public sealed class WorldSystems : Feature {
         public WorldSystems(Contexts contexts,IServiceContainer services, Feature logicFeature){
             Add(new InitializeEntityCount(contexts));

@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.Logic.Systems.Actor
+namespace Lockstep.ECS.Systems.Actor
 {
     public class InitializeEntityCount : IInitializeSystem
     {

@@ -1,4 +1,4 @@
-#define DONT_USE_GENERATE_CODE 
+//#define DONT_USE_GENERATE_CODE 
 //Auto Gen by code please do not modify it by hand
 using System;
 using System.Collections.Generic;
@@ -25,8 +25,8 @@ namespace Lockstep.ECS.Input{public partial class FireComponent : BaseComponent{
 namespace Lockstep.ECS.Game{public partial class FireRequestComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class GameLocalIdComponent : BaseComponent{}};
 namespace Lockstep.ECS.GameState{public partial class HashCodeComponent : BaseComponent{}};
-namespace Lockstep.ECS.Debug{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Snapshot{public partial class HashCodeComponent : BaseComponent{}};
+namespace Lockstep.ECS.Debug{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class IdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ItemTypeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class LifeComponent : BaseComponent{}};
@@ -42,9 +42,9 @@ namespace Lockstep.ECS.Game{public partial class TagBulletComponent : BaseCompon
 namespace Lockstep.ECS.Game{public partial class TagCampComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagEnemyComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagTankComponent : BaseComponent{}};
-namespace Lockstep.ECS.Debug{public partial class TickComponent : BaseComponent{}};
-namespace Lockstep.ECS.GameState{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Snapshot{public partial class TickComponent : BaseComponent{}};
+namespace Lockstep.ECS.GameState{public partial class TickComponent : BaseComponent{}};
+namespace Lockstep.ECS.Debug{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Input{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class UnitComponent : BaseComponent{}};
 
@@ -810,7 +810,7 @@ namespace Lockstep.ECS.Actor{
 }
 
 
-namespace Lockstep.ECS.Debug{
+namespace Lockstep.ECS.Snapshot{
     public partial class HashCodeComponent  {
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
@@ -845,7 +845,7 @@ namespace Lockstep.ECS.Debug{
 }
 
 
-namespace Lockstep.ECS.Snapshot{
+namespace Lockstep.ECS.Debug{
     public partial class HashCodeComponent  {
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
@@ -1458,7 +1458,7 @@ namespace Lockstep.ECS.Game{
 }
 
 
-namespace Lockstep.ECS.Snapshot{
+namespace Lockstep.ECS.Debug{
     public partial class TickComponent  {
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;
@@ -1528,7 +1528,7 @@ namespace Lockstep.ECS.Input{
 }
 
 
-namespace Lockstep.ECS.Debug{
+namespace Lockstep.ECS.Snapshot{
     public partial class TickComponent  {
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;

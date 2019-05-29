@@ -1,7 +1,7 @@
 ﻿using Entitas;
 using Lockstep.Game;
 
-namespace Lockstep.Core.Logic.Systems.GameState {
+namespace Lockstep.ECS.Systems.GameState {
     public class IncrementTick : BaseSystem, IInitializeSystem, IExecuteSystem {
         public IncrementTick(Contexts contexts, IServiceContainer serviceContainer) :
             base(contexts, serviceContainer){ }

@@ -33,9 +33,6 @@ namespace BinarySerializer {
             get { return Path.Combine(GeneratePath, "BinarySerializerGeneratedCodes.cs"); }
         }
 
-        protected override ITypeHandler TypeHandler {
-            get { return new TypeHandlerBinary(this); }
-        }
         public override string prefix {
             get { return "\t\t"; }
         }
@@ -60,7 +57,7 @@ namespace BinarySerializer {
             var ser = new CodeGenerator();
             var ignoreTypes = new Type[] {typeof(UnityEngine.Transform), typeof(UnityEngine.GameObject)};
             ser.AddIgnoredTypes(ignoreTypes);
-            var extensionStr = GenTypeCode(ser);
+            var extensionStr = GenTypeCode(ser,new TypeHandlerBinary(this));
             var registerStr = GenRegisterCode(ser);
             var finalStr = GenFinalCodes(extensionStr, registerStr, isRefresh);
             //save to file

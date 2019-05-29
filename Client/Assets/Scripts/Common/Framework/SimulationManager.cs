@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Lockstep.Core;
-using Lockstep.Core.Logic;
+using Lockstep.ECS;
 using Lockstep.Logging;
 using Lockstep.Math;
 using Lockstep.Serialization;
@@ -370,16 +370,16 @@ namespace Lockstep.Game {
                 allHashCodes.Add(0);
             }
 
-            var hash = _world.Contexts.gameState.hashCode.value;
-            allHashCodes[iTick] = _world.Contexts.gameState.hashCode.value;
+            var hash = _gameStateContext.hashCode.value;
+            allHashCodes[iTick] = _gameStateContext.hashCode.value;
             SetHash(nextTick - 1, hash);
         }
 
 
         public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
-            serializer.Put(_context.gameState.hashCode.value);
-            serializer.Put(_context.gameState.tick.value);
+            serializer.Put(_gameStateContext.hashCode.value);
+            serializer.Put(_gameStateContext.tick.value);
             outputStream.Write(serializer.Data, 0, serializer.Length);
 
             GameLog.WriteTo(outputStream);

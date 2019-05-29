@@ -2,24 +2,32 @@
 using System.Linq;
 using Entitas;
 using Lockstep.Logging;
-using Lockstep.Core.Logic.Systems;
+using Lockstep.ECS.Systems;
 using Lockstep.Game;
-using Debug = UnityEngine.Debug;
 
-namespace Lockstep.Core.Logic {
+namespace Lockstep.ECS {
     public class World {
-        public Contexts Contexts { get; }
 
-        public int Tick => Contexts.gameState.tick.value;
+        public int Tick => _gameStateContext.tick.value;
 
         private readonly WorldSystems _systems;
         private ITimeMachineService _timeMachineService;
 
+        private InputContext _inputContext;
+        private ActorContext _actorContext;
+        private GameContext _gameContext;
+        private GameStateContext _gameStateContext;
+        private SnapshotContext _snapshotContext;
+        
         public World(Contexts contexts, IServiceContainer services, IEnumerable<byte> actorIds,
             Feature logicFeature){
-            Contexts = contexts;
+            _actorContext = contexts.actor;
+            _gameContext = contexts.game;
+            _gameStateContext = contexts.gameState;
+            _snapshotContext= contexts.snapshot;
+            
             _timeMachineService = services.GetService<ITimeMachineService>();
-            _systems = new WorldSystems(Contexts,services, logicFeature);
+            _systems = new WorldSystems(contexts,services, logicFeature);
         }
 
         public void StartSimulate(){
@@ -28,7 +36,7 @@ namespace Lockstep.Core.Logic {
 
         public void Predict(bool isNeedGenSnap = true){
             SetNeedGenSnapShot(isNeedGenSnap);
-            Log.Trace(this, "Predict " + Contexts.gameState.tick.value);
+            Log.Trace(this, "Predict " + _gameStateContext.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
@@ -37,21 +45,21 @@ namespace Lockstep.Core.Logic {
         private void SetNeedGenSnapShot(bool isNeedGenSnap){
             if (isNeedGenSnap) {
                 if (Tick % FrameBuffer.SnapshotFrameInterval == 0) {
-                    Contexts.gameState.isBackupCurFrame = false; //确保一定会触发AddEvent
-                    Contexts.gameState.isBackupCurFrame = true;
+                    _gameStateContext.isBackupCurFrame = false; //确保一定会触发AddEvent
+                    _gameStateContext.isBackupCurFrame = true;
                 }
                 else {
-                    Contexts.gameState.isBackupCurFrame = false;
+                    _gameStateContext.isBackupCurFrame = false;
                 }
             }
             else {
-                Contexts.gameState.isBackupCurFrame = false;
+                _gameStateContext.isBackupCurFrame = false;
             }
         }
 
         public void Simulate(bool isNeedGenSnap = true){
             SetNeedGenSnapShot(isNeedGenSnap);
-            Log.Trace(this, "Simulate " + Contexts.gameState.tick.value);
+            Log.Trace(this, "Simulate " + _gameStateContext.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
@@ -62,7 +70,7 @@ namespace Lockstep.Core.Logic {
         public void CleanUselessSnapshot(int checkedTick){
             if (checkedTick < 2) return;
             //_timeMachineService.Clean(checkedTick-1);
-            var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+            var snapshotIndices = _snapshotContext.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= checkedTick).Select(entity => entity.tick.value).ToList();
             if (snapshotIndices.Count == 0) return;
             snapshotIndices.Sort();
@@ -76,17 +84,17 @@ namespace Lockstep.Core.Logic {
             if (i < 0) return;
             var resultTick = snapshotIndices[i];
             //将太后 和太前的snapshot 删除掉
-            foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
+            foreach (var invalidBackupEntity in _actorContext.GetEntities(ActorMatcher.Backup)
                 .Where(e => e.backup.tick < (resultTick))) {
                 invalidBackupEntity.Destroy();
             }
 
-            foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
+            foreach (var invalidBackupEntity in _gameContext.GetEntities(GameMatcher.Backup)
                 .Where(e => e.backup.tick < (resultTick))) {
                 invalidBackupEntity.Destroy();
             }
 
-            foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+            foreach (var snapshotEntity in _snapshotContext.GetEntities(SnapshotMatcher.Tick)
                 .Where(e => e.tick.value < (resultTick))) {
                 snapshotEntity.Destroy();
             }
@@ -98,7 +106,7 @@ namespace Lockstep.Core.Logic {
         /// Reverts all changes that were done during or after the given tick
         /// </summary>
         public void RollbackTo(int tick, int missFrameTick, bool isNeedClear = true){
-            var snapshotIndices = Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+            var snapshotIndices = _snapshotContext.GetEntities(SnapshotMatcher.Tick)
                 .Where(entity => entity.tick.value <= tick).Select(entity => entity.tick.value).ToList();
             if (snapshotIndices.Count <= 0) return;
             snapshotIndices.Sort();
@@ -121,8 +129,8 @@ namespace Lockstep.Core.Logic {
                 snaps += idx + " ";
             }
 
-            Debug.Log(
-                $"Rolling back {Tick}->{tick} :final from {resultTick} to {Contexts.gameState.tick.value}  " +
+            Logging.Debug.Log(
+                $"Rolling back {Tick}->{tick} :final from {resultTick} to {_gameStateContext.tick.value}  " +
                 $"missTick:{missFrameTick} total:{Tick - resultTick} ");
 
             /*
@@ -131,11 +139,11 @@ namespace Lockstep.Core.Logic {
              */
 
             var backedUpActors =
-                Contexts.actor.GetEntities(ActorMatcher.Backup).Where(e => e.backup.tick == resultTick);
+                _actorContext.GetEntities(ActorMatcher.Backup).Where(e => e.backup.tick == resultTick);
             foreach (var backedUpActor in backedUpActors) {
-                var target = Contexts.actor.GetEntityWithId(backedUpActor.backup.actorId);
+                var target = _actorContext.GetEntityWithId(backedUpActor.backup.actorId);
                 if (target == null) {
-                    target = Contexts.actor.CreateEntity();
+                    target = _actorContext.CreateEntity();
                     target.AddId(backedUpActor.backup.actorId);
                 }
 
@@ -156,8 +164,8 @@ namespace Lockstep.Core.Logic {
             /*
             * ====================== Revert game-entities ======================      
             */
-            var currentEntities = Contexts.game.GetEntities(GameMatcher.LocalId);
-            var backupEntities = Contexts.game.GetEntities(GameMatcher.Backup).Where(e => e.backup.tick == resultTick)
+            var currentEntities = _gameContext.GetEntities(GameMatcher.LocalId);
+            var backupEntities = _gameContext.GetEntities(GameMatcher.Backup).Where(e => e.backup.tick == resultTick)
                 .ToList();
             var backupEntityIds = backupEntities.Select(entity => entity.backup.localEntityId);
 
@@ -170,17 +178,17 @@ namespace Lockstep.Core.Logic {
 
             //将太后 和太前的snapshot 删除掉
             if (isNeedClear) {
-                foreach (var invalidBackupEntity in Contexts.actor.GetEntities(ActorMatcher.Backup)
+                foreach (var invalidBackupEntity in _actorContext.GetEntities(ActorMatcher.Backup)
                     .Where(e => e.backup.tick != resultTick)) {
                     invalidBackupEntity.Destroy();
                 }
 
-                foreach (var invalidBackupEntity in Contexts.game.GetEntities(GameMatcher.Backup)
+                foreach (var invalidBackupEntity in _gameContext.GetEntities(GameMatcher.Backup)
                     .Where(e => e.backup.tick != resultTick)) {
                     invalidBackupEntity.Destroy();
                 }
 
-                foreach (var snapshotEntity in Contexts.snapshot.GetEntities(SnapshotMatcher.Tick)
+                foreach (var snapshotEntity in _snapshotContext.GetEntities(SnapshotMatcher.Tick)
                     .Where(e => e.tick.value != resultTick)) {
                     snapshotEntity.Destroy();
                 }
@@ -189,9 +197,9 @@ namespace Lockstep.Core.Logic {
 
             //Copy old state to the entity                                      
             foreach (var backupEntity in backupEntities) {
-                var target = Contexts.game.GetEntityWithLocalId(backupEntity.backup.localEntityId);
+                var target = _gameContext.GetEntityWithLocalId(backupEntity.backup.localEntityId);
                 if (target == null) {
-                    target = Contexts.game.CreateEntity();
+                    target = _gameContext.CreateEntity();
                     target.AddLocalId(backupEntity.backup.localEntityId);
                 }
 
@@ -213,7 +221,7 @@ namespace Lockstep.Core.Logic {
 
             //Cleanup game-entities that are marked as destroyed
             _systems.Cleanup();
-            Contexts.gameState.ReplaceTick(resultTick);
+            _gameStateContext.ReplaceTick(resultTick);
             _timeMachineService.RollbackTo(resultTick);
             _timeMachineService.CurTick = resultTick;
         }

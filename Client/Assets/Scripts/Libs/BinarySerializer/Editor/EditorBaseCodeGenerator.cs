@@ -8,7 +8,7 @@ namespace BinarySerializer {
     public class EditorBaseCodeGenerator : ICodeHelper {
         protected HashSet<Type> togenCodeTypes = new HashSet<Type>();
         protected HashSet<Type> needNameSpaceTypes = new HashSet<Type>();
-            
+
         protected virtual string GeneratePath {
             get { return ""; }
         }
@@ -17,20 +17,17 @@ namespace BinarySerializer {
             get { return ""; }
         }
 
-        protected virtual ITypeHandler TypeHandler {
-            get { return null; }
-        }
 
         protected virtual void CustomRegisterTypes(){ }
 
         protected virtual void ReflectRegisterTypes(){ }
 
-        public string GenTypeCode(CodeGenerator gen, params Type[] types){
+        public string GenTypeCode(CodeGenerator gen, ITypeHandler typeHandler, params Type[] types){
             List<Type> allTypes = new List<Type>();
             allTypes.AddRange(types);
             var registerTypes = GetNeedSerilizeTypes();
             allTypes.AddRange(registerTypes);
-            return gen.GenTypeCode(TypeHandler, allTypes.ToArray());
+            return gen.GenTypeCode(typeHandler, allTypes.ToArray());
         }
 
         protected void HideGenerateCodes(bool isSave = true){
@@ -69,7 +66,6 @@ namespace BinarySerializer {
         }
 
 
-
         protected void RegisterType(Type type){
             togenCodeTypes.Add(type);
         }
@@ -93,19 +89,19 @@ namespace BinarySerializer {
         }
 
 
-   
-
         protected bool IsNeedNameSpace(Type t){
             return needNameSpaceTypes.Contains(t);
         }
+
         public virtual string prefix {
             get { return "\t\t"; }
         }
+
         public string GetNameSpace(Type type){
             return type.Namespace;
         }
 
-        public string GetTypeName(Type type,bool isWithNameSpaceIfNeed = true){
+        public string GetTypeName(Type type, bool isWithNameSpaceIfNeed = true){
             var str = type.ToString();
             if (IsNeedNameSpace(type)) {
                 return str.Replace("+", ".");
@@ -115,7 +111,7 @@ namespace BinarySerializer {
             }
         }
 
-        public string GetFuncName(Type type,bool isWithNameSpaceIfNeed = true){
+        public string GetFuncName(Type type, bool isWithNameSpaceIfNeed = true){
             var str = type.ToString();
             if (IsNeedNameSpace(type)) {
                 return str.Replace(".", "").Replace("+", "");

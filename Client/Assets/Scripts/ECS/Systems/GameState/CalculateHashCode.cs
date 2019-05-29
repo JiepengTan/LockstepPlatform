@@ -1,6 +1,6 @@
 ﻿using Entitas;
 
-namespace Lockstep.Core.Logic.Systems.GameState {
+namespace Lockstep.ECS.Systems.GameState {
     public class CalculateHashCode : IInitializeSystem, IExecuteSystem {
         private readonly IGroup<GameEntity> _hashableEntities;
 

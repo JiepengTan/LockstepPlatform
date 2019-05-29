@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Entitas;
-using Lockstep.Core.Logic;
+using Lockstep.ECS;
 using Lockstep.ECS.Game;
 using Lockstep.Math;
 using UnityEngine;
