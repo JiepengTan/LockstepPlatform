@@ -138,44 +138,44 @@ namespace Lockstep.Serialization
             return r;
         }
         
-        public static short GetShort(byte[] buffer,int index)
+        public static short ToInt16(byte[] buffer,int index)
         {
             return (short)ReadLittleEndian(buffer, index, sizeof(short));
         }
 
-        public static ushort GetUshort(byte[] buffer,int index)
+        public static ushort ToUInt16(byte[] buffer,int index)
         {
             return (ushort)ReadLittleEndian(buffer, index, sizeof(ushort));
         }
 
-        public static int GetInt(byte[] buffer,int index)
+        public static int ToInt32(byte[] buffer,int index)
         {
             return (int)ReadLittleEndian(buffer, index, sizeof(int));
         }
 
-        public static uint GetUint(byte[] buffer,int index)
+        public static uint ToUInt32(byte[] buffer,int index)
         {
             return (uint)ReadLittleEndian(buffer, index, sizeof(uint));
         }
 
-        public static long GetLong(byte[] buffer,int index)
+        public static long ToInt64(byte[] buffer,int index)
         {
             return (long)ReadLittleEndian(buffer, index, sizeof(long));
         }
 
-        public static ulong GetUlong(byte[] buffer,int index)
+        public static ulong ToUInt64(byte[] buffer,int index)
         {
             return ReadLittleEndian(buffer, index, sizeof(ulong));
         }
         
-        public static float GetFloat(byte[] buffer,int index)
+        public static float ToSingle(byte[] buffer,int index)
         {
             int i = (int)ReadLittleEndian(buffer, index, sizeof(float));
             ConverterHelperFloat ch = new ConverterHelperFloat { Aint = i };
             return ch.Afloat;
         }
 
-        public static double GetDouble(byte[] buffer,int index)
+        public static double ToDouble(byte[] buffer,int index)
         {
             ulong i = ReadLittleEndian(buffer, index, sizeof(double));
             ConverterHelperDouble ch = new ConverterHelperDouble { Along = i };

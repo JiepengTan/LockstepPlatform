@@ -123,7 +123,7 @@ namespace Lockstep.Serialization
 
         public bool[] GetBoolArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new bool[size];
             for (int i = 0; i < size; i++)
@@ -135,7 +135,7 @@ namespace Lockstep.Serialization
 
         public ushort[] GetUShortArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new ushort[size];
             for (int i = 0; i < size; i++)
@@ -147,7 +147,7 @@ namespace Lockstep.Serialization
 
         public short[] GetShortArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new short[size];
             for (int i = 0; i < size; i++)
@@ -159,7 +159,7 @@ namespace Lockstep.Serialization
 
         public long[] GetLongArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new long[size];
             for (int i = 0; i < size; i++)
@@ -171,7 +171,7 @@ namespace Lockstep.Serialization
 
         public ulong[] GetULongArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new ulong[size];
             for (int i = 0; i < size; i++)
@@ -183,7 +183,7 @@ namespace Lockstep.Serialization
 
         public int[] GetIntArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new int[size];
             for (int i = 0; i < size; i++)
@@ -195,7 +195,7 @@ namespace Lockstep.Serialization
 
         public uint[] GetUIntArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new uint[size];
             for (int i = 0; i < size; i++)
@@ -207,7 +207,7 @@ namespace Lockstep.Serialization
 
         public float[] GetFloatArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new float[size];
             for (int i = 0; i < size; i++)
@@ -219,7 +219,7 @@ namespace Lockstep.Serialization
 
         public double[] GetDoubleArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new double[size];
             for (int i = 0; i < size; i++)
@@ -231,7 +231,7 @@ namespace Lockstep.Serialization
 
         public string[] GetStringArray()
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new string[size];
             for (int i = 0; i < size; i++)
@@ -243,7 +243,7 @@ namespace Lockstep.Serialization
 
         public string[] GetStringArray(int maxStringLength)
         {
-            ushort size = BitConverter.ToUInt16(_data, _position);
+            ushort size = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             var arr = new string[size];
             for (int i = 0; i < size; i++)
@@ -280,63 +280,63 @@ namespace Lockstep.Serialization
 
         public char GetChar()
         {
-            char result = BitConverter.ToChar(_data, _position);
+            char result =(char) FastBitConverter.ToInt16(_data, _position);
             _position += 2;
             return result;
         }
 
         public ushort GetUShort()
         {
-            ushort result = BitConverter.ToUInt16(_data, _position);
+            ushort result = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             return result;
         }
 
         public short GetShort()
         {
-            short result = BitConverter.ToInt16(_data, _position);
+            short result = FastBitConverter.ToInt16(_data, _position);
             _position += 2;
             return result;
         }
 
         public long GetLong()
         {
-            long result = BitConverter.ToInt64(_data, _position);
+            long result = FastBitConverter.ToInt64(_data, _position);
             _position += 8;
             return result;
         }
 
         public ulong GetULong()
         {
-            ulong result = BitConverter.ToUInt64(_data, _position);
+            ulong result = FastBitConverter.ToUInt64(_data, _position);
             _position += 8;
             return result;
         }
 
         public int GetInt()
         {
-            int result = BitConverter.ToInt32(_data, _position);
+            int result = FastBitConverter.ToInt32(_data, _position);
             _position += 4;
             return result;
         }
 
         public uint GetUInt()
         {
-            uint result = BitConverter.ToUInt32(_data, _position);
+            uint result = FastBitConverter.ToUInt32(_data, _position);
             _position += 4;
             return result;
         }
 
         public float GetFloat()
         {
-            float result = BitConverter.ToSingle(_data, _position);
+            float result = FastBitConverter.ToSingle(_data, _position);
             _position += 4;
             return result;
         }
 
         public double GetDouble()
         {
-            double result = BitConverter.ToDouble(_data, _position);
+            double result = FastBitConverter.ToDouble(_data, _position);
             _position += 8;
             return result;
         }
@@ -440,47 +440,47 @@ namespace Lockstep.Serialization
 
         public char PeekChar()
         {
-            return BitConverter.ToChar(_data, _position);
+            return (char) FastBitConverter.ToInt16(_data, _position);
         }
 
         public ushort PeekUShort()
         {
-            return BitConverter.ToUInt16(_data, _position);
+            return FastBitConverter.ToUInt16(_data, _position);
         }
 
         public short PeekShort()
         {
-            return BitConverter.ToInt16(_data, _position);
+            return FastBitConverter.ToInt16(_data, _position);
         }
 
         public long PeekLong()
         {
-            return BitConverter.ToInt64(_data, _position);
+            return FastBitConverter.ToInt64(_data, _position);
         }
 
         public ulong PeekULong()
         {
-            return BitConverter.ToUInt64(_data, _position);
+            return FastBitConverter.ToUInt64(_data, _position);
         }
 
         public int PeekInt()
         {
-            return BitConverter.ToInt32(_data, _position);
+            return FastBitConverter.ToInt32(_data, _position);
         }
 
         public uint PeekUInt()
         {
-            return BitConverter.ToUInt32(_data, _position);
+            return FastBitConverter.ToUInt32(_data, _position);
         }
 
         public float PeekFloat()
         {
-            return BitConverter.ToSingle(_data, _position);
+            return FastBitConverter.ToSingle(_data, _position);
         }
 
         public double PeekDouble()
         {
-            return BitConverter.ToDouble(_data, _position);
+            return FastBitConverter.ToDouble(_data, _position);
         }
 
         public string PeekString(int maxLength)
