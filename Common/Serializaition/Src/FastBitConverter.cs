@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 
 namespace Lockstep.Serialization
@@ -55,7 +56,7 @@ namespace Lockstep.Serialization
             buffer[offset + 1] = (byte)(data >> 16);
             buffer[offset    ] = (byte)(data >> 24);
 #else
-            buffer[offset] = (byte)(data);
+            buffer[offset] =    (byte)(data);
             buffer[offset + 1] = (byte)(data >> 8);
             buffer[offset + 2] = (byte)(data >> 16);
             buffer[offset + 3] = (byte)(data >> 24);
@@ -113,6 +114,72 @@ namespace Lockstep.Serialization
         public static void GetBytes(byte[] bytes, int startIndex, ulong value)
         {
             WriteLittleEndian(bytes, startIndex, value);
+        }
+        
+        
+        
+        private static ulong ReadLittleEndian(byte[] buffer,int offset, int count)
+        {
+            ulong r = 0;
+            if (BitConverter.IsLittleEndian)
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    r |= (ulong)buffer[offset + i] << i * 8;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < count; i++)
+                {
+                    r |= (ulong)buffer[offset + count - 1 - i] << i * 8;
+                }
+            }
+            return r;
+        }
+        
+        public static short GetShort(byte[] buffer,int index)
+        {
+            return (short)ReadLittleEndian(buffer, index, sizeof(short));
+        }
+
+        public static ushort GetUshort(byte[] buffer,int index)
+        {
+            return (ushort)ReadLittleEndian(buffer, index, sizeof(ushort));
+        }
+
+        public static int GetInt(byte[] buffer,int index)
+        {
+            return (int)ReadLittleEndian(buffer, index, sizeof(int));
+        }
+
+        public static uint GetUint(byte[] buffer,int index)
+        {
+            return (uint)ReadLittleEndian(buffer, index, sizeof(uint));
+        }
+
+        public static long GetLong(byte[] buffer,int index)
+        {
+            return (long)ReadLittleEndian(buffer, index, sizeof(long));
+        }
+
+        public static ulong GetUlong(byte[] buffer,int index)
+        {
+            return ReadLittleEndian(buffer, index, sizeof(ulong));
+        }
+        
+        public static float GetFloat(byte[] buffer,int index)
+        {
+            int i = (int)ReadLittleEndian(buffer, index, sizeof(float));
+            ConverterHelperFloat ch = new ConverterHelperFloat { Aint = i };
+            return ch.Afloat;
+        }
+
+        public static double GetDouble(byte[] buffer,int index)
+        {
+            ulong i = ReadLittleEndian(buffer, index, sizeof(double));
+            ConverterHelperDouble ch = new ConverterHelperDouble { Along = i };
+            return ch.Adouble;
         }
     }
 }
