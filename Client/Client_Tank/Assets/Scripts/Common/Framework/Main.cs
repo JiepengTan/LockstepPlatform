@@ -9,9 +9,12 @@ using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
     public interface IEventRegisterService : IService {
-        void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+        void RegisterManagersEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
             Action<TEnum, TDelegate> callBack) where TDelegate : Delegate
             where TEnum : struct;
+
+        void RegisterEvent(object obj);
+        void UnRegisterEvent(object obj);
     }
 
     public interface ITimeMachineService : ITimeMachine, IService {
@@ -21,8 +24,9 @@ namespace Lockstep.Game {
     public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, ITimeMachineService,
         IEventRegisterService {
         private int _curTick;
+
         public int CurTick {
-            get { return _curTick;}
+            get { return _curTick; }
             set {
                 _curTick = value;
                 foreach (var timeMachine in GetAllTimeMachines()) {
@@ -30,6 +34,7 @@ namespace Lockstep.Game {
                 }
             }
         }
+
         public static Main Instance { get; private set; }
         public Contexts contexts;
 
@@ -79,9 +84,9 @@ namespace Lockstep.Game {
             foreach (var mgr in _allMgrs) {
                 mgr.AssignReference(contexts, this, this);
             }
+
             //bind events
-            RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
-                (eType, handler) => { EventHelper.AddListener(eType, handler); });
+            RegisterManagersEvent();
             DoAwake();
             foreach (var mgr in _allMgrs) {
                 mgr.DoAwake(this);
@@ -235,22 +240,44 @@ namespace Lockstep.Game {
             return Delegate.CreateDelegate(typeof(T), instance, method) as T;
         }
 
-        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+        public void UnRegisterEvent(object obj){
+            ReflectTargetFunctions<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
+                EventHelper.RemoveListener, obj);
+        }
+
+        public void RegisterEvent(object obj){
+            ReflectTargetFunctions<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length, EventHelper.AddListener,
+                obj);
+        }
+
+        private void RegisterManagersEvent(){
+            RegisterManagersEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length, EventHelper.AddListener);
+        }
+
+        public void RegisterManagersEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
             Action<TEnum, TDelegate> callBack)
             where TDelegate : Delegate
             where TEnum : struct{
             if (callBack == null) return;
             foreach (var mgr in _allMgrs) {
-                var methods = mgr.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
-                                                       BindingFlags.Instance | BindingFlags.DeclaredOnly);
-                foreach (var method in methods) {
-                    var methodName = method.Name;
-                    if (methodName.StartsWith(prefix)) {
-                        var eventTypeStr = methodName.Substring(ignorePrefixLen);
-                        if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
-                            var hanlder = CreateDelegateFromMethodInfo<TDelegate>(mgr, method);
-                            callBack(eType, hanlder);
-                        }
+                ReflectTargetFunctions(prefix, ignorePrefixLen, callBack, mgr);
+            }
+        }
+
+        public void ReflectTargetFunctions<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+            Action<TEnum, TDelegate> callBack, object obj)
+            where TDelegate : Delegate
+            where TEnum : struct{
+            if (callBack == null) return;
+            var methods = obj.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
+                                                   BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            foreach (var method in methods) {
+                var methodName = method.Name;
+                if (methodName.StartsWith(prefix)) {
+                    var eventTypeStr = methodName.Substring(ignorePrefixLen);
+                    if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
+                        var handler = CreateDelegateFromMethodInfo<TDelegate>(obj, method);
+                        callBack(eType, handler);
                     }
                 }
             }

@@ -23,9 +23,9 @@ namespace Lockstep.Game {
         public override void DoAwake(IServiceContainer services){
             _netProxyRoom = new BaseNetProxy((int) EMsgCS.EnumCount);
             _netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
-            _eventRegisterService.RegisterEvent<EMsgCL, NetMsgHandler>("OnMsg_L2C", "OnMsg_".Length,
+            _eventRegisterService.RegisterManagersEvent<EMsgCL, NetMsgHandler>("OnMsg_L2C", "OnMsg_".Length,
                 RegisterMsgHandler);
-            _eventRegisterService.RegisterEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
+            _eventRegisterService.RegisterManagersEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
                 RegisterMsgHandler);
             //Editor mode don't need network
             if (_constStateService.IsVideoMode) return;
@@ -166,7 +166,7 @@ namespace Lockstep.Game {
                 StartRoom();
             }
             else {
-                SendCreateRoomMsg();
+                EventHelper.Trigger(EEvent.OnLoginResult,msg);
             }
         }
 
