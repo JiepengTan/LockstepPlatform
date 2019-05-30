@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using Lockstep.Serialization;
 
 namespace NetMsg.Game {
-[System.Serializable]
+    [System.Serializable]
+    [SelfImplement]
+    [Udp]
     public partial class Msg_PlayerInput : BaseFormater {
         public byte[] inputDatas; //real data
         public byte ActorId;
@@ -16,7 +18,7 @@ namespace NetMsg.Game {
         public Msg_PlayerInput(int tick, byte actorID, List<InputCmd> inputs){
             this.Tick = tick;
             this.ActorId = actorID;
-            if (inputs != null && inputs.Count>0) {
+            if (inputs != null && inputs.Count > 0) {
                 this.Commands = inputs.ToArray();
             }
         }
@@ -45,12 +47,12 @@ namespace NetMsg.Game {
 
         public override void Serialize(Serializer writer){
 #if DEBUG_FRAME_DELAY
-            writer.Put(timeSinceStartUp);
+            writer.PutSingle(timeSinceStartUp);
 #endif
-            writer.Put(ActorId);
-            writer.Put(Tick);
+            writer.PutByte(ActorId);
+            writer.PutInt32(Tick);
             int count = Commands?.Length ?? 0;
-            writer.Put((byte) count);
+            writer.PutByte((byte) count);
             for (int i = 0; i < count; i++) {
                 Commands[i].Serialize(writer);
             }
@@ -58,15 +60,16 @@ namespace NetMsg.Game {
 
         public override void Deserialize(Deserializer reader){
 #if DEBUG_FRAME_DELAY
-            timeSinceStartUp = reader.GetFloat();
+            timeSinceStartUp = reader.GetSingle();
 #endif
             ActorId = reader.GetByte();
-            Tick = reader.GetInt();
+            Tick = reader.GetInt32();
             int count = reader.GetByte();
-            if (count == 0) { 
+            if (count == 0) {
                 Commands = null;
                 return;
             }
+
             Commands = new InputCmd[count];
             for (int i = 0; i < count; i++) {
                 var cmd = reader.Parse<InputCmd>();

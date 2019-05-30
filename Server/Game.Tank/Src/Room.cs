@@ -177,9 +177,9 @@ namespace Lockstep.Logic.Server {
             msg.startTick = frames[0].tick;
             msg.frames = frames;
             var writer = new Serializer();
-            writer.Put(TypeId);
-            writer.Put(RoomId);
-            writer.Put(seed);
+            writer.PutInt32(TypeId);
+            writer.PutInt32(RoomId);
+            writer.PutInt32(seed);
             writer.PutBytes_255(_playerId2LocalId.Values.ToArray());
 
             msg.Serialize(writer);
@@ -247,8 +247,6 @@ namespace Lockstep.Logic.Server {
                 (reader) => { return ParseData<Msg_PlayerInput>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode,
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_PlayerReady, OnNet_PlayerReady,
-                (reader) => { return ParseData<Msg_PlayerReady>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_LoadingProgress, OnNet_LoadingProgress,
                 (reader) => { return ParseData<Msg_LoadingProgress>(reader); });
             RegisterNetMsgHandler(EMsgCS.C2S_ReqMissFrame, OnNet_ReqMissFrame,
@@ -291,7 +289,7 @@ namespace Lockstep.Logic.Server {
 
         public void SendTo(Player player, EMsgCS type, ISerializable body, bool isNeedDebugSize = false){
             var writer = new Serializer();
-            writer.Put((byte) type);
+            writer.PutByte((byte) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             if (isNeedDebugSize) {
@@ -303,7 +301,7 @@ namespace Lockstep.Logic.Server {
 
         public void SendToAll(EMsgCS type, ISerializable body){
             var writer = new Serializer();
-            writer.Put((byte) type);
+            writer.PutByte((byte) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             foreach (var player in _allPlayers) {
@@ -608,8 +606,8 @@ namespace Lockstep.Logic.Server {
             }
         }
 
-        Msg_StartGame CreateStartGame(byte playerId, byte[] ids){
-            return new Msg_StartGame {
+        Msg_StartRoomGame CreateStartGame(byte playerId, byte[] ids){
+            return new Msg_StartRoomGame {
                 RoomID = RoomId,
                 Seed = seed,
                 ActorID = playerId,

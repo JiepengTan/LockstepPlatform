@@ -17,10 +17,10 @@ namespace BinarySerializer {
         }
         public class FiledHandlerBinaryWriter : FiledHandler {
             public FiledHandlerBinaryWriter(ICodeHelper helper) :base(helper){
-                _defaultCodeTemplete = @"{0}Write{2}(stream ,val.{1});";
-                _enumCodeTemplete = @"{0}WriteInt32(stream ,(int)(val.{1}));";
-                _clsCodeTemplete = @"{0}Write{2}(stream ,val.{1});";
-                _arrayCodeTemplete = @"{0}WriteArray(stream ,val.{1});";
+                _defaultCodeTemplete = @"{0}Put(stream ,val.{1});";
+                _enumCodeTemplete = @"{0}Put(stream ,(int)(val.{1}));";
+                _clsCodeTemplete = @"{0}Put{2}(stream ,val.{1});";
+                _arrayCodeTemplete = @"{0}PutArray(stream ,val.{1});";
                 _lstCodeTemplete = @"{0}WriteList(stream ,val.{1});";
                 _dictCodeTemplete = @"{0}WriteDict(stream ,val.{1});";
             }

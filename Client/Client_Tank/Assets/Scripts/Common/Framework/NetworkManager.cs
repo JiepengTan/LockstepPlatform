@@ -89,7 +89,7 @@ namespace Lockstep.Game {
         public void OnConnectedRoom(){
             Logging.Debug.Log("OnConnected room");
             if (!IsReconnected) {
-                SendMsgRoom(EMsgCS.C2S_PlayerReady, new Msg_PlayerReady() {roomId = _roomId});
+                SendMsgRoom(EMsgCS.C2S_PlayerReady, new NetMsg.Lobby.Msg_PlayerReady { });
             }
             else {
                 EventHelper.Trigger(EEvent.OnRoomGameStart, reconnectedInfo);
@@ -102,15 +102,15 @@ namespace Lockstep.Game {
 
         public void SendMsgLobby(EMsgCL msgId, ISerializable body){
             var writer = new Serializer();
-            writer.Put((byte) msgId);
+            writer.PutByte((byte) msgId);
             body.Serialize(writer);
             _netProxyLobby.Send(Compressor.Compress(writer));
         }
 
         public void SendMsgRoom(EMsgCS msgId, ISerializable body){
             var writer = new Serializer();
-            writer.Put(_playerID);
-            writer.Put((byte) msgId);
+            writer.PutInt64(_playerID);
+            writer.PutByte((byte) msgId);
             body.Serialize(writer);
             _netProxyRoom.Send(Compressor.Compress(writer));
         }
@@ -146,15 +146,15 @@ namespace Lockstep.Game {
         void OnMsg_L2C_RoomMsg(Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoomResult>();
             _roomId = msg.roomId;
-            UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + msg.port);
-            InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
+            UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + 32);
+            InitRoom("127", 32, NetworkDefine.NetKey);
             StartRoom();
         }
 
         private object reconnectedInfo;
 
-        void OnMsg_L2C_ReqInit(Deserializer reader){
-            var msg = reader.Parse<NetMsg.Lobby.Msg_RepInit>();
+        void OnMsg_L2C_RepLogin(Deserializer reader){
+            var msg = reader.Parse<NetMsg.Lobby.Msg_RepLogin>();
             _playerID = msg.playerId;
             Debug.Log("PlayerID " + _playerID + " roomId:" + msg.roomId);
             if (msg.roomId > 0) {
@@ -166,12 +166,12 @@ namespace Lockstep.Game {
                 StartRoom();
             }
             else {
-                EventHelper.Trigger(EEvent.OnLoginResult,msg);
+                EventHelper.Trigger(EEvent.OnLoginResult, msg);
             }
         }
 
         void SendInitMsg(){
-            SendMsgLobby(EMsgCL.C2L_InitMsg,
+            SendMsgLobby(EMsgCL.C2L_ReqLogin,
                 new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
         }
 
@@ -187,7 +187,7 @@ namespace Lockstep.Game {
         }
 
         public void OnMsg_S2C_StartGame(Deserializer reader){
-            var msg = reader.Parse<Msg_StartGame>();
+            var msg = reader.Parse<Msg_StartRoomGame>();
             _roomId = msg.RoomID;
             Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
             EventHelper.Trigger(EEvent.OnRoomGameStart, msg);

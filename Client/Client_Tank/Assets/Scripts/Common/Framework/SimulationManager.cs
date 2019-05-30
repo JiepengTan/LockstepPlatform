@@ -61,7 +61,7 @@ namespace Lockstep.Game {
         }
 
         void OnEvent_OnRoomGameStart(object param){
-            var msg = param as Msg_StartGame;
+            var msg = param as Msg_StartRoomGame;
             OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
             EventHelper.Trigger(EEvent.OnSimulationInited, null);
         }
@@ -378,8 +378,8 @@ namespace Lockstep.Game {
 
         public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
-            serializer.Put(_gameStateContext.hashCode.value);
-            serializer.Put(_gameStateContext.tick.value);
+            serializer.PutInt64(_gameStateContext.hashCode.value);
+            serializer.PutInt32(_gameStateContext.tick.value);
             outputStream.Write(serializer.Data, 0, serializer.Length);
 
             GameLog.WriteTo(outputStream);

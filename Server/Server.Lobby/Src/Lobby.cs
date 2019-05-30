@@ -35,7 +35,7 @@ namespace Lockstep.Logic.Server {
         public NetServer serverRoom;
 
         public const byte MAX_HANDLER_IDX = (byte) EMsgCL.EnumCount;
-        public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_InitMsg;
+        public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_ReqLogin;
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCL.EnumCount];
 
         private delegate IRoom FuncCreateRoom();
@@ -76,7 +76,7 @@ namespace Lockstep.Logic.Server {
             int netID = peer.Id;
             try {
                 var reader = new Deserializer(Compressor.Decompress(data));
-                var playerID = reader.GetLong();
+                var playerID = reader.GetInt64();
                 var player = GetPlayer(playerID);
                 if (player.gameSock == null) {
                     player.gameSock = peer;
@@ -240,8 +240,8 @@ namespace Lockstep.Logic.Server {
 
         private void SendCreateRoomResult(Player player){
             var writer = new Serializer();
-            writer.Put((byte) EMsgCL.L2C_RoomMsg);
-            new Msg_CreateRoomResult() {ip = RoomIP, port = RoomPort, roomId = player.RoomId}.Serialize(writer);
+            writer.PutByte((byte) EMsgCL.L2C_RoomMsg);
+            new Msg_CreateRoomResult() {roomId = player.RoomId}.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             player.SendLobby(bytes);
         }
@@ -357,10 +357,10 @@ namespace Lockstep.Logic.Server {
                     return;
                 }
 
-                if (msgType == (byte) EMsgCL.C2L_InitMsg) {
-                    Msg_InitMsg initMsg = null;
+                if (msgType == (byte) EMsgCL.C2L_ReqLogin) {
+                    Msg_ReqLogin initMsg = null;
                     try {
-                        initMsg = reader.Parse<Msg_InitMsg>();
+                        initMsg = reader.Parse<Msg_ReqLogin>();
                     }
 #pragma warning disable 168
                     catch (Exception _e) {
@@ -368,7 +368,7 @@ namespace Lockstep.Logic.Server {
                         return;
                     }
 
-                    DealInitMsg(initMsg, peer, reader);
+                    DealLogin(initMsg, peer, reader);
                     return;
                 }
 
@@ -390,7 +390,7 @@ namespace Lockstep.Logic.Server {
         }
 
 
-        private void DealInitMsg(Msg_InitMsg initMsg, NetPeer peer, Deserializer reader){
+        private void DealLogin(Msg_ReqLogin initMsg, NetPeer peer, Deserializer reader){
             var netId = peer.Id;
             var account = initMsg.account;
             Player player = null;
@@ -413,8 +413,8 @@ namespace Lockstep.Logic.Server {
             }
             
             var writer = new Serializer();
-            writer.Put((byte) EMsgCL.L2C_ReqInit);
-            var msg = new Msg_RepInit() {playerId = player.PlayerId};
+            writer.PutByte((byte) EMsgCL.L2C_RepLogin);
+            var msg = new Msg_RepLogin() {playerId = player.PlayerId};
             if (room != null) {
                 msg.roomId = room.RoomId;
                 msg.port = RoomPort;

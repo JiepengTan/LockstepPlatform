@@ -9,25 +9,25 @@ using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
 namespace BinarySerializer {
-    public partial class EditorCodeGeneratorEcsExtension {
+    public partial class EditorCodeGeneratorExtensionEcs {
         [MenuItem("Tools/ECSExtension/0.Hide Compiler Error")]
         public static void HideCompileError(){
-            new EditorCodeGeneratorEcsExtension().HideGenerateCodes(false);
+            new EditorCodeGeneratorExtensionEcs().HideGenerateCodes(false);
         }
 
         [MenuItem("Tools/ECSExtension/1.Generate Code")]
         public static void GenerateCode(){
-            new EditorCodeGeneratorEcsExtension().GenerateCodeNodeData(true);
+            new EditorCodeGeneratorExtensionEcs().GenerateCodeNodeData(true);
         }
     }
 
-    public partial class EditorCodeGeneratorEcsExtension : EditorBaseCodeGenerator {
+    public partial class EditorCodeGeneratorExtensionEcs : EditorBaseCodeGenerator {
         protected override string GeneratePath {
             get { return Path.Combine(Application.dataPath, "Game/Scripts/ECS/ECSExtension/Generated/"); }
         }
 
         protected override string GenerateFilePath {
-            get { return Path.Combine(GeneratePath, "ECSExtention.cs"); }
+            get { return Path.Combine(GeneratePath, "ExtentionECS.cs"); }
         }
         public override string prefix {
             get { return "\t\t\t"; }
@@ -74,7 +74,8 @@ namespace BinarySerializer {
         string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh){
             string fileContent =
                 @"//#define DONT_USE_GENERATE_CODE 
-//Auto Gen by code please do not modify it by hand
+//Auto Gen by code please do not modify it
+//https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
 using UnityEngine;

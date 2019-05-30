@@ -13,7 +13,12 @@ namespace BinarySerializer {
         string DealType(Type t, List<string> sbfs);
         IFiledHandler[] GetFiledHandlers();
     }
-
+    public interface ICodeHelper {
+        string prefix { get; }
+        string GetNameSpace(Type type);
+        string GetTypeName(Type type,bool isWithNameSpaceIfNeed = true);
+        string GetFuncName(Type type,bool isWithNameSpaceIfNeed = true);
+    }
     public interface IFiledHandler {
         string DealDic(Type t, FieldInfo field);
         string DealList(Type t, FieldInfo field);

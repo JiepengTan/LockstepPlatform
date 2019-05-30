@@ -4,12 +4,7 @@ using Entitas;
 
 namespace BinarySerializer {
     
-    public interface ICodeHelper {
-        string prefix { get; }
-        string GetNameSpace(Type type);
-        string GetTypeName(Type type,bool isWithNameSpaceIfNeed = true);
-        string GetFuncName(Type type,bool isWithNameSpaceIfNeed = true);
-    }
+
     
     public class TypeHandlerECS : ITypeHandler {
         public class HandlerCopyTo : FiledHandler {

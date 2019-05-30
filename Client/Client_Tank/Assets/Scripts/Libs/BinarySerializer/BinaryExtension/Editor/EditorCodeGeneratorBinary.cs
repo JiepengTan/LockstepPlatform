@@ -7,30 +7,30 @@ using UnityEditor;
 using UnityEngine;
 
 namespace BinarySerializer {
-    public partial class EditorCodeGenerator {
+    public partial class EditorCodeGeneratorBinary {
         [MenuItem("Tools/BinarySerializer/-1.Test Generate SerializeCode")]
         public static void TestGenerateCode(){
-            new EditorCodeGenerator().GenerateCodeNodeData(true, new Type[] {typeof(TestSerializeClassAlone)});
+            new EditorCodeGeneratorBinary().GenerateCodeNodeData(true, new Type[] {typeof(TestSerializeClassAlone)});
         }
 
         [MenuItem("Tools/BinarySerializer/0.Hide Compiler Error")]
         public static void HideCompileError(){
-            new EditorCodeGenerator().HideGenerateCodes(false);
+            new EditorCodeGeneratorBinary().HideGenerateCodes(false);
         }
 
         [MenuItem("Tools/BinarySerializer/1.Generate SerializeCode")]
         public static void GenerateCode(){
-            new EditorCodeGenerator().GenerateCodeNodeData(true);
+            new EditorCodeGeneratorBinary().GenerateCodeNodeData(true);
         }
     }
 
-    public partial class EditorCodeGenerator : EditorBaseCodeGenerator {
+    public partial class EditorCodeGeneratorBinary : EditorBaseCodeGenerator {
         protected override string GeneratePath {
-            get { return Path.Combine(Application.dataPath, "Scripts/Libs/BinarySerializer"); }
+            get { return Path.Combine(Application.dataPath, "Game/Scripts/Libs/BinarySerializer/BinaryExtension/Generated/"); }
         }
 
         protected override string GenerateFilePath {
-            get { return Path.Combine(GeneratePath, "BinarySerializerGeneratedCodes.cs"); }
+            get { return Path.Combine(GeneratePath, "ExtensionBinary.cs"); }
         }
 
         public override string prefix {
@@ -82,7 +82,8 @@ namespace BinarySerializer {
         string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh){
             string fileContent =
                 @"//#define DONT_USE_GENERATE_CODE 
-//Auto Gen by code please do not modify it by hand
+//Auto Gen by code please do not modify it 
+//https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
 using UnityEngine;

@@ -107,7 +107,7 @@ namespace Lockstep.Game.UI
 
         public virtual void OnLoginClick()
         {
-            SendMessage(EMsgCL.C2L_InitMsg,new Msg_RoomInitMsg() {name = Username.text});
+            SendMessage(EMsgCL.C2L_ReqLogin,new Msg_RoomInitMsg() {name = Username.text});
             HandleRemembering();
             EventHelper.Trigger(EEvent.OnLoginResult,null);
 

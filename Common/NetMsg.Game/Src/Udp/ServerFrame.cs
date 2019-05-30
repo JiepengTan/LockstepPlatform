@@ -2,6 +2,8 @@ using Lockstep.Serialization;
 
 namespace NetMsg.Game {
     [System.Serializable]
+    [SelfImplement]
+    [Udp]
     public partial class ServerFrame : BaseFormater {
         public byte[] inputDatas; //包含玩家的输入& 游戏输入
         public int tick;
@@ -29,11 +31,11 @@ namespace NetMsg.Game {
             if (inputDatas != null) return;
             var writer = new Serializer();
             var inputLen = (byte) (Inputs?.Length ?? 0);
-            writer.Put(inputLen);
+            writer.PutByte(inputLen);
             for (byte i = 0; i < inputLen; i++) {
                 var cmds = Inputs[i].Commands;
                 var len = (byte) (cmds?.Length ?? 0);
-                writer.Put(len);
+                writer.PutByte(len);
                 for (int cmdIdx = 0; cmdIdx < len; cmdIdx++) {
                     cmds[cmdIdx].Serialize(writer);
                 }
@@ -71,13 +73,13 @@ namespace NetMsg.Game {
 
         public override void Serialize(Serializer writer){
             BeforeSerialize();
-            writer.Put(tick);
-            writer.PutBytes_65535(inputDatas);
+            writer.PutInt32(tick);
+            writer.PutBytes(inputDatas);
         }
 
         public override void Deserialize(Deserializer reader){
-            tick = reader.GetInt();
-            inputDatas = reader.GetBytes_65535();
+            tick = reader.GetInt32();
+            inputDatas = reader.GetBytes();
             AfterDeserialize();
         }
 

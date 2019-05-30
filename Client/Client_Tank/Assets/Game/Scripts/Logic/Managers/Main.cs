@@ -24,7 +24,7 @@ namespace Lockstep.Game {
 
         public string RecordPath;
         public int MaxRunTick = int.MaxValue;
-        public Msg_StartGame gameInfo;
+        public Msg_StartRoomGame gameInfo;
         public Msg_RepMissFrame framesInfo;
 
         public float realtimeSinceStartup;
@@ -35,14 +35,14 @@ namespace Lockstep.Game {
         public void OpenRecordFile(string path){
             var bytes = File.ReadAllBytes(path);
             var reader = new Deserializer(Compressor.Decompress(bytes));
-            var TypeId = reader.GetInt();
-            var RoomId = reader.GetInt();
-            var Seed = reader.GetInt();
+            var TypeId = reader.GetInt32();
+            var RoomId = reader.GetInt32();
+            var Seed = reader.GetInt32();
             var AllActors = reader.GetBytes_255();
             var msg = new Msg_RepMissFrame();
             msg.startTick = 0;
             msg.Deserialize(reader);
-            var msgStartGame = new Msg_StartGame();
+            var msgStartGame = new Msg_StartRoomGame();
             msgStartGame.RoomID = RoomId;
             msgStartGame.Seed = Seed;
             msgStartGame.AllActors = AllActors;

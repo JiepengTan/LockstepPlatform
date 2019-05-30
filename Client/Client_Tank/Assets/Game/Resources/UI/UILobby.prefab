@@ -817,7 +817,7 @@ GameObject:
   - component: {fileID: 2509173070324297671}
   - component: {fileID: 6579637230478980888}
   - component: {fileID: 5853802135079810609}
-  - component: {fileID: 5312880662189146184}
+  - component: {fileID: 6181600539266553780}
   m_Layer: 5
   m_Name: UILobby
   m_TagString: Untagged
@@ -870,7 +870,7 @@ MonoBehaviour:
   GameJoinButton: {fileID: 7021349928878771306}
   ItemPrefab: {fileID: 6160169182869554325}
   LayoutGroup: {fileID: 5542928972516589892}
---- !u!114 &5312880662189146184
+--- !u!114 &6181600539266553780
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -879,11 +879,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 3034904627024816872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e090253b736dfc845aed0a107cb7eb87, type: 3}
+  m_Script: {fileID: 11500000, guid: 440b2f40fbe64636b2fb22907196b809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChangeOpacity: 1
-  DraggedOpacity: 0.7
+  ErrorText: {fileID: 0}
+  LoginButton: {fileID: 0}
+  Password: {fileID: 0}
+  Remember: {fileID: 0}
+  Username: {fileID: 0}
 --- !u!1 &3165438152830958946
 GameObject:
   m_ObjectHideFlags: 0

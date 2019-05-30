@@ -120,7 +120,7 @@ namespace Lockstep.Serialization
             _position++;
             return b;
         }
-
+      
         public bool[] GetBoolArray()
         {
             ushort size = FastBitConverter.ToUInt16(_data, _position);
@@ -128,7 +128,7 @@ namespace Lockstep.Serialization
             var arr = new bool[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetBool();
+                arr[i] = GetBoolean();
             }
             return arr;
         }
@@ -140,7 +140,7 @@ namespace Lockstep.Serialization
             var arr = new ushort[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetUShort();
+                arr[i] = GetUInt16();
             }
             return arr;
         }
@@ -152,7 +152,7 @@ namespace Lockstep.Serialization
             var arr = new short[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetShort();
+                arr[i] = GetInt16();
             }
             return arr;
         }
@@ -164,7 +164,7 @@ namespace Lockstep.Serialization
             var arr = new long[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetLong();
+                arr[i] = GetInt64();
             }
             return arr;
         }
@@ -176,7 +176,7 @@ namespace Lockstep.Serialization
             var arr = new ulong[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetULong();
+                arr[i] = GetUInt64();
             }
             return arr;
         }
@@ -188,7 +188,7 @@ namespace Lockstep.Serialization
             var arr = new int[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetInt();
+                arr[i] = GetInt32();
             }
             return arr;
         }
@@ -200,7 +200,7 @@ namespace Lockstep.Serialization
             var arr = new uint[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetUInt();
+                arr[i] = GetUInt32();
             }
             return arr;
         }
@@ -212,7 +212,7 @@ namespace Lockstep.Serialization
             var arr = new float[size];
             for (int i = 0; i < size; i++)
             {
-                arr[i] = GetFloat();
+                arr[i] = GetSingle();
             }
             return arr;
         }
@@ -252,15 +252,28 @@ namespace Lockstep.Serialization
             }
             return arr;
         }
+
+        public byte[] GetArray(ref byte[] _){return GetBytes();}
+        public short[] GetArray(ref short[] _){return GetShortArray();}
+        public ushort[] GetArray(ref ushort[] _){return GetUShortArray();}
+        public int[] GetArray(ref int[] _){return GetIntArray();}
+        public uint[] GetArray(ref uint[] _){return GetUIntArray();}
+        public long[] GetArray(ref long[] _){return GetLongArray();}
+        public ulong[] GetArray(ref ulong[] _){return GetULongArray();}
+        public float[] GetArray(ref float[] _){return GetFloatArray();}
+        public double[] GetArray(ref double[] _){return GetDoubleArray();}
+        public bool[] GetArray(ref bool[] _){return GetBoolArray();}
+        public string[] GetArray(ref string[] _){return GetStringArray();}
         
-        public T[] GetArray<T>() where T:BaseFormater ,new ()
+
+        public T[] GetArray<T>(ref T[] _) where T:BaseFormater ,new ()
         {
-            ushort len = GetUShort();
+            ushort len = GetUInt16();
             if (len == 0)
                 return null;
             var formatters = new T[len];
             for (int i = 0; i < len; i++) {
-                if (GetBool())
+                if (GetBoolean())
                     formatters[i] = null;
                 else {
                     var val = new T();
@@ -271,7 +284,7 @@ namespace Lockstep.Serialization
             return formatters;
         }
 
-        public bool GetBool()
+        public bool GetBoolean()
         {
             bool res = _data[_position] > 0;
             _position += 1;
@@ -285,49 +298,49 @@ namespace Lockstep.Serialization
             return result;
         }
 
-        public ushort GetUShort()
+        public ushort GetUInt16()
         {
             ushort result = FastBitConverter.ToUInt16(_data, _position);
             _position += 2;
             return result;
         }
 
-        public short GetShort()
+        public short GetInt16()
         {
             short result = FastBitConverter.ToInt16(_data, _position);
             _position += 2;
             return result;
         }
 
-        public long GetLong()
+        public long GetInt64()
         {
             long result = FastBitConverter.ToInt64(_data, _position);
             _position += 8;
             return result;
         }
 
-        public ulong GetULong()
+        public ulong GetUInt64()
         {
             ulong result = FastBitConverter.ToUInt64(_data, _position);
             _position += 8;
             return result;
         }
 
-        public int GetInt()
+        public int GetInt32()
         {
             int result = FastBitConverter.ToInt32(_data, _position);
             _position += 4;
             return result;
         }
 
-        public uint GetUInt()
+        public uint GetUInt32()
         {
             uint result = FastBitConverter.ToUInt32(_data, _position);
             _position += 4;
             return result;
         }
 
-        public float GetFloat()
+        public float GetSingle()
         {
             float result = FastBitConverter.ToSingle(_data, _position);
             _position += 4;
@@ -340,10 +353,16 @@ namespace Lockstep.Serialization
             _position += 8;
             return result;
         }
-
+        public T Get<T>(ref T _) where T:BaseFormater ,new(){
+            if (GetBoolean())
+                return null;
+            var val = new T();
+            val.Deserialize(this);
+            return val;
+        }
         public string GetString(int maxLength)
         {
-            int bytesCount = GetInt();
+            int bytesCount = GetInt32();
             if (bytesCount <= 0 || bytesCount > maxLength*2)
             {
                 return string.Empty;
@@ -362,7 +381,7 @@ namespace Lockstep.Serialization
 
         public string GetString()
         {
-            int bytesCount = GetInt();
+            int bytesCount = GetInt32();
             if (bytesCount <= 0)
             {
                 return string.Empty;
@@ -392,9 +411,9 @@ namespace Lockstep.Serialization
             Buffer.BlockCopy(_data, _position, destination, 0, count);
             _position += count;
         }
-        public byte[] GetBytes_65535()
+        public byte[] GetBytes()
         {
-            ushort size = GetUShort();
+            ushort size = GetUInt16();
             if (size == 0) return null;
             var outgoingData = new byte[size];
             Buffer.BlockCopy(_data, _position, outgoingData, 0, size);
@@ -411,14 +430,6 @@ namespace Lockstep.Serialization
             return outgoingData;
         }
         
-        public byte[] GetBytesWithLength()
-        {
-            int length = GetInt();
-            byte[] outgoingData = new byte[length];
-            Buffer.BlockCopy(_data, _position, outgoingData, 0, length);
-            _position += length;
-            return outgoingData;
-        }
         #endregion
 
         #region PeekMethods
@@ -541,7 +552,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 1)
             {
-                result = GetBool();
+                result = GetBoolean();
                 return true;
             }
             result = false;
@@ -563,7 +574,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 2)
             {
-                result = GetShort();
+                result = GetInt16();
                 return true;
             }
             result = 0;
@@ -574,7 +585,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 2)
             {
-                result = GetUShort();
+                result = GetUInt16();
                 return true;
             }
             result = 0;
@@ -585,7 +596,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 4)
             {
-                result = GetInt();
+                result = GetInt32();
                 return true;
             }
             result = 0;
@@ -596,7 +607,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 4)
             {
-                result = GetUInt();
+                result = GetUInt32();
                 return true;
             }
             result = 0;
@@ -607,7 +618,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 8)
             {
-                result = GetLong();
+                result = GetInt64();
                 return true;
             }
             result = 0;
@@ -618,7 +629,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 8)
             {
-                result = GetULong();
+                result = GetUInt64();
                 return true;
             }
             result = 0;
@@ -629,7 +640,7 @@ namespace Lockstep.Serialization
         {
             if (AvailableBytes >= 4)
             {
-                result = GetFloat();
+                result = GetSingle();
                 return true;
             }
             result = 0;
@@ -684,20 +695,6 @@ namespace Lockstep.Serialization
             return true;
         }
 
-        public bool TryGetBytesWithLength(out byte[] result)
-        {
-            if (AvailableBytes >= 4)
-            {
-                var length = PeekInt();
-                if (AvailableBytes >= length + 4)
-                {
-                    result = GetBytesWithLength();
-                    return true;
-                }
-            }
-            result = null;
-            return false;
-        }
         #endregion
 
         public void Clear()

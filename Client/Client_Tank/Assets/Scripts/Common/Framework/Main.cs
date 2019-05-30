@@ -15,6 +15,11 @@ namespace Lockstep.Game {
 
         void RegisterEvent(object obj);
         void UnRegisterEvent(object obj);
+
+        void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+            Action<TEnum, TDelegate> callBack, object obj)
+            where TDelegate : Delegate
+            where TEnum : struct;
     }
 
     public interface ITimeMachineService : ITimeMachine, IService {
@@ -241,12 +246,12 @@ namespace Lockstep.Game {
         }
 
         public void UnRegisterEvent(object obj){
-            ReflectTargetFunctions<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
+            RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,
                 EventHelper.RemoveListener, obj);
         }
 
         public void RegisterEvent(object obj){
-            ReflectTargetFunctions<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length, EventHelper.AddListener,
+            RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length, EventHelper.AddListener,
                 obj);
         }
 
@@ -260,11 +265,11 @@ namespace Lockstep.Game {
             where TEnum : struct{
             if (callBack == null) return;
             foreach (var mgr in _allMgrs) {
-                ReflectTargetFunctions(prefix, ignorePrefixLen, callBack, mgr);
+                RegisterEvent(prefix, ignorePrefixLen, callBack, mgr);
             }
         }
 
-        public void ReflectTargetFunctions<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
+        public void RegisterEvent<TEnum, TDelegate>(string prefix, int ignorePrefixLen,
             Action<TEnum, TDelegate> callBack, object obj)
             where TDelegate : Delegate
             where TEnum : struct{

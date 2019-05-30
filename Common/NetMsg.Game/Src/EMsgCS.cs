@@ -2,21 +2,24 @@
     //msg between client RoomServer
     public enum EMsgCS : byte {
         //Client GameServer
-        //Input 
+        //Input udp
         C2S_ReqMissFrame,
         C2S_RepMissFrameAck,
         S2C_RepMissFrame,
         C2S_HashCode,
         C2S_PlayerInput,
         S2C_FrameData,
+
+        //GameEvent tcp
         C2S_GameEvent,
         S2C_GameEvent,
-
         //Room
+        //废弃
         C2S_PlayerReady,
         S2C_PlayerReady,
         C2S_PlayerLeave,
         S2C_PlayerLeave,
+        
         S2C_StartGame,
 
         //Level
