@@ -1,5 +1,6 @@
 using System.Net;
 using Lockstep.Serialization;
+using NetMsg.Server;
 using Server.Common;
 
 namespace Lockstep.Server.Common {
@@ -24,8 +25,7 @@ namespace Lockstep.Server.Common {
         public virtual void OnBecomeMaster(){ }
         public virtual void OnBecomeCandidateMaster(){ }
 
-        public virtual void SendToMaster(EServerMsg type, BaseFormater data){ }
+        public virtual void SendToMaster(EMsgMS type, BaseFormater data){ }
         public virtual void OnRecvMsg(byte[] data){ }
     }
-
 }

@@ -11,6 +11,7 @@
     <AssemblyName>Server.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,7 +54,7 @@
     <Compile Include="Src\Interfaces\IRoom.cs" />
     <Compile Include="Src\Interfaces\IServer.cs" />
     <Compile Include="Src\Interfaces\IServerProxy.cs" />
-    <Compile Include="Src\Interfaces\MsgDefine.cs" />
+    <Compile Include="Src\NetWork\NetClient.cs" />
     <Compile Include="Src\NetWork\NetServer.cs" />
     <Compile Include="Src\Player.cs" />
     <Compile Include="Src\Server.cs" />
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetMsg.Server\NetMsg.Server.csproj">
+      <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>
+      <Name>NetMsg.Server</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

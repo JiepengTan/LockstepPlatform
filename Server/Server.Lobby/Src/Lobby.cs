@@ -31,8 +31,8 @@ namespace Lockstep.Server {
 
         private const int MAX_NAME_LEN = 30;
 
-        public NetServer serverLobby;
-        public NetServer serverRoom;
+        public NetServer<EMsgCL,Player> serverLobby;
+        public NetServer<EMsgCL,Player> serverRoom;
 
         public const byte MAX_HANDLER_IDX = (byte) EMsgCL.EnumCount;
         public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_ReqLogin;
@@ -57,18 +57,18 @@ namespace Lockstep.Server {
 
         public override void DoStart(ushort tcpPort, ushort udpPort){
             RegisterMsgHandlers();
-            serverLobby = new NetServer(Define.ClientKey);
-            serverLobby.DataReceived += OnDataReceived;
-            serverLobby.ClientConnected += OnClientConnected;
-            serverLobby.ClientDisconnected += OnCilentDisconnected;
-            serverLobby.Run(tcpPort);
-            this.RoomPort = udpPort;
-            this.RoomIP = "127.0.0.1";
-            serverRoom = new NetServer(Define.ClientKey);
-            serverRoom.DataReceived += OnDataReceivedRoom;
-            serverRoom.ClientConnected += OnClientConnectedRoom;
-            serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
-            serverRoom.Run(udpPort);
+            //serverLobby = new NetServer(Define.ClientKey);
+            //serverLobby.DataReceived += OnDataReceived;
+            //serverLobby.ClientConnected += OnClientConnected;
+            //serverLobby.ClientDisconnected += OnCilentDisconnected;
+            //serverLobby.Run(tcpPort);
+            //this.RoomPort = udpPort;
+            //this.RoomIP = "127.0.0.1";
+            //serverRoom = new NetServer(Define.ClientKey);
+            //serverRoom.DataReceived += OnDataReceivedRoom;
+            //serverRoom.ClientConnected += OnClientConnectedRoom;
+            //serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
+            //serverRoom.Run(udpPort);
             Debug.Log($"Listen tcpPort {tcpPort} udpPort {udpPort}");
         }
 
