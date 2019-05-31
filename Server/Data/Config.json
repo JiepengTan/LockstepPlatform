@@ -1,0 +1,50 @@
+/*
+    public enum EServerType {
+        DaemonServer = 0,
+        LoginServer = 1,
+        LobbyServer = 2,
+        GameServer = 3,
+        DatabaseServer = 4,
+        WorldServer =5,
+    }
+*/
+{
+  "daemonMasterIpPort": "127.0.0.1:10001",
+  "daemon": {
+    "type": 0,
+    "path": "./Server.Daemon.exe",
+    "serverIpPort": "127.0.0.1:10001",
+    "tcpClientIpPort": "127.0.0.1:7050",
+    "udpClientIpPort": "127.0.0.1:7051"
+  },
+  "servers": [
+    {
+      "type": 1,
+      "path": "./Server.Login.exe",
+      "serverIpPort": "127.0.0.1:10101",
+      "tcpClientIpPort": "127.0.0.1:7150",
+      "udpClientIpPort": "127.0.0.1:7151"
+    },
+    {
+      "type": 2,
+      "path": "./Server.Lobby.exe",
+      "serverIpPort": "127.0.0.1:10201",
+      "tcpClientIpPort": "127.0.0.1:7250",
+      "udpClientIpPort": "127.0.0.1:7251"
+    },
+    {
+      "type": 3,
+      "path": "./Server.Game.exe",
+      "serverIpPort": "127.0.0.1:10301",
+      "tcpClientIpPort": "127.0.0.1:7350",
+      "udpClientIpPort": "127.0.0.1:7351"
+    },
+    {
+      "type": 4,
+      "path": "./Server.Database.exe",
+      "serverIpPort": "127.0.0.1:10401",
+      "tcpClientIpPort": "127.0.0.1:7450",
+      "udpClientIpPort": "127.0.0.1:7451"
+    }
+  ]
+}

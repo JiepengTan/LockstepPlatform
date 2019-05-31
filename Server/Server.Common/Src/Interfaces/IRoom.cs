@@ -1,6 +1,6 @@
 using Lockstep.Serialization;
 
-namespace Server.Common {
+namespace Lockstep.Server.Common {
     public interface IRecyclable {
         void OnReuse();
         void OnRecycle();

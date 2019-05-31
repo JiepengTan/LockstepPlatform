@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Lockstep.Logic.Server {
+namespace Lockstep.Server {
     public class SimpleDatabase {
         
         public Dictionary<string, long> Account2Id = new Dictionary<string, long>();

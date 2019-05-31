@@ -44,12 +44,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Define.cs" />
+    <Compile Include="Src\BaseServer.cs" />
+    <Compile Include="Src\ConfigInfo.cs" />
+    <Compile Include="Src\Define.cs" />
+    <Compile Include="Src\Interfaces\IDaemonServer.cs" />
+    <Compile Include="Src\Interfaces\IGameServer.cs" />
     <Compile Include="Src\Interfaces\ILobby.cs" />
     <Compile Include="Src\Interfaces\IRoom.cs" />
     <Compile Include="Src\Interfaces\IServer.cs" />
+    <Compile Include="Src\Interfaces\IServerProxy.cs" />
+    <Compile Include="Src\Interfaces\MsgDefine.cs" />
     <Compile Include="Src\NetWork\NetServer.cs" />
     <Compile Include="Src\Player.cs" />
+    <Compile Include="Src\Server.cs" />
+    <Compile Include="Src\ServerUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

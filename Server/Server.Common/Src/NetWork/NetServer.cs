@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using LiteNetLib;
-namespace Server.Common
+namespace Lockstep.Server.Common
 {
     public class NetServer : IServer
     {

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1A00F547-A5D9-4FBA-953A-04236882CC7A}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{B89F02F8-49F3-4214-BBCD-52D286FB1D13}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lockstep.Serializaition</RootNamespace>
-    <AssemblyName>Lockstep.Serializaition</AssemblyName>
+    <RootNamespace>Server.Deamon</RootNamespace>
+    <AssemblyName>Server.Deamon</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>../../Libs/</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>../../Libs/</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -38,25 +38,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\BaseFormater.cs" />
-    <Compile Include="src\Compressor.cs" />
-    <Compile Include="src\Deserializer.cs" />
-    <Compile Include="src\FastBitConverter.cs" />
-    <Compile Include="src\LitJson\IJsonWrapper.cs" />
-    <Compile Include="src\LitJson\JsonData.cs" />
-    <Compile Include="src\LitJson\JsonException.cs" />
-    <Compile Include="src\LitJson\JsonMapper.cs" />
-    <Compile Include="src\LitJson\JsonMockWrapper.cs" />
-    <Compile Include="src\LitJson\JsonReader.cs" />
-    <Compile Include="src\LitJson\JsonWriter.cs" />
-    <Compile Include="src\LitJson\Lexer.cs" />
-    <Compile Include="src\LitJson\Netstandard15Polyfill.cs" />
-    <Compile Include="src\LitJson\ParserToken.cs" />
-    <Compile Include="src\NetMsgExtension.cs" />
-    <Compile Include="src\Serializer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\DaemonServer.cs" />
+    <Compile Include="Src\Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="src\LitJson\.DS_Store" />
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Common\Server.Common.csproj">
+      <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
+      <Name>Server.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

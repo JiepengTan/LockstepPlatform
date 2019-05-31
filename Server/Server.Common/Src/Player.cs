@@ -2,7 +2,7 @@ using System.Runtime.Serialization;
 using LiteNetLib;
 using Lockstep.Serialization;
 
-namespace Server.Common {
+namespace Lockstep.Server.Common {
     public enum EPlayerStatus {
         Unconnected,
         Idle,

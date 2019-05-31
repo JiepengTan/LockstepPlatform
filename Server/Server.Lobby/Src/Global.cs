@@ -1,4 +1,4 @@
-namespace Lockstep.Logic.Server {
+namespace Lockstep.Server {
     public class Global {
         public const int IVALID_GAME_TYPE_ID = -1;
         public static int deltaTime;

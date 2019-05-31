@@ -1,7 +1,7 @@
 using System;
 using LiteNetLib;
 
-namespace Server.Common {
+namespace Lockstep.Server.Common {
     public interface IServer {
         event Action<object> ClientConnected;
         event Action<object> ClientDisconnected;

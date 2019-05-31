@@ -6,10 +6,10 @@ using LiteNetLib;
 using Lockstep.Serialization;
 using NetMsg.Game;
 using NetMsg.Lobby;
-using Server.Common;
+using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
-namespace Lockstep.Logic.Server {
+namespace Lockstep.Server {
     public class HashCodeMatcher {
         public long hashCode;
         public bool[] sendResult;

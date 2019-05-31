@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Text;
 
 namespace Lockstep.Logging {
     public static class Log {
         public static LogSeverity LogSeverityLevel =
             LogSeverity.Info | LogSeverity.Warn | LogSeverity.Error | LogSeverity.Exception;
 
-        public static event EventHandler<LogEventArgs> OnMessage;
+        public static event EventHandler<LogEventArgs> OnMessage = DefaultServerLogHandler;
         public static Action<bool, string> OnAssert;
 
         public static void SetLogAllSeverities(){
@@ -39,6 +41,28 @@ namespace Lockstep.Logging {
             if (OnMessage != null && (LogSeverityLevel & sev) != 0) {
                 var message = (args != null && args.Length > 0) ? string.Format(format, args) : format;
                 OnMessage.Invoke(sender, new LogEventArgs(sev, message));
+            }
+        }
+        
+        static StringBuilder _logBuffer = new StringBuilder(); 
+        public static void DefaultServerLogHandler(object sernder, LogEventArgs logArgs){
+            if ((LogSeverity.Error & logArgs.LogSeverity) != 0
+                || (LogSeverity.Exception & logArgs.LogSeverity) != 0
+            ) {
+                StackTrace st = new StackTrace(true);
+                StackFrame[] sf = st.GetFrames();
+                for (int i = 4; i < sf.Length; ++i) {
+                    var frame = sf[i];
+                    _logBuffer.AppendLine(frame.GetMethod().DeclaringType.FullName + "::" + frame.GetMethod().Name +
+                                  " Line=" + frame.GetFileLineNumber());
+                }
+            }
+
+            Console.WriteLine(logArgs.Message);
+            if (_logBuffer.Length != 0) {
+                Console.WriteLine(_logBuffer.ToString());
+                _logBuffer.Length = 0;
+                _logBuffer.Clear();
             }
         }
     }

@@ -8,10 +8,10 @@ using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Logging;
 using NetMsg.Lobby;
-using Server.Common;
+using Lockstep.Server.Common;
 
-namespace Lockstep.Logic.Server {
-    public class Lobby : ILobby {
+namespace Lockstep.Server {
+    public class Lobby :BaseServer, ILobby {
         //account map
         private Dictionary<string, long> account2PlayerId = new Dictionary<string, long>();
         private long PlayerAutoIncId = 1;
@@ -55,7 +55,7 @@ namespace Lockstep.Logic.Server {
 
         #region LifeCycle
 
-        public void DoStart(ushort tcpPort, ushort udpPort){
+        public override void DoStart(ushort tcpPort, ushort udpPort){
             RegisterMsgHandlers();
             serverLobby = new NetServer(Define.ClientKey);
             serverLobby.DataReceived += OnDataReceived;
@@ -111,7 +111,7 @@ namespace Lockstep.Logic.Server {
         }
 
 
-        public void DoUpdate(int deltaTime){
+        public override void DoUpdate(int deltaTime){
             foreach (var room in _allRooms) {
                 try {
                     room?.DoUpdate(deltaTime);
@@ -122,9 +122,9 @@ namespace Lockstep.Logic.Server {
             }
         }
 
-        public void DoDestroy(){ }
+        public override void DoDestroy(){ }
 
-        public void PollEvents(){
+        public override void PollEvents(){
             serverLobby?.PollEvents();
             serverRoom?.PollEvents();
         }
@@ -368,6 +368,7 @@ namespace Lockstep.Logic.Server {
                         return;
                     }
 
+                    var ep = peer.EndPoint;
                     DealLogin(initMsg, peer, reader);
                     return;
                 }
