@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Game", "Server.Game\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Server", "NetMsg.Server\NetMsg.Server.csproj", "{1DF87870-36F9-46D4-ACF0-4193DD302DA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.DB", "Server.DB\Server.DB.csproj", "{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,5 +76,9 @@ Global
 		{1DF87870-36F9-46D4-ACF0-4193DD302DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1DF87870-36F9-46D4-ACF0-4193DD302DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1DF87870-36F9-46D4-ACF0-4193DD302DA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
