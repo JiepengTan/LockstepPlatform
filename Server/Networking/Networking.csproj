@@ -36,12 +36,56 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="websocket-sharp, Version=1.0.2.31450, Culture=neutral, PublicKeyToken=5660b08a1845a91e">
+      <HintPath>Libs\websocket-sharp.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Libs\WebSocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\BaseClientSocket.cs" />
+    <Compile Include="Src\BasePeer.cs" />
+    <Compile Include="Src\BTimer.cs" />
+    <Compile Include="Src\ClientSocketWs.cs" />
+    <Compile Include="Src\ConnectionStatus.cs" />
+    <Compile Include="Src\DeliveryMethod.cs" />
+    <Compile Include="Src\IClientSocket.cs" />
+    <Compile Include="Src\IIncommingMessage.cs" />
+    <Compile Include="Src\IMessage.cs" />
+    <Compile Include="Src\IMessageFactory.cs" />
+    <Compile Include="Src\IMsgDispatcher.cs" />
+    <Compile Include="Src\IncomingMessage.cs" />
+    <Compile Include="Src\IPacketHandler.cs" />
+    <Compile Include="Src\IPeer.cs" />
+    <Compile Include="Src\IServerSocket.cs" />
+    <Compile Include="Src\Message.cs" />
+    <Compile Include="Src\MessageFactory.cs" />
+    <Compile Include="Src\MessageFlag.cs" />
+    <Compile Include="Src\MessageHelper.cs" />
+    <Compile Include="Src\PacketHandler.cs" />
+    <Compile Include="Src\PeerWs.cs" />
+    <Compile Include="Src\ResponseStatus.cs" />
+    <Compile Include="Src\SerializationExtensions.cs" />
+    <Compile Include="Src\ServerSocketWs.cs" />
+    <Compile Include="Src\Userful\ToDo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Src" />
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Common\Server.Common.csproj">
+      <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
+      <Name>Server.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Libs\.DS_Store" />
+    <Content Include="Libs\websocket-sharp.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
