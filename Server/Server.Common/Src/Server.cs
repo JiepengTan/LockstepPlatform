@@ -70,25 +70,25 @@ namespace Lockstep.Server.Common {
 
         #endregion
 
-        #region Client DS
+        #region Client XS
 
-        //Client DS
-        protected NetClient<EMsgDS> _netClientDS;
+        //Client XS
+        protected NetClient<EMsgXS> _netClientXS;
 
-        private void InitClientDS(){
-            _netClientDS = new NetClient<EMsgDS>((int) EMsgDS.EnumCount);
-            _netClientDS.OnConnected += OnConnectedDaemon;
-            RegisterMsgHandlerD2S();
-            _netClientDS.Init("127.0.0.1", _config.daemonPort, Define.DSKey);
+        private void InitClientXS(){
+            _netClientXS = new NetClient<EMsgXS>((int) EMsgXS.EnumCount);
+            _netClientXS.OnConnected += OnConnectedDaemon;
+            RegisterMsgHandlerX2S();
+            _netClientXS.Init("127.0.0.1", _config.daemonPort, Define.XSKey);
         }
 
-        void RegisterMsgHandlerD2S(){
-            ServerUtil.RegisterEvent<EMsgDS, NetClientMsgHandler>("OnMsg_D2S", "OnMsg_".Length,
-                _netClientDS.RegisterMsgHandler, this);
+        void RegisterMsgHandlerX2S(){
+            ServerUtil.RegisterEvent<EMsgXS, NetClientMsgHandler>("OnMsg_X2S", "OnMsg_".Length,
+                _netClientXS.RegisterMsgHandler, this);
         }
 
         void OnConnectedDaemon(){
-            _netClientDS.Send(EMsgDS.S2D_ReqMasterInfo, new Msg_ReqMasterInfo() {type = (byte) serverType});
+            _netClientXS.Send(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {type = (byte) serverType});
         }
 
         #endregion
@@ -97,12 +97,12 @@ namespace Lockstep.Server.Common {
             base.DoStart(info);
             serverType = info.type;
             _config = ServerUtil.LoadConfig();
-            InitClientDS();
+            InitClientXS();
             InitServerMS(info);
         }
 
 
-        void OnMsg_D2S_RepMasterInfo(Deserializer reader){
+        void OnMsg_X2S_RepMasterInfo(Deserializer reader){
             if (_netClientMS != null) return;
             var msg = reader.Parse<Msg_RepMasterInfo>();
             InitClientMS(msg);

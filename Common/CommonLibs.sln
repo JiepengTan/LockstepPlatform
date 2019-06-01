@@ -4,7 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serializaition", "Serializa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "Logging\Logging.csproj", "{7A5E2696-0566-40A5-BD33-21A580FBDD6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Lobby", "NetMsg.Lobby\NetMsg.Lobby.csproj", "{2EE8F630-4373-4F2E-B988-B576A7B6FE52}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Common", "NetMsg.Common\NetMsg.Common.csproj", "{2EE8F630-4373-4F2E-B988-B576A7B6FE52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Game.Tank", "NetMsg.Game.Tank\NetMsg.Game.Tank.csproj", "{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}"
 EndProject

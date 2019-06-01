@@ -7,8 +7,8 @@ using System.Text;
 using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Logging;
-using NetMsg.Lobby;
 using Lockstep.Server.Common;
+using NetMsg.Common;
 
 namespace Lockstep.Server {
     public class Lobby :BaseServer, ILobby {
@@ -31,12 +31,12 @@ namespace Lockstep.Server {
 
         private const int MAX_NAME_LEN = 30;
 
-        public NetServer<EMsgCL,Player> serverLobby;
-        public NetServer<EMsgCL,Player> serverRoom;
+        public NetServer<EMsgSC,Player> serverLobby;
+        public NetServer<EMsgSC,Player> serverRoom;
 
-        public const byte MAX_HANDLER_IDX = (byte) EMsgCL.EnumCount;
-        public const byte INIT_MSG_IDX = (byte) EMsgCL.C2L_ReqLogin;
-        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCL.EnumCount];
+        public const byte MAX_HANDLER_IDX = (byte) EMsgSC.EnumCount;
+        public const byte INIT_MSG_IDX = (byte) EMsgSC.C2L_ReqLogin;
+        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgSC.EnumCount];
 
         private delegate IRoom FuncCreateRoom();
 
@@ -134,11 +134,11 @@ namespace Lockstep.Server {
         #region rooms
 
         public List<IRoom> GetRooms(int roomType){
-            return gameId2Rooms.GetRefVal(roomType);
+            return DictExtensions.GetRefVal(gameId2Rooms, roomType);
         }
 
         public IRoom GetRoom(int roomId){
-            return roomId2Room.GetRefVal(roomId);
+            return DictExtensions.GetRefVal(roomId2Room, roomId);
         }
 
         public IRoom GetRoomByUserID(int id){
@@ -240,7 +240,7 @@ namespace Lockstep.Server {
 
         private void SendCreateRoomResult(Player player){
             var writer = new Serializer();
-            writer.PutByte((byte) EMsgCL.L2C_RoomMsg);
+            writer.PutByte((byte) EMsgSC.L2C_CreateRoom);
             new Msg_CreateRoomResult() {roomId = player.RoomId}.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             player.SendLobby(bytes);
@@ -281,15 +281,15 @@ namespace Lockstep.Server {
         }
 
         public Player GetPlayer(long playerId){
-            return playerID2Player.GetRefVal(playerId);
+            return DictExtensions.GetRefVal(playerID2Player, playerId);
         }
 
         public Player GetPlayerLobby(int netId){
-            return netId2Player.GetRefVal(netId);
+            return DictExtensions.GetRefVal(netId2Player, netId);
         }
 
         public Player GetPlayerRoom(int netId){
-            return netId2PlayerRoom.GetRefVal(netId);
+            return DictExtensions.GetRefVal(netId2PlayerRoom, netId);
         }
 
 
@@ -357,7 +357,7 @@ namespace Lockstep.Server {
                     return;
                 }
 
-                if (msgType == (byte) EMsgCL.C2L_ReqLogin) {
+                if (msgType == (byte) EMsgSC.C2L_ReqLogin) {
                     Msg_ReqLogin initMsg = null;
                     try {
                         initMsg = reader.Parse<Msg_ReqLogin>();
@@ -414,7 +414,7 @@ namespace Lockstep.Server {
             }
             
             var writer = new Serializer();
-            writer.PutByte((byte) EMsgCL.L2C_RepLogin);
+            writer.PutByte((byte) EMsgSC.L2C_RepLogin);
             var msg = new Msg_RepLogin() {playerId = player.PlayerId};
             if (room != null) {
                 msg.roomId = room.RoomId;
@@ -435,13 +435,13 @@ namespace Lockstep.Server {
 
 
         private void RegisterMsgHandlers(){
-            RegisterNetMsgHandler(EMsgCL.C2L_JoinRoom, OnMsg_JoinRoom);
-            RegisterNetMsgHandler(EMsgCL.C2L_CreateRoom, OnMsg_CreateRoom);
-            RegisterNetMsgHandler(EMsgCL.C2L_LeaveRoom, OnMsg_LeaveRoom);
-            RegisterNetMsgHandler(EMsgCL.C2L_RoomMsg, OnMsg_RoomMsg);
+            //RegisterNetMsgHandler(EMsgSC.C2L_JoinRoom, OnMsg_JoinRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_CreateRoom, OnMsg_CreateRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_LeaveRoom, OnMsg_LeaveRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_RoomMsg, OnMsg_RoomMsg);
         }
 
-        private void RegisterNetMsgHandler(EMsgCL type, DealNetMsg func){
+        private void RegisterNetMsgHandler(EMsgSC type, DealNetMsg func){
             allMsgDealFuncs[(int) type] = func;
         }
 

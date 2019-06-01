@@ -2,7 +2,7 @@ namespace Lockstep.Server.Common  {
     public class Define {
         public const string ClientKey = "LockstepPlatform";
         public const string MSKey = "LockstepPlatformMasterSlave";
-        public const string DSKey = "LockstepPlatformDaemonServer";
+        public const string XSKey = "LockstepPlatformDaemonServer";
         public const int SimulationSpeed = 60;
     }
     

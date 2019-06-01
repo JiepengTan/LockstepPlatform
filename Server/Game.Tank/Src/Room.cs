@@ -4,8 +4,7 @@ using System.IO;
 using System.Linq;
 using LiteNetLib;
 using Lockstep.Serialization;
-using NetMsg.Game;
-using NetMsg.Lobby;
+using NetMsg.Common;
 using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
@@ -61,8 +60,8 @@ namespace Lockstep.Server {
 
         private ILobby _lobby;
 
-        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgCS.EnumCount];
-        private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgCS.EnumCount];
+        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgSC.EnumCount];
+        private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgSC.EnumCount];
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
 
@@ -149,7 +148,7 @@ namespace Lockstep.Server {
 
                 msg.startTick = frames[0].tick;
                 msg.frames = frames;
-                SendToAll(EMsgCS.S2C_FrameData, msg);
+                SendToAll(EMsgSC.G2C_FrameData, msg);
                 if (firstFrameTimeStamp <= 0) {
                     firstFrameTimeStamp = timeSinceLoaded;
                 }
@@ -207,7 +206,7 @@ namespace Lockstep.Server {
             }
 
             var msgType = reader.GetByte();
-            if (msgType >= (byte) EMsgCS.EnumCount) {
+            if (msgType >= (byte) EMsgSC.EnumCount) {
                 DealMsgHandlerError(player, $"{player.PlayerId} send a Error msgType out of range {msgType}");
                 return;
             }
@@ -243,19 +242,19 @@ namespace Lockstep.Server {
         }
 
         private void RegisterMsgHandlers(){
-            RegisterNetMsgHandler(EMsgCS.C2S_PlayerInput, OnNet_PlayerInput,
+            RegisterNetMsgHandler(EMsgSC.C2G_PlayerInput, OnNet_PlayerInput,
                 (reader) => { return ParseData<Msg_PlayerInput>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_HashCode, OnNet_HashCode,
+            RegisterNetMsgHandler(EMsgSC.C2G_HashCode, OnNet_HashCode,
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_LoadingProgress, OnNet_LoadingProgress,
+            RegisterNetMsgHandler(EMsgSC.C2G_LoadingProgress, OnNet_LoadingProgress,
                 (reader) => { return ParseData<Msg_LoadingProgress>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_ReqMissFrame, OnNet_ReqMissFrame,
+            RegisterNetMsgHandler(EMsgSC.C2G_ReqMissFrame, OnNet_ReqMissFrame,
                 (reader) => { return ParseData<Msg_ReqMissFrame>(reader); });
-            RegisterNetMsgHandler(EMsgCS.C2S_RepMissFrameAck, OnNet_RepMissFrameAck,
+            RegisterNetMsgHandler(EMsgSC.C2G_RepMissFrameAck, OnNet_RepMissFrameAck,
                 (reader) => { return ParseData<Msg_RepMissFrameAck>(reader); });
         }
 
-        private void RegisterNetMsgHandler(EMsgCS type, DealNetMsg func, ParseNetMsg parseFunc){
+        private void RegisterNetMsgHandler(EMsgSC type, DealNetMsg func, ParseNetMsg parseFunc){
             allMsgDealFuncs[(int) type] = func;
             allMsgParsers[(int) type] = parseFunc;
         }
@@ -287,7 +286,7 @@ namespace Lockstep.Server {
             }
         }
 
-        public void SendTo(Player player, EMsgCS type, ISerializable body, bool isNeedDebugSize = false){
+        public void SendTo(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
             var writer = new Serializer();
             writer.PutByte((byte) type);
             body.Serialize(writer);
@@ -299,7 +298,7 @@ namespace Lockstep.Server {
             player.SendRoom(bytes);
         }
 
-        public void SendToAll(EMsgCS type, ISerializable body){
+        public void SendToAll(EMsgSC type, ISerializable body){
             var writer = new Serializer();
             writer.PutByte((byte) type);
             body.Serialize(writer);
@@ -554,7 +553,7 @@ namespace Lockstep.Server {
 
             msg.startTick = frames[0].tick;
             msg.frames = frames;
-            SendTo(player, EMsgCS.S2C_RepMissFrame, msg, true);
+            SendTo(player, EMsgSC.G2C_RepMissFrame, msg, true);
         }
 
         void OnNet_RepMissFrameAck(Player player, BaseFormater data){
@@ -584,7 +583,7 @@ namespace Lockstep.Server {
             var retmsg = new Msg_AllLoadingProgress();
             retmsg.isAllDone = isDone;
             retmsg.progress = playerLoadingProgress;
-            SendToAll(EMsgCS.S2C_LoadingProgress, retmsg);
+            SendToAll(EMsgSC.G2C_LoadingProgress, retmsg);
             if (isDone) {
                 for (int i = 0; i < playerLoadingProgress.Length; i++) {
                     playerLoadingProgress[i] = 0;
@@ -602,7 +601,7 @@ namespace Lockstep.Server {
             seed = new Random().Next(int.MinValue, int.MaxValue);
             var ids = _playerId2LocalId.Values.ToArray();
             foreach (var player in _allPlayers) {
-                SendTo(player, EMsgCS.S2C_StartGame, CreateStartGame(player.localId, ids));
+                SendTo(player, EMsgSC.G2C_StartGame, CreateStartGame(player.localId, ids));
             }
         }
 

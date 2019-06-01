@@ -2,7 +2,7 @@ using Lockstep.Serialization;
 
 
 namespace NetMsg.Server {
-//DS
+//XS
     public class Msg_ReqMasterInfo : BaseFormater {
         public byte type;
     }

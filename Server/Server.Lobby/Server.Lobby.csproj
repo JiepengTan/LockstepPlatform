@@ -42,9 +42,6 @@
     <Reference Include="Lockstep.Serializaition, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\Lockstep.Serializaition.dll</HintPath>
     </Reference>
-    <Reference Include="NetMsg.Lobby, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\NetMsg.Lobby.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -60,6 +57,10 @@
     <Compile Include="Src\SimpleDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
       <Name>Server.Common</Name>

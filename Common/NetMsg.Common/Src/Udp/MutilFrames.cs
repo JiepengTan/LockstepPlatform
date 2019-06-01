@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Lockstep.Serialization;
 
-namespace NetMsg.Game {
+namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
     public partial class MutilFrames : BaseFormater {

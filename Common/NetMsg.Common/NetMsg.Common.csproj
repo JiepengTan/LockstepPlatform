@@ -7,8 +7,8 @@
     <ProjectGuid>{2EE8F630-4373-4F2E-B988-B576A7B6FE52}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NetMsg.Lobby</RootNamespace>
-    <AssemblyName>NetMsg.Lobby</AssemblyName>
+    <RootNamespace>NetMsg.Common</RootNamespace>
+    <AssemblyName>NetMsg.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -45,9 +45,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\DictExtensions.cs" />
-    <Compile Include="Src\EMsgCL.cs" />
+    <Compile Include="Src\NetworkDefine.cs" />
+    <Compile Include="Src\EMsgSC.cs" />
     <Compile Include="Src\ExtentionMsg.cs" />
     <Compile Include="Src\MsgDefine.cs" />
+    <Compile Include="Src\Udp\InputCmd.cs" />
+    <Compile Include="Src\Udp\Msg_PlayerInput.cs" />
+    <Compile Include="Src\Udp\MutilDiscFrames.cs" />
+    <Compile Include="Src\Udp\MutilFrames.cs" />
+    <Compile Include="Src\Udp\ServerFrame.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace NetMsg.Lobby {
+namespace NetMsg.Common{
     public static class DictExtensions {
         public static TValue GetRefVal<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
             where TValue : class{

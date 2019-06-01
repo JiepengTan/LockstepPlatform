@@ -1,6 +1,6 @@
 using Lockstep.Serialization;
 
-namespace NetMsg.Game {
+namespace NetMsg.Common {
     [System.Serializable]
     [SelfImplement]
     [Udp]

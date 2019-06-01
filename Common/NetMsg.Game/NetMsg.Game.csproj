@@ -44,14 +44,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\EMsgCS.cs" />
-    <Compile Include="Src\ExtentionMsg.cs" />
-    <Compile Include="Src\MsgDefine.cs" />
-    <Compile Include="Src\Udp\InputCmd.cs" />
-    <Compile Include="Src\Udp\Msg_PlayerInput.cs" />
-    <Compile Include="Src\Udp\MutilDiscFrames.cs" />
-    <Compile Include="Src\Udp\MutilFrames.cs" />
-    <Compile Include="Src\Udp\ServerFrame.cs" />
+    <Content Include="Src\.DS_Store" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

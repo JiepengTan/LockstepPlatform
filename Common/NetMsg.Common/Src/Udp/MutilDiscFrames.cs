@@ -1,6 +1,6 @@
 using Lockstep.Serialization;
 
-namespace NetMsg.Game {
+namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
     public partial class MutilDiscFrames : BaseFormater {

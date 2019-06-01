@@ -4,9 +4,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logging", "..\Common\Loggin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serializaition", "..\Common\Serializaition\Serializaition.csproj", "{1A00F547-A5D9-4FBA-953A-04236882CC7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Lobby", "..\Common\NetMsg.Lobby\NetMsg.Lobby.csproj", "{2EE8F630-4373-4F2E-B988-B576A7B6FE52}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Game", "..\Common\NetMsg.Game\NetMsg.Game.csproj", "{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetMsg.Common", "..\Common\NetMsg.Common\NetMsg.Common.csproj", "{2EE8F630-4373-4F2E-B988-B576A7B6FE52}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server.Login", "Server.Login\Server.Login.csproj", "{EBA8FDBD-7BEE-4277-B1A4-B47135E76D30}"
 EndProject
@@ -52,10 +50,6 @@ Global
 		{1A00F547-A5D9-4FBA-953A-04236882CC7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A00F547-A5D9-4FBA-953A-04236882CC7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A00F547-A5D9-4FBA-953A-04236882CC7A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5195D0DE-4CE6-4D29-A72F-373DF69D1C46}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12F44184-A422-5F27-22E6-507969043F15}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12F44184-A422-5F27-22E6-507969043F15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12F44184-A422-5F27-22E6-507969043F15}.Release|Any CPU.ActiveCfg = Release|Any CPU
