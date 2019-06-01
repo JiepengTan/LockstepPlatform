@@ -2,9 +2,9 @@ using Lockstep.Serialization;
 
 namespace Lockstep.Server.Common {
     public interface IGameServer {
-        bool IsMaster { get; set; }
+        bool IsMaster { get;  }
 
-        bool IsCandidateMaster { get; set; }
+        bool IsCandidateMaster { get;  }
 
         //life cycle
         void DoStart(ushort tcpPort, ushort udpPort);

@@ -1,25 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using LiteDB;
 using LiteNetLib;
-using Lockstep.Game;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using NetMsg.Server;
-using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Database {
     public class DatabaseServer : Common.Server {
-        private int _reportInterval = 1000;
-        private int _reportTimer = 0;
-        private DaemonState _curState;
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _memCounter;
-
         private IAuthDatabase _authDb;
         private IProfilesDatabase _profilesDb;
 

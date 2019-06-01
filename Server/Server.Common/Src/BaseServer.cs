@@ -4,24 +4,24 @@ using NetMsg.Server;
 using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Common {
-
-    
     public class BaseServer : IGameServer {
         protected ConfigInfo _config;
-        
+
         public ServerProxy masterServer;
         public ServerProxy candidateMasterServer;
 
         public IPEndPoint ipInfo;
-        private EMasterType masterType;
         public EServerType serverType;
-        public bool IsMaster { get; set; }
-        public bool IsCandidateMaster { get; set; }
+        protected EMasterType masterType;
+        public bool IsMaster => masterType == EMasterType.Master;
+        public bool IsCandidateMaster => masterType == EMasterType.CandidateMaster;
 
         public virtual void DoAwake(ServerConfigInfo info){
             serverType = info.type;
             _config = ServerUtil.LoadConfig();
+            masterType = _config.isMaster ? EMasterType.Master : EMasterType.Slave;
         }
+
         public virtual void DoStart(ServerConfigInfo info){ }
         public virtual void DoStart(ushort tcpPort, ushort udpPort){ }
         public virtual void DoUpdate(int deltaTime){ }
