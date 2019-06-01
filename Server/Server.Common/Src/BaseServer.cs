@@ -7,6 +7,8 @@ namespace Lockstep.Server.Common {
 
     
     public class BaseServer : IGameServer {
+        protected ConfigInfo _config;
+        
         public ServerProxy masterServer;
         public ServerProxy candidateMasterServer;
 
@@ -15,7 +17,12 @@ namespace Lockstep.Server.Common {
         public EServerType serverType;
         public bool IsMaster { get; set; }
         public bool IsCandidateMaster { get; set; }
-        public virtual void DoStart(ServerConfigInfo config){ }
+
+        public virtual void DoAwake(ServerConfigInfo info){
+            serverType = info.type;
+            _config = ServerUtil.LoadConfig();
+        }
+        public virtual void DoStart(ServerConfigInfo info){ }
         public virtual void DoStart(ushort tcpPort, ushort udpPort){ }
         public virtual void DoUpdate(int deltaTime){ }
         public virtual void DoDestroy(){ }

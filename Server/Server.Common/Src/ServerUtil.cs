@@ -57,6 +57,7 @@ namespace Server.Common {
             sw.Start();
             BaseServer server = new T();
             {
+                server.DoAwake(config);
                 server.DoStart(config);
                 while (!Console.KeyAvailable) {
                     server.PollEvents();

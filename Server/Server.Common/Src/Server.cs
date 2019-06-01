@@ -12,7 +12,6 @@ namespace Lockstep.Server.Common {
     public class MasterMessageHandler { }
 
     public class Server : BaseServer {
-        protected ConfigInfo _config;
 
         #region Server MS
 
@@ -95,8 +94,6 @@ namespace Lockstep.Server.Common {
 
         public override void DoStart(ServerConfigInfo info){
             base.DoStart(info);
-            serverType = info.type;
-            _config = ServerUtil.LoadConfig();
             InitClientXS();
             InitServerMS(info);
         }

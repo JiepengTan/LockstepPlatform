@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>Libs\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\LiteNetLib.dll</HintPath>
     </Reference>
@@ -42,7 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\AuthDbLdb.cs" />
     <Compile Include="Src\DatabaseServer.cs" />
+    <Compile Include="Src\IProfilesDatabase.cs" />
+    <Compile Include="Src\LiteDbFactory.cs" />
+    <Compile Include="Src\MsfDbAccessorFactory.cs" />
+    <Compile Include="Src\ProfilesDatabaseLdb.cs" />
     <Compile Include="Src\Program.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,7 @@ namespace NetMsg.Server {
         S2X_ShutdownServer,
         S2X_ReqMasterInfo,
         X2S_RepMasterInfo,
+        
         EnumCount,
     }
     //X=MasterDaemon  D=Daemon
@@ -38,22 +39,26 @@ namespace NetMsg.Server {
         X2Y_RegisterDaemon,
         X2Y_ReportState,
         X2Y_ShutdownServer,
+        
         EnumCount,
     }
     
     //D DB,S Server
     public enum EMsgDS{
-        I2D_ReqUserInfo,
-        D2I_RepUserInfo,
-        I2D_ReqCreateUser,
-        D2I_RepCreateUser,
-        I2D_RepChangeUserInfo,
-        D2I_RepChangeUserInfo,
+        S2D_ReqUserInfo,
+        D2S_RepUserInfo,
+        S2D_ReqCreateUser,
+        D2S_RepCreateUser,
+        S2D_RepChangeUserInfo,
+        D2S_RepChangeUserInfo,
+        
+        EnumCount,
     }
     // Server to Server
     public enum EMsgSS {
         I2L_UserLoginInfo,
         L2I_ReqUserLogin,
+        EnumCount,
     }
     
 }
