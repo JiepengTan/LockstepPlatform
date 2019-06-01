@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Collections;
 
-namespace BinarySerializer {
+namespace Lockstep.CodeGenerator {
     public interface ITypeHandler {
         bool CanAddType(Type t);
         string DealType(Type t, List<string> sbfs);

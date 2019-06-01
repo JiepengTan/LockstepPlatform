@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Networking", "Networking\Ne
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Util", "Util\Util.csproj", "{AC5B8A05-6E14-4B17-98D1-5BFFF3290E76}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeGenerator", "CodeGenerator\CodeGenerator.csproj", "{C3CDD113-ABCA-45A0-BA2A-C5C55D24DA32}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,5 +94,9 @@ Global
 		{AC5B8A05-6E14-4B17-98D1-5BFFF3290E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC5B8A05-6E14-4B17-98D1-5BFFF3290E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC5B8A05-6E14-4B17-98D1-5BFFF3290E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3CDD113-ABCA-45A0-BA2A-C5C55D24DA32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3CDD113-ABCA-45A0-BA2A-C5C55D24DA32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3CDD113-ABCA-45A0-BA2A-C5C55D24DA32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3CDD113-ABCA-45A0-BA2A-C5C55D24DA32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

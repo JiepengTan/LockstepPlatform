@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Lockstep.Logging;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-namespace BinarySerializer {
+namespace Lockstep.CodeGenerator {
     public class EditorBaseCodeGenerator : ICodeHelper {
         protected HashSet<Type> togenCodeTypes = new HashSet<Type>();
         protected HashSet<Type> needNameSpaceTypes = new HashSet<Type>();
@@ -32,7 +34,7 @@ namespace BinarySerializer {
             return gen.GenTypeCode(typeHandler, allTypes.ToArray());
         }
 
-        protected void HideGenerateCodes(bool isSave = true){
+        public void HideGenerateCodes(bool isSave = true){
             var path = GenerateFilePath;
             var lines = System.IO.File.ReadAllLines(path);
             lines[0] = lines[0].Replace("//#define", "#define");
@@ -47,6 +49,7 @@ namespace BinarySerializer {
         }
 
         protected void SaveFile(bool isRefresh, string finalStr){ //save to file
+            //Debug.LogError(GeneratePath);
             if (!Directory.Exists(GeneratePath)) {
                 Directory.CreateDirectory(GeneratePath);
             }

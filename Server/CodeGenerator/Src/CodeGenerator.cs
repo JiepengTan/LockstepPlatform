@@ -6,7 +6,13 @@ using System.Text;
 using UnityEngine;
 
 #endif
-namespace BinarySerializer {
+namespace Lockstep.CodeGenerator {
+    /// <summary>
+    /// 不序列化到文件中
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = false)]
+    public class NoGenCodeAttribute : System.Attribute { }
+    
     public class CodeGenerator {
         const BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetField;
         readonly Queue<Type> todoTypes = new Queue<Type>();
@@ -95,12 +101,10 @@ namespace BinarySerializer {
                 if (field.IsStatic) {
                     continue;
                 }
-
-                var noBytesAttris = field.GetCustomAttributes(typeof(NoToBinaryAttribute), true);
+                var noBytesAttris = field.GetCustomAttributes(typeof(NoGenCodeAttribute), true);
                 if (noBytesAttris != null && noBytesAttris.Length > 0) {
                     continue;
                 }
-
                 retfileds.Add(field);
             }
 

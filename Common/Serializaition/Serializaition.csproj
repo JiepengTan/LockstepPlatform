@@ -38,26 +38,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\BaseFormater.cs" />
-    <Compile Include="src\ByteHelper.cs" />
-    <Compile Include="src\Compressor.cs" />
-    <Compile Include="src\Deserializer.cs" />
-    <Compile Include="src\FastBitConverter.cs" />
-    <Compile Include="src\LitJson\IJsonWrapper.cs" />
-    <Compile Include="src\LitJson\JsonData.cs" />
-    <Compile Include="src\LitJson\JsonException.cs" />
-    <Compile Include="src\LitJson\JsonMapper.cs" />
-    <Compile Include="src\LitJson\JsonMockWrapper.cs" />
-    <Compile Include="src\LitJson\JsonReader.cs" />
-    <Compile Include="src\LitJson\JsonWriter.cs" />
-    <Compile Include="src\LitJson\Lexer.cs" />
-    <Compile Include="src\LitJson\Netstandard15Polyfill.cs" />
-    <Compile Include="src\LitJson\ParserToken.cs" />
-    <Compile Include="src\NetMsgExtension.cs" />
-    <Compile Include="src\Serializer.cs" />
+    <Content Include="Src\LitJson\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="src\LitJson\.DS_Store" />
+    <Compile Include="Src\BaseFormater.cs" />
+    <Compile Include="Src\ByteHelper.cs" />
+    <Compile Include="Src\Compressor.cs" />
+    <Compile Include="Src\Deserializer.cs" />
+    <Compile Include="Src\FastBitConverter.cs" />
+    <Compile Include="Src\LitJson\IJsonWrapper.cs" />
+    <Compile Include="Src\LitJson\JsonData.cs" />
+    <Compile Include="Src\LitJson\JsonException.cs" />
+    <Compile Include="Src\LitJson\JsonMapper.cs" />
+    <Compile Include="Src\LitJson\JsonMockWrapper.cs" />
+    <Compile Include="Src\LitJson\JsonReader.cs" />
+    <Compile Include="Src\LitJson\JsonWriter.cs" />
+    <Compile Include="Src\LitJson\Lexer.cs" />
+    <Compile Include="Src\LitJson\Netstandard15Polyfill.cs" />
+    <Compile Include="Src\LitJson\ParserToken.cs" />
+    <Compile Include="Src\NetMsgExtension.cs" />
+    <Compile Include="Src\Serializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

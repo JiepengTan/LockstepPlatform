@@ -4,46 +4,58 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Entitas;
 using Lockstep.Serialization;
-using NetMsg.Game;
-using NetMsg.Lobby;
-using UnityEditor;
-using UnityEngine;
+using NetMsg.Common;
+using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
-namespace BinarySerializer {
-    public partial class EditorCodeGeneratorExtensionMsgRoom {
+namespace Lockstep.CodeGenerator {
+    public class EditorCodeGenerator {
+#if UNITY_EDITOR
         [MenuItem("Tools/MsgExtension/0.Hide Compiler Error")]
+#endif
         public static void HideCompileError(){
-            new EditorCodeGeneratorExtensionMsgLobby().HideGenerateCodes(false);
-            new EditorCodeGeneratorExtensionMsgRoom().HideGenerateCodes(false);
+            new EditorCodeGeneratorExtensionMsgCommon().HideGenerateCodes(false);
+            new EditorCodeGeneratorExtensionMsgServer().HideGenerateCodes(false);
         }
-
+#if UNITY_EDITOR
         [MenuItem("Tools/MsgExtension/1.Generate Code")]
+#endif
         public static void GenerateCode(){
-            new EditorCodeGeneratorExtensionMsgLobby().GenerateCodeNodeData(true);
-            new EditorCodeGeneratorExtensionMsgRoom().GenerateCodeNodeData(true);
+            new EditorCodeGeneratorExtensionMsgCommon().GenerateCodeNodeData(true);
+            new EditorCodeGeneratorExtensionMsgServer().GenerateCodeNodeData(true);
         }
     }
 
-    ///Users/jiepengtan/Projects/LockstepDemo/Common/NetMsg.Lobby/Src 
-
-    public partial class EditorCodeGeneratorExtensionMsgLobby : EditorCodeGeneratorExtensionMsgRoom {
-        protected override string GeneratePath {
-            get { return Path.Combine(Application.dataPath, "../../../Common/NetMsg.Lobby/Src/"); }
-        }
+    public partial class EditorCodeGeneratorExtensionMsgCommon : EditorCodeGeneratorExtensionMsg {
         public override Type[] GetTypes(){
-            return typeof(EMsgCL).Assembly.GetTypes();
-        }     
+            return typeof(EMsgSC).Assembly.GetTypes();
+        }
+
         public override string GetNameSpace(){
-            return typeof(EMsgCL).Namespace;
+            return typeof(EMsgSC).Namespace;
+        }
+        protected override string GeneratePath {
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../Common/NetMsg.Common/Src/"); }
         }
     }
+    public partial class EditorCodeGeneratorExtensionMsgServer : EditorCodeGeneratorExtensionMsg {
+        
+        public override Type[] GetTypes(){
+            return typeof(EMsgSS).Assembly.GetTypes();
+        }
 
-    public partial class EditorCodeGeneratorExtensionMsgRoom : EditorBaseCodeGenerator {
+        public override string GetNameSpace(){
+            return typeof(EMsgSS).Namespace;
+        }
+        
         protected override string GeneratePath {
-            get { return Path.Combine(Application.dataPath, "../../../Common/NetMsg.Game/Src/"); }
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../NetMsg.Server/Src/"); }
+        }
+    }
+    public abstract partial class EditorCodeGeneratorExtensionMsg : EditorBaseCodeGenerator {
+        protected override string GeneratePath {
+            get { return ""; }
         }
 
         protected override string GenerateFilePath {
@@ -54,20 +66,18 @@ namespace BinarySerializer {
             get { return "\t\t\t"; }
         }
 
-        public virtual Type[] GetTypes(){
-            return typeof(EMsgCS).Assembly.GetTypes();
-        }
-        public virtual string GetNameSpace(){
-            return typeof(EMsgCS).Namespace;
-        }
+        public abstract Type[] GetTypes();
+        public abstract string GetNameSpace();
+
         protected override void ReflectRegisterTypes(){
             Type[] types = null;
             HashSet<Type> allTypes = new HashSet<Type>();
             types = GetTypes();
             foreach (var t in types) {
-                if( !allTypes.Add(t)) continue;
-                if (t.IsSubclassOf(typeof(BaseFormater)) &&
-                    t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null) {
+                if (!allTypes.Add(t)) continue;
+                if (t.IsSubclassOf(typeof(BaseFormater)) 
+                    &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
+                    ) {
                     RegisterType(t);
                 }
             }
@@ -98,4 +108,5 @@ namespace #NAMESPACE{
                 ;
         }
     }
+
 }

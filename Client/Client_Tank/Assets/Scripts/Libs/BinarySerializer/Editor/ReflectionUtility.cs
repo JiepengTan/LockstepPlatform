@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using UnityEditor;
+#if UNITY_EDITOR
 using UnityEngine;
+#endif
 using System.Collections;
 
 public static class ReflectionUtility
@@ -64,6 +65,7 @@ public static class ReflectionUtility
             .ToArray();
     }
 
+#if UNITY_EDITOR
     /// <summary>
     /// Returns all fields that should be serialized in the given type
     /// </summary>
@@ -90,7 +92,7 @@ public static class ReflectionUtility
                     && !field.GetCustomAttributes(typeof(ReflectionSearchIgnoreAttribute), false).Any()))
             .ToArray();
     }
-
+#endif
     /// <summary>
     /// Gets all fields in the classType of the specified fieldType
     /// </summary>

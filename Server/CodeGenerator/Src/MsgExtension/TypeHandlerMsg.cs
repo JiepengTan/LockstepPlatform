@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Entitas;
 using Lockstep.Serialization;
 
-namespace BinarySerializer {
+namespace Lockstep.CodeGenerator {
     
     
     public class TypeHandlerMsg: ITypeHandler {
