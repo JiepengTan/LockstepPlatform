@@ -59,6 +59,7 @@
     <Compile Include="Src\Player.cs" />
     <Compile Include="Src\Server.cs" />
     <Compile Include="Src\ServerUtil.cs" />
+    <Compile Include="Src\Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">

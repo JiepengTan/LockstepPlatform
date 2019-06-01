@@ -1,4 +1,5 @@
 
+using System;
 using System.Diagnostics;
 
 namespace Lockstep.Logging {
@@ -12,7 +13,9 @@ namespace Lockstep.Logging {
         public static void LogError(string format, params object[] args){
             Lockstep.Logging.Log.Err(0, format, args);
         }
-
+        public static void LogError(Exception e){
+            Lockstep.Logging.Log.Err(0, e.ToString());
+        }
         public static void LogErrorFormat(string format, params object[] args){
             Lockstep.Logging.Log.Err(0, format, args);
         }
