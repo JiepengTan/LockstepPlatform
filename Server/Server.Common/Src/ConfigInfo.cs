@@ -1,7 +1,7 @@
 using LitJson;
 using Lockstep.Server.Common;
 
-namespace Server.Common {
+namespace Lockstep.Server.Common {
     public class ServerConfigInfo {
         public EServerType type;
         public string path;

@@ -1,6 +1,5 @@
 ﻿using Lockstep.Logging;
 using Lockstep.Server.Common;
-using Server.Common;
 
 namespace Lockstep.Server.Game {
     class Program {

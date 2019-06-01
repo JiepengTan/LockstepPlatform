@@ -7,7 +7,7 @@ using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using NetMsg.Server;
-using Server.Common;
+using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Game {

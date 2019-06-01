@@ -1,5 +1,4 @@
 ﻿using Lockstep.Server.Common;
-using Server.Common;
 
 namespace Lockstep.Server.Database {
     internal class Program {

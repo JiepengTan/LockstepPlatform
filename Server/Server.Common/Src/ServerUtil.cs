@@ -7,7 +7,7 @@ using LitJson;
 using Lockstep.Server.Common;
 using Lockstep.Util;
 
-namespace Server.Common {
+namespace Lockstep.Server.Common {
     public static class ServerUtil {
         public const string defaultConfigPath = "../Data/Config.json";
 

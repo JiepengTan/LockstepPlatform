@@ -1,7 +1,7 @@
 using System.Net;
 using Lockstep.Serialization;
 using NetMsg.Server;
-using Server.Common;
+using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Common {
 

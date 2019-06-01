@@ -10,8 +10,8 @@ using Lockstep.Logging;
 using Lockstep.Server.Common;
 using NetMsg.Common;
 
-namespace Lockstep.Server {
-    public class Lobby :BaseServer, ILobby {
+namespace Lockstep.Server.Lobby {
+    public class LobbyServer :BaseServer, ILobby {
         //account map
         private Dictionary<string, long> account2PlayerId = new Dictionary<string, long>();
         private long PlayerAutoIncId = 1;

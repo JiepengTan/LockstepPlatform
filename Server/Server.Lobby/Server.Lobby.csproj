@@ -8,6 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Server.Lobby</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyName>Server.Lobby</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -52,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\Global.cs" />
-    <Compile Include="Src\Lobby.cs" />
+    <Compile Include="Src\LobbyServer.cs" />
     <Compile Include="Src\Program.cs" />
     <Compile Include="Src\SimpleDatabase.cs" />
   </ItemGroup>

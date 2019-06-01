@@ -8,7 +8,6 @@ using Lockstep.Game;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using NetMsg.Server;
-using Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Daemon {

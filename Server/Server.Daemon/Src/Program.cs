@@ -1,7 +1,4 @@
-﻿using Lockstep.Logging;
-using Lockstep.Server.Common;
-using Lockstep.Server.Daemon;
-using Server.Common;
+﻿using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Daemon {
     class Program {

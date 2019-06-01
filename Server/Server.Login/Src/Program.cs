@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Lockstep.Server.Common;
 using Lockstep.Util;
-using Server.Common;
+using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Login {
     internal class Program {
