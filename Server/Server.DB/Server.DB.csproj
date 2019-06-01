@@ -48,8 +48,6 @@
     <Compile Include="Src\AuthDbLdb.cs" />
     <Compile Include="Src\DatabaseServer.cs" />
     <Compile Include="Src\IProfilesDatabase.cs" />
-    <Compile Include="Src\LiteDbFactory.cs" />
-    <Compile Include="Src\MsfDbAccessorFactory.cs" />
     <Compile Include="Src\ProfilesDatabaseLdb.cs" />
     <Compile Include="Src\Program.cs" />
   </ItemGroup>

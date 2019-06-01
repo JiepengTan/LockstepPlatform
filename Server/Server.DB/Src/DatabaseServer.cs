@@ -13,24 +13,6 @@ using Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Database {
-    public interface IDaemonProxy {
-        DaemonState state { get; set; }
-        void SendMsg(byte[] data);
-    }
-
-    public class DaemonProxy : IDaemonProxy {
-        private NetPeer _peer;
-
-        public DaemonProxy(NetPeer peer){
-            _peer = peer;
-        }
-
-        public DaemonState state { get; set; }
-
-        public void SendMsg(byte[] data){
-            _peer?.Send(data, DeliveryMethod.ReliableSequenced);
-        }
-    }
     public class DatabaseServer : Common.Server {
         private int _reportInterval = 1000;
         private int _reportTimer = 0;
