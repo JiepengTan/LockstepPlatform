@@ -7,7 +7,7 @@ namespace Lockstep.Networking
         /// <summary>
         /// Connection status
         /// </summary>
-        ConnectionStatus Status { get; }
+        EConnectionStatus Status { get; }
 
         /// <summary>
         /// Returns true, if we are connected to another socket
@@ -44,7 +44,7 @@ namespace Lockstep.Networking
         /// <summary>
         /// Event, invoked when connection status changes
         /// </summary>
-        event Action<ConnectionStatus> StatusChanged;
+        event Action<EConnectionStatus> StatusChanged;
 
         /// <summary>
         /// Starts connecting to another socket

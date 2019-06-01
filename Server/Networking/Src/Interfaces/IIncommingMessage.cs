@@ -46,7 +46,7 @@ namespace Lockstep.Networking
         /// <summary>
         ///     Message status code
         /// </summary>
-        ResponseStatus Status { get; }
+        EResponseStatus Status { get; }
 
         /// <summary>
         ///     Returns true if message contains any data
@@ -58,39 +58,39 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="message"></param>
         /// <param name="statusCode"></param>
-        void Respond(IMessage message, ResponseStatus statusCode = ResponseStatus.Default);
+        void Respond(IMessage message, EResponseStatus statusCode = EResponseStatus.Default);
 
         /// <summary>
         ///     Respond with data (message is created internally)
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        void Respond(byte[] data, ResponseStatus statusCode = ResponseStatus.Default);
+        void Respond(byte[] data, EResponseStatus statusCode = EResponseStatus.Default);
 
         /// <summary>
         ///     Respond with data (message is created internally)
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        void Respond(ISerializablePacket packet, ResponseStatus statusCode = ResponseStatus.Default);
+        void Respond(ISerializablePacket packet, EResponseStatus statusCode = EResponseStatus.Default);
 
         /// <summary>
         ///     Respond with empty message and status code
         /// </summary>
         /// <param name="statusCode"></param>
-        void Respond(ResponseStatus statusCode);
+        void Respond(EResponseStatus statusCode);
 
         /// <summary>
         ///     Respond with string message
         /// </summary>
-        void Respond(string message, ResponseStatus statusCode = ResponseStatus.Default);
+        void Respond(string message, EResponseStatus statusCode = EResponseStatus.Default);
 
         /// <summary>
         /// Respond with integer
         /// </summary>
         /// <param name="response"></param>
         /// <param name="statusCode"></param>
-        void Respond(int response, ResponseStatus statusCode = ResponseStatus.Default);
+        void Respond(int response, EResponseStatus statusCode = EResponseStatus.Default);
 
         /// <summary>
         ///     Returns contents of this message. Mutable

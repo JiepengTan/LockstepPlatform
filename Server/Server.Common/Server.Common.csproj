@@ -59,7 +59,6 @@
     <Compile Include="Src\Player.cs" />
     <Compile Include="Src\Server.cs" />
     <Compile Include="Src\ServerUtil.cs" />
-    <Compile Include="Src\Time.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
@@ -74,6 +73,13 @@
       <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>
       <Name>NetMsg.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Util\Util.csproj">
+      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
+      <Name>Util</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\UnityLike" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

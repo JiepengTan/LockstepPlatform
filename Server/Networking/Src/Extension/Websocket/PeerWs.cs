@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Net.WebSockets;
 using Lockstep.Logging;
 using Lockstep.Networking;
-using Server.Common;
+using Lockstep.Util;
+
 
 namespace Lockstep.Networking
 {
@@ -30,7 +31,7 @@ namespace Lockstep.Networking
 
         public IEnumerator SendDelayedMessages()
         {
-            yield return new WaitForSecondsRealtime(Delay);
+            yield return new WaitForSeconds(Delay);
 
             if (_delayedMessages == null)
             {
@@ -52,7 +53,7 @@ namespace Lockstep.Networking
             }
         }
 
-        public override void SendMessage(IMessage message, DeliveryMethod deliveryMethod)
+        public override void SendMessage(IMessage message, EDeliveryMethod eDeliveryMethod)
         {
             if (_delayedMessages != null)
             {
@@ -100,7 +101,7 @@ namespace Lockstep.Networking
 
         public IEnumerator SendDelayedMessages(float delay)
         {
-            yield return new WaitForSecondsRealtime(0.2f);
+            yield return new WaitForSeconds(0.2f);
 
             if (_delayedMessages == null)
             {
@@ -128,7 +129,7 @@ namespace Lockstep.Networking
             get { return _isConnected; }
         }
 
-        public override void SendMessage(IMessage message, DeliveryMethod deliveryMethod)
+        public override void SendMessage(IMessage message, EDeliveryMethod eDeliveryMethod)
         {
             if (_delayedMessages != null)
             {

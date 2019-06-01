@@ -1,6 +1,6 @@
 ﻿namespace Lockstep.Networking
 {
-    public enum ResponseStatus
+    public enum EResponseStatus
     {
         Default = 0,
         Success = 1,

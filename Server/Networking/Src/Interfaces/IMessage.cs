@@ -39,7 +39,7 @@
         /// <summary>
         ///     Status code of the message
         /// </summary>
-        ResponseStatus Status { get; set; }
+        EResponseStatus Status { get; set; }
 
         /// <summary>
         ///     Overrides current data

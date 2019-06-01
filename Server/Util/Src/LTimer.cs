@@ -2,53 +2,31 @@
 using System.Collections;
 using System.Collections.Generic;
 using Lockstep.Logging;
-using Server.Common;
+using Lockstep.Util;
 
 
-namespace Lockstep.Networking {
-    public class CoroutineUtil {
-        public static void StartCoroutine(IEnumerator enumerator){ }
-    }
-
-    public class BTimer {
-        private BTimer(){ }
-        public static long CurrentTick { get; protected set; }
-
+namespace Lockstep.Util {
+    public static class LTimer {
         public delegate void DoneHandler(bool isSuccessful);
-
-        private static BTimer _instance;
-        private List<Action> _mainThreadActions;
-
-        /// <summary>
         /// Event, which is invoked every second
-        /// </summary>
-        public event Action<long> OnTick;
+        public static event Action<long> OnTickPerSeconds;
+        public static long CurrentTick { get; private set; }
 
-        public event Action ApplicationQuit;
+        private static List<Action> _mainThreadActions;
+        private static readonly object _mainThreadLock = new object();
 
-        private readonly object _mainThreadLock = new object();
-
-        public static BTimer Instance {
-            get {
-                if (_instance == null) {
-                    _instance = new BTimer();
-                }
-
-                return _instance;
-            }
-        }
-        public void DoAwake(){
+        public static void DoStart(){
             _mainThreadActions = new List<Action>();
-            _instance = this;
-            CoroutineUtil.StartCoroutine(StartTicker());
+            CoroutineHelper.StartCoroutine(StartTicker());
         }
 
-        public void DoUpdate(){
+        public static void DoUpdate(){
             if (_mainThreadActions.Count > 0) {
                 lock (_mainThreadLock) {
                     foreach (var actions in _mainThreadActions) {
                         actions.Invoke();
                     }
+
                     _mainThreadActions.Clear();
                 }
             }
@@ -59,7 +37,7 @@ namespace Lockstep.Networking {
         ///     If timed out, callback will be invoked with false
         /// </summary>
         public static void WaitUntil(Func<bool> condiction, DoneHandler doneCallback, float timeoutSeconds){
-            CoroutineUtil.StartCoroutine(WaitWhileTrueCoroutine(condiction, doneCallback, timeoutSeconds, true));
+            CoroutineHelper.StartCoroutine(WaitWhileTrueCoroutine(condiction, doneCallback, timeoutSeconds, true));
         }
 
         /// <summary>
@@ -67,7 +45,7 @@ namespace Lockstep.Networking {
         ///     If timed out, callback will be invoked with false
         /// </summary>
         public static void WaitWhile(Func<bool> condiction, DoneHandler doneCallback, float timeoutSeconds){
-            CoroutineUtil.StartCoroutine(WaitWhileTrueCoroutine(condiction, doneCallback, timeoutSeconds));
+            CoroutineHelper.StartCoroutine(WaitWhileTrueCoroutine(condiction, doneCallback, timeoutSeconds));
         }
 
         private static IEnumerator WaitWhileTrueCoroutine(Func<bool> condition, DoneHandler callback,
@@ -81,44 +59,37 @@ namespace Lockstep.Networking {
         }
 
         public static void AfterSeconds(float time, Action callback){
-            CoroutineUtil.StartCoroutine(Instance.StartWaitingSeconds(time, callback));
+            CoroutineHelper.StartCoroutine(StartWaitingSeconds(time, callback));
         }
 
         public static void ExecuteOnMainThread(Action action){
-            Instance.OnMainThread(action);
+            OnMainThread(action);
         }
 
-        public void OnMainThread(Action action){
+        public static void OnMainThread(Action action){
             lock (_mainThreadLock) {
                 _mainThreadActions.Add(action);
             }
         }
 
-        private IEnumerator StartWaitingSeconds(float time, Action callback){
+        private static IEnumerator StartWaitingSeconds(float time, Action callback){
             yield return new WaitForSeconds(time);
             callback.Invoke();
         }
 
-        private IEnumerator StartTicker(){
+        private static IEnumerator StartTicker(){
             CurrentTick = 0;
             while (true) {
                 yield return new WaitForSeconds(1);
                 CurrentTick++;
                 try {
-                    if (OnTick != null)
-                        OnTick.Invoke(CurrentTick);
+                    if (OnTickPerSeconds != null)
+                        OnTickPerSeconds.Invoke(CurrentTick);
                 }
                 catch (Exception e) {
                     Debug.LogError(e);
                 }
             }
-        }
-
-        void OnDestroy(){ }
-
-        void OnApplicationQuit(){
-            if (ApplicationQuit != null)
-                ApplicationQuit.Invoke();
         }
     }
 }

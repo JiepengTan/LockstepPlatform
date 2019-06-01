@@ -1,6 +1,6 @@
 ﻿namespace Lockstep.Networking
 {
-    public enum ConnectionStatus
+    public enum EConnectionStatus
     {
         None,
         Connecting,

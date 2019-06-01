@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Lockstep.Serialization;
 
 
 namespace Lockstep.Networking
@@ -13,7 +14,7 @@ namespace Lockstep.Networking
     {
         private readonly byte[] _data;
 
-        public IncommingMessage(short opCode, byte flags, byte[] data, DeliveryMethod deliveryMethod, IPeer peer)
+        public IncommingMessage(short opCode, byte flags, byte[] data, EDeliveryMethod eDeliveryMethod, IPeer peer)
         {
             OpCode = opCode;
             Peer = peer;
@@ -63,21 +64,21 @@ namespace Lockstep.Networking
         /// <summary>
         ///     Message status code
         /// </summary>
-        public ResponseStatus Status { get; set; }
+        public EResponseStatus Status { get; set; }
 
         /// <summary>
         ///     Respond with a message
         /// </summary>
         /// <param name="message"></param>
         /// <param name="statusCode"></param>
-        public void Respond(IMessage message, ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(IMessage message, EResponseStatus statusCode = EResponseStatus.Default)
         {
             message.Status = statusCode;
 
             if (AckResponseId.HasValue)
                 message.AckResponseId = AckResponseId.Value;
 
-            Peer.SendMessage(message, DeliveryMethod.Reliable);
+            Peer.SendMessage(message, EDeliveryMethod.Reliable);
         }
 
         /// <summary>
@@ -85,7 +86,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        public void Respond(byte[] data, ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(byte[] data, EResponseStatus statusCode = EResponseStatus.Default)
         {
             Respond(MessageHelper.Create(OpCode, data), statusCode);
         }
@@ -95,7 +96,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        public void Respond(ISerializablePacket packet, ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(ISerializablePacket packet, EResponseStatus statusCode = EResponseStatus.Default)
         {
             Respond(MessageHelper.Create(OpCode, packet.ToBytes()), statusCode);
         }
@@ -104,17 +105,17 @@ namespace Lockstep.Networking
         ///     Respond with empty message and status code
         /// </summary>
         /// <param name="statusCode"></param>
-        public void Respond(ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(EResponseStatus statusCode = EResponseStatus.Default)
         {
             Respond(MessageHelper.Create(OpCode), statusCode);
         }
 
-        public void Respond(string message, ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(string message, EResponseStatus statusCode = EResponseStatus.Default)
         {
             Respond(message.ToBytes(), statusCode);
         }
 
-        public void Respond(int response, ResponseStatus statusCode = ResponseStatus.Default)
+        public void Respond(int response, EResponseStatus statusCode = EResponseStatus.Default)
         {
             Respond(MessageHelper.Create(OpCode, response), statusCode);
         }

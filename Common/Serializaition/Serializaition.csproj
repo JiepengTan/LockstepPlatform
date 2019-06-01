@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\BaseFormater.cs" />
+    <Compile Include="src\ByteHelper.cs" />
     <Compile Include="src\Compressor.cs" />
     <Compile Include="src\Deserializer.cs" />
     <Compile Include="src\FastBitConverter.cs" />

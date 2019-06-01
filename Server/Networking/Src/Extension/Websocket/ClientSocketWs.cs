@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Lockstep.Logging;
 using Lockstep.Networking;
+using Lockstep.Util;
+
 
 namespace Lockstep.Networking
 {
@@ -15,18 +17,18 @@ namespace Lockstep.Networking
 
         private WebSocket _socket;
         private PeerWs _peer;
-        private ConnectionStatus _status;
+        private EConnectionStatus _status;
         private readonly Dictionary<short, IPacketHandler> _handlers;
 
         public event Action Connected;
         public event Action Disconnected;
 
-        public event Action<ConnectionStatus> StatusChanged;
+        public event Action<EConnectionStatus> StatusChanged;
 
         private bool _isConnected;
 
         public bool IsConnected { get { return _isConnected; } }
-        public bool IsConnecting { get { return _status == ConnectionStatus.Connecting; } }
+        public bool IsConnecting { get { return _status == EConnectionStatus.Connecting; } }
 
         private string _ip;
         private int _port;
@@ -37,7 +39,7 @@ namespace Lockstep.Networking
 
         public ClientSocketWs()
         {
-            Status = ConnectionStatus.Disconnected;
+            Status = EConnectionStatus.Disconnected;
             _handlers = new Dictionary<short, IPacketHandler>();
         }
 
@@ -71,7 +73,7 @@ namespace Lockstep.Networking
 
             Connected += onConnected;
 
-            BTimer.AfterSeconds(timeoutSeconds, () =>
+            LTimer.AfterSeconds(timeoutSeconds, () =>
             {
                 if (!isConnected)
                 {
@@ -184,14 +186,14 @@ namespace Lockstep.Networking
             if (wasConnected != _isConnected)
             {
                 // If status has changed
-                SetStatus(_isConnected ? ConnectionStatus.Connected :  ConnectionStatus.Disconnected);
+                SetStatus(_isConnected ? EConnectionStatus.Connected :  EConnectionStatus.Disconnected);
             }
         }
 
         /// <summary>
         /// Connection status
         /// </summary>
-        public ConnectionStatus Status
+        public EConnectionStatus Status
         {
             get
             {
@@ -209,28 +211,28 @@ namespace Lockstep.Networking
         }
 
 
-        private void SetStatus(ConnectionStatus status)
+        private void SetStatus(EConnectionStatus status)
         {
             switch (status)
             {
-                case ConnectionStatus.Connecting:
-                    if (Status != ConnectionStatus.Connecting)
+                case EConnectionStatus.Connecting:
+                    if (Status != EConnectionStatus.Connecting)
                     {
-                        Status = ConnectionStatus.Connecting;
+                        Status = EConnectionStatus.Connecting;
                     }
                     break;
-                case ConnectionStatus.Connected:
-                    if (Status != ConnectionStatus.Connected)
+                case EConnectionStatus.Connected:
+                    if (Status != EConnectionStatus.Connected)
                     {
-                        Status = ConnectionStatus.Connected;
-                        CoroutineUtil.StartCoroutine(_peer.SendDelayedMessages());
+                        Status = EConnectionStatus.Connected;
+                        CoroutineHelper.StartCoroutine(_peer.SendDelayedMessages());
                         if (Connected != null) Connected.Invoke();
                     }
                     break;
-                case ConnectionStatus.Disconnected:
-                    if (Status != ConnectionStatus.Disconnected)
+                case EConnectionStatus.Disconnected:
+                    if (Status != EConnectionStatus.Disconnected)
                     {
-                        Status = ConnectionStatus.Disconnected;
+                        Status = EConnectionStatus.Disconnected;
                         if (Disconnected != null) Disconnected.Invoke();
                     }
                     break;
@@ -267,7 +269,7 @@ namespace Lockstep.Networking
             }
 
             _isConnected = false;
-            Status = ConnectionStatus.Connecting;
+            Status = EConnectionStatus.Connecting;
 
             if (_peer != null)
             {
@@ -280,6 +282,7 @@ namespace Lockstep.Networking
             peer.MessageReceived += HandleMessage;
             _peer = peer;
             Peer = peer;
+            CoroutineHelper.StartCoroutine(_socket.Connect());
 
             return this;
         }
@@ -297,7 +300,7 @@ namespace Lockstep.Networking
             }
 
             _isConnected = false; //EMIL Fix
-            SetStatus(ConnectionStatus.Disconnected); // EMIL strikes again!
+            SetStatus(EConnectionStatus.Disconnected); // EMIL strikes again!
         }
 
         private void HandleMessage(IIncommingMessage message)
@@ -312,7 +315,7 @@ namespace Lockstep.Networking
                 else if (message.IsExpectingResponse)
                 {
                     Debug.LogError("Connection is missing a handler. OpCode: " + message.OpCode);
-                    message.Respond(ResponseStatus.Error);
+                    message.Respond(EResponseStatus.Error);
                 }
             }
             catch (Exception e)
@@ -330,7 +333,7 @@ namespace Lockstep.Networking
 
                 try
                 {
-                    message.Respond(ResponseStatus.Error);
+                    message.Respond(EResponseStatus.Error);
                 }
                 catch (Exception exception)
                 {

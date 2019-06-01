@@ -1,6 +1,6 @@
 ﻿namespace Lockstep.Networking
 {
-    public enum DeliveryMethod
+    public enum EDeliveryMethod
     {
         Unreliable,
         Reliable,

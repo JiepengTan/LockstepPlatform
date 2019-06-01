@@ -1,22 +1,20 @@
 ﻿using System;
+using Lockstep.Logging;
+using Lockstep.Serialization;
 
 
-namespace Lockstep.Networking
-{
+namespace Lockstep.Networking {
     /// <summary>
     ///     Represents an outgoing message.
     ///     Default barebones implementation
     /// </summary>
-    public class Message : IMessage
-    {
-        public Message(short opCode) : this(opCode, new byte[0])
-        {
+    public class Message : IMessage {
+        public Message(short opCode) : this(opCode, new byte[0]){
             OpCode = opCode;
             Status = 0;
         }
 
-        public Message(short opCode, byte[] data)
-        {
+        public Message(short opCode, byte[] data){
             OpCode = opCode;
             Status = 0;
             SetBinary(data);
@@ -37,8 +35,7 @@ namespace Lockstep.Networking
         /// <summary>
         ///     Returns true if data is not empty
         /// </summary>
-        public bool HasData
-        {
+        public bool HasData {
             get { return Data.Length > 0; }
         }
 
@@ -61,10 +58,9 @@ namespace Lockstep.Networking
         /// <summary>
         ///     Status code of the message
         /// </summary>
-        public ResponseStatus Status { get; set; }
+        public EResponseStatus Status { get; set; }
 
-        public IMessage SetBinary(byte[] data)
-        {
+        public IMessage SetBinary(byte[] data){
             Data = data;
             return this;
         }
@@ -73,13 +69,12 @@ namespace Lockstep.Networking
         ///     Serializes message to byte array
         /// </summary>
         /// <returns></returns>
-        public byte[] ToBytes()
-        {
+        public byte[] ToBytes(){
             var flags = GenerateFlags(this);
 
             var dataLength = Data.Length;
-            var isAckRequest = (flags & (byte) MessageFlag.AckRequest) > 0;
-            var isAckResponse = (flags & (byte) MessageFlag.AckResponse) > 0;
+            var isAckRequest = (flags & (byte) EMessageFlag.AckRequest) > 0;
+            var isAckResponse = (flags & (byte) EMessageFlag.AckResponse) > 0;
 
             var packetSize = 1 // Flags
                              + 2 // OpCode
@@ -100,34 +95,31 @@ namespace Lockstep.Networking
             Array.Copy(Data, 0, messagePacket, pointer, dataLength);
             pointer += dataLength; // Data
 
-            if (isAckRequest)
-            {
+            if (isAckRequest) {
                 ByteHelper.CopyBytes(AckRequestId.Value, messagePacket, pointer);
                 pointer += 4;
             }
 
-            if (isAckResponse)
-            {
+            if (isAckResponse) {
                 ByteHelper.CopyBytes(AckResponseId.Value, messagePacket, pointer);
                 pointer += 4;
 
                 // Status code
-                messagePacket[pointer] = (byte)Status;
+                messagePacket[pointer] = (byte) Status;
                 pointer++;
             }
 
             return messagePacket;
         }
 
-        public static byte GenerateFlags(IMessage message)
-        {
+        public static byte GenerateFlags(IMessage message){
             var flags = message.Flags;
 
             if (message.AckRequestId.HasValue)
-                flags |= (byte) MessageFlag.AckRequest;
+                flags |= (byte) EMessageFlag.AckRequest;
 
             if (message.AckResponseId.HasValue)
-                flags |= (byte) MessageFlag.AckResponse;
+                flags |= (byte) EMessageFlag.AckResponse;
 
             return flags;
         }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Lockstep.Networking;
-
+using Lockstep.Util;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -47,8 +47,6 @@ namespace Lockstep.Networking
         public void Listen(int port)
         {
             // Stop listening when application closes
-            BTimer.Instance.ApplicationQuit += Stop;
-
             _server = new WebSocketServer(port);
             SetupService(_server);
 
@@ -87,7 +85,7 @@ namespace Lockstep.Networking
 
                 ExecuteOnUpdate(() =>
                 {
-                   CoroutineUtil.StartCoroutine(peer.SendDelayedMessages(_initialDelay));
+                   CoroutineHelper.StartCoroutine(peer.SendDelayedMessages(_initialDelay));
 
                     if (Connected != null)
                         Connected.Invoke(peer);

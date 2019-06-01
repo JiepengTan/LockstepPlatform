@@ -12,10 +12,10 @@
 
         public void SendMessage(short opCode, ISerializablePacket packet)
         {
-            SendMessage(opCode, packet, DeliveryMethod.Reliable);
+            SendMessage(opCode, packet, EDeliveryMethod.Reliable);
         }
 
-        public void SendMessage(short opCode, ISerializablePacket packet, DeliveryMethod method)
+        public void SendMessage(short opCode, ISerializablePacket packet, EDeliveryMethod method)
         {
             var msg = MessageHelper.Create(opCode, packet.ToBytes());
             Peer.SendMessage(msg, method);
@@ -42,10 +42,10 @@
 
         public void SendMessage(short opCode, byte[] data)
         {
-            SendMessage(opCode, data, DeliveryMethod.Reliable);
+            SendMessage(opCode, data, EDeliveryMethod.Reliable);
         }
 
-        public void SendMessage(short opCode, byte[] data, DeliveryMethod method)
+        public void SendMessage(short opCode, byte[] data, EDeliveryMethod method)
         {
             var msg = MessageHelper.Create(opCode, data);
             Peer.SendMessage(msg, method);
@@ -65,10 +65,10 @@
 
         public void SendMessage(short opCode, string data)
         {
-            SendMessage(opCode, data, DeliveryMethod.Reliable);
+            SendMessage(opCode, data, EDeliveryMethod.Reliable);
         }
 
-        public void SendMessage(short opCode, string data, DeliveryMethod method)
+        public void SendMessage(short opCode, string data, EDeliveryMethod method)
         {
             var msg = MessageHelper.Create(opCode, data);
             Peer.SendMessage(msg, method);
@@ -88,10 +88,10 @@
 
         public void SendMessage(short opCode, int data)
         {
-            SendMessage(opCode, data, DeliveryMethod.Reliable);
+            SendMessage(opCode, data, EDeliveryMethod.Reliable);
         }
 
-        public void SendMessage(short opCode, int data, DeliveryMethod method)
+        public void SendMessage(short opCode, int data, EDeliveryMethod method)
         {
             var msg = MessageHelper.Create(opCode, data);
             Peer.SendMessage(msg, method);
@@ -111,10 +111,10 @@
 
         public void SendMessage(IMessage message)
         {
-            SendMessage(message, DeliveryMethod.Reliable);
+            SendMessage(message, EDeliveryMethod.Reliable);
         }
 
-        public void SendMessage(IMessage message, DeliveryMethod method)
+        public void SendMessage(IMessage message, EDeliveryMethod method)
         {
             Peer.SendMessage(message, method);
         }

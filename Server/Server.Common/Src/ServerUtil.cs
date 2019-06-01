@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading;
 using LitJson;
 using Lockstep.Server.Common;
+using Lockstep.Util;
 
 namespace Server.Common {
     public static class ServerUtil {
@@ -47,6 +48,16 @@ namespace Server.Common {
             return config;
         }
 
+        public static void StartServices(){
+            Time.DoStart();
+            CoroutineHelper.DoStart();
+        }
+
+        public static void UpdateServices(){
+            Time.DoUpdate();
+            CoroutineHelper.DoUpdate();
+        }
+
         public static void RunServer<T>(ServerConfigInfo config)
             where T : BaseServer, new(){
             long lastTick = 1;
@@ -55,6 +66,7 @@ namespace Server.Common {
             Console.WriteLine("config: " + config.ToString());
             var sw = new Stopwatch();
             sw.Start();
+            StartServices();
             BaseServer server = new T();
             {
                 server.DoAwake(config);
@@ -65,6 +77,7 @@ namespace Server.Common {
                     var elapse = curTick - lastTick;
                     if (elapse >= tickInterval) {
                         lastTick = curTick;
+                        UpdateServices();
                         server.DoUpdate((int) elapse);
                     }
 

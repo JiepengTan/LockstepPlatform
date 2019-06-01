@@ -4,7 +4,7 @@ namespace Lockstep.Networking
 {
     public delegate void IncommingMessageHandler(IIncommingMessage message);
 
-    public delegate void ResponseCallback(ResponseStatus status, IIncommingMessage response);
+    public delegate void ResponseCallback(EResponseStatus status, IIncommingMessage response);
 
     /// <summary>
     ///     Represents connection peer
@@ -49,18 +49,18 @@ namespace Lockstep.Networking
         /// <param name="message">Message to send</param>
         /// <param name="responseCallback">Callback method, which will be invoked when peer responds</param>
         /// <param name="timeoutSecs">If peer fails to respons within this time frame, callback will be invoked with timeout status</param>
-        /// <param name="deliveryMethod">Delivery method</param>
+        /// <param name="eDeliveryMethod">Delivery method</param>
         /// <returns></returns>
         int SendMessage(IMessage message, ResponseCallback responseCallback, int timeoutSecs,
-            DeliveryMethod deliveryMethod);
+            EDeliveryMethod eDeliveryMethod);
 
         /// <summary>
         ///     Sends a message to peer
         /// </summary>
         /// <param name="message">Message to send</param>
-        /// <param name="deliveryMethod">Delivery method</param>
+        /// <param name="eDeliveryMethod">Delivery method</param>
         /// <returns></returns>
-        void SendMessage(IMessage message, DeliveryMethod deliveryMethod);
+        void SendMessage(IMessage message, EDeliveryMethod eDeliveryMethod);
 
         /// <summary>
         ///     Stores a property into peer
