@@ -67,6 +67,7 @@ namespace Lockstep.Server.Common {
             var sw = new Stopwatch();
             sw.Start();
             StartServices();
+            Debug.prefix = typeof(T).Name + ":";
             BaseServer server = new T();
             {
                 server.DoAwake(config);

@@ -18,12 +18,15 @@ namespace Lockstep.CodeGenerator {
         string GetFuncName(Type type,bool isWithNameSpaceIfNeed = true);
     }
     public interface IFiledHandler {
-        string DealDic(Type t, FieldInfo field);
-        string DealList(Type t, FieldInfo field);
-        string DealArray(Type t, FieldInfo field);
-        string DealUserClass(Type t, FieldInfo field);
-        string DealEnum(Type t, FieldInfo field);
-        string DealStructOrString(Type t, FieldInfo field);
+        string DealDic(Type t, MemberInfo field);
+        string DealList(Type t, MemberInfo field);
+        string DealArray(Type t, MemberInfo field);
+        string DealUserClass(Type t, MemberInfo field);
+        string DealEnum(Type t, MemberInfo field);
+        string DealStructOrString(Type t, MemberInfo field);
+        
+        
+      
     }
 
     public class FiledHandler : IFiledHandler {
@@ -65,28 +68,28 @@ namespace Lockstep.CodeGenerator {
         string dictCodeTemplete {
             get { return _dictCodeTemplete; }
         }
-
-        public string DealStructOrString(Type type, FieldInfo field){
+       
+        public string DealStructOrString(Type type, MemberInfo field){
             return string.Format(defaultCodeTemplete, prefix, field.Name, GetFuncName(type));
         }
 
-        public string DealEnum(Type type, FieldInfo field){
+        public string DealEnum(Type type, MemberInfo field){
             return string.Format(enumCodeTemplete, prefix, field.Name, type.ToString().Replace("+", "."));
         }
 
-        public string DealUserClass(Type type, FieldInfo field){
+        public string DealUserClass(Type type, MemberInfo field){
             return string.Format(clsCodeTemplete, prefix, field.Name, GetFuncName(type));
         }
 
-        public string DealArray(Type t, FieldInfo field){
+        public string DealArray(Type t, MemberInfo field){
             return string.Format(arrayCodeTemplete, prefix, field.Name);
         }
 
-        public string DealList(Type t, FieldInfo field){
+        public string DealList(Type t, MemberInfo field){
             return string.Format(lstCodeTemplete, prefix, field.Name);
         }
 
-        public string DealDic(Type t, FieldInfo field){
+        public string DealDic(Type t, MemberInfo field){
             var tepl = dictCodeTemplete;
             return string.Format(tepl, prefix, field.Name);
         }
@@ -106,31 +109,31 @@ namespace Lockstep.CodeGenerator {
         public class FiledHandler : IFiledHandler {
             string prefix = "    ";
 
-            public string DealDic(Type t, FieldInfo field){
+            public string DealDic(Type t, MemberInfo field){
                 var types = t.GetGenericArguments();
                 return string.Format("{0}Dict<{2},{3}> {1}", prefix, field.Name, types[0].ToString(),
                     types[1].ToString());
             }
 
-            public string DealList(Type t, FieldInfo field){
+            public string DealList(Type t, MemberInfo field){
                 var type = t.GetGenericArguments()[0];
                 return string.Format("{0}List<{2}> {1}", prefix, field.Name, type.ToString());
             }
 
-            public string DealArray(Type t, FieldInfo field){
+            public string DealArray(Type t, MemberInfo field){
                 var type = t.GetElementType();
                 return string.Format("{0}Array[{2}] {1}", prefix, field.Name, type.ToString());
             }
 
-            public string DealUserClass(Type t, FieldInfo field){
+            public string DealUserClass(Type t, MemberInfo field){
                 return string.Format("{0}{1} {2}", prefix, t.ToString(), field.Name);
             }
 
-            public string DealEnum(Type t, FieldInfo field){
+            public string DealEnum(Type t, MemberInfo field){
                 return string.Format("{0}{1} {2}", prefix, t.ToString().Replace("+", "."), field.Name);
             }
 
-            public string DealStructOrString(Type t, FieldInfo field){
+            public string DealStructOrString(Type t, MemberInfo field){
                 return string.Format("{0}{1} {2}", prefix, t.ToString(), field.Name);
             }
         }

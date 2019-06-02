@@ -2,23 +2,35 @@ using Lockstep.Serialization;
 
 
 namespace NetMsg.Server {
-//XS
-    public partial class Msg_ReqMasterInfo : BaseFormater {
-        public int masterPort;
+    public partial class ServerIpInfo : BaseFormater {
+        public int port;
         public string ip;
         public bool isMaster;
         public byte serverType;
     }
+//OMS
+    public partial class Msg_ReqOtherServerInfo : BaseFormater {
+        public byte serverType;
+    }  
+    public partial class Msg_RepOtherServerInfo : BaseFormater {
+        public ServerIpInfo serverInfo;
+    }  
+//XS
+    public partial class Msg_ReqMasterInfo : BaseFormater {
+        public ServerIpInfo serverInfo;
+    }
 
     public partial class Msg_RepMasterInfo : BaseFormater {
-        public byte serverType;
-        public string ip;
-        public int port;
+        public ServerIpInfo[] serverInfos;
+    }
+
+    public partial class Msg_BorderMasterInfo : BaseFormater {
+        public ServerIpInfo serverInfo;
     }
 
 //MS
     public partial class Msg_RegisterServer : BaseFormater {
-        public byte type;
+        public ServerIpInfo serverInfo;
     }
 
 //DX

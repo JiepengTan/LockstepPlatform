@@ -1,20 +1,25 @@
 #define DEBUG_FRAME_DELAY
 using System;
-using System.Reflection;
 using LiteNetLib;
 using Lockstep.Serialization;
-using Lockstep.Server.Common;
-using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
-namespace Lockstep.Game {
+
+namespace Lockstep.Server.Common {
     public delegate void NetClientMsgHandler(Deserializer reader);
 
-    public class NetClient<TMsgType> where TMsgType:struct{
+
+    public interface IPollEvents {
+        void PollEvents();
+    }
+    public interface IUpdate {
+        void DoUpdate();
+    }
+    public class NetClient<TMsgType> : IUpdate where TMsgType : struct {
         protected string _ip;
         protected int _port;
         protected string _key;
-        protected EventBasedNetListener _listener; 
+        protected EventBasedNetListener _listener;
         protected NetManager _client;
         protected NetPeer _peer;
         protected float _autoConnTimer;
@@ -32,11 +37,12 @@ namespace Lockstep.Game {
             AllClientMsgDealFuncs[(short) (object) msgType] = handler;
         }
 
-        public NetClient(int maxMsgHandlerIdx,string msgFlag,object msgHandlerObj){
+        public NetClient(int maxMsgHandlerIdx, string msgFlag, object msgHandlerObj){
             AllClientMsgDealFuncs = new NetClientMsgHandler[maxMsgHandlerIdx];
-            ServerUtil.RegisterEvent<TMsgType, NetClientMsgHandler>("OnMsg_" + msgFlag, "OnMsg_".Length,RegisterMsgHandler,msgHandlerObj);
+            ServerUtil.RegisterEvent<TMsgType, NetClientMsgHandler>("OnMsg_" + msgFlag, "OnMsg_".Length,
+                RegisterMsgHandler, msgHandlerObj);
         }
-       
+
         public void Init(string ip, int port, string key){
             _key = key;
             this._ip = ip;
@@ -74,8 +80,9 @@ namespace Lockstep.Game {
         public void DoUpdate(){
             if (!_isInit) return;
             AutoConnect();
-            _client.PollEvents();
+            _client?.PollEvents();
         }
+
 
         private void AutoConnect(){
             _autoConnTimer += 0.016f;
@@ -98,13 +105,13 @@ namespace Lockstep.Game {
                 func(reader);
             }
             else {
-                Debug.LogError("ErrorMsg type :no msgHandler" + (TMsgType)(object)msgTypeId);
+                Debug.LogError("ErrorMsg type :no msgHandler" + (TMsgType) (object) msgTypeId);
             }
         }
 
         public void Send(TMsgType type, BaseFormater data){
             var writer = new Serializer();
-            writer.PutInt16((short)(object)type);
+            writer.PutInt16((short) (object) type);
             data.Serialize(writer);
             var bytes = Compressor.Compress(writer.CopyData());
             Send(bytes);

@@ -146,4 +146,6 @@ namespace NetMsg.Common{
     public partial class Msg_RoomStatus :BaseFormater {
         public RoomInfo roomInfo;
     }
+    
+    
 }

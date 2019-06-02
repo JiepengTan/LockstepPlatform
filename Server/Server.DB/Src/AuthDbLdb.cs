@@ -2,31 +2,12 @@
 using System;
 using System.Collections.Generic;
 using LiteDB;
+using Lockstep.Serialization;
+using NetMsg.Common;
 
 namespace Lockstep.Server.Database
 {   
-    public interface IPasswordResetData
-    {
-        string Email { get; set; }
-        string Code { get; set; }
-    }
-    /// <summary>
-    ///     Represents account data
-    /// </summary>
-    public interface IAccountData
-    {
-        string Username { get; set; }
-        string Password { get; set; }
-        string Email { get; set; }
-        string Token { get; set; }
-        bool IsAdmin { get; set; }
-        bool IsGuest { get; set; }
-        bool IsEmailConfirmed { get; set; }
-        Dictionary<string, string> Properties { get; set; }
 
-        event Action<IAccountData> OnChange;
-        void MarkAsDirty();
-    }
     public interface IAuthDatabase
     {
         /// <summary>
@@ -51,7 +32,7 @@ namespace Lockstep.Server.Database
     }
     public class AuthDbLdb : IAuthDatabase
     {
-        private readonly LiteCollection<AccountDataLdb> _accounts;
+        private readonly LiteCollection<AccountData> _accounts;
         private readonly LiteCollection<PasswordResetData> _resetCodes;
         private readonly LiteCollection<EmailConfirmationData> _emailConfirmations;
 
@@ -61,7 +42,7 @@ namespace Lockstep.Server.Database
         {
             _db = database;
 
-            _accounts = _db.GetCollection<AccountDataLdb>("accounts");
+            _accounts = _db.GetCollection<AccountData>("accounts");
             _accounts.EnsureIndex(a => a.Username, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true});
             _accounts.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
 
@@ -74,7 +55,7 @@ namespace Lockstep.Server.Database
 
         public IAccountData CreateAccountObject()
         {
-            var account = new AccountDataLdb();
+            var account = new AccountData();
             return account;
         }
 
@@ -141,21 +122,21 @@ namespace Lockstep.Server.Database
 
         public void UpdateAccount(IAccountData account, Action doneCallback)
         {
-            _accounts.Update(account as AccountDataLdb);
+            _accounts.Update(account as AccountData);
 
             doneCallback.Invoke();
         }
 
         public void InsertNewAccount(IAccountData account, Action doneCallback)
         {
-            _accounts.Insert(account as AccountDataLdb);
+            _accounts.Insert(account as AccountData);
             doneCallback.Invoke();
         }
 
         public void InsertToken(IAccountData account, string token, Action doneCallback)
         {
             account.Token = token;
-            _accounts.Update(account as AccountDataLdb);
+            _accounts.Update(account as AccountData);
 
             doneCallback.Invoke();
         }
@@ -170,35 +151,6 @@ namespace Lockstep.Server.Database
         {
             public string Email { get; set; }
             public string Code { get; set; }
-        }
-
-        /// <summary>
-        ///     LiteDB implementation of account data
-        /// </summary>
-        private class AccountDataLdb : IAccountData
-        {
-            [BsonId]
-            public string Username { get; set; }
-
-            public string Password { get; set; }
-            public string Email { get; set; }
-            public string Token { get; set; }
-            public bool IsAdmin { get; set; }
-            public bool IsGuest { get; set; }
-            public bool IsEmailConfirmed { get; set; }
-            public Dictionary<string, string> Properties { get; set; }
-
-            public event Action<IAccountData> OnChange;
-
-            public AccountDataLdb()
-            {
-            }
-
-            public void MarkAsDirty()
-            {
-                if (OnChange != null)
-                    OnChange.Invoke(this);
-            }
         }
     }
 }

@@ -5,6 +5,29 @@ using Lockstep.Serialization;
 namespace NetMsg.Common{
 #if !DONT_USE_GENERATE_CODE
 
+    public partial class AccountData{
+        public override void Serialize(Serializer writer){
+			writer.PutString(Email);
+			writer.PutBoolean(IsAdmin);
+			writer.PutBoolean(IsEmailConfirmed);
+			writer.PutBoolean(IsGuest);
+			writer.PutString(Password);
+			writer.PutString(Token);
+			writer.PutString(Username);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Email = reader.GetString();
+			IsAdmin = reader.GetBoolean();
+			IsEmailConfirmed = reader.GetBoolean();
+			IsGuest = reader.GetBoolean();
+			Password = reader.GetString();
+			Token = reader.GetString();
+			Username = reader.GetString();
+        }
+    }
+
+
     public partial class Msg_AllLoadingProgress{
         public override void Serialize(Serializer writer){
 			writer.PutBoolean(isAllDone);
@@ -14,6 +37,19 @@ namespace NetMsg.Common{
         public override void Deserialize(Deserializer reader){
 			isAllDone = reader.GetBoolean();
 			progress = reader.GetArray(ref this.progress);
+        }
+    }
+
+
+    public partial class Msg_CreateAccount{
+        public override void Serialize(Serializer writer){
+			writer.PutString(account);
+			writer.PutString(password);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			account = reader.GetString();
+			password = reader.GetString();
         }
     }
 
@@ -181,6 +217,28 @@ namespace NetMsg.Common{
     }
 
 
+    public partial class Msg_RepAccountData{
+        public override void Serialize(Serializer writer){
+			writer.Put(accountData);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			accountData = reader.Get(ref this.accountData);
+        }
+    }
+
+
+    public partial class Msg_RepCreateResult{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(result);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			result = reader.GetByte();
+        }
+    }
+
+
     public partial class Msg_RepInit{
         public override void Serialize(Serializer writer){
 			writer.PutInt64(playerId);
@@ -231,6 +289,19 @@ namespace NetMsg.Common{
     
         public override void Deserialize(Deserializer reader){
 			Child = reader.GetArray(ref this.Child);
+        }
+    }
+
+
+    public partial class Msg_ReqAccountData{
+        public override void Serialize(Serializer writer){
+			writer.PutString(account);
+			writer.PutString(password);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			account = reader.GetString();
+			password = reader.GetString();
         }
     }
 

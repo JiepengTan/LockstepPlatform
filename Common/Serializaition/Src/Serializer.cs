@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
@@ -346,6 +347,7 @@ namespace Lockstep.Serialization {
                 val?.Serialize(this);
             }
         }
+
 
         public void PutArray(byte[] value){
             var isNull = value == null;

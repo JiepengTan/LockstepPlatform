@@ -32,6 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\..\Server\Server.DB\Libs\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -45,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\DictExtensions.cs" />
+    <Compile Include="Src\MsgDefine_Login.cs" />
     <Compile Include="Src\NetworkDefine.cs" />
     <Compile Include="Src\EMsgSC.cs" />
     <Compile Include="Src\ExtentionMsg.cs" />

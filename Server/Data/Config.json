@@ -17,7 +17,7 @@
       "isMaster": true,
       "type": 1,
       "path": "Server.Daemon.exe",
-      "servePort": 10101,
+      "serverPort": 10101,
       "masterPort": 10102,
       "masterIp": "127.0.0.1",
       "tcpPort": 7050,
@@ -27,16 +27,15 @@
       "isMaster": true,
       "type": 2,
       "path": "Server.Login.exe",
-      "servePort": 10201,
+      "serverPort": 10201,
       "masterPort": 10202,
       "tcpPort": 7150,
       "udpPort": 7151
-    }
-    // ,
+    },
     //{
     //  "type": 3,
     //  "path": "Server.Lobby.exe",
-    //  "servePort": 10301,
+    //  "serverPort": 10301,
     //  "masterPort": 10301,
     //  "tcpPort": 7250,
     //  "udpPort": 7251
@@ -49,13 +48,14 @@
     //  "tcpPort": 7350,
     //  "udpPort": 7351
     //},
-    //{
-    //  "type": 5,
-    //  "path": "Server.Database.exe",
-    //  "serverIpPort": 10501,
-    //  "masterPort": 10502,
-    //  "tcpPort": 7450,
-    //  "udpPort": 7451
-    //}
+    {
+      "isMaster": true,
+      "type": 5,
+      "path": "Server.Database.exe",
+      "serverPort": 10501,
+      "masterPort": 10502,
+      "tcpPort": 7450,
+      "udpPort": 7451
+    }
   ]
 }

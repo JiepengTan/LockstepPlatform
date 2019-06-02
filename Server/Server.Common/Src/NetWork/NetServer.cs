@@ -7,7 +7,7 @@ using Lockstep.Serialization;
 using NetMsg.Server;
 
 namespace Lockstep.Server.Common {
-    public class NetServer<TMsgType, TParam> : IServer
+    public class NetServer<TMsgType, TParam> :IPollEvents, IServer
         where TParam : class, INetProxy
         where TMsgType : struct {
         public event Action<object> ClientConnected;

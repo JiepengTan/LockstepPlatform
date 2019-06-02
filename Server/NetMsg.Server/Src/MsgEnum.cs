@@ -17,6 +17,9 @@ namespace NetMsg.Server {
         M2S_ReqShutdown,
         M2S_ReqShutdownAll,
 
+        //OMS
+        S2M_ReqOtherServerInfo,
+        M2S_RepOtherServerInfo,
         EnumCount,
     }
 
@@ -24,6 +27,7 @@ namespace NetMsg.Server {
     public enum EMsgXS:short {
         S2X_ReqMasterInfo,
         X2S_RepMasterInfo,
+        X2S_BorderMasterInfo,
         S2X_StartServer,
         S2X_ShutdownServer,
 
@@ -34,6 +38,7 @@ namespace NetMsg.Server {
     public enum EMsgYX:short {
         X2Y_ReqMasterInfo,
         Y2X_RepMasterInfo,
+        Y2X_BorderMasterInfo,
         X2Y_RegisterDaemon,
         X2Y_ReportState,
         X2Y_ShutdownServer,

@@ -20,7 +20,7 @@ namespace Lockstep.Server.Common {
 
         public void SendMsg(object type, BaseFormater data){
             var writer = new Serializer();
-            writer.PutByte((byte) (object) type);
+            writer.PutInt16((short) (object) type);
             data.Serialize(writer);
             var bytes = Compressor.Compress(writer.Data);
             SendMsg(bytes);

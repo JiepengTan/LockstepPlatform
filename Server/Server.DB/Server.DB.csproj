@@ -7,8 +7,8 @@
     <ProjectGuid>{8D6C4FA9-23A4-42BC-BEFD-0ABCBCC9D0F4}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Server.DB</RootNamespace>
-    <AssemblyName>Server.DB</AssemblyName>
+    <RootNamespace>Server.Database</RootNamespace>
+    <AssemblyName>Server.Database</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <FileAlignment>512</FileAlignment>
@@ -57,6 +57,10 @@
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
@@ -68,6 +72,10 @@
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
       <Name>Server.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Util\Util.csproj">
+      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
+      <Name>Util</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
