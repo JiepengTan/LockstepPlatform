@@ -4,8 +4,11 @@ using Lockstep.Server.Common;
 namespace Lockstep.Server.Common {
     public class ServerConfigInfo {
         public EServerType type;
+        public bool isMaster;
         public string path;
         public int servePort;
+        public string masterIp;
+        public int masterPort;
         public int tcpPort;
         public int udpPort;
         public override string ToString(){
@@ -13,7 +16,6 @@ namespace Lockstep.Server.Common {
         }
     }
     public class ConfigInfo {
-        public string daemonMasterIpPort;
         public bool isMaster;
         public int daemonPort;
         public ServerConfigInfo[] servers;

@@ -31,8 +31,8 @@ namespace Lockstep.Server.Lobby {
 
         private const int MAX_NAME_LEN = 30;
 
-        public NetServer<EMsgSC,Player> serverLobby;
-        public NetServer<EMsgSC,Player> serverRoom;
+        public NetServer<EMsgSC,INetProxy> serverLobby;
+        public NetServer<EMsgSC,INetProxy> serverRoom;
 
         public const byte MAX_HANDLER_IDX = (byte) EMsgSC.EnumCount;
         public const byte INIT_MSG_IDX = (byte) EMsgSC.C2L_ReqLogin;
@@ -55,7 +55,8 @@ namespace Lockstep.Server.Lobby {
 
         #region LifeCycle
 
-        public override void DoStart(ushort tcpPort, ushort udpPort){
+        public override void DoStart( ){
+            base.DoStart();
             RegisterMsgHandlers();
             //serverLobby = new NetServer(Define.ClientKey);
             //serverLobby.DataReceived += OnDataReceived;
@@ -69,7 +70,7 @@ namespace Lockstep.Server.Lobby {
             //serverRoom.ClientConnected += OnClientConnectedRoom;
             //serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
             //serverRoom.Run(udpPort);
-            Debug.Log($"Listen tcpPort {tcpPort} udpPort {udpPort}");
+            //Debug.Log($"Listen tcpPort {tcpPort} udpPort {udpPort}");
         }
 
         public void OnDataReceivedRoom(NetPeer peer, byte[] data){

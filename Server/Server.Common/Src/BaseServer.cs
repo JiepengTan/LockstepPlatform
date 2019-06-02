@@ -5,10 +5,11 @@ using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Common {
     public class BaseServer : IGameServer {
-        protected ConfigInfo _config;
+        protected ConfigInfo _allConfig;
+        protected ServerConfigInfo _serverConfig;
 
-        public ServerProxy masterServer;
-        public ServerProxy candidateMasterServer;
+        public ServerProxy MasterServer;
+        public ServerProxy CandidateMasterServer;
 
         public IPEndPoint ipInfo;
         public EServerType serverType;
@@ -18,12 +19,13 @@ namespace Lockstep.Server.Common {
 
         public virtual void DoAwake(ServerConfigInfo info){
             serverType = info.type;
-            _config = ServerUtil.LoadConfig();
-            masterType = _config.isMaster ? EMasterType.Master : EMasterType.Slave;
+            _allConfig = ServerUtil.LoadConfig();
+            _allConfig.daemonPort = _allConfig.GetServerConfig(EServerType.DaemonServer).servePort;
+            _serverConfig = info;
+            masterType = _allConfig.isMaster ? EMasterType.Master : EMasterType.Slave;
         }
 
-        public virtual void DoStart(ServerConfigInfo info){ }
-        public virtual void DoStart(ushort tcpPort, ushort udpPort){ }
+        public virtual void DoStart(){ }
         public virtual void DoUpdate(int deltaTime){ }
         public virtual void DoDestroy(){ }
         public virtual void PollEvents(){ }

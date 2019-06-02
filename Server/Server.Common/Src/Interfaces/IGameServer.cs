@@ -7,7 +7,7 @@ namespace Lockstep.Server.Common {
         bool IsCandidateMaster { get;  }
 
         //life cycle
-        void DoStart(ushort tcpPort, ushort udpPort);
+        void DoStart();
         void DoUpdate(int deltaTime);
         void DoDestroy();
         void PollEvents();

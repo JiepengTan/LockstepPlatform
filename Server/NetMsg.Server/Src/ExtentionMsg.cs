@@ -31,22 +31,30 @@ namespace NetMsg.Server{
         public override void Serialize(Serializer writer){
 			writer.PutString(ip);
 			writer.PutInt32(port);
+			writer.PutByte(serverType);
         }
     
         public override void Deserialize(Deserializer reader){
 			ip = reader.GetString();
 			port = reader.GetInt32();
+			serverType = reader.GetByte();
         }
     }
 
 
     public partial class Msg_ReqMasterInfo{
         public override void Serialize(Serializer writer){
-			writer.PutByte(type);
+			writer.PutString(ip);
+			writer.PutBoolean(isMaster);
+			writer.PutInt32(masterPort);
+			writer.PutByte(serverType);
         }
     
         public override void Deserialize(Deserializer reader){
-			type = reader.GetByte();
+			ip = reader.GetString();
+			isMaster = reader.GetBoolean();
+			masterPort = reader.GetInt32();
+			serverType = reader.GetByte();
         }
     }
 

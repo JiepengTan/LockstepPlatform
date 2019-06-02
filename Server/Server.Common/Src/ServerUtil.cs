@@ -4,8 +4,8 @@ using System.IO;
 using System.Reflection;
 using System.Threading;
 using LitJson;
-using Lockstep.Server.Common;
 using Lockstep.Util;
+using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
     public static class ServerUtil {
@@ -21,7 +21,7 @@ namespace Lockstep.Server.Common {
             where TEnum : struct{
             if (callBack == null) return;
             var methods = obj.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
-                                                   BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                                                   BindingFlags.Instance | BindingFlags.FlattenHierarchy );
             foreach (var method in methods) {
                 var methodName = method.Name;
                 if (methodName.StartsWith(prefix)) {
@@ -70,7 +70,7 @@ namespace Lockstep.Server.Common {
             BaseServer server = new T();
             {
                 server.DoAwake(config);
-                server.DoStart(config);
+                server.DoStart();
                 while (!Console.KeyAvailable) {
                     server.PollEvents();
                     var curTick = sw.ElapsedMilliseconds;

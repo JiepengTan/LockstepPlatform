@@ -1,7 +1,7 @@
 ﻿namespace NetMsg.Common
 {
     //msg between client RoomServer
-    public enum EMsgSC : byte
+    public enum EMsgSC : short
     {   
         //Login
         S2C_TickPlayer,

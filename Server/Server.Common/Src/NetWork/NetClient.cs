@@ -1,14 +1,16 @@
 #define DEBUG_FRAME_DELAY
 using System;
-using System.Collections;
+using System.Reflection;
 using LiteNetLib;
 using Lockstep.Serialization;
+using Lockstep.Server.Common;
+using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Game {
     public delegate void NetClientMsgHandler(Deserializer reader);
 
-    public class NetClient<TMsgType> {
+    public class NetClient<TMsgType> where TMsgType:struct{
         protected string _ip;
         protected int _port;
         protected string _key;
@@ -27,13 +29,14 @@ namespace Lockstep.Game {
         public Action OnConnected;
 
         public void RegisterMsgHandler(TMsgType msgType, NetClientMsgHandler handler){
-            AllClientMsgDealFuncs[(int) (object) msgType] = handler;
+            AllClientMsgDealFuncs[(short) (object) msgType] = handler;
         }
 
-        public NetClient(int maxMsgHandlerIdx){
+        public NetClient(int maxMsgHandlerIdx,string msgFlag,object msgHandlerObj){
             AllClientMsgDealFuncs = new NetClientMsgHandler[maxMsgHandlerIdx];
+            ServerUtil.RegisterEvent<TMsgType, NetClientMsgHandler>("OnMsg_" + msgFlag, "OnMsg_".Length,RegisterMsgHandler,msgHandlerObj);
         }
-
+       
         public void Init(string ip, int port, string key){
             _key = key;
             this._ip = ip;
@@ -44,6 +47,7 @@ namespace Lockstep.Game {
                 dataReader.Recycle();
             };
             _listener.PeerConnectedEvent += (peer) => {
+                Debug.Log("Conn to " + peer.EndPoint.Port);
                 _peer = peer;
                 OnConnected?.Invoke();
             };
@@ -52,11 +56,13 @@ namespace Lockstep.Game {
                 DisconnectTimeout = 300000
             };
             _isInit = true;
+            DoStart();
         }
 
         public void DoStart(){
             if (!_isInit) return;
             _client.Start();
+            //Debug.Log("Clent conn" + _ip + " port " + _port  + " key  " + _key);
             _client.Connect(_ip, _port, _key);
         }
 
@@ -81,7 +87,7 @@ namespace Lockstep.Game {
 
         private void OnNetMsg(byte[] rawData){
             var reader = new Deserializer(Compressor.Decompress(rawData));
-            var msgTypeId = reader.GetByte();
+            var msgTypeId = reader.GetInt16();
             if (msgTypeId >= AllClientMsgDealFuncs.Length) {
                 Debug.LogError("Recv error msg type" + msgTypeId);
                 return;
@@ -92,15 +98,15 @@ namespace Lockstep.Game {
                 func(reader);
             }
             else {
-                Debug.LogError("ErrorMsg type :no msgHandler" + msgTypeId);
+                Debug.LogError("ErrorMsg type :no msgHandler" + (TMsgType)(object)msgTypeId);
             }
         }
 
         public void Send(TMsgType type, BaseFormater data){
             var writer = new Serializer();
-            writer.PutByte((byte)(object)type);
+            writer.PutInt16((short)(object)type);
             data.Serialize(writer);
-            var bytes = Compressor.Compress(writer.Data);
+            var bytes = Compressor.Compress(writer.CopyData());
             Send(bytes);
         }
 

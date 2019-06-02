@@ -1,50 +1,61 @@
 /*
     public enum EServerType {
-        DaemonServer = 0,
-        LoginServer = 1,
-        LobbyServer = 2,
-        GameServer = 3,
-        DatabaseServer = 4,
-        WorldServer =5,
+        Client=0,
+        DaemonServer = 1,
+        LoginServer = 2,
+        LobbyServer = 3,
+        GameServer = 4,
+        DatabaseServer = 5,
+        WorldServer = 6,
+        
+        EnumCount,
     }
 */
 {
-  "daemonMasterIpPort": "127.0.0.1:10001",
-  "daemon": {
-    "type": 0,
-    "path": "./Server.Daemon.exe",
-    "serverIpPort": "127.0.0.1:10001",
-    "tcpClientIpPort": "127.0.0.1:7050",
-    "udpClientIpPort": "127.0.0.1:7051"
-  },
   "servers": [
     {
+      "isMaster": true,
       "type": 1,
-      "path": "./Server.Login.exe",
-      "serverIpPort": "127.0.0.1:10101",
-      "tcpClientIpPort": "127.0.0.1:7150",
-      "udpClientIpPort": "127.0.0.1:7151"
+      "path": "Server.Daemon.exe",
+      "servePort": 10101,
+      "masterPort": 10102,
+      "masterIp": "127.0.0.1",
+      "tcpPort": 7050,
+      "udpPort": 7051
     },
     {
+      "isMaster": true,
       "type": 2,
-      "path": "./Server.Lobby.exe",
-      "serverIpPort": "127.0.0.1:10201",
-      "tcpClientIpPort": "127.0.0.1:7250",
-      "udpClientIpPort": "127.0.0.1:7251"
-    },
-    {
-      "type": 3,
-      "path": "./Server.Game.exe",
-      "serverIpPort": "127.0.0.1:10301",
-      "tcpClientIpPort": "127.0.0.1:7350",
-      "udpClientIpPort": "127.0.0.1:7351"
-    },
-    {
-      "type": 4,
-      "path": "./Server.Database.exe",
-      "serverIpPort": "127.0.0.1:10401",
-      "tcpClientIpPort": "127.0.0.1:7450",
-      "udpClientIpPort": "127.0.0.1:7451"
+      "path": "Server.Login.exe",
+      "servePort": 10201,
+      "masterPort": 10202,
+      "tcpPort": 7150,
+      "udpPort": 7151
     }
+    // ,
+    //{
+    //  "type": 3,
+    //  "path": "Server.Lobby.exe",
+    //  "servePort": 10301,
+    //  "masterPort": 10301,
+    //  "tcpPort": 7250,
+    //  "udpPort": 7251
+    //},
+    //{
+    //  "type": 4,
+    //  "path": "Server.Game.exe",
+    //  "serverIpPort": 10401,
+    //  "masterPort": 10502,
+    //  "tcpPort": 7350,
+    //  "udpPort": 7351
+    //},
+    //{
+    //  "type": 5,
+    //  "path": "Server.Database.exe",
+    //  "serverIpPort": 10501,
+    //  "masterPort": 10502,
+    //  "tcpPort": 7450,
+    //  "udpPort": 7451
+    //}
   ]
 }

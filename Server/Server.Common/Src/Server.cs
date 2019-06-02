@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using LiteNetLib;
+using LitJson;
 using Lockstep.Game;
 using Lockstep.Serialization;
 using NetMsg.Server;
@@ -12,124 +13,92 @@ namespace Lockstep.Server.Common {
     public class MasterMessageHandler { }
 
     public class Server : BaseServer {
-
-        #region Server MS
-
         //Server MS
         protected NetServer<EMsgMS, IServerProxy> _netServerMS;
-        protected List<IServerProxy> _slaveMS = new List<IServerProxy>();
+        protected NetClient<EMsgMS> _netClientMS;
+        protected NetClient<EMsgXS> _netClientXS;
+        #region ServerMS_ClientMS_ClientXS
 
-        protected virtual IServerProxy OnSlaveConnectMS(NetPeer peer){
-            var server = new ServerProxy(peer);
-            _slaveMS.Add(server);
-            return server;
-        }
-
-        protected virtual void OnSlaveDisconnectMS(NetPeer peer, IServerProxy param){
-            _slaveMS.Remove(param);
-        }
-
-        void RegisterMsgHandlerS2M(){
-            ServerUtil.RegisterEvent<EMsgMS, NetServer<EMsgMS, IServerProxy>.MsgHandler>("OnMsg_S2M", "OnMsg_".Length,
-                _netServerMS.RegisterMsgHandler, this);
-        }
 
         private void InitServerMS(ServerConfigInfo info){
-            if (_config.IsMaster()) {
+            if (_serverConfig.isMaster) {
                 _netServerMS = new NetServer<EMsgMS, IServerProxy>(Define.MSKey, (int) EMsgMS.EnumCount,
-                    OnSlaveConnectMS,
-                    OnSlaveDisconnectMS);
-                RegisterMsgHandlerS2M();
-                _netServerMS.Run(info.servePort);
+                    "S2M", this, (peer) => new ServerProxy(peer));
+                _netServerMS.Run(info.masterPort);
             }
         }
 
-        #endregion
-
-        #region Client MS
-
         //Client MS
-        protected NetClient<EMsgMS> _netClientMS;
 
         private void InitClientMS(Msg_RepMasterInfo msg){
-            _netClientMS = new NetClient<EMsgMS>((int) EMsgMS.EnumCount);
+            _netClientMS = new NetClient<EMsgMS>((int) EMsgMS.EnumCount, "M2S", this);
             _netClientMS.OnConnected += OnConnectedMaster;
-            RegisterMsgHandlerM2S();
             _netClientMS.Init(msg.ip, msg.port, Define.MSKey);
         }
 
-        void RegisterMsgHandlerM2S(){
-            ServerUtil.RegisterEvent<EMsgMS, NetClientMsgHandler>("OnMsg_M2S", "OnMsg_".Length,
-                _netClientMS.RegisterMsgHandler, this);
-        }
-
         void OnConnectedMaster(){
-            _netClientMS.Send(EMsgMS.RegisterServer, new Msg_RegisterServer() {type = (byte) serverType});
+            _netClientMS.Send(EMsgMS.S2M_RegisterServer, new Msg_RegisterServer() {type = (byte) serverType});
         }
-
-        #endregion
-
-        #region Client XS
 
         //Client XS
-        protected NetClient<EMsgXS> _netClientXS;
 
         private void InitClientXS(){
-            _netClientXS = new NetClient<EMsgXS>((int) EMsgXS.EnumCount);
+            _netClientXS = new NetClient<EMsgXS>((int) EMsgXS.EnumCount, "X2S", this);
             _netClientXS.OnConnected += OnConnectedDaemon;
-            RegisterMsgHandlerX2S();
-            _netClientXS.Init("127.0.0.1", _config.daemonPort, Define.XSKey);
-        }
-
-        void RegisterMsgHandlerX2S(){
-            ServerUtil.RegisterEvent<EMsgXS, NetClientMsgHandler>("OnMsg_X2S", "OnMsg_".Length,
-                _netClientXS.RegisterMsgHandler, this);
+            _netClientXS.Init("127.0.0.1", _allConfig.daemonPort, Define.XSKey);
+            Debug.Log("InitClientXS " + _allConfig.daemonPort);
         }
 
         void OnConnectedDaemon(){
-            _netClientXS.Send(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {type = (byte) serverType});
+            Debug.Log("OnConnectedDaemon " + _allConfig.daemonPort);
+            _netClientXS.Send(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {
+                isMaster = _serverConfig.isMaster,
+                masterPort = _serverConfig.masterPort,
+                serverType = (byte) serverType
+            });
         }
 
         #endregion
 
-        public override void DoStart(ServerConfigInfo info){
-            base.DoStart(info);
+
+        public override void DoStart(){
+            base.DoStart();
+            InitServerMS(_serverConfig);
             InitClientXS();
-            InitServerMS(info);
         }
 
+        public override void DoUpdate(int deltaTime){
+            base.DoUpdate(deltaTime);
+            _netClientXS?.DoUpdate();
+            _netClientMS?.DoUpdate();
+        }
 
-        void OnMsg_X2S_RepMasterInfo(Deserializer reader){
+        public override void PollEvents(){
+            _netServerMS?.PollEvents();
+        }
+
+        protected void OnMsg_X2S_RepMasterInfo(Deserializer reader){
             if (_netClientMS != null) return;
             var msg = reader.Parse<Msg_RepMasterInfo>();
-            InitClientMS(msg);
-        }
-
-
-        void OnMsg_S2M_RegisterServer(IServerProxy server, Deserializer reader){
-            Debug.Log("Add a server " + server.EndPoint.ToString());
-            var msg = reader.Parse<Msg_RegisterServer>();
-            server.ServerType = (EServerType)msg.type;
-        }
-
-
-        public void BorderToSlaves(EMsgMS type, BaseFormater data){
-            var writer = new Serializer();
-            writer.PutByte((byte) type);
-            data.Serialize(writer);
-            var bytes = writer.CopyData();
-            foreach (var server in _slaveMS) {
-                server.SendMsg(bytes);
+            if (msg.serverType == (byte) serverType) {
+                Debug.Log("OnMsg_X2S_RepMasterInfo " + msg.ToString());
+                InitClientMS(msg);
             }
+        }
+
+        protected void OnMsg_S2M_RegisterServer(IServerProxy net, Deserializer reader){
+            Debug.Log("Add a server " + net.EndPoint.ToString());
+            var msg = reader.Parse<Msg_RegisterServer>();
+            net.ServerType = (EServerType) msg.type;
         }
 
         public void SendToCandidate(EMsgMS type, BaseFormater data){
             var writer = new Serializer();
-            writer.PutByte((byte) EMsgMS.MasterToCandidate);
-            writer.PutByte((byte) type);
+            writer.PutInt16((short) EMsgMS.M2S_MasterToCandidate);
+            writer.PutInt16((short) type);
             data.Serialize(writer);
             var bytes = writer.CopyData();
-            candidateMasterServer?.SendMsg(bytes);
+            CandidateMasterServer?.SendMsg(bytes);
         }
 
         #region Candidate Master

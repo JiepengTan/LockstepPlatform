@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using LiteNetLib;
 using Lockstep.Game;
 using Lockstep.Serialization;
@@ -11,23 +12,13 @@ using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Daemon {
-    public interface IDaemonProxy {
+    public interface IDaemonProxy : IServerProxy {
         DaemonState state { get; set; }
-        void SendMsg(byte[] data);
     }
 
-    public class DaemonProxy : IDaemonProxy {
-        private NetPeer _peer;
-
-        public DaemonProxy(NetPeer peer){
-            _peer = peer;
-        }
-
+    public class DaemonProxy : ServerProxy, IDaemonProxy {
+        public DaemonProxy(NetPeer peer) : base(peer){ }
         public DaemonState state { get; set; }
-
-        public void SendMsg(byte[] data){
-            _peer?.Send(data, DeliveryMethod.ReliableSequenced);
-        }
     }
 
 
@@ -41,105 +32,61 @@ namespace Lockstep.Server.Daemon {
         #region Server YX
 
         //Server YX
-        private List<IDaemonProxy> _slaveYX = new List<IDaemonProxy>();
         private NetServer<EMsgYX, IDaemonProxy> _netServerYX;
-
-        protected virtual IDaemonProxy OnSlaveConnectYX(NetPeer peer){
-            var server = new DaemonProxy(peer);
-            _slaveYX.Add(server);
-            return server;
-        }
-
-        protected virtual void OnSlaveDisconnectYX(NetPeer peer, IDaemonProxy param){
-            _slaveYX.Remove(param);
-        }
-
-        private void InitServerYX(){
-            if (!_config.IsMaster()) return;
-            _netServerYX = new NetServer<EMsgYX, IDaemonProxy>(Define.MSKey, (int) EMsgYX.EnumCount,
-                OnSlaveConnectYX,
-                OnSlaveDisconnectYX);
-            RegisterMsgHandlerX2Y();
-        }
-
-        void RegisterMsgHandlerX2Y(){
-            ServerUtil.RegisterEvent<EMsgMS, NetClientMsgHandler>("OnMsg_M2S", "OnMsg_".Length,
-                _netClientMS.RegisterMsgHandler, this);
-        }
-
-        #endregion
-
-        #region Server XS
-
-        //Server XS
-        private List<IServerProxy> _slaveXS = new List<IServerProxy>();
         private NetServer<EMsgXS, IServerProxy> _netServerXS;
-
-        private void InitServerXS(){
-            _netServerXS = new NetServer<EMsgXS, IServerProxy>(Define.MSKey, (int) EMsgXS.EnumCount,
-                OnSlaveConnectXS,
-                OnSlaveDisconnectXS);
-            RegisterMsgHandlerS2X();
-        }
-
-        protected virtual IServerProxy OnSlaveConnectXS(NetPeer peer){
-            var server = new ServerProxy(peer);
-            _slaveXS.Add(server);
-            return server;
-        }
-
-        protected virtual void OnSlaveDisconnectXS(NetPeer peer, IServerProxy param){
-            _slaveXS.Remove(param);
-        }
-
-        void RegisterMsgHandlerS2X(){
-            ServerUtil.RegisterEvent<EMsgXS, NetServer<EMsgXS, IServerProxy>.MsgHandler>("OnMsg_X2Y", "OnMsg_".Length,
-                _netServerXS.RegisterMsgHandler, this);
-        }
-
-        #endregion
-
-        #region ClientXS
-
-        //Client XS
         protected NetClient<EMsgYX> _netClientYX;
 
+        private void InitServerYX(){
+            if (!_serverConfig.isMaster) return;
+            _netServerYX = new NetServer<EMsgYX, IDaemonProxy>(Define.MSKey, (int) EMsgYX.EnumCount, "X2Y", this,
+                (peer) => new DaemonProxy(peer));
+            _netServerYX.Run(_serverConfig.masterPort);
+            Debug.Log("InitServerYX RunServer " + serverType + " port" + _serverConfig.masterPort);
+        }
+
+        //Server XS
+
+        private void InitServerXS(){
+            _netServerXS = new NetServer<EMsgXS, IServerProxy>(Define.MSKey, (int) EMsgXS.EnumCount, "S2X", this,
+                (peer) => new ServerProxy(peer));
+            _netServerXS.Run(_serverConfig.servePort);
+            Debug.Log("InitServerXS RunServer " + serverType + " port" + _serverConfig.servePort);
+        }
+
+        //Client XS
 
         private void InitClientYX(){
-            if (_config.IsMaster()) return;
-            _netClientYX = new NetClient<EMsgYX>((int) EMsgYX.EnumCount);
-            _netClientYX.OnConnected += OnConnectedDaemonX;
-            RegisterMsgHandlerY2X();
-            _netClientYX.Init("127.0.0.1", _config.daemonPort, Define.MSKey);
+            _netClientYX = new NetClient<EMsgYX>((int) EMsgYX.EnumCount, "Y2X", this);
+            _netClientYX.OnConnected += OnConnectedDaemonY;
+            _netClientYX.Init(_serverConfig.masterIp, _serverConfig.masterPort, Define.MSKey);
         }
 
-        void RegisterMsgHandlerY2X(){
-            ServerUtil.RegisterEvent<EMsgYX, NetServer<EMsgYX, IDaemonProxy>.MsgHandler>("OnMsg_X2Y", "OnMsg_".Length,
-                _netServerYX.RegisterMsgHandler, this);
-        }
-
-        void OnConnectedDaemonX(){
+        void OnConnectedDaemonY(){
             _netClientYX.Send(EMsgYX.X2Y_RegisterDaemon, new Msg_RegisterDaemon() {type = (byte) serverType});
         }
 
         #endregion
 
-        public override void DoStart(ServerConfigInfo info){
-            base.DoStart(info);
+        public override void DoStart(){
             _curState = new DaemonState();
             _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             _memCounter = new PerformanceCounter("Memory", "Available MBytes");
             InitServerXS();
-            InitClientYX();
             InitServerYX();
-            if (_config.IsMaster()) {
-                _netServerYX.Run(info.servePort);
-                foreach (var serverConfig in _config.servers) {
-                    LunchProgram(serverConfig);
-                }
+            InitClientYX();
+            foreach (var serverConfig in _allConfig.servers) {
+                if (serverConfig.type == EServerType.DaemonServer) continue;
+                if (!serverConfig.isMaster) continue;
+                LunchProgram(serverConfig);
             }
         }
 
+
+        public override void PollEvents(){
+            base.PollEvents();
+            _netServerYX?.PollEvents();
+            _netServerXS?.PollEvents();
+        }
 
         public void ReqStartServer(EServerType type){
             //TODO 根据个Daemon 的cpu 占用决定究竟是哪一个改启动新的服务
@@ -147,7 +94,7 @@ namespace Lockstep.Server.Daemon {
         }
 
         public void StartServer(EServerType type){
-            var serverConfig = _config.GetServerConfig(type);
+            var serverConfig = _allConfig.GetServerConfig(type);
             if (serverConfig != null) {
                 LunchProgram(serverConfig);
             }
@@ -158,16 +105,16 @@ namespace Lockstep.Server.Daemon {
             writer.PutByte((byte) EMsgYX.X2Y_ReportState);
             state.Serialize(writer);
             var bytes = writer.CopyData();
-            masterServer?.SendMsg(bytes);
+            MasterServer?.SendMsg(bytes);
         }
 
         public void ReportState(){
             _curState.cpu = _cpuCounter.NextValue();
             _curState.memory = _memCounter.NextValue();
-            var serves = _slaveXS;
-            _curState.localServers = new byte[serves.Count];
+            var servers = _netServerXS.Peers;
+            _curState.localServers = new byte[servers.Count];
             int i = 0;
-            foreach (var server in serves) {
+            foreach (var server in servers) {
                 _curState.localServers[i++] = (byte) server.ServerType;
             }
 
@@ -175,12 +122,64 @@ namespace Lockstep.Server.Daemon {
         }
 
 
-        public void OnMsg_S2X_RegisterServer(IServerProxy server, Deserializer reader){ }
-        public void OnMsg_S2X_StartServer(IServerProxy server, Deserializer reader){ }
-        public void OnMsg_S2X_ShutdownServer(IServerProxy server, Deserializer reader){ }
+        public struct IpInfo {
+            public string ip;
+            public int port;
+        }
+
+        public Dictionary<EServerType, IpInfo> type2MasterInfo = new Dictionary<EServerType, IpInfo>();
+        public Queue<IServerProxy> pendingReqMasterInfoServers = new Queue<IServerProxy>();
+
+        public void OnMsg_S2X_ReqMasterInfo(IServerProxy net, Deserializer reader){
+            var msg = reader.Parse<Msg_ReqMasterInfo>();
+            Debug.Log("OnMsg_S2X_ReqMasterInfo " + msg.ToString());
+            net.ServerType = (EServerType) msg.serverType;
+            msg.ip = net.EndPoint.Address.ToString();
+            _netClientYX.Send(EMsgYX.X2Y_ReqMasterInfo, msg);
+        }
+
+        
+        public void OnMsg_Y2X_RepMasterInfo(Deserializer reader){
+            var msg = reader.Parse<Msg_RepMasterInfo>();
+            Debug.Log("OnMsg_Y2X_RepMasterInfo " + msg.ToString());
+            _netServerXS.Border(EMsgXS.X2S_RepMasterInfo, msg);
+        }
+
+        public void OnMsg_S2X_StartServer(IServerProxy net, Deserializer reader){ }
+        public void OnMsg_S2X_ShutdownServer(IServerProxy net, Deserializer reader){ }
+        
+        
+        public void OnMsg_X2Y_RegisterDaemon(IDaemonProxy net,Deserializer reader){
+            var msg = reader.Parse<Msg_RegisterDaemon>();
+            Debug.Log("OnMsg_X2Y_RegisterDaemon " + msg.ToString());
+            //_netServerXS.Border(EMsgXS.X2S_RepMasterInfo, msg);
+        }
+        public void OnMsg_X2Y_ReqMasterInfo(IDaemonProxy net, Deserializer reader){
+            var msg = reader.Parse<Msg_ReqMasterInfo>();
+            Debug.Log("OnMsg_X2Y_ReqMasterInfo " + msg.ToString());
+            var type = (EServerType) msg.serverType;
+            if (type2MasterInfo.TryGetValue(type, out var end)) {
+                var retMsg = new Msg_RepMasterInfo();
+                retMsg.ip = msg.ip;
+                retMsg.port = msg.masterPort;
+                retMsg.serverType = msg.serverType;
+                net.SendMsg(EMsgYX.Y2X_RepMasterInfo, retMsg);
+            }
+            else {
+                if (msg.isMaster) {
+                    type2MasterInfo.Add(type, new IpInfo() {ip = msg.ip, port = msg.masterPort});
+                    var retMsg = new Msg_RepMasterInfo();
+                    retMsg.ip = msg.ip;
+                    retMsg.port = msg.masterPort;
+                    retMsg.serverType = msg.serverType;
+                    _netServerYX.Border(EMsgYX.Y2X_RepMasterInfo, retMsg);
+                }
+            }
+        }
 
         public override void DoUpdate(int deltaTime){
             base.DoUpdate(deltaTime);
+            _netClientYX?.DoUpdate();
             _reportTimer -= deltaTime;
             if (_reportTimer <= 0) {
                 _reportTimer = _reportInterval;
@@ -189,7 +188,9 @@ namespace Lockstep.Server.Daemon {
         }
 
         void LunchProgram(ServerConfigInfo configInfo){
-            Process proc = Process.Start(configInfo.path);
+            if (configInfo.type == EServerType.DaemonServer) return;
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configInfo.path);
+            Process proc = Process.Start(path);
             if (proc != null) {
                 proc.EnableRaisingEvents = true;
                 proc.Exited += new EventHandler(OnProcExited);

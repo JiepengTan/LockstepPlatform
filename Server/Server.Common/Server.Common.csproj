@@ -36,9 +36,6 @@
     <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\LiteNetLib.dll</HintPath>
     </Reference>
-    <Reference Include="Lockstep.Serializaition, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\Lockstep.Serializaition.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -53,7 +50,7 @@
     <Compile Include="Src\Interfaces\ILobby.cs" />
     <Compile Include="Src\Interfaces\IRoom.cs" />
     <Compile Include="Src\Interfaces\IServer.cs" />
-    <Compile Include="Src\Interfaces\IServerProxy.cs" />
+    <Compile Include="Src\Interfaces\INetProxy.cs" />
     <Compile Include="Src\NetWork\NetClient.cs" />
     <Compile Include="Src\NetWork\NetServer.cs" />
     <Compile Include="Src\Player.cs" />

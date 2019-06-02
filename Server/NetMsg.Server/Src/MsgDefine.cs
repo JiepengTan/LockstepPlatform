@@ -4,10 +4,14 @@ using Lockstep.Serialization;
 namespace NetMsg.Server {
 //XS
     public partial class Msg_ReqMasterInfo : BaseFormater {
-        public byte type;
+        public int masterPort;
+        public string ip;
+        public bool isMaster;
+        public byte serverType;
     }
 
     public partial class Msg_RepMasterInfo : BaseFormater {
+        public byte serverType;
         public string ip;
         public int port;
     }

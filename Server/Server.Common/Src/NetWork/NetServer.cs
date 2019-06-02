@@ -7,7 +7,9 @@ using Lockstep.Serialization;
 using NetMsg.Server;
 
 namespace Lockstep.Server.Common {
-    public class NetServer<TMsgType, TParam> : IServer where TParam : class {
+    public class NetServer<TMsgType, TParam> : IServer
+        where TParam : class, INetProxy
+        where TMsgType : struct {
         public event Action<object> ClientConnected;
         public event Action<object> ClientDisconnected;
         public event Action<NetPeer, byte[]> DataReceived;
@@ -17,15 +19,33 @@ namespace Lockstep.Server.Common {
 
         private string _clientKey;
 
+        public delegate void MsgHandler(TParam param, Deserializer reader);
+
+        public delegate TParam CreateParamFromPeer(NetPeer peer);
+
+        public delegate void RemoveParamFromPeer(NetPeer peer, TParam param);
+
         //所有的消息处理函数
         protected MsgHandler[] _allMsgDealFuncs;
         private CreateParamFromPeer FuncCreateParamOnConnect;
         private RemoveParamFromPeer FuncRemoveParamOnDisconnect;
-        public Dictionary<int, TParam> netId2Param = new Dictionary<int, TParam>();
+        private Dictionary<int, TParam> netId2Peer = new Dictionary<int, TParam>();
         private int maxMsgIdx;
+        private List<TParam> _peers = new List<TParam>();
+        public List<TParam> Peers => _peers;
+
+        public TParam GetClientFromNetId(int netId){
+            if (netId2Peer.TryGetValue(netId, out var par)) {
+                return par;
+            }
+
+            return null;
+        }
+
         public NetServer(string clientKey, int maxMsgIdx,
+            string msgFlag, object msgHandlerObj,
             CreateParamFromPeer funcCreateParamOnConnectOnConnect
-            , RemoveParamFromPeer funcRemoveParamOnDisconnect){
+            , RemoveParamFromPeer funcRemoveParamOnDisconnect = null){
             _clientKey = clientKey;
             _listener = new EventBasedNetListener();
             _server = new NetManager(_listener) {
@@ -35,6 +55,8 @@ namespace Lockstep.Server.Common {
             _allMsgDealFuncs = new MsgHandler[maxMsgIdx];
             FuncCreateParamOnConnect = funcCreateParamOnConnectOnConnect;
             FuncRemoveParamOnDisconnect = funcRemoveParamOnDisconnect;
+            ServerUtil.RegisterEvent<TMsgType, MsgHandler>("OnMsg_" + msgFlag, "OnMsg_".Length, RegisterMsgHandler,
+                msgHandlerObj);
         }
 
         public void Distribute(byte[] data){
@@ -46,8 +68,20 @@ namespace Lockstep.Server.Common {
                 _server.ConnectedPeerList.First(peer => peer.Id == clientId));
         }
 
+
         public void Send(int clientId, byte[] data){
             _server.ConnectedPeerList.First(peer => peer.Id == clientId).Send(data, DeliveryMethod.ReliableOrdered);
+        }
+
+        public void Border(TMsgType type, BaseFormater msg){
+            var writer = new Serializer();
+            writer.PutInt16((short) (object) type);
+            msg.Serialize(writer);
+            var bytes = Compressor.Compress(writer.CopyData());
+            var peers = _peers;
+            foreach (var peer in peers) {
+                peer.SendMsg(bytes);
+            }
         }
 
         public void Run(int port){
@@ -55,7 +89,8 @@ namespace Lockstep.Server.Common {
 
             _listener.PeerConnectedEvent += peer => {
                 var param = FuncCreateParamOnConnect(peer);
-                netId2Param.Add(peer.Id, param);
+                _peers.Add(param);
+                netId2Peer.Add(peer.Id, param);
                 ClientConnected?.Invoke(peer);
             };
 
@@ -64,9 +99,10 @@ namespace Lockstep.Server.Common {
             };
 
             _listener.PeerDisconnectedEvent += (peer, info) => {
-                var param = netId2Param[peer.Id];
-                FuncRemoveParamOnDisconnect?.Invoke(peer,param);
-                netId2Param.Remove(peer.Id);
+                var param = netId2Peer[peer.Id];
+                FuncRemoveParamOnDisconnect?.Invoke(peer, param);
+                _peers.Remove(param);
+                netId2Peer.Remove(peer.Id);
                 ClientDisconnected?.Invoke(peer);
             };
 
@@ -77,21 +113,17 @@ namespace Lockstep.Server.Common {
             _server.PollEvents();
         }
 
-        public delegate void MsgHandler(TParam param, Deserializer reader);
-
-        public delegate TParam CreateParamFromPeer(NetPeer peer);
-
-        public delegate void RemoveParamFromPeer(NetPeer peer,TParam param);
 
         public void RegisterMsgHandler(TMsgType msgType, MsgHandler handler){
-            _allMsgDealFuncs[(int) (object) msgType] = handler;
+            var idx = (short) (object) msgType;
+            _allMsgDealFuncs[idx] = handler;
         }
 
         private void OnDataReceived(NetPeer peer, byte[] data){
             int netID = peer.Id;
             try {
                 var reader = new Deserializer(Compressor.Decompress(data));
-                var msgType = reader.GetByte();
+                var msgType = reader.GetInt16();
                 if (msgType >= maxMsgIdx) {
                     Debug.LogError("msgType out of range " + msgType);
                     return;
@@ -99,7 +131,7 @@ namespace Lockstep.Server.Common {
 
                 {
                     TParam param = null;
-                    if (netId2Param.TryGetValue(netID, out TParam _server)) {
+                    if (netId2Peer.TryGetValue(netID, out TParam _server)) {
                         param = _server;
                     }
                     else {
@@ -111,12 +143,12 @@ namespace Lockstep.Server.Common {
                         _func(param, reader);
                     }
                     else {
-                        Debug.LogError("ErrorMsg type :no msgHnadler" + msgType);
+                        Debug.LogError("ErrorMsg type :no msg handler " + (TMsgType) (object) msgType);
                     }
                 }
             }
             catch (Exception e) {
-                Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
+                Debug.Log($"netID{netID} parse msg Error:{e.ToString()}");
             }
         }
     }
