@@ -35,7 +35,7 @@ namespace Lockstep.Server.Daemon {
         private NetServer<EMsgXS, IServerProxy> _netServerXS;
         protected NetClient<EMsgYX> _netClientYX;
         public Dictionary<EServerType, ServerIpInfo> _type2MasterInfo = new Dictionary<EServerType, ServerIpInfo>();
-        
+
         private void InitServerYX(){
             if (!_serverConfig.isMaster) return;
             InitNetServer(ref _netServerYX, _serverConfig.masterPort, (peer) => new DaemonProxy(peer));
@@ -64,7 +64,8 @@ namespace Lockstep.Server.Daemon {
             InitServerXS();
             InitServerYX();
             InitClientYX();
-            foreach (var serverConfig in _allConfig.servers) {
+            foreach (var serverConfig in _allConfig.servers.ToArray()) {
+                Debug.Log("LunchProgram " + serverConfig.type);
                 if (serverConfig.type == EServerType.DaemonServer) continue;
                 if (!serverConfig.isMaster) continue;
                 LunchProgram(serverConfig);
@@ -79,6 +80,7 @@ namespace Lockstep.Server.Daemon {
                 ReportState();
             }
         }
+
         public void ReqStartServer(EServerType type){
             //TODO 根据个Daemon 的cpu 占用决定究竟是哪一个改启动新的服务
             StartServer(type);
@@ -111,7 +113,6 @@ namespace Lockstep.Server.Daemon {
 
             ReportState(_curState);
         }
-
 
 
         public void OnMsg_S2X_ReqMasterInfo(IServerProxy net, Deserializer reader){
@@ -164,11 +165,17 @@ namespace Lockstep.Server.Daemon {
 
         void LunchProgram(ServerConfigInfo configInfo){
             if (configInfo.type == EServerType.DaemonServer) return;
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, configInfo.path);
-            Process proc = Process.Start(path);
-            if (proc != null) {
-                proc.EnableRaisingEvents = true;
-                proc.Exited += new EventHandler(OnProcExited);
+            if (_allConfig.isAllInOne) {
+                ServerUtil.RunServer(GetType().Assembly, configInfo.type, _allConfig);
+            }
+            else {
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Server.Servers.exe");
+                Debug.Log("Start Program " + configInfo.type.ToString());
+                Process proc = Process.Start(path, configInfo.type.ToString());
+                if (proc != null) {
+                    proc.EnableRaisingEvents = true;
+                    proc.Exited += new EventHandler(OnProcExited);
+                }
             }
         }
 

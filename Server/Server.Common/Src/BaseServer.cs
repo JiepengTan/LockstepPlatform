@@ -1,4 +1,7 @@
+using System;
+using System.Diagnostics;
 using System.Net;
+using Lockstep.Logging;
 using Lockstep.Serialization;
 using NetMsg.Server;
 using Lockstep.Server.Common;
@@ -6,6 +9,9 @@ using Lockstep.Util;
 
 namespace Lockstep.Server.Common {
     public class BaseServer : IGameServer {
+
+        public DebugInstance Debug;
+        public bool HasInit { get; private set; }
         protected ConfigInfo _allConfig;
         protected ServerConfigInfo _serverConfig;
 
@@ -21,6 +27,8 @@ namespace Lockstep.Server.Common {
         public string IP;
 
         public virtual void DoAwake(ServerConfigInfo info){
+            Debug = new DebugInstance(GetType().Name + ": ");
+            HasInit = true;
             IP = NetworkHelper.GetLocalIP();
             serverType = info.type;
             _allConfig = ServerUtil.LoadConfig();

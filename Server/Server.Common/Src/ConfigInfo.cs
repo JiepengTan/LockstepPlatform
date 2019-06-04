@@ -16,6 +16,7 @@ namespace Lockstep.Server.Common {
         }
     }
     public class ConfigInfo {
+        public bool isAllInOne;//所有的服务器都在同一个机器上 方便调试
         public bool isMaster;
         public int daemonPort;
         public ServerConfigInfo[] servers;

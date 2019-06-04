@@ -30,4 +30,37 @@ namespace Lockstep.Logging {
             Lockstep.Logging.Log.Assert(0, val, prefix+msg);
         }
     }
+    
+    public class DebugInstance {
+        private string prefix = "";
+
+        public DebugInstance(string prefix){
+            this.prefix = prefix;
+        }
+
+        public void Log(string format, params object[] args){
+            Lockstep.Logging.Log.Info(0, prefix + format, args);
+        }
+
+        public void LogFormat(string format, params object[] args){
+            Lockstep.Logging.Log.Info(0, prefix + format, args);
+        }
+
+        public void LogError(string format, params object[] args){
+            Lockstep.Logging.Log.Err(0, prefix + format, args);
+        }
+
+        public void LogError(Exception e){
+            Lockstep.Logging.Log.Err(0, prefix + e.ToString());
+        }
+
+        public void LogErrorFormat(string format, params object[] args){
+            Lockstep.Logging.Log.Err(0, prefix + format, args);
+        }
+
+        [Conditional("DEBUG")]
+        public void Assert(bool val, string msg = ""){
+            Lockstep.Logging.Log.Assert(0, val, prefix+msg);
+        }
+    }
 }

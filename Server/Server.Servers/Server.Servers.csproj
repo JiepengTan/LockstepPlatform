@@ -4,13 +4,12 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{EBA8FDBD-7BEE-4277-B1A4-B47135E76D30}</ProjectGuid>
+    <ProjectGuid>{23AD1C5B-CF67-4C22-92FF-2CE9E2BE8FEE}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Server.Login</RootNamespace>
-    <AssemblyName>Server.Login</AssemblyName>
+    <RootNamespace>Server.Servers</RootNamespace>
+    <AssemblyName>Server.Servers</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -18,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>../bin</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,12 +26,15 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>../bin</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+      <HintPath>..\Server.DB\Libs\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Libs\LiteNetLib.dll</HintPath>
     </Reference>
@@ -42,9 +44,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Src\LoginServer.cs" />
-    <Compile Include="Src\Program.cs" />
+    <Compile Include="Src\Daemon\DaemonServer.cs" />
+    <Compile Include="Src\DB\AuthDbLdb.cs" />
+    <Compile Include="Src\DB\DatabaseServer.cs" />
+    <Compile Include="Src\DB\IProfilesDatabase.cs" />
+    <Compile Include="Src\DB\ProfilesDatabaseLdb.cs" />
+    <Compile Include="Src\Game\GameServer.cs" />
+    <Compile Include="Src\Lobby\Global.cs" />
+    <Compile Include="Src\Lobby\LobbyServer.cs" />
+    <Compile Include="Src\Lobby\SimpleDatabase.cs" />
+    <Compile Include="Src\Login\LoginServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
