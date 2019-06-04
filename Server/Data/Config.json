@@ -12,12 +12,11 @@
     }
 */
 {
-  "isAllInOne": true,//所有的服务器都在同一个机器上 方便调试
+  "isDebugMode": false,//all server run in the same process
   "servers": [
     {
       "isMaster": true,
       "type": 1,
-      "path": "Server.Servers.exe",
       "serverPort": 10101,
       "masterPort": 10102,
       "masterIp": "127.0.0.1",
@@ -27,7 +26,6 @@
     {
       "isMaster": true,
       "type": 2,
-      "path": "Server.Login.exe",
       "serverPort": 10201,
       "masterPort": 10202,
       "tcpPort": 7150,
@@ -35,7 +33,6 @@
     },
     //{
     //  "type": 3,
-    //  "path": "Server.Lobby.exe",
     //  "serverPort": 10301,
     //  "masterPort": 10301,
     //  "tcpPort": 7250,
@@ -43,7 +40,6 @@
     //},
     //{
     //  "type": 4,
-    //  "path": "Server.Game.exe",
     //  "serverIpPort": 10401,
     //  "masterPort": 10502,
     //  "tcpPort": 7350,
@@ -52,7 +48,6 @@
     {
       "isMaster": true,
       "type": 5,
-      "path": "Server.Database.exe",
       "serverPort": 10501,
       "masterPort": 10502,
       "tcpPort": 7450,

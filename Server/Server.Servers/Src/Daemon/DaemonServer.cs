@@ -165,7 +165,7 @@ namespace Lockstep.Server.Daemon {
 
         void LunchProgram(ServerConfigInfo configInfo){
             if (configInfo.type == EServerType.DaemonServer) return;
-            if (_allConfig.isAllInOne) {
+            if (_allConfig.isDebugMode) {
                 ServerUtil.RunServer(GetType().Assembly, configInfo.type, _allConfig);
             }
             else {
