@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using LiteDB;
 using LiteNetLib;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using Lockstep.Util;
@@ -30,7 +31,7 @@ namespace Lockstep.Server.Database {
         }
 
         private void InitServerDS(){
-            InitNetServer(ref _netServerDS, _serverConfig.serverPort, (peer) => new ServerProxy(peer));
+            InitNetServer(ref _netServerDS, _serverConfig.serverPort);
         }
 
         protected override ServerIpInfo GetSlaveServeInfo(){
@@ -41,15 +42,15 @@ namespace Lockstep.Server.Database {
             };
         }
 
-        protected void OnMsg_S2D_ReqUserInfo(IServerProxy proxy, Deserializer reader){
+        protected void S2D_ReqUserInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqAccountData>();
             _authDb.GetAccount(msg.account, (dbData) => {
-                proxy.SendMsg(EMsgDS.D2S_RepUserInfo,
+                reader.Respond(EMsgDS.D2S_RepUserInfo,
                     new Msg_RepAccountData() {accountData = dbData as AccountData});
             });
         }
 
-        protected void OnMsg_S2D_ReqCreateUser(IServerProxy proxy, Deserializer reader){
+        protected void S2D_ReqCreateUser(IIncommingMessage reader){
             var msg = reader.Parse<Msg_CreateAccount>();
             _authDb.GetAccount(msg.account, (dbData) => {
                 if (dbData == null) {
@@ -62,10 +63,10 @@ namespace Lockstep.Server.Database {
                     newInfo.IsGuest = false;
                     newInfo.IsEmailConfirmed = false;
                     _authDb.InsertNewAccount(newInfo
-                        , () => { proxy.SendMsg(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0}); });
+                        , () => { reader.Respond(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0}); });
                 }
                 else {
-                    proxy.SendMsg(EMsgDS.D2S_RepCreateUser,
+                    reader.Respond(EMsgDS.D2S_RepCreateUser,
                         new Msg_RepCreateResult() {result = 1});
                 }
             });

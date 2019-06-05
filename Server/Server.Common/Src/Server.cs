@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using LiteNetLib;
 using LitJson;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using NetMsg.Server;
 using Lockstep.Server.Common;
@@ -54,8 +55,7 @@ namespace Lockstep.Server.Common {
         #region ServerMS_ClientMS_ClientXS
 
         //Client MS
-        protected void InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port,
-            NetServer<TMsgType, TParam>.CreateParamFromPeer funcCreateParamFromPeer)
+        protected void InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port)
             where TParam : class, INetProxy
             where TMsgType : struct{
             if (refServer != null) return;
@@ -63,8 +63,8 @@ namespace Lockstep.Server.Common {
             var name = typeof(TMsgType).Name;
             var tag = name.Replace("EMsg", "");
             tag = tag.Substring(1, 1) + "2" + tag.Substring(0, 1);
-            refServer = new NetServer<TMsgType, TParam>(Define.MSKey, maxIdx, tag, this, funcCreateParamFromPeer);
-            refServer.Run(port);
+            refServer = new NetServer<TMsgType, TParam>(Define.MSKey, maxIdx, tag, this);
+            refServer.Listen(port);
             _allServerNet.Add(refServer);
             _cachedAllServerNet = null;
         }
@@ -81,21 +81,20 @@ namespace Lockstep.Server.Common {
                 refClient.OnConnected += onConnCallback;
             }
 
-            refClient.Init(ip, port, Define.MSKey);
             _allClientNet.Add(refClient);
+            refClient.Connect(ip, port, Define.MSKey);
             _cachedAllClientNet = null;
         }
 
         private void InitServerMS(ServerConfigInfo info){
             if (_serverConfig.isMaster) {
-                InitNetServer(ref _netServerMS, info.masterPort, (peer) => new ServerProxy(peer));
+                InitNetServer(ref _netServerMS, info.masterPort);
             }
         }
 
         private void InitClientMS(ServerIpInfo msg){
             InitNetClient(ref _netClientMS, msg.ip, msg.port, () => {
-                    Debug.Log("Connect Master " + serverType);
-                    _netClientMS.Send(EMsgMS.S2M_RegisterServer, new Msg_RegisterServer() {
+                    _netClientMS.SendMessage(EMsgMS.S2M_RegisterServer, new Msg_RegisterServer() {
                         serverInfo = new ServerIpInfo() {serverType = (byte) serverType}
                     });
                 }
@@ -103,31 +102,38 @@ namespace Lockstep.Server.Common {
         }
 
         private void InitClientXS(){
-            Debug.Log("InitClientXS " + _allConfig.daemonPort);
             InitNetClient(ref _netClientXS, "127.0.0.1", _allConfig.daemonPort,
                 () => {
-                    Debug.Log("OnConnectedDaemon " + _allConfig.daemonPort);
-                    _netClientXS.Send(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {
-                        serverInfo = new ServerIpInfo() {
-                            isMaster = _serverConfig.isMaster,
-                            port = _serverConfig.masterPort,
-                            serverType = (byte) serverType
+                    _netClientXS.SendMessage(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {
+                            serverInfo = new ServerIpInfo() {
+                                isMaster = _serverConfig.isMaster,
+                                port = _serverConfig.masterPort,
+                                serverType = (byte) serverType
+                            }
+                        }, (status, respond) => {
+                            var msg = respond.Parse<Msg_RepMasterInfo>();
+                            if (msg.serverInfos != null) {
+                                foreach (var serverInfo in msg.serverInfos) {
+                                    if (serverInfo.serverType == (byte) serverType) {
+                                        InitClientMS(serverInfo);
+                                    }
+                                    OnMasterServerInfo(serverInfo);
+                                }
+                            }
                         }
-                    });
+                    );
                 });
         }
 
         #endregion
 
-        protected void OnMsg_S2M_ReqOtherServerInfo(IServerProxy net, Deserializer reader){
+        protected void S2M_ReqOtherServerInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqOtherServerInfo>();
             var type = (EServerType) msg.serverType;
-            Debug.Log("OnMsg_S2M_ReqOtherServerInfo " + type);
             if (type == serverType) {
                 //TODO 
                 var info = GetSlaveServeInfo();
-                Debug.Log("GetSlaveServeInfo " + info);
-                net.SendMsg(EMsgMS.M2S_RepOtherServerInfo,new Msg_RepOtherServerInfo() {
+                reader.Respond(EMsgMS.M2S_RepOtherServerInfo, new Msg_RepOtherServerInfo() {
                     serverInfo = info
                 });
             }
@@ -138,30 +144,17 @@ namespace Lockstep.Server.Common {
             return null;
         }
 
-        protected void OnMsg_S2M_RegisterServer(IServerProxy net, Deserializer reader){
-            Debug.Log("Add a server " + net.EndPoint.ToString());
+        protected void S2M_RegisterServer(IIncommingMessage reader){
+            var net = new ServerProxy(reader.Peer);
+            reader.Peer.AddExtension(net);
             var msg = reader.Parse<Msg_RegisterServer>();
             net.ServerType = (EServerType) msg.serverInfo.serverType;
         }
 
-        protected void OnMsg_X2S_RepMasterInfo(Deserializer reader){
-            if (_netClientMS != null) return;
-            var msg = reader.Parse<Msg_RepMasterInfo>();
-            foreach (var serverInfo in msg.serverInfos) {
-                if (serverInfo.serverType == (byte) serverType) {
-                    Debug.Log("OnMsg_X2S_RepMasterInfo " + msg.ToString());
-                    InitClientMS(serverInfo);
-                }
 
-                OnMasterServerInfo(serverInfo);
-            }
-        }
-
-        public void OnMsg_X2S_BorderMasterInfo(Deserializer reader){
+        public void X2S_BorderMasterInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_BorderMasterInfo>();
-            Debug.Log("OnMsg_X2S_BorderMasterInfo " + msg.ToString());
             if (msg.serverInfo.serverType == (byte) serverType) {
-                Debug.Log("OnMsg_X2S_RepMasterInfo " + msg.ToString());
                 InitClientMS(msg.serverInfo);
             }
 

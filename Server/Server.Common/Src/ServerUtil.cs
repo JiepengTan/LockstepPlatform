@@ -28,8 +28,14 @@ namespace Lockstep.Server.Common {
                 if (methodName.StartsWith(prefix)) {
                     var eventTypeStr = methodName.Substring(ignorePrefixLen);
                     if (Enum.TryParse(eventTypeStr, out TEnum eType)) {
-                        var handler = CreateDelegateFromMethodInfo<TDelegate>(obj, method);
-                        callBack(eType, handler);
+                        try {
+                            var handler = CreateDelegateFromMethodInfo<TDelegate>(obj, method);
+                            callBack(eType, handler);
+                        }
+                        catch (Exception e) {
+                            Console.WriteLine("CreateDelegate failed " + eventTypeStr + " " + e);
+                            throw;
+                        }
                     }
                 }
             }

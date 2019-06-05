@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using LiteNetLib;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using NetMsg.Server;
@@ -16,7 +17,7 @@ namespace Lockstep.Server.Daemon {
     }
 
     public class DaemonProxy : ServerProxy, IDaemonProxy {
-        public DaemonProxy(NetPeer peer) : base(peer){ }
+        public DaemonProxy(IPeer peer) : base(peer){ }
         public DaemonState state { get; set; }
     }
 
@@ -38,17 +39,18 @@ namespace Lockstep.Server.Daemon {
 
         private void InitServerYX(){
             if (!_serverConfig.isMaster) return;
-            InitNetServer(ref _netServerYX, _serverConfig.masterPort, (peer) => new DaemonProxy(peer));
+            InitNetServer(ref _netServerYX, _serverConfig.masterPort);
         }
 
         private void InitServerXS(){
-            InitNetServer(ref _netServerXS, _serverConfig.serverPort, (peer) => new ServerProxy(peer));
+            InitNetServer(ref _netServerXS, _serverConfig.serverPort);
         }
 
         private void InitClientYX(){
             InitNetClient(ref _netClientYX, _serverConfig.masterIp, _serverConfig.masterPort,
                 () => {
-                    _netClientYX.Send(EMsgYX.X2Y_RegisterDaemon, new Msg_RegisterDaemon() {type = (byte) serverType});
+                    _netClientYX.SendMessage(EMsgYX.X2Y_RegisterDaemon,
+                        new Msg_RegisterDaemon() {type = (byte) serverType});
                 }
             );
         }
@@ -94,72 +96,62 @@ namespace Lockstep.Server.Daemon {
         }
 
         public void ReportState(DaemonState state){
-            var writer = new Serializer();
-            writer.PutByte((byte) EMsgYX.X2Y_ReportState);
-            state.Serialize(writer);
-            var bytes = writer.CopyData();
-            MasterServer?.SendMsg(bytes);
+            MasterServer?.SendMsg(EMsgYX.X2Y_ReportState, state);
         }
 
         public void ReportState(){
             _curState.cpu = _cpuCounter.NextValue();
             _curState.memory = _memCounter.NextValue();
-            var servers = _netServerXS.Peers;
-            _curState.localServers = new byte[servers.Count];
-            int i = 0;
-            foreach (var server in servers) {
-                _curState.localServers[i++] = (byte) server.ServerType;
-            }
-
-            ReportState(_curState);
+            //var servers = _netServerXS.Peers;
+            //_curState.localServers = new byte[servers.Count];
+            //int i = 0;
+            //foreach (var server in servers) {
+            //    _curState.localServers[i++] = (byte) server.ServerType;
+            //}
+//
+            //ReportState(_curState);
         }
 
 
-        public void OnMsg_S2X_ReqMasterInfo(IServerProxy net, Deserializer reader){
+        public void S2X_ReqMasterInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqMasterInfo>();
-            Debug.Log("OnMsg_S2X_ReqMasterInfo " + msg.ToString());
-            net.ServerType = (EServerType) msg.serverInfo.serverType;
-            msg.serverInfo.ip = net.EndPoint.Address.ToString();
-            _netClientYX.Send(EMsgYX.X2Y_ReqMasterInfo, msg);
+            var proxy = new ServerProxy(reader.Peer);
+            reader.Peer.AddExtension(proxy);
+            proxy.ServerType = (EServerType) msg.serverInfo.serverType;
+            msg.serverInfo.ip = proxy.EndPoint.Address.ToString();
+            _netClientYX.SendMessage(EMsgYX.X2Y_ReqMasterInfo, msg,
+                (status, respond) => {
+                    var respondMsg = respond.Parse<Msg_RepMasterInfo>();
+                    reader.Respond(respondMsg);
+                });
         }
 
-
-        public void OnMsg_Y2X_RepMasterInfo(Deserializer reader){
-            var msg = reader.Parse<Msg_RepMasterInfo>();
-            Debug.Log("OnMsg_Y2X_RepMasterInfo " + msg.ToString());
-            _netServerXS.Border(EMsgXS.X2S_RepMasterInfo, msg);
-        }
-
-        public void OnMsg_Y2X_BorderMasterInfo(Deserializer reader){
+        public void Y2X_BorderMasterInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_BorderMasterInfo>();
-            Debug.Log("OnMsg_Y2X_RepMasterInfo " + msg.ToString());
-            _netServerXS.Border(EMsgXS.X2S_BorderMasterInfo, msg);
+            _netServerXS.BorderMessage(EMsgXS.X2S_BorderMasterInfo, msg);
         }
 
 
-        public void OnMsg_S2X_StartServer(IServerProxy net, Deserializer reader){ }
-        public void OnMsg_S2X_ShutdownServer(IServerProxy net, Deserializer reader){ }
+        public void S2X_StartServer(IIncommingMessage reader){ }
+        public void S2X_ShutdownServer(IIncommingMessage reader){ }
 
 
-        public void OnMsg_X2Y_RegisterDaemon(IDaemonProxy net, Deserializer reader){
+        public void X2Y_RegisterDaemon(IIncommingMessage reader){
             var msg = reader.Parse<Msg_RegisterDaemon>();
-            Debug.Log("OnMsg_X2Y_RegisterDaemon " + msg.ToString());
             //_netServerXS.Border(EMsgXS.X2S_RepMasterInfo, msg);
         }
 
-        public void OnMsg_X2Y_ReqMasterInfo(IDaemonProxy net, Deserializer reader){
+        public void X2Y_ReqMasterInfo(IIncommingMessage reader){
             var serverInfo = reader.Parse<Msg_ReqMasterInfo>().serverInfo;
-            Debug.Log("OnMsg_X2Y_ReqMasterInfo " + serverInfo.ToString());
             var type = (EServerType) serverInfo.serverType;
             if (serverInfo.isMaster) {
                 _type2MasterInfo[type] = serverInfo;
-                _netServerYX.Border(EMsgYX.Y2X_BorderMasterInfo, new Msg_BorderMasterInfo() {serverInfo = serverInfo});
+                _netServerYX.BorderMessage(EMsgYX.Y2X_BorderMasterInfo,
+                    new Msg_BorderMasterInfo() {serverInfo = serverInfo});
             }
 
-            if (_type2MasterInfo.Count > 0) {
-                var infos = _type2MasterInfo.Values.ToArray();
-                net.SendMsg(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {serverInfos = infos});
-            }
+            var infos = _type2MasterInfo.Values.ToArray();
+            reader.Respond(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {serverInfos = infos});
         }
 
 

@@ -32,7 +32,7 @@ namespace Lockstep.Networking
         /// Opens the socket and starts listening to a given port
         /// </summary>
         /// <param name="port"></param>
-        void Listen(int port);
+        void Listen(int port,string key = "");
 
         /// <summary>
         /// Stops listening

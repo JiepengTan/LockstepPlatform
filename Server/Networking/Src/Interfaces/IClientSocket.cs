@@ -53,7 +53,7 @@ namespace Lockstep.Networking
         /// <param name="port"></param>
         /// <param name="timeoutMillis"></param>
         /// <returns></returns>
-        IClientSocket Connect(string ip, int port, int timeoutMillis);
+        IClientSocket Connect(string ip, int port, int timeoutMillis,string key = "");
         
         /// <summary>
         /// Starts connecting to another socket
@@ -61,7 +61,7 @@ namespace Lockstep.Networking
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <returns></returns>
-        IClientSocket Connect(string ip, int port);
+        IClientSocket Connect(string ip, int port,string key = "");
 
         /// <summary>
         /// Invokes a callback when connection is established, or after the timeout

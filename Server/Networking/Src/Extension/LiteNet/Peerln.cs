@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.WebSockets;
 using LiteNetLib;
 using Lockstep.Logging;
@@ -11,6 +12,7 @@ using Lockstep.Util;
 namespace Lockstep.Networking
 {
     public class PeerLn : BasePeer {
+        public override IPEndPoint EndPoint => _peer?.EndPoint;
         protected NetPeer _peer;
         public const float Delay = 0.2f;
         private Queue<byte[]> _delayedMessages;

@@ -1,29 +1,21 @@
 using System.Net;
 using LiteNetLib;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 
 namespace Lockstep.Server.Common {
     public interface INetProxy {
-        void SendMsg(byte[] data);
         void SendMsg(object type, BaseFormater msg);
     }
 
     public class NetProxy : INetProxy {
-        private NetPeer _peer;
-        public NetProxy(NetPeer peer){
+        private IPeer _peer;
+        public NetProxy(IPeer peer){
             _peer = peer;
         }
 
-        public void SendMsg(byte[] data){
-            _peer?.Send(data, DeliveryMethod.ReliableOrdered);
-        }
-
         public void SendMsg(object type, BaseFormater data){
-            var writer = new Serializer();
-            writer.PutInt16((short) (object) type);
-            data.Serialize(writer);
-            var bytes = Compressor.Compress(writer.Data);
-            SendMsg(bytes);
+            _peer?.SendMessage((short)type, data);
         }
     }
 
@@ -33,12 +25,10 @@ namespace Lockstep.Server.Common {
     }
 
     public class ServerProxy : NetProxy, IServerProxy {
-        public ServerProxy(NetPeer peer) : base(peer){
-            Peer = peer;
+        public ServerProxy(IPeer peer) : base(peer){
             EndPoint = peer.EndPoint;
         }
         public EServerType ServerType { get; set; }
         public IPEndPoint EndPoint { get; }
-        public NetPeer Peer;
     }
 }

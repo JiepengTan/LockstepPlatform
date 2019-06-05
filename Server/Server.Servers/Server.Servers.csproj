@@ -8,6 +8,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Server.Servers</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <AssemblyName>Server.Servers</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -73,6 +74,10 @@
     <ProjectReference Include="..\NetMsg.Server\NetMsg.Server.csproj">
       <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>
       <Name>NetMsg.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Networking\Networking.csproj">
+      <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
+      <Name>Networking</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>

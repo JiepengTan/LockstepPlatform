@@ -1,4 +1,6 @@
 ﻿
+using Lockstep.Serialization;
+
 namespace Lockstep.Networking
 {
 

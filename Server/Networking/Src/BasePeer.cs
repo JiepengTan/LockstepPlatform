@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Lockstep.Logging;
+using Lockstep.Serialization;
 using Lockstep.Util;
 
 namespace Lockstep.Networking {
@@ -10,6 +12,7 @@ namespace Lockstep.Networking {
     ///     Extend this, if you want to implement custom protocols
     /// </summary>
     public abstract class BasePeer : IPeer {
+        public abstract IPEndPoint EndPoint { get; }
         public static bool DontCatchExceptionsInEditor = true;
 
         private static readonly object _idGenerationLock = new object();

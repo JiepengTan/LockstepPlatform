@@ -26,6 +26,11 @@ namespace Lockstep.Serialization {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class UdpAttribute : Attribute { }
 
+    public interface ISerializablePacket {
+        byte[] ToBytes();
+        void FromBytes(byte[] bytes);
+    }
+
     public interface ISerializable {
         void Serialize(Serializer writer);
 
@@ -63,7 +68,7 @@ namespace Lockstep.Serialization {
                 return netDataWriter;
             }
 
-            return new Serializer(true, 0) {_data = bytes,_capacity = bytes.Length};
+            return new Serializer(true, 0) {_data = bytes, _capacity = bytes.Length};
         }
 
         /// <summary>
@@ -177,12 +182,13 @@ namespace Lockstep.Serialization {
             _data[_position] = value;
             _position++;
         }
+
         public void PutBoolean(bool value){
             ResizeIfNeed(_position + 1);
             _data[_position] = (byte) (value ? 1 : 0);
             _position++;
         }
-        
+
         public void PutChar(char value){
             ResizeIfNeed(_position + 2);
             FastBitConverter.GetBytes(_data, _position, value);
@@ -229,21 +235,25 @@ namespace Lockstep.Serialization {
 
             _position += bytesCount;
         }
-        
+
         public void Put(BaseFormater value){
             PutBoolean(value == null);
             value?.Serialize(this);
         }
-        
+
         /// len should less then ushort.MaxValue
         public void PutBytes(byte[] value){
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             PutUInt16(len);
             Put(value);
         }
-        
+
         public void PutArray(float[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(float));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(float));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 4 + 2);
             PutUInt16(len);
@@ -252,7 +262,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(double[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(double));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(double));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 8 + 2);
             PutUInt16(len);
@@ -261,7 +275,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(long[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(long));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(long));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 8 + 2);
             PutUInt16(len);
@@ -270,7 +288,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(ulong[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(ulong));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(ulong));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 8 + 2);
             PutUInt16(len);
@@ -279,7 +301,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(int[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(int));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(int));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 4 + 2);
             PutUInt16(len);
@@ -288,7 +314,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(uint[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(uint));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(uint));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 4 + 2);
             PutUInt16(len);
@@ -297,7 +327,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(ushort[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(ushort));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(ushort));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 2 + 2);
             PutUInt16(len);
@@ -306,7 +340,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(short[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(short));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(short));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len * 2 + 2);
             PutUInt16(len);
@@ -315,7 +353,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(bool[] value){
-            if (BitConverter.IsLittleEndian) {__PutArrayFastLE(value, sizeof(bool));return;}
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, sizeof(bool));
+                return;
+            }
+
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
             ResizeIfNeed(_position + len + 2);
             PutUInt16(len);
@@ -370,7 +412,7 @@ namespace Lockstep.Serialization {
             PutByte((byte) value.Length);
             Put(value);
         }
-        
+
         private void Put(byte[] data, int offset, int length){
             ResizeIfNeed(_position + length);
             Buffer.BlockCopy(data, offset, _data, _position, length);
@@ -383,7 +425,7 @@ namespace Lockstep.Serialization {
             _position += data.Length;
         }
 
-        private void __PutArrayFastLE<T>(T[] x, int elemSize)where T : struct{
+        private void __PutArrayFastLE<T>(T[] x, int elemSize) where T : struct{
             ushort len = x == null ? (ushort) 0 : (ushort) x.Length;
             int bytesCount = elemSize * len;
             ResizeIfNeed(_position + 2 + bytesCount);

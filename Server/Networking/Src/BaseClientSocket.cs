@@ -1,4 +1,6 @@
-﻿namespace Lockstep.Networking
+﻿using Lockstep.Serialization;
+
+namespace Lockstep.Networking
 {
     public class BaseClientSocket : IMsgDispatcher
     {

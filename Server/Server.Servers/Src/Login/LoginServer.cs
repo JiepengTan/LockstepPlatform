@@ -1,3 +1,4 @@
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
 using NetMsg.Common;
@@ -15,7 +16,7 @@ namespace Lockstep.Server.Login {
         }
 
         private void InitServerSC(){
-            InitNetServer(ref _netServerSC, _serverConfig.tcpPort, (peer) => new ServerProxy(peer));
+            InitNetServer(ref _netServerSC, _serverConfig.tcpPort);
         }
 
         protected override void OnMasterServerInfo(ServerIpInfo info){
@@ -23,59 +24,53 @@ namespace Lockstep.Server.Login {
                 InitClientDSMaster(info);
             }
         }
+
         private void InitClientDSMaster(ServerIpInfo info){
             InitNetClient(ref _netClientOMS, info.ip, info.port, OnDBMasterConn);
         }
 
         private void OnDBMasterConn(){
-            Debug.Log(" OnDBMasterConn");
-            _netClientOMS.Send(EMsgMS.S2M_ReqOtherServerInfo, new Msg_ReqOtherServerInfo() {serverType = (byte) EServerType.DatabaseServer});
+            _netClientOMS.SendMessage(EMsgMS.S2M_ReqOtherServerInfo,
+                new Msg_ReqOtherServerInfo() {serverType = (byte) EServerType.DatabaseServer},
+                (status, reader) => {
+                    var msg = reader.Parse<Msg_RepOtherServerInfo>();
+                    var info = msg.serverInfo;
+                    if (EServerType.DatabaseServer == (EServerType) info.serverType) {
+                        InitNetClient(ref _netClientDS, info.ip, info.port, OnDBConn);
+                    }
+                }
+            );
         }
 
-        protected void OnMsg_M2S_RepOtherServerInfo(Deserializer reader){
-            var msg = reader.Parse<Msg_RepOtherServerInfo>();
-            var info = msg.serverInfo;
-            if (EServerType.DatabaseServer == (EServerType) info.serverType) {
-                Debug.Log("OnMsg_M2S_RepOtherServerInfo " + msg.ToString());
-                InitNetClient(ref _netClientDS, info.ip, info.port, OnDBConn);
-            }
-        }
         private void OnDBConn(){
-            Debug.Log(" OnDBConn");
-            _netClientDS.Send(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
-                account = "LockstepPlatform",
-                password = "123"
-            });
-            _netClientDS.Send(EMsgDS.S2D_ReqCreateUser, new Msg_ReqAccountData() {
-                account = "LockstepPlatform",
-                password = "123"
-            });
-            _netClientDS.Send(EMsgDS.S2D_ReqCreateUser, new Msg_ReqAccountData() {
-                account = "jiepengtan",
-                password = "123"
-            });
-            _netClientDS.Send(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
-                account = "jiepengtan",
-                password = "123"
-            });
-            _netClientDS.Send(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
-                account = "LockstepPlatform",
-                password = "123"
-            });
-            _netClientDS.Send(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
-                account = "hehehe",
-                password = "123"
+            TestDB();
+        }
+
+        private void TestDB(){
+            ReqUserInfo("LockstepPlatform", "123");
+            CreateUser("LockstepPlatform", "123");
+            ReqUserInfo("LockstepPlatform", "123");
+            ReqUserInfo("hehehe", "123");
+        }
+
+        void ReqUserInfo(string account, string password){
+            _netClientDS.SendMessage(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
+                account = account,
+                password = password
+            }, (status, response) => {
+                var msg = response.Parse<Msg_RepAccountData>();
+                Debug.Log($" S2D_ReqUserInfo account:{account} password:{password} Respond:{msg.ToString()}");
             });
         }
 
-        protected void OnMsg_D2S_RepUserInfo(Deserializer reader){
-            var msg = reader.Parse<Msg_RepAccountData>();
-            Debug.Log("OnMsg_D2S_RepUserInfo " + msg.ToString());
+        void CreateUser(string account, string password){
+            _netClientDS.SendMessage(EMsgDS.S2D_ReqCreateUser, new Msg_ReqAccountData() {
+                account = account,
+                password = password
+            }, (status, response) => {
+                var msg = response.Parse<Msg_RepCreateResult>();
+                Debug.Log($" S2D_ReqCreateUser account:{account} password:{password} Respond:{msg.ToString()}");
+            });
         }
-        protected void OnMsg_D2S_RepCreateUser(Deserializer reader){
-            var msg = reader.Parse<Msg_RepCreateResult>();
-            Debug.Log("OnMsg_D2S_RepCreateUser " + msg.ToString());
-        }
-        
     }
 }

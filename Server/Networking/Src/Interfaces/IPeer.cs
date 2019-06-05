@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 
 namespace Lockstep.Networking
 {
@@ -100,5 +101,8 @@ namespace Lockstep.Networking
         T GetExtension<T>();
 
         bool HasExtension<T>();
+
+
+        IPEndPoint EndPoint { get; }
     }
 }

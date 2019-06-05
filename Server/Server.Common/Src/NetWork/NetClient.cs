@@ -1,124 +1,75 @@
 #define DEBUG_FRAME_DELAY
 using System;
 using LiteNetLib;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using Debug = Lockstep.Logging.Debug;
 
 
 namespace Lockstep.Server.Common {
-    public delegate void NetClientMsgHandler(Deserializer reader);
-
-
     public interface IPollEvents {
         void PollEvents();
     }
+
     public interface IUpdate {
         void DoUpdate();
     }
-    public class NetClient<TMsgType> : IUpdate where TMsgType : struct {
-        protected string _ip;
-        protected int _port;
-        protected string _key;
-        protected EventBasedNetListener _listener;
-        protected NetManager _client;
-        protected NetPeer _peer;
-        protected float _autoConnTimer;
-        public bool Connected => _client?.FirstPeer?.ConnectionState == ConnectionState.Connected;
 
-        public float AutoConnInterval = 1;
+    public class NetClient<TMsgType> : IUpdate where TMsgType : struct {
+        protected ClientSocketLn _client;
 
         //所有的消息处理函数
-        protected NetClientMsgHandler[] AllClientMsgDealFuncs;
+        protected IncommingMessageHandler[] _allDealFuncs;
 
         private bool _isInit = false;
         public Action OnConnected;
 
-        public void RegisterMsgHandler(TMsgType msgType, NetClientMsgHandler handler){
-            AllClientMsgDealFuncs[(short) (object) msgType] = handler;
+        private string _ip;
+        private int _port;
+        private string _key;
+
+        public void RegisterMsgHandler(TMsgType msgType, IncommingMessageHandler handler){
+            _allDealFuncs[(short) (object) msgType] = handler;
         }
 
         public NetClient(int maxMsgHandlerIdx, string msgFlag, object msgHandlerObj){
-            AllClientMsgDealFuncs = new NetClientMsgHandler[maxMsgHandlerIdx];
-            ServerUtil.RegisterEvent<TMsgType, NetClientMsgHandler>("OnMsg_" + msgFlag, "OnMsg_".Length,
+            _allDealFuncs = new IncommingMessageHandler[maxMsgHandlerIdx];
+            ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
                 RegisterMsgHandler, msgHandlerObj);
         }
 
-        public void Init(string ip, int port, string key){
-            _key = key;
+        public void Connect(string ip, int port, string key){
             this._ip = ip;
             this._port = port;
-            _listener = new EventBasedNetListener();
-            _listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) => {
-                OnNetMsg(dataReader.GetRemainingBytes());
-                dataReader.Recycle();
-            };
-            _listener.PeerConnectedEvent += (peer) => {
-                Debug.Log("Conn to " + peer.EndPoint.Port);
-                _peer = peer;
-                OnConnected?.Invoke();
-            };
-            _listener.PeerDisconnectedEvent += (peer, disconnectInfo) => { };
-            _client = new NetManager(_listener) {
-                DisconnectTimeout = 300000
-            };
+            this._key = key;
+            _client = new ClientSocketLn();
             _isInit = true;
-            DoStart();
-        }
-
-        public void DoStart(){
-            if (!_isInit) return;
-            _client.Start();
-            //Debug.Log("Clent conn" + _ip + " port " + _port  + " key  " + _key);
+            for (short i = 0; i < _allDealFuncs.Length; i++) {
+                var func = _allDealFuncs[i];
+                if (func != null) {
+                    _client.SetHandler(i, func);
+                }
+            }
+            _client.Connected += OnConnected;
             _client.Connect(_ip, _port, _key);
         }
 
         public void DoDestroy(){
+            _client.Connected -= OnConnected;
             _isInit = false;
-            _client?.Stop();
         }
 
         public void DoUpdate(){
             if (!_isInit) return;
-            AutoConnect();
-            _client?.PollEvents();
+            _client?.Update();
         }
 
-
-        private void AutoConnect(){
-            _autoConnTimer += 0.016f;
-            if (_autoConnTimer > AutoConnInterval && !Connected) {
-                _autoConnTimer = 0;
-                _client.Connect(_ip, _port, _key);
-            }
+        public void SendMessage(TMsgType type, BaseFormater data){
+            _client?.SendMessage((short) (object) type, data);
         }
 
-        private void OnNetMsg(byte[] rawData){
-            var reader = new Deserializer(Compressor.Decompress(rawData));
-            var msgTypeId = reader.GetInt16();
-            if (msgTypeId >= AllClientMsgDealFuncs.Length) {
-                Debug.LogError("Recv error msg type" + msgTypeId);
-                return;
-            }
-
-            var func = AllClientMsgDealFuncs[msgTypeId];
-            if (func != null) {
-                func(reader);
-            }
-            else {
-                Debug.LogError("ErrorMsg type :no msgHandler" + (TMsgType) (object) msgTypeId);
-            }
-        }
-
-        public void Send(TMsgType type, BaseFormater data){
-            var writer = new Serializer();
-            writer.PutInt16((short) (object) type);
-            data.Serialize(writer);
-            var bytes = Compressor.Compress(writer.CopyData());
-            Send(bytes);
-        }
-
-        public void Send(byte[] data){
-            _peer?.Send(data, DeliveryMethod.ReliableOrdered);
+        public void SendMessage(TMsgType type, BaseFormater data, ResponseCallback responseCallback){
+            _client?.SendMessage((short) (object) type, data, responseCallback);
         }
     }
 }

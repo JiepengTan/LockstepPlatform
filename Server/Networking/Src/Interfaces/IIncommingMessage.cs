@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Lockstep.Serialization;
 
 
 namespace Lockstep.Networking
@@ -124,6 +124,9 @@ namespace Lockstep.Networking
         /// <param name="packetToBeFilled"></param>
         /// <returns></returns>
         T Deserialize<T>(T packetToBeFilled) where T : ISerializablePacket;
+
+        T Parse<T>() where T : BaseFormater, new();
+        void Respond(object type, BaseFormater msg, EResponseStatus responseStatus = EResponseStatus.Default);
 
     }
 }

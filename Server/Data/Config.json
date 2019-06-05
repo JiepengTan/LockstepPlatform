@@ -12,7 +12,7 @@
     }
 */
 {
-  "isDebugMode": false,//all server run in the same process
+  "isDebugMode": true,//all server run in the same process
   "servers": [
     {
       "isMaster": true,

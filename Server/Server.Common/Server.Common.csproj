@@ -70,6 +70,10 @@
       <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>
       <Name>NetMsg.Server</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Networking\Networking.csproj">
+      <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
+      <Name>Networking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Util\Util.csproj">
       <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
       <Name>Util</Name>

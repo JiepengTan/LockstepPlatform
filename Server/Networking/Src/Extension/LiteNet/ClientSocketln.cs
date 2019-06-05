@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using LiteNetLib;
 using Lockstep.Logging;
 using Lockstep.Networking;
-using Lockstep.Server.Common;
 using Lockstep.Util;
 
 
@@ -166,6 +165,7 @@ namespace Lockstep.Networking {
             _netManager?.PollEvents();
         }
 
+
         /// <summary>
         /// Connection status
         /// </summary>
@@ -193,14 +193,14 @@ namespace Lockstep.Networking {
                     if (Status != EConnectionStatus.Connected) {
                         Status = EConnectionStatus.Connected;
                         CoroutineHelper.StartCoroutine(_peer.SendDelayedMessages());
-                        if (Connected != null) Connected.Invoke();
+                        Connected?.Invoke();
                     }
 
                     break;
                 case EConnectionStatus.Disconnected:
                     if (Status != EConnectionStatus.Disconnected) {
                         Status = EConnectionStatus.Disconnected;
-                        if (Disconnected != null) Disconnected.Invoke();
+                        Disconnected?.Invoke();
                     }
 
                     break;
@@ -213,8 +213,8 @@ namespace Lockstep.Networking {
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <returns></returns>
-        public IClientSocket Connect(string ip, int port){
-            Connect(ip, port, 10000);
+        public IClientSocket Connect(string ip, int port, string key = ""){
+            Connect(ip, port, 10000, key);
             return this;
         }
 
@@ -225,7 +225,7 @@ namespace Lockstep.Networking {
         /// <param name="port"></param>
         /// <param name="timeoutMillis"></param>
         /// <returns></returns>
-        public IClientSocket Connect(string ip, int port, int timeoutMillis){
+        public IClientSocket Connect(string ip, int port, int timeoutMillis, string key = ""){
             _ip = ip;
             _port = port;
 
@@ -247,25 +247,24 @@ namespace Lockstep.Networking {
                 dataReader.Recycle();
             };
             _listener.PeerConnectedEvent += (peer) => {
-                Debug.Log("Conn to " + peer.EndPoint.Port);
                 _isConnected = false;
                 var pe = new PeerLn(peer);
                 pe.MessageReceived += HandleMessage;
                 _peer = pe;
                 pe.SetConnectedState(true);
                 Peer = pe;
-                this.Connected?.Invoke();
+                Connected?.Invoke();
             };
             _listener.PeerDisconnectedEvent += (peer, disconnectInfo) => {
-                _peer.SetConnectedState(false);
-                this.Disconnected?.Invoke();
+                _peer?.SetConnectedState(false);
                 _isConnected = false;
+                Disconnected?.Invoke();
             };
             _netManager = new NetManager(_listener) {
                 DisconnectTimeout = 300000
             };
             _netManager.Start();
-            _netManager.Connect(_ip, _port, Define.XSKey);
+            _netManager.Connect(_ip, _port, key);
             return this;
         }
 

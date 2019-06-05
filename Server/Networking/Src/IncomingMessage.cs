@@ -5,21 +5,17 @@ using System.Text;
 using Lockstep.Serialization;
 
 
-namespace Lockstep.Networking
-{
+namespace Lockstep.Networking {
     /// <summary>
     ///     Default implementation of incomming message
     /// </summary>
-    public class IncommingMessage : IIncommingMessage
-    {
+    public class IncommingMessage : IIncommingMessage {
         private readonly byte[] _data;
 
-        public IncommingMessage(short opCode, byte flags, byte[] data, EDeliveryMethod eDeliveryMethod, IPeer peer)
-        {
+        public IncommingMessage(short opCode, byte flags, byte[] data, EDeliveryMethod eDeliveryMethod, IPeer peer){
             OpCode = opCode;
             Peer = peer;
             _data = data;
-        
         }
 
         /// <summary>
@@ -51,8 +47,7 @@ namespace Lockstep.Networking
         /// <summary>
         ///     Returns true, if sender expects a response to this message
         /// </summary>
-        public bool IsExpectingResponse
-        {
+        public bool IsExpectingResponse {
             get { return AckResponseId.HasValue; }
         }
 
@@ -71,8 +66,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="message"></param>
         /// <param name="statusCode"></param>
-        public void Respond(IMessage message, EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(IMessage message, EResponseStatus statusCode = EResponseStatus.Default){
             message.Status = statusCode;
 
             if (AckResponseId.HasValue)
@@ -86,8 +80,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        public void Respond(byte[] data, EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(byte[] data, EResponseStatus statusCode = EResponseStatus.Default){
             Respond(MessageHelper.Create(OpCode, data), statusCode);
         }
 
@@ -96,8 +89,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="data"></param>
         /// <param name="statusCode"></param>
-        public void Respond(ISerializablePacket packet, EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(ISerializablePacket packet, EResponseStatus statusCode = EResponseStatus.Default){
             Respond(MessageHelper.Create(OpCode, packet.ToBytes()), statusCode);
         }
 
@@ -105,26 +97,22 @@ namespace Lockstep.Networking
         ///     Respond with empty message and status code
         /// </summary>
         /// <param name="statusCode"></param>
-        public void Respond(EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(EResponseStatus statusCode = EResponseStatus.Default){
             Respond(MessageHelper.Create(OpCode), statusCode);
         }
 
-        public void Respond(string message, EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(string message, EResponseStatus statusCode = EResponseStatus.Default){
             Respond(message.ToBytes(), statusCode);
         }
 
-        public void Respond(int response, EResponseStatus statusCode = EResponseStatus.Default)
-        {
+        public void Respond(int response, EResponseStatus statusCode = EResponseStatus.Default){
             Respond(MessageHelper.Create(OpCode, response), statusCode);
         }
 
         /// <summary>
         ///     Returns true if message contains any data
         /// </summary>
-        public bool HasData
-        {
+        public bool HasData {
             get { return _data.Length > 0; }
         }
 
@@ -132,8 +120,7 @@ namespace Lockstep.Networking
         ///     Returns contents of this message. Mutable
         /// </summary>
         /// <returns></returns>
-        public byte[] AsBytes()
-        {
+        public byte[] AsBytes(){
             return _data;
         }
 
@@ -141,8 +128,7 @@ namespace Lockstep.Networking
         ///     Decodes content into a string
         /// </summary>
         /// <returns></returns>
-        public string AsString()
-        {
+        public string AsString(){
             return Encoding.UTF8.GetString(_data);
         }
 
@@ -151,8 +137,7 @@ namespace Lockstep.Networking
         ///     returns the <see cref="defaultValue"/>
         /// </summary>
         /// <returns></returns>
-        public string AsString(string defaultValue)
-        {
+        public string AsString(string defaultValue){
             return HasData ? AsString() : defaultValue;
         }
 
@@ -160,8 +145,7 @@ namespace Lockstep.Networking
         ///     Decodes content into an integer
         /// </summary>
         /// <returns></returns>
-        public int AsInt()
-        {
+        public int AsInt(){
             return ByteHelper.ToInt32(_data, 0);
         }
 
@@ -171,16 +155,24 @@ namespace Lockstep.Networking
         /// <typeparam name="T"></typeparam>
         /// <param name="packetToBeFilled"></param>
         /// <returns></returns>
-        public T Deserialize<T>(T packetToBeFilled) where T : ISerializablePacket
-        {
+        public T Deserialize<T>(T packetToBeFilled) where T : ISerializablePacket{
             return MessageHelper.Deserialize(_data, packetToBeFilled);
         }
 
-       
 
-        public override string ToString()
-        {
+        public override string ToString(){
             return AsString(base.ToString());
+        }
+
+        public T Parse<T>() where T : BaseFormater, new(){
+            Deserializer reader = new Deserializer(_data);
+            var val = new T();
+            val.Deserialize(reader);
+            return val;
+        }
+
+        public void Respond(object type, BaseFormater msg,EResponseStatus responseStatus = EResponseStatus.Default){
+            Respond(MessageHelper.Create((short) type, msg.ToBytes()), responseStatus);
         }
     }
 }

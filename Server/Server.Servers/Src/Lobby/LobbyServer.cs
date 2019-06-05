@@ -436,10 +436,10 @@ namespace Lockstep.Server.Lobby {
 
 
         private void RegisterMsgHandlers(){
-            //RegisterNetMsgHandler(EMsgSC.C2L_JoinRoom, OnMsg_JoinRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_CreateRoom, OnMsg_CreateRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_LeaveRoom, OnMsg_LeaveRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_RoomMsg, OnMsg_RoomMsg);
+            //RegisterNetMsgHandler(EMsgSC.C2L_JoinRoom, JoinRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_CreateRoom, CreateRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_LeaveRoom, LeaveRoom);
+            //RegisterNetMsgHandler(EMsgSC.C2L_RoomMsg, RoomMsg);
         }
 
         private void RegisterNetMsgHandler(EMsgSC type, DealNetMsg func){
@@ -455,7 +455,7 @@ namespace Lockstep.Server.Lobby {
             return player != null;
         }
 
-        private void OnMsg_CreateRoom(Player player, Deserializer reader){
+        private void CreateRoom(Player player, Deserializer reader){
             var msg = reader.Parse<Msg_CreateRoom>();
             if (_allRooms.Count > 0) {
                 JoinRoom(player, _allRooms[0].RoomId);
@@ -466,7 +466,7 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
-        private void OnMsg_LeaveRoom(Player player, Deserializer reader){
+        private void LeaveRoom(Player player, Deserializer reader){
             var room = player.room;
             if (room == null) {
                 Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
@@ -475,12 +475,12 @@ namespace Lockstep.Server.Lobby {
             room.OnPlayerLeave(player);
         }
 
-        private void OnMsg_JoinRoom(Player player, Deserializer reader){
+        private void JoinRoom(Player player, Deserializer reader){
             var msg = reader.Parse<Msg_JoinRoom>();
             JoinRoom(player, msg.roomId);
         }
 
-        private void OnMsg_RoomMsg(Player player, Deserializer reader){
+        private void RoomMsg(Player player, Deserializer reader){
             var room = player.room;
             if (room == null) {
                 Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
