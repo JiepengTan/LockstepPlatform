@@ -43,7 +43,7 @@ namespace Lockstep.Server.Login {
         }
 
         private void OnDBConn(){
-            TestDB();
+            //TestDB();
         }
 
         private void TestDB(){

@@ -5,7 +5,6 @@ namespace Lockstep.Server.Common {
     public class ServerConfigInfo {
         public EServerType type;
         public bool isMaster;
-        public string path;
         public int serverPort;
         public string masterIp;
         public int masterPort;

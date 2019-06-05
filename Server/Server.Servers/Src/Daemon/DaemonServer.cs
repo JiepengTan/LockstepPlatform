@@ -67,7 +67,6 @@ namespace Lockstep.Server.Daemon {
             InitServerYX();
             InitClientYX();
             foreach (var serverConfig in _allConfig.servers.ToArray()) {
-                Debug.Log("LunchProgram " + serverConfig.type);
                 if (serverConfig.type == EServerType.DaemonServer) continue;
                 if (!serverConfig.isMaster) continue;
                 LunchProgram(serverConfig);
@@ -158,11 +157,12 @@ namespace Lockstep.Server.Daemon {
         void LunchProgram(ServerConfigInfo configInfo){
             if (configInfo.type == EServerType.DaemonServer) return;
             if (_allConfig.isDebugMode) {
+                Debug.Log("Add Server Thread " + configInfo.type);
                 ServerUtil.RunServer(GetType().Assembly, configInfo.type, _allConfig);
             }
             else {
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Server.Servers.exe");
-                Debug.Log("Start Program " + configInfo.type.ToString());
+                Debug.Log("Add Server Process " + configInfo.type.ToString());
                 Process proc = Process.Start(path, configInfo.type.ToString());
                 if (proc != null) {
                     proc.EnableRaisingEvents = true;
