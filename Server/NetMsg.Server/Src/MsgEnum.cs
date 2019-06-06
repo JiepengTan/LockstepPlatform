@@ -5,6 +5,7 @@ namespace NetMsg.Server {
     //I login
     //L lobby
     //S server
+    //G gameServer
     //M master
     //W world
     //C client
@@ -22,7 +23,12 @@ namespace NetMsg.Server {
         M2S_RepOtherServerInfo,
         EnumCount,
     }
-
+    public enum EMsgYM:short {
+        M2Y_RegisterServerInfo,
+        Y2M_ReqOtherServerInfo,
+        M2Y_RepOtherServerInfo,
+        EnumCount,
+    }
 
     public enum EMsgXS:short {
         S2X_ReqMasterInfo,
@@ -30,13 +36,15 @@ namespace NetMsg.Server {
         X2S_BorderMasterInfo,
         S2X_StartServer,
         S2X_ShutdownServer,
-
+        S2X_ReqOtherServerInfo,
         EnumCount,
     }
 
     //X=MasterDaemon  D=Daemon
     public enum EMsgYX:short {
         X2Y_ReqMasterInfo,
+        X2Y_ReqOtherServerInfo,
+        M2Y_RepOtherServerInfo,
         Y2X_RepMasterInfo,
         Y2X_BorderMasterInfo,
         X2Y_RegisterDaemon,
@@ -54,8 +62,17 @@ namespace NetMsg.Server {
         D2S_RepCreateUser,
         S2D_RepChangeUserInfo,
         D2S_RepChangeUserInfo,
-
+        
+        S2D_SaveUserInfo,
         EnumCount,
+    }
+    //I login L lobby
+    public enum EMsgLS {
+        I2L_UserLogin,
+        L2G_StartGame,
+        G2L_RegisterServer,
+        G2L_OnStartGame,
+        G2L_OnGameFinished,
     }
 
     // Server to Server

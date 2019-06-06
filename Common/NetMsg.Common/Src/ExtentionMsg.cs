@@ -13,6 +13,7 @@ namespace NetMsg.Common{
 			writer.PutBoolean(IsGuest);
 			writer.PutString(Password);
 			writer.PutString(Token);
+			writer.PutInt64(UserId);
 			writer.PutString(Username);
         }
     
@@ -23,20 +24,166 @@ namespace NetMsg.Common{
 			IsGuest = reader.GetBoolean();
 			Password = reader.GetString();
 			Token = reader.GetString();
+			UserId = reader.GetInt64();
 			Username = reader.GetString();
         }
     }
 
 
-    public partial class Msg_AllLoadingProgress{
+    public partial class GamePlayerInfo{
         public override void Serialize(Serializer writer){
-			writer.PutBoolean(isAllDone);
-			writer.PutArray(progress);
+			writer.PutString(Account);
+			writer.PutString(LoginHash);
+			writer.PutInt64(UserId);
         }
     
         public override void Deserialize(Deserializer reader){
-			isAllDone = reader.GetBoolean();
-			progress = reader.GetArray(ref this.progress);
+			Account = reader.GetString();
+			LoginHash = reader.GetString();
+			UserId = reader.GetInt64();
+        }
+    }
+
+
+    public partial class IPEndInfo{
+        public override void Serialize(Serializer writer){
+			writer.PutString(Ip);
+			writer.PutUInt16(Port);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Ip = reader.GetString();
+			Port = reader.GetUInt16();
+        }
+    }
+
+
+    public partial class Msg_C2G_GameEvent{
+        public override void Serialize(Serializer writer){
+			writer.PutArray(Data);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Data = reader.GetArray(ref this.Data);
+        }
+    }
+
+
+    public partial class Msg_C2G_Hello{
+        public override void Serialize(Serializer writer){
+			writer.PutString(GameHash);
+			writer.PutInt32(GameType);
+			writer.PutInt32(RoomId);
+			writer.Put(UserInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			GameHash = reader.GetString();
+			GameType = reader.GetInt32();
+			RoomId = reader.GetInt32();
+			UserInfo = reader.Get(ref this.UserInfo);
+        }
+    }
+
+
+    public partial class Msg_C2G_LoadingProgress{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Progress);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Progress = reader.GetByte();
+        }
+    }
+
+
+    public partial class Msg_C2G_UdpHello{
+        public override void Serialize(Serializer writer){
+			writer.Put(UserInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			UserInfo = reader.Get(ref this.UserInfo);
+        }
+    }
+
+
+    public partial class Msg_C2I_UserLogin{
+        public override void Serialize(Serializer writer){
+			writer.PutString(Account);
+			writer.PutString(EncryptHash);
+			writer.PutInt32(GameType);
+			writer.PutString(Password);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Account = reader.GetString();
+			EncryptHash = reader.GetString();
+			GameType = reader.GetInt32();
+			Password = reader.GetString();
+        }
+    }
+
+
+    public partial class Msg_C2L_CreateRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(GameType);
+			writer.PutInt32(MapId);
+			writer.PutByte(MaxPlayerCount);
+			writer.PutString(Name);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			GameType = reader.GetInt32();
+			MapId = reader.GetInt32();
+			MaxPlayerCount = reader.GetByte();
+			Name = reader.GetString();
+        }
+    }
+
+
+    public partial class Msg_C2L_JoinRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(RoomId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			RoomId = reader.GetInt32();
+        }
+    }
+
+
+    public partial class Msg_C2L_LeaveRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Reason);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Reason = reader.GetByte();
+        }
+    }
+
+
+    public partial class Msg_C2L_StartGame{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Reason);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Reason = reader.GetByte();
+        }
+    }
+
+
+    public partial class Msg_C2L_UserLogin{
+        public override void Serialize(Serializer writer){
+			writer.PutString(LoginHash);
+			writer.PutInt64(userId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			LoginHash = reader.GetString();
+			userId = reader.GetInt64();
         }
     }
 
@@ -54,165 +201,181 @@ namespace NetMsg.Common{
     }
 
 
-    public partial class Msg_CreateRoom{
+    public partial class Msg_G2C_AllFinishedLoaded{
         public override void Serialize(Serializer writer){
-			writer.PutString(name);
-			writer.PutByte(size);
-			writer.PutByte(type);
+			writer.PutByte(Padding);
         }
     
         public override void Deserialize(Deserializer reader){
-			name = reader.GetString();
-			size = reader.GetByte();
-			type = reader.GetByte();
+			Padding = reader.GetByte();
         }
     }
 
 
-    public partial class Msg_CreateRoomResult{
+    public partial class Msg_G2C_GameEvent{
         public override void Serialize(Serializer writer){
-			writer.PutString(name);
-			writer.PutInt32(roomId);
-			writer.PutByte(size);
-			writer.PutByte(type);
+			writer.PutArray(Data);
         }
     
         public override void Deserialize(Deserializer reader){
-			name = reader.GetString();
-			roomId = reader.GetInt32();
-			size = reader.GetByte();
-			type = reader.GetByte();
+			Data = reader.GetArray(ref this.Data);
         }
     }
 
 
-    public partial class Msg_GameEvent{
+    public partial class Msg_G2C_GameInfo{
         public override void Serialize(Serializer writer){
-			writer.PutInt16(type);
-			writer.PutArray(content);
+			writer.PutInt32(MapId);
+			writer.PutInt32(Seed);
+			writer.PutInt32(SimulationSpeed);
+			writer.PutInt32(UserCount);
+			writer.Put(UdpEnd);
+			writer.PutArray(UserInfos);
         }
     
         public override void Deserialize(Deserializer reader){
-			type = reader.GetInt16();
-			content = reader.GetArray(ref this.content);
+			MapId = reader.GetInt32();
+			Seed = reader.GetInt32();
+			SimulationSpeed = reader.GetInt32();
+			UserCount = reader.GetInt32();
+			UdpEnd = reader.Get(ref this.UdpEnd);
+			UserInfos = reader.GetArray(ref this.UserInfos);
+        }
+    }
+
+
+    public partial class Msg_G2C_GameStatu{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Status);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Status = reader.GetByte();
+        }
+    }
+
+
+    public partial class Msg_G2C_Hello{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(LocalId);
+			writer.PutInt32(MapId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			LocalId = reader.GetByte();
+			MapId = reader.GetInt32();
+        }
+    }
+
+
+    public partial class Msg_G2C_LoadingProgress{
+        public override void Serialize(Serializer writer){
+			writer.PutArray(Progress);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Progress = reader.GetArray(ref this.Progress);
         }
     }
 
 
     public partial class Msg_HashCode{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(startTick);
-			writer.PutArray(hashCodes);
+			writer.PutInt32(StartTick);
+			writer.PutArray(HashCodes);
         }
     
         public override void Deserialize(Deserializer reader){
-			startTick = reader.GetInt32();
-			hashCodes = reader.GetArray(ref this.hashCodes);
+			StartTick = reader.GetInt32();
+			HashCodes = reader.GetArray(ref this.HashCodes);
         }
     }
 
 
-    public partial class Msg_JoinRoom{
+    public partial class Msg_I2C_LoginResult{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(roomId);
+			writer.PutString(LoginHash);
+			writer.PutByte(LoginResult);
+			writer.PutInt64(UserId);
+			writer.Put(LobbyEnd);
         }
     
         public override void Deserialize(Deserializer reader){
-			roomId = reader.GetInt32();
+			LoginHash = reader.GetString();
+			LoginResult = reader.GetByte();
+			UserId = reader.GetInt64();
+			LobbyEnd = reader.Get(ref this.LobbyEnd);
         }
     }
 
 
-    public partial class Msg_JoinRoomResult{
+    public partial class Msg_L2C_CreateRoom{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(roomId);
-			writer.PutByte(statu);
+			writer.Put(Info);
         }
     
         public override void Deserialize(Deserializer reader){
-			roomId = reader.GetInt32();
-			statu = reader.GetByte();
+			Info = reader.Get(ref this.Info);
         }
     }
 
 
-    public partial class Msg_LeaveRoom{
+    public partial class Msg_L2C_RoomChangedInfo{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(pad);
+			writer.PutArray(AddInfo);
+			writer.PutArray(ChangedInfo);
+			writer.PutArray(DeleteInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			pad = reader.GetInt32();
+			AddInfo = reader.GetArray(ref this.AddInfo);
+			ChangedInfo = reader.GetArray(ref this.ChangedInfo);
+			DeleteInfo = reader.GetArray(ref this.DeleteInfo);
         }
     }
 
 
-    public partial class Msg_LeaveRoomResult{
+    public partial class Msg_L2C_RoomList{
         public override void Serialize(Serializer writer){
-			writer.PutByte(result);
+			writer.PutInt32(GameType);
+			writer.PutArray(Rooms);
         }
     
         public override void Deserialize(Deserializer reader){
-			result = reader.GetByte();
+			GameType = reader.GetInt32();
+			Rooms = reader.GetArray(ref this.Rooms);
         }
     }
 
 
-    public partial class Msg_LoadingProgress{
+    public partial class Msg_L2C_StartGame{
         public override void Serialize(Serializer writer){
-			writer.PutByte(progress);
+			writer.PutString(GameHash);
+			writer.PutByte(Result);
+			writer.PutInt32(RoomId);
+			writer.Put(GameServerEnd);
         }
     
         public override void Deserialize(Deserializer reader){
-			progress = reader.GetByte();
+			GameHash = reader.GetString();
+			Result = reader.GetByte();
+			RoomId = reader.GetInt32();
+			GameServerEnd = reader.Get(ref this.GameServerEnd);
         }
     }
 
 
-    public partial class Msg_LobbyStatus{
+    public partial class Msg_L2G_StartGame{
         public override void Serialize(Serializer writer){
-			writer.PutArray(deleteRooms);
-			writer.PutArray(modifiedRooms);
+			writer.PutString(GameHash);
+			writer.PutInt32(GameType);
+			writer.PutArray(Players);
         }
     
         public override void Deserialize(Deserializer reader){
-			deleteRooms = reader.GetArray(ref this.deleteRooms);
-			modifiedRooms = reader.GetArray(ref this.modifiedRooms);
-        }
-    }
-
-
-    public partial class Msg_PartFinished{
-        public override void Serialize(Serializer writer){
-			writer.PutUInt16(level);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			level = reader.GetUInt16();
-        }
-    }
-
-
-    public partial class Msg_PlayerReady{
-        public override void Serialize(Serializer writer){
-			writer.PutByte(pad);
-			writer.PutInt32(roomId);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			pad = reader.GetByte();
-			roomId = reader.GetInt32();
-        }
-    }
-
-
-    public partial class Msg_PlayerReadyResult{
-        public override void Serialize(Serializer writer){
-			writer.PutByte(result);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			result = reader.GetByte();
+			GameHash = reader.GetString();
+			GameType = reader.GetInt32();
+			Players = reader.GetArray(ref this.Players);
         }
     }
 
@@ -231,64 +394,23 @@ namespace NetMsg.Common{
     public partial class Msg_RepCreateResult{
         public override void Serialize(Serializer writer){
 			writer.PutByte(result);
+			writer.PutInt64(userId);
         }
     
         public override void Deserialize(Deserializer reader){
 			result = reader.GetByte();
-        }
-    }
-
-
-    public partial class Msg_RepInit{
-        public override void Serialize(Serializer writer){
-			writer.PutInt64(playerId);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			playerId = reader.GetInt64();
-        }
-    }
-
-
-    public partial class Msg_RepLogin{
-        public override void Serialize(Serializer writer){
-			writer.PutString(ip);
-			writer.PutInt64(playerId);
-			writer.PutInt32(port);
-			writer.PutInt32(roomId);
-			writer.PutArray(childMsg);
-			writer.PutArray(roomInfos);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			ip = reader.GetString();
-			playerId = reader.GetInt64();
-			port = reader.GetInt32();
-			roomId = reader.GetInt32();
-			childMsg = reader.GetArray(ref this.childMsg);
-			roomInfos = reader.GetArray(ref this.roomInfos);
+			userId = reader.GetInt64();
         }
     }
 
 
     public partial class Msg_RepMissFrameAck{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(missFrameTick);
+			writer.PutInt32(MissFrameTick);
         }
     
         public override void Deserialize(Deserializer reader){
-			missFrameTick = reader.GetInt32();
-        }
-    }
-
-
-    public partial class Msg_RepRoomList{
-        public override void Serialize(Serializer writer){
-			writer.PutArray(Child);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			Child = reader.GetArray(ref this.Child);
+			MissFrameTick = reader.GetInt32();
         }
     }
 
@@ -306,118 +428,64 @@ namespace NetMsg.Common{
     }
 
 
-    public partial class Msg_ReqLogin{
-        public override void Serialize(Serializer writer){
-			writer.PutString(account);
-			writer.PutString(password);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			account = reader.GetString();
-			password = reader.GetString();
-        }
-    }
-
-
     public partial class Msg_ReqMissFrame{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(startTick);
+			writer.PutInt32(StartTick);
         }
     
         public override void Deserialize(Deserializer reader){
-			startTick = reader.GetInt32();
+			StartTick = reader.GetInt32();
         }
     }
 
 
-    public partial class Msg_ReqRoomList{
+    public partial class RoomChangedInfo{
         public override void Serialize(Serializer writer){
-			writer.PutByte(dump);
+			writer.PutInt32(CurPlayerCount);
+			writer.PutInt32(RoomId);
         }
     
         public override void Deserialize(Deserializer reader){
-			dump = reader.GetByte();
-        }
-    }
-
-
-    public partial class Msg_RoomInitMsg{
-        public override void Serialize(Serializer writer){
-			writer.PutString(name);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			name = reader.GetString();
-        }
-    }
-
-
-    public partial class Msg_RoomStatus{
-        public override void Serialize(Serializer writer){
-			writer.Put(roomInfo);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			roomInfo = reader.Get(ref this.roomInfo);
-        }
-    }
-
-
-    public partial class Msg_StartGame{
-        public override void Serialize(Serializer writer){
-			writer.PutString(ip);
-			writer.PutByte(localId);
-			writer.PutInt32(port);
-			writer.PutInt32(roomId);
-			writer.PutArray(allActorIds);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			ip = reader.GetString();
-			localId = reader.GetByte();
-			port = reader.GetInt32();
-			roomId = reader.GetInt32();
-			allActorIds = reader.GetArray(ref this.allActorIds);
-        }
-    }
-
-
-    public partial class Msg_StartRoomGame{
-        public override void Serialize(Serializer writer){
-			writer.PutByte(ActorID);
-			writer.PutInt32(RoomID);
-			writer.PutInt32(Seed);
-			writer.PutInt32(SimulationSpeed);
-			writer.PutArray(AllActors);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			ActorID = reader.GetByte();
-			RoomID = reader.GetInt32();
-			Seed = reader.GetInt32();
-			SimulationSpeed = reader.GetInt32();
-			AllActors = reader.GetArray(ref this.AllActors);
+			CurPlayerCount = reader.GetInt32();
+			RoomId = reader.GetInt32();
         }
     }
 
 
     public partial class RoomInfo{
         public override void Serialize(Serializer writer){
-			writer.PutByte(curCount);
-			writer.PutUInt16(mapId);
-			writer.PutByte(maxCount);
-			writer.PutString(name);
-			writer.PutInt32(roomId);
-			writer.PutByte(statu);
+			writer.PutByte(CurPlayerCount);
+			writer.PutInt32(GameType);
+			writer.PutInt32(MapId);
+			writer.PutByte(MaxPlayerCount);
+			writer.PutString(Name);
+			writer.PutString(OwnerName);
+			writer.PutInt32(RoomId);
+			writer.PutByte(State);
         }
     
         public override void Deserialize(Deserializer reader){
-			curCount = reader.GetByte();
-			mapId = reader.GetUInt16();
-			maxCount = reader.GetByte();
-			name = reader.GetString();
-			roomId = reader.GetInt32();
-			statu = reader.GetByte();
+			CurPlayerCount = reader.GetByte();
+			GameType = reader.GetInt32();
+			MapId = reader.GetInt32();
+			MaxPlayerCount = reader.GetByte();
+			Name = reader.GetString();
+			OwnerName = reader.GetString();
+			RoomId = reader.GetInt32();
+			State = reader.GetByte();
+        }
+    }
+
+
+    public partial class UserGameInfo{
+        public override void Serialize(Serializer writer){
+			writer.PutString(Name);
+			writer.PutArray(Data);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Name = reader.GetString();
+			Data = reader.GetArray(ref this.Data);
         }
     }
 

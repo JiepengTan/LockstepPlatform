@@ -1,40 +1,56 @@
+using System.Collections.Generic;
 using Lockstep.Serialization;
+using NetMsg.Common;
 
 
 namespace NetMsg.Server {
     public partial class ServerIpInfo : BaseFormater {
-        public int port;
-        public string ip;
-        public bool isMaster;
-        public byte serverType;
+        public ushort Port;
+        public string Ip;
+        public bool IsMaster;
+        public byte ServerType;
     }
+
+//IL
+    public partial class Msg_I2L_UserLogin : BaseFormater {
+        public string Account;
+        public int GameType;
+        public long UserId;
+        public string LoginHash;
+    }
+    
 //OMS
     public partial class Msg_ReqOtherServerInfo : BaseFormater {
-        public byte serverType;
-    }  
+        public byte ServerType;
+    }
+
     public partial class Msg_RepOtherServerInfo : BaseFormater {
-        public ServerIpInfo serverInfo;
-    }  
+        public ServerIpInfo ServerInfo;
+    }
+
 //XS
+    public partial class Msg_ReqServerInfo : BaseFormater {
+        public ServerIpInfo ServerInfo;
+    }
     public partial class Msg_ReqMasterInfo : BaseFormater {
-        public ServerIpInfo serverInfo;
+        public ServerIpInfo ServerInfo;
     }
 
     public partial class Msg_RepMasterInfo : BaseFormater {
-        public ServerIpInfo[] serverInfos;
+        public ServerIpInfo[] ServerInfos;
     }
 
     public partial class Msg_BorderMasterInfo : BaseFormater {
-        public ServerIpInfo serverInfo;
+        public ServerIpInfo ServerInfo;
     }
 
 //MS
     public partial class Msg_RegisterServer : BaseFormater {
-        public ServerIpInfo serverInfo;
+        public ServerIpInfo ServerInfo;
     }
 
 //DX
     public partial class Msg_RegisterDaemon : BaseFormater {
-        public byte type;
+        public byte Type;
     }
 }

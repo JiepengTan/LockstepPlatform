@@ -36,9 +36,9 @@ namespace Lockstep.Server.Database {
 
         protected override ServerIpInfo GetSlaveServeInfo(){
             return new ServerIpInfo() {
-                port = _serverConfig.serverPort,
-                ip = IP,
-                serverType = (byte) this.serverType,
+                Port = _serverConfig.serverPort,
+                Ip = IP,
+                ServerType = (byte) this.serverType,
             };
         }
 
@@ -49,7 +49,7 @@ namespace Lockstep.Server.Database {
                     new Msg_RepAccountData() {accountData = dbData as AccountData});
             });
         }
-
+        
         protected void S2D_ReqCreateUser(IIncommingMessage reader){
             var msg = reader.Parse<Msg_CreateAccount>();
             _authDb.GetAccount(msg.account, (dbData) => {
@@ -57,13 +57,15 @@ namespace Lockstep.Server.Database {
                     var newInfo = _authDb.CreateAccountObject();
                     newInfo.Username = msg.account;
                     newInfo.Password = msg.password;
-                    newInfo.Email = "null" + new Random().Next();
+                    newInfo.Email = "null" + LRandom.Next();
                     newInfo.Token = "aaa";
                     newInfo.IsAdmin = true;
                     newInfo.IsGuest = false;
                     newInfo.IsEmailConfirmed = false;
                     _authDb.InsertNewAccount(newInfo
-                        , () => { reader.Respond(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0}); });
+                        , (userId) => {
+                            reader.Respond(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0,userId =  userId});
+                        });
                 }
                 else {
                     reader.Respond(EMsgDS.D2S_RepCreateUser,

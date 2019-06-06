@@ -1,40 +1,46 @@
-﻿namespace NetMsg.Common
-{
+﻿
+namespace NetMsg.Common {
+
     //msg between client RoomServer
-    public enum EMsgSC : short
-    {   
-        //Login
+    public enum EMsgSC : short {
         S2C_TickPlayer,
-        
-        C2I_Register,
-        I2C_RegisterResult,
-        C2I_ReqLogin,
+
+        //IC
+        C2I_UserLogin,
         I2C_LoginResult,
-        C2I_ChangeUserInfo,
-        I2C_ChangeUserInfoResult,
-        
-        //Lobby
-        C2L_ReqLogin,
-        L2C_RepLogin,
-        C2L_ReqRoomList,
-        L2C_RepRoomList,
-        
+
+        //LC
+        I2L_UserLogin,
+        C2L_UserLogin,
+        L2C_RoomList,
+        L2C_RoomChangedInfo,
+
         C2L_JoinRoom,
-        L2C_JoinRoom,
-        C2L_CreateRoom,
-        L2C_CreateRoom,
         C2L_LeaveRoom,
-        L2C_LeaveRoom,
-        C2L_PlayerReady,
-        L2C_PlayerReady,
+        C2L_CreateRoom,
+        L2C_CreateRoomResult,
         C2L_StartGame,
         L2C_StartGame,
-        
-        L2C_RoomStatuUpdate,
-        L2C_LobbyStatuUpdate,
-        
-        //Game
-        //Input udp
+
+        //LG
+        L2G_StartGame,
+
+        //GC Tcp
+        C2G_Hello,
+        G2C_Hello,
+        G2C_GameInfo,
+
+        G2C_GameStatu,
+        C2G_LoadingProgress,
+        G2C_LoadingProgress,
+        G2C_AllFinishedLoaded,
+
+        //
+        C2G_GameEvent,
+        G2C_GameEvent,
+
+        //GC udp
+        C2G_UdpHello,
         C2G_ReqMissFrame,
         C2G_RepMissFrameAck,
         G2C_RepMissFrame,
@@ -42,17 +48,6 @@
         C2G_PlayerInput,
         G2C_FrameData,
 
-        //Level
-        G2C_LoadingProgress,
-        C2G_LoadingProgress,
-        C2G_PartFinished,
-        G2C_PartFinished,
-        G2C_StartGame,
-
-        //GameEvent tcp
-        C2G_GameEvent,
-        G2C_GameEvent,
-        
         EnumCount
     }
 }

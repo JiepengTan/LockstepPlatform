@@ -32,8 +32,7 @@ namespace Lockstep.Server {
         PartFinished,
         FinishAll,
     }
-
-
+#if false
     public class Room : IRoom {
         public ERoomState State = ERoomState.Idle;
         public int TypeId { get; protected set; }
@@ -58,7 +57,7 @@ namespace Lockstep.Server {
         private Dictionary<int, HashCodeMatcher> _hashCodes = new Dictionary<int, HashCodeMatcher>();
 
 
-        private ILobby _lobby;
+        private IGameServer _gameServer;
 
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgSC.EnumCount];
         private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgSC.EnumCount];
@@ -79,11 +78,11 @@ namespace Lockstep.Server {
 
         #region  life cycle
 
-        public void DoStart(int type, int roomId, ILobby server, int size, string name){
+        public void DoStart(int type, int roomId, IGameServer server, int size, string name){
             this.RoomId = roomId;
             this.MaxPlayerCount = size;
             this.name = name;
-            _lobby = server;
+            _gameServer = server;
             Tick = 0;
             TypeId = type;
             timeSinceLoaded = 0;
@@ -146,8 +145,8 @@ namespace Lockstep.Server {
                     frames[count - i - 1] = allHistoryFrames[iTick - i];
                 }
 
-                msg.startTick = frames[0].tick;
-                msg.frames = frames;
+                msg.StartTick = frames[0].Tick;
+                msg.Frames = frames;
                 SendToAll(EMsgSC.G2C_FrameData, msg);
                 if (firstFrameTimeStamp <= 0) {
                     firstFrameTimeStamp = timeSinceLoaded;
@@ -173,8 +172,8 @@ namespace Lockstep.Server {
                 Debug.Assert(frames[i] != null, "!!!!!!!!!!!!!!!!!");
             }
 
-            msg.startTick = frames[0].tick;
-            msg.frames = frames;
+            msg.StartTick = frames[0].Tick;
+            msg.Frames = frames;
             var writer = new Serializer();
             writer.PutInt32(TypeId);
             writer.PutInt32(RoomId);
@@ -238,7 +237,7 @@ namespace Lockstep.Server {
         }
 
         public void TickOut(Player player, int reason){
-            _lobby.TickOut(player, reason);
+            _gameServer.TickOut(player, reason);
         }
 
         private void RegisterMsgHandlers(){
@@ -392,7 +391,7 @@ namespace Lockstep.Server {
                 Console.WriteLine("All players left, stopping current simulation...");
                 IsRunning = false;
                 State = ERoomState.Idle;
-                _lobby.RemoveRoom(this);
+                _gameServer.RemoveRoom(this);
             }
             else {
                 Console.WriteLine(CurPlayerCount + " players remaining.");
@@ -465,7 +464,7 @@ namespace Lockstep.Server {
             }
 
             if (allHistoryFrames[iTick] == null) {
-                allHistoryFrames[iTick] = new ServerFrame() {tick = tick};
+                allHistoryFrames[iTick] = new ServerFrame() {Tick = tick};
             }
 
             var frame = allHistoryFrames[iTick];
@@ -488,9 +487,9 @@ namespace Lockstep.Server {
         void OnNet_HashCode(Player player, BaseFormater data){
             var hashInfo = data as Msg_HashCode;
             var id = player.localId;
-            for (int i = 0; i < hashInfo.hashCodes.Length; i++) {
-                var code = hashInfo.hashCodes[i];
-                var tick = hashInfo.startTick + i;
+            for (int i = 0; i < hashInfo.HashCodes.Length; i++) {
+                var code = hashInfo.HashCodes[i];
+                var tick = hashInfo.StartTick + i;
                 if (_hashCodes.TryGetValue(tick, out HashCodeMatcher matcher1)) {
                     if (matcher1 == null || matcher1.sendResult[id]) {
                         continue;
@@ -539,7 +538,7 @@ namespace Lockstep.Server {
 
         void OnNet_ReqMissFrame(Player player, BaseFormater data){
             var reqMsg = data as Msg_ReqMissFrame;
-            var nextCheckTick = reqMsg.startTick;
+            var nextCheckTick = reqMsg.StartTick;
             Debug.Log($"OnNet_ReqMissFrame nextCheckTick id:{player.localId}:{nextCheckTick}");
             var msg = new Msg_RepMissFrame();
             int count = Math.Min(Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
@@ -551,14 +550,14 @@ namespace Lockstep.Server {
                 Debug.Assert(frames[i] != null);
             }
 
-            msg.startTick = frames[0].tick;
-            msg.frames = frames;
+            msg.StartTick = frames[0].Tick;
+            msg.Frames = frames;
             SendTo(player, EMsgSC.G2C_RepMissFrame, msg, true);
         }
 
         void OnNet_RepMissFrameAck(Player player, BaseFormater data){
             var msg = data as Msg_RepMissFrameAck;
-            Debug.Log($"OnNet_RepMissFrameAck missFrameTick:{msg.missFrameTick}");
+            Debug.Log($"OnNet_RepMissFrameAck missFrameTick:{msg.MissFrameTick}");
         }
 
 
@@ -614,5 +613,7 @@ namespace Lockstep.Server {
                 SimulationSpeed = Define.SimulationSpeed
             };
         }
-    }
+
+}
+#endif
 }

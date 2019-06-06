@@ -8,7 +8,7 @@ using Lockstep.Server.Common;
 using Lockstep.Util;
 
 namespace Lockstep.Server.Common {
-    public class BaseServer : IGameServer {
+    public class BaseServer : IServer {
 
         public DebugInstance Debug;
         public bool HasInit { get; private set; }
@@ -32,7 +32,7 @@ namespace Lockstep.Server.Common {
             IP = NetworkHelper.GetLocalIP();
             serverType = info.type;
             _allConfig = ServerUtil.LoadConfig();
-            _allConfig.daemonPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
+            _allConfig.YMPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
             _serverConfig = info;
             masterType = _allConfig.isMaster ? EMasterType.Master : EMasterType.Slave;
         }

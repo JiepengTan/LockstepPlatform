@@ -15,6 +15,7 @@ namespace NetMsg.Common {
     public interface IAccountData {
         string Username { get; set; }
         string Password { get; set; }
+        long UserId{ get; set; }
         string Email { get; set; }
         string Token { get; set; }
         bool IsAdmin { get; set; }
@@ -28,8 +29,8 @@ namespace NetMsg.Common {
     }
 
     public partial class AccountData : BaseFormater, IAccountData {
-        [BsonId]
-        public string Username { get; set; }
+        [BsonId] public string Username { get; set; }
+        public long UserId { get; set; }
         public string Password { get; set; }
         public string Email { get; set; }
         public string Token { get; set; }
@@ -47,14 +48,18 @@ namespace NetMsg.Common {
         public string account;
         public string password;
     }
+
     public partial class Msg_CreateAccount : BaseFormater {
         public string account;
         public string password;
     }
+
     public partial class Msg_RepAccountData : BaseFormater {
         public AccountData accountData;
-    }  
+    }
+
     public partial class Msg_RepCreateResult : BaseFormater {
         public byte result;
+        public long userId;
     }
 }

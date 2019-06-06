@@ -1,6 +1,7 @@
 using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
+using Lockstep.Util;
 using NetMsg.Common;
 using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
@@ -9,6 +10,9 @@ namespace Lockstep.Server.Login {
     public class LoginServer : Common.Server {
         private NetServer<EMsgSC, IServerProxy> _netServerSC;
         private NetClient<EMsgDS> _netClientDS;
+        protected NetClient<EMsgLS> _netClientLI; //其他类型的Master 用于提供服务
+
+        private ServerIpInfo lobbyInfo;
 
         public override void DoStart(){
             base.DoStart();
@@ -20,57 +24,104 @@ namespace Lockstep.Server.Login {
         }
 
         protected override void OnMasterServerInfo(ServerIpInfo info){
-            if (info.serverType == (byte) EServerType.DatabaseServer) {
-                InitClientDSMaster(info);
+            if (info.ServerType == (byte) EServerType.DatabaseServer) {
+                ReqOtherServerInfo(EServerType.DatabaseServer, (status, respond) => {
+                    if (status != EResponseStatus.Failed) {
+                        InitClientDS(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
+                    }
+                });
+            }
+
+            if (info.ServerType == (byte) EServerType.LobbyServer) {
+                ReqOtherServerInfo(EServerType.LobbyServer, (status, respond) => {
+                    if (status != EResponseStatus.Failed) {
+                        InitClientLI(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
+                    }
+                });
             }
         }
 
-        private void InitClientDSMaster(ServerIpInfo info){
-            InitNetClient(ref _netClientOMS, info.ip, info.port, OnDBMasterConn);
+        private void InitClientLI(ServerIpInfo info){
+            lobbyInfo = info;
+            InitNetClient(ref _netClientLI, info.Ip, info.Port, OnLobbyConn);
         }
 
-        private void OnDBMasterConn(){
-            _netClientOMS.SendMessage(EMsgMS.S2M_ReqOtherServerInfo,
-                new Msg_ReqOtherServerInfo() {serverType = (byte) EServerType.DatabaseServer},
-                (status, reader) => {
-                    var msg = reader.Parse<Msg_RepOtherServerInfo>();
-                    var info = msg.serverInfo;
-                    if (EServerType.DatabaseServer == (EServerType) info.serverType) {
-                        InitNetClient(ref _netClientDS, info.ip, info.port, OnDBConn);
-                    }
-                }
-            );
+        private void InitClientDS(ServerIpInfo info){
+            InitNetClient(ref _netClientDS, info.Ip, info.Port, OnDBConn);
+        }
+
+
+        private void OnLobbyConn(){
+            //TestDB();
         }
 
         private void OnDBConn(){
             //TestDB();
         }
 
-        private void TestDB(){
-            ReqUserInfo("LockstepPlatform", "123");
-            CreateUser("LockstepPlatform", "123");
-            ReqUserInfo("LockstepPlatform", "123");
-            ReqUserInfo("hehehe", "123");
+        protected void C2I_UserLogin(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2I_UserLogin>();
+            Debug.Log("C2I_UserLogin" + msg);
+            ReqUserInfo(msg, reader);
         }
 
-        void ReqUserInfo(string account, string password){
+        private void TestDB(){
+            //ReqUserInfo("LockstepPlatform", "123");
+            //CreateUser("LockstepPlatform", "123");
+            //ReqUserInfo("LockstepPlatform", "123");
+            //ReqUserInfo("hehehe", "123");
+        }
+
+        void ReqUserInfo(Msg_C2I_UserLogin cInfo, IIncommingMessage reader){
+            var account = cInfo.Account;
+            var password = cInfo.Password;
             _netClientDS.SendMessage(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
                 account = account,
                 password = password
             }, (status, response) => {
                 var msg = response.Parse<Msg_RepAccountData>();
-                Debug.Log($" S2D_ReqUserInfo account:{account} password:{password} Respond:{msg.ToString()}");
+                if (msg.accountData == null) {
+                    CreateUser(cInfo, reader);
+                }
+                else {
+                    //密码不正确
+                    NotifyLobbyUserLoginResult(msg.accountData.Password, msg.accountData.UserId, cInfo, reader);
+                }
             });
         }
 
-        void CreateUser(string account, string password){
+        void CreateUser(Msg_C2I_UserLogin cInfo, IIncommingMessage reader){
             _netClientDS.SendMessage(EMsgDS.S2D_ReqCreateUser, new Msg_ReqAccountData() {
-                account = account,
-                password = password
+                account = cInfo.Account,
+                password = cInfo.Password
             }, (status, response) => {
                 var msg = response.Parse<Msg_RepCreateResult>();
-                Debug.Log($" S2D_ReqCreateUser account:{account} password:{password} Respond:{msg.ToString()}");
+                NotifyLobbyUserLoginResult(cInfo.Password, msg.userId, cInfo, reader);
             });
+        }
+
+        void NotifyLobbyUserLoginResult(string password, long userId, Msg_C2I_UserLogin cInfo,
+            IIncommingMessage reader){
+            if (cInfo.Password != password) {
+                reader.Respond(EMsgSC.I2C_LoginResult, new Msg_I2C_LoginResult() {LoginResult = 0});
+            }
+            else {
+                var loginHash = "LSHash" + Time.timeSinceLevelLoad;
+                _netClientLI.SendMessage(EMsgLS.I2L_UserLogin, new Msg_I2L_UserLogin() {
+                        Account = cInfo.Password,
+                        GameType = cInfo.GameType,
+                        UserId = userId,
+                        LoginHash = loginHash
+                    },
+                    (sta, res) => {
+                        reader.Respond(EMsgSC.I2C_LoginResult, new Msg_I2C_LoginResult() {
+                            LoginResult = 1,
+                            UserId = userId,
+                            LoginHash = loginHash,
+                            LobbyEnd = new IPEndInfo() {Ip = lobbyInfo.Ip, Port = lobbyInfo.Port}
+                        });
+                    });
+            }
         }
     }
 }

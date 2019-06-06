@@ -34,12 +34,15 @@ namespace Lockstep.Server.Daemon {
         //Server YX
         private NetServer<EMsgYX, IDaemonProxy> _netServerYX;
         private NetServer<EMsgXS, IServerProxy> _netServerXS;
+        private NetServer<EMsgYM, IServerProxy> _netServerYM;
         protected NetClient<EMsgYX> _netClientYX;
+        public Dictionary<EServerType, IPeer> _type2MasterPeer = new Dictionary<EServerType, IPeer>();
         public Dictionary<EServerType, ServerIpInfo> _type2MasterInfo = new Dictionary<EServerType, ServerIpInfo>();
 
         private void InitServerYX(){
             if (!_serverConfig.isMaster) return;
             InitNetServer(ref _netServerYX, _serverConfig.masterPort);
+            InitNetServer(ref _netServerYM, _allConfig.YMPort);
         }
 
         private void InitServerXS(){
@@ -50,7 +53,7 @@ namespace Lockstep.Server.Daemon {
             InitNetClient(ref _netClientYX, _serverConfig.masterIp, _serverConfig.masterPort,
                 () => {
                     _netClientYX.SendMessage(EMsgYX.X2Y_RegisterDaemon,
-                        new Msg_RegisterDaemon() {type = (byte) serverType});
+                        new Msg_RegisterDaemon() {Type = (byte) serverType});
                 }
             );
         }
@@ -110,14 +113,46 @@ namespace Lockstep.Server.Daemon {
 //
             //ReportState(_curState);
         }
-
-
-        public void S2X_ReqMasterInfo(IIncommingMessage reader){
+        
+        protected void M2Y_RegisterServerInfo(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_RegisterServer>();
+            var oServerType = (EServerType) msg.ServerInfo.ServerType;
+            if (!_type2MasterPeer.TryGetValue(oServerType, out var info)) {
+                _type2MasterPeer.Add(oServerType,reader.Peer);
+            }
+        }  
+        protected void S2X_ReqOtherServerInfo(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_ReqOtherServerInfo>();
+            _netClientYX.SendMessage(EMsgYX.X2Y_ReqOtherServerInfo, msg,
+                (status, respond) => {
+                    if (status == EResponseStatus.Failed) {
+                        reader.Respond(0,EResponseStatus.Failed);
+                    }
+                    else {
+                        var rMsg = respond.Parse<Msg_RepOtherServerInfo>();
+                        reader.Respond(rMsg);
+                    }
+                });
+        }  
+        protected void X2Y_ReqOtherServerInfo(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_ReqOtherServerInfo>();
+            if (_type2MasterPeer.TryGetValue((EServerType)msg.ServerType, out var peer)) {
+                peer.SendMessage((short)EMsgYM.Y2M_ReqOtherServerInfo, msg,
+                    (status, respond) => {
+                        var rMsg = respond.Parse<Msg_RepOtherServerInfo>();
+                        reader.Respond(rMsg);
+                    });
+            }
+            else {
+                reader.Respond(0,EResponseStatus.Failed);
+            }
+        }  
+        protected void S2X_ReqMasterInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqMasterInfo>();
             var proxy = new ServerProxy(reader.Peer);
             reader.Peer.AddExtension(proxy);
-            proxy.ServerType = (EServerType) msg.serverInfo.serverType;
-            msg.serverInfo.ip = proxy.EndPoint.Address.ToString();
+            proxy.ServerType = (EServerType) msg.ServerInfo.ServerType;
+            msg.ServerInfo.Ip = proxy.EndPoint.Address.ToString();
             _netClientYX.SendMessage(EMsgYX.X2Y_ReqMasterInfo, msg,
                 (status, respond) => {
                     var respondMsg = respond.Parse<Msg_RepMasterInfo>();
@@ -125,32 +160,33 @@ namespace Lockstep.Server.Daemon {
                 });
         }
 
-        public void Y2X_BorderMasterInfo(IIncommingMessage reader){
+        protected void Y2X_BorderMasterInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_BorderMasterInfo>();
             _netServerXS.BorderMessage(EMsgXS.X2S_BorderMasterInfo, msg);
         }
 
 
-        public void S2X_StartServer(IIncommingMessage reader){ }
-        public void S2X_ShutdownServer(IIncommingMessage reader){ }
+        protected void S2X_StartServer(IIncommingMessage reader){ }
+        protected void S2X_ShutdownServer(IIncommingMessage reader){ }
 
 
-        public void X2Y_RegisterDaemon(IIncommingMessage reader){
+        protected void X2Y_RegisterDaemon(IIncommingMessage reader){
             var msg = reader.Parse<Msg_RegisterDaemon>();
             //_netServerXS.Border(EMsgXS.X2S_RepMasterInfo, msg);
         }
 
-        public void X2Y_ReqMasterInfo(IIncommingMessage reader){
-            var serverInfo = reader.Parse<Msg_ReqMasterInfo>().serverInfo;
-            var type = (EServerType) serverInfo.serverType;
-            if (serverInfo.isMaster) {
+        protected void X2Y_ReqMasterInfo(IIncommingMessage reader){
+            var serverInfo = reader.Parse<Msg_ReqMasterInfo>().ServerInfo;
+            var type = (EServerType) serverInfo.ServerType;
+            if (serverInfo.IsMaster) {
+                _type2MasterPeer[type] = reader.Peer;
                 _type2MasterInfo[type] = serverInfo;
                 _netServerYX.BorderMessage(EMsgYX.Y2X_BorderMasterInfo,
-                    new Msg_BorderMasterInfo() {serverInfo = serverInfo});
+                    new Msg_BorderMasterInfo() {ServerInfo = serverInfo});
             }
 
             var infos = _type2MasterInfo.Values.ToArray();
-            reader.Respond(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {serverInfos = infos});
+            reader.Respond(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {ServerInfos = infos});
         }
 
 

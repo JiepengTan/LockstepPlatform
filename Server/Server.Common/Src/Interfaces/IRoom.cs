@@ -1,11 +1,7 @@
 using Lockstep.Serialization;
+using Lockstep.Util;
 
 namespace Lockstep.Server.Common {
-    public interface IRecyclable {
-        void OnReuse();
-        void OnRecycle();
-    }
-
     public interface IRoom : IRecyclable {
         int TypeId { get; }
         int RoomId { get; }
@@ -16,7 +12,7 @@ namespace Lockstep.Server.Common {
         byte[] GetReconnectMsg(Player player);
 
         //room life cycle
-        void DoStart(int type,int roomId, ILobby server, int size, string name);
+        void DoStart(int type,int roomId, IGameServer server, int size, string name);
         void DoUpdate(int deltaTime);
         void DoDestroy();
 

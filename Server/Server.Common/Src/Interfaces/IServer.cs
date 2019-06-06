@@ -1,15 +1,17 @@
-using System;
-using LiteNetLib;
+using Lockstep.Serialization;
 
 namespace Lockstep.Server.Common {
     public interface IServer {
-        event Action<object> ClientConnected;
-        event Action<object> ClientDisconnected;
-        event Action<NetPeer, byte[]> DataReceived;
+        bool IsMaster { get;  }
 
-        void Distribute(byte[] data);
-        void Distribute(int sourceClientId, byte[] data);
-        void Send(int clientId, byte[] data);
-        void Run(int port);
+        bool IsCandidateMaster { get;  }
+
+        //life cycle
+        void DoStart();
+        void DoUpdate(int deltaTime);
+        void DoDestroy();
+        void PollEvents();
+
+        void OnRecvMsg(byte[] msg);
     }
 }

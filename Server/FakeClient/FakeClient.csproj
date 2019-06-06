@@ -4,14 +4,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B0A7D5E-DDDD-46AF-BFA0-6700B4EB6A8E}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{4BEAC3A9-752C-4F4C-9BC4-0C9F6EA341B5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Server.Common</RootNamespace>
-    <AssemblyName>Server.Common</AssemblyName>
+    <RootNamespace>FakeClient</RootNamespace>
+    <AssemblyName>FakeClient</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -33,54 +32,37 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\Libs\LiteNetLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\BaseServer.cs" />
-    <Compile Include="Src\ConfigInfo.cs" />
-    <Compile Include="Src\Define.cs" />
-    <Compile Include="Src\Interfaces\IDaemonServer.cs" />
-    <Compile Include="Src\Interfaces\IServer.cs" />
-    <Compile Include="Src\Interfaces\IGameServer.cs" />
-    <Compile Include="Src\Interfaces\IRoom.cs" />
-    <Compile Include="Src\Interfaces\INetServer.cs" />
-    <Compile Include="Src\Interfaces\INetProxy.cs" />
-    <Compile Include="Src\NetWork\NetClient.cs" />
-    <Compile Include="Src\NetWork\NetServer.cs" />
-    <Compile Include="Src\Player.cs" />
-    <Compile Include="Src\Server.cs" />
-    <Compile Include="Src\ServerUtil.cs" />
+    <Compile Include="Client.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
-      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
-      <Name>Logging</Name>
+    <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NetMsg.Server\NetMsg.Server.csproj">
-      <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>
-      <Name>NetMsg.Server</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Networking\Networking.csproj">
       <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
       <Name>Networking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Common\Server.Common.csproj">
+      <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
+      <Name>Server.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Util\Util.csproj">
       <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
       <Name>Util</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Src\UnityLike" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

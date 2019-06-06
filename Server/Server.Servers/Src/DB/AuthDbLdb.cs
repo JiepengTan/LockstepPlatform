@@ -27,21 +27,29 @@ namespace Lockstep.Server.Database
         void GetEmailConfirmationCode(string email, Action<string> callback);
 
         void UpdateAccount(IAccountData account, Action doneCallback);
-        void InsertNewAccount(IAccountData account, Action doneCallback);
+        void InsertNewAccount(IAccountData account, Action<long> doneCallback);
         void InsertToken(IAccountData account, string token, Action doneCallback);
     }
     public class AuthDbLdb : IAuthDatabase
     {
+        private readonly LiteCollection<UserIdInfo> _userIds;
         private readonly LiteCollection<AccountData> _accounts;
         private readonly LiteCollection<PasswordResetData> _resetCodes;
         private readonly LiteCollection<EmailConfirmationData> _emailConfirmations;
 
         private readonly LiteDatabase _db;
 
+        public class UserIdInfo {
+            public string Name;
+            public long Id;
+        }
+
         public AuthDbLdb(LiteDatabase database)
         {
             _db = database;
-
+            _userIds = _db.GetCollection<UserIdInfo>("userId");
+            _userIds.EnsureIndex(a => a.Name, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true});
+            
             _accounts = _db.GetCollection<AccountData>("accounts");
             _accounts.EnsureIndex(a => a.Username, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true});
             _accounts.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
@@ -51,12 +59,36 @@ namespace Lockstep.Server.Database
 
             _emailConfirmations = _db.GetCollection<EmailConfirmationData>("emailConf");
             _emailConfirmations.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
+            userId = GetCurMaxUserID();
         }
+
+        private long userId;
 
         public IAccountData CreateAccountObject()
         {
             var account = new AccountData();
             return account;
+        }
+
+        public long GetCurMaxUserID(){
+            var info = _userIds.FindOne(a => a.Name == "Unique");
+            if (info == null) {
+                info = new UserIdInfo() {
+                    Name = "Unique",
+                    Id = 0
+                };
+                _userIds.Insert(info);
+            }
+
+            return info.Id;
+        } 
+        public void SaveCurMaxUserID(long userId)
+        {
+            var info = new UserIdInfo() {
+                Name = "Unique",
+                Id = userId
+            };
+            _userIds.Update(info);
         }
 
         public void GetAccount(string username, Action<IAccountData> callback)
@@ -127,10 +159,11 @@ namespace Lockstep.Server.Database
             doneCallback.Invoke();
         }
 
-        public void InsertNewAccount(IAccountData account, Action doneCallback)
-        {
+        public void InsertNewAccount(IAccountData account, Action<long> doneCallback){
+            account.UserId = userId++;
+            SaveCurMaxUserID(userId);
             _accounts.Insert(account as AccountData);
-            doneCallback.Invoke();
+            doneCallback.Invoke(account.UserId);
         }
 
         public void InsertToken(IAccountData account, string token, Action doneCallback)

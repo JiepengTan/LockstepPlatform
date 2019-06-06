@@ -42,6 +42,7 @@
     <Compile Include="Src\CoroutineHelper.cs" />
     <Compile Include="Src\LTimer.cs" />
     <Compile Include="Src\NetworkHelper.cs" />
+    <Compile Include="Src\Pool.cs" />
     <Compile Include="Src\Time.cs" />
   </ItemGroup>
   <ItemGroup>

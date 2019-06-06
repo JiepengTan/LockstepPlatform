@@ -25,4 +25,17 @@ namespace Lockstep.Server.Common  {
         
         EnumCount,
     }
+
+    public enum ELoginResult {
+        PasswordMissMatch,
+        ErrorHash,
+        NotLogin,
+    }
+
+    public enum ERoomOperatorResult {
+        Succ,
+        Full,
+        NotExist,
+        AlreadyExist,
+    }
 }

@@ -1,7 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Common{
-    #region Game
+    #region UDP
     [SelfImplement]
     [Udp]
     public partial class Msg_RepMissFrame : MutilFrames { }
@@ -12,140 +12,187 @@ namespace NetMsg.Common{
 
     [Udp]
     public partial class Msg_HashCode : BaseFormater {
-        public int startTick;
-        public long[] hashCodes;
+        public int StartTick;
+        public long[] HashCodes;
     }
 
     [Udp]
     public partial class Msg_RepMissFrameAck : BaseFormater {
-        public int missFrameTick;
+        public int MissFrameTick;
     }
 
     [Udp]
     public partial class Msg_ReqMissFrame : BaseFormater {
-        public int startTick;
+        public int StartTick;
+    }
+
+    #endregion
+
+    #region TCP
+    
+
+    public partial class IPEndInfo : BaseFormater {
+        public string Ip;
+        public ushort Port;
+    }
+
+    public partial class RoomChangedInfo : BaseFormater {
+        public int RoomId;
+        public int CurPlayerCount;
+    }
+
+    public partial class RoomInfo : BaseFormater {
+        public int GameType;
+        public int MapId;
+        public string Name;
+        public byte MaxPlayerCount;
+        
+        public int RoomId;
+        public byte State;
+        public string OwnerName;
+        public byte CurPlayerCount;
+    }
+    
+    public partial class UserGameInfo : BaseFormater {
+        public string Name;
+        public byte[] Data;
+    }
+
+    public partial class GamePlayerInfo : BaseFormater {
+        public long UserId;
+        public string Account;
+        public string LoginHash;
+    }
+
+    
+    
+//IC
+    public partial class Msg_C2I_UserLogin : BaseFormater {
+        public string Account;
+        public string Password;
+        public string EncryptHash;
+        public int GameType;
+    }
+
+    public partial class Msg_I2C_LoginResult : BaseFormater {
+        public byte LoginResult;
+        public string LoginHash;
+        public long UserId;
+        public IPEndInfo LobbyEnd;
     }
 
 
-    public partial class Msg_GameEvent : BaseFormater {
-        public short type;
-        [Limited] public byte[] content;
-    }
+//LC
 
-    public partial class Msg_LoadingProgress : BaseFormater {
-        /// [进度百分比 1表示1% 100表示已经加载完成]
-        public byte progress;
-    }
-
-    public partial class Msg_AllLoadingProgress : BaseFormater {
-        /// [进度百分比 1表示1% 100表示已经加载完成]
-        [Limited(true)] public byte[] progress;
-
-        public bool isAllDone;
-    }
-
-    public partial class Msg_PartFinished : BaseFormater {
-        /// 关卡id
-        public ushort level;
-    }
-
-    public partial class Msg_PlayerReady : BaseFormater {
-        public int roomId;
-    }
-
-    public partial class Msg_RepInit : BaseFormater {
-        public long playerId;
+    public partial class Msg_C2L_UserLogin : BaseFormater {
+        public long userId;
+        public string LoginHash;
     }
 
 
-    public partial class Msg_RoomInitMsg : BaseFormater {
-        public string name;
+    public partial class Msg_L2C_RoomList : BaseFormater {
+        public int GameType;
+        public RoomInfo[] Rooms;
     }
 
-    public partial class Msg_StartRoomGame : BaseFormater {
-        public int RoomID;
+    public partial class Msg_L2C_RoomChangedInfo : BaseFormater {
+        public RoomInfo[] AddInfo;
+        public int[] DeleteInfo;
+        public RoomChangedInfo[] ChangedInfo;
+    }
+
+
+    public partial class Msg_C2L_JoinRoom : BaseFormater {
+        public int RoomId;
+    }
+
+    public partial class Msg_C2L_LeaveRoom : BaseFormater {
+        public byte Reason;
+    }
+
+    public partial class Msg_C2L_CreateRoom : BaseFormater {
+        public int GameType;
+        public int MapId;
+        public string Name;
+        public byte MaxPlayerCount;
+    }
+
+
+    public partial class Msg_L2C_CreateRoom : BaseFormater {
+        public RoomInfo Info;
+    }
+
+    public partial class Msg_C2L_StartGame : BaseFormater {
+        public byte Reason;
+    }
+
+    public partial class Msg_L2C_StartGame : BaseFormater {
+        public byte Result;
+        public IPEndInfo GameServerEnd;
+        public string GameHash;
+        public int RoomId;
+    }
+
+//LG
+    public partial class Msg_L2G_StartGame : BaseFormater {
+        public int GameType;
+        public GamePlayerInfo[] Players;
+        public string GameHash;
+    }
+
+//GC
+    public partial class Msg_C2G_Hello : BaseFormater {
+        public GamePlayerInfo UserInfo;
+        public int GameType;
+        public string GameHash;
+        public int RoomId;
+
+    }
+
+    public partial class Msg_G2C_Hello : BaseFormater {
+        public int MapId;
+        public byte LocalId;
+    }
+
+    public partial class Msg_G2C_GameInfo : BaseFormater {
+        public int MapId;
         public int Seed;
-        public byte ActorID;
-        [Limited(true)] public byte[] AllActors;
+        public int UserCount;
+        public UserGameInfo[] UserInfos;
+        public IPEndInfo UdpEnd;
         public int SimulationSpeed;
     }
-    
+
+    public partial class Msg_C2G_UdpHello : BaseFormater {
+        public GamePlayerInfo UserInfo;
+    }
+
+    public partial class Msg_G2C_GameStatu : BaseFormater {
+        public byte Status;
+    }
+
+    public partial class Msg_C2G_LoadingProgress : BaseFormater {
+        /// [进度百分比 1表示1% 100表示已经加载完成]
+        public byte Progress;
+    }
+
+    public partial class Msg_G2C_LoadingProgress : BaseFormater {
+        /// [进度百分比 1表示1% 100表示已经加载完成]
+        public byte[] Progress;
+    }
+
+    public partial class Msg_G2C_AllFinishedLoaded : BaseFormater {
+        public byte Padding;
+    }
+
+    public partial class Msg_C2G_GameEvent : BaseFormater {
+        public byte[] Data;
+    }
+
+    public partial class Msg_G2C_GameEvent : BaseFormater {
+        public byte[] Data;
+    }
+
+
     #endregion
-    
-    public partial class RoomInfo:BaseFormater {
-        public int roomId;
-        public string name;
-        public ushort mapId;
-        public byte statu;
-        public byte curCount;
-        public byte maxCount;
-    }
-
-    public partial class Msg_ReqLogin :BaseFormater{
-        public string account;
-        public string password;
-    }
-    
-    public partial class Msg_RepLogin :BaseFormater{
-        public long playerId;
-        public string ip;
-        public int port;
-        public int roomId;
-        public byte[] childMsg;
-        public RoomInfo[] roomInfos;
-    }
-    public partial class Msg_ReqRoomList :BaseFormater{
-        public byte dump;
-    }
-    public partial class Msg_RepRoomList:BaseFormater {
-        public RoomInfo[] Child;
-    }
-
-    public partial class Msg_JoinRoom :BaseFormater{
-        public int roomId;
-    }
-    public partial class Msg_JoinRoomResult :BaseFormater{
-        public byte statu;
-        public int roomId;
-    }
-    public partial class Msg_CreateRoom:BaseFormater {
-        public byte type;
-        public byte size;
-        public string name;
-    }
-    public partial class Msg_CreateRoomResult :BaseFormater{
-        public int roomId;
-        public byte type;
-        public byte size;
-        public string name;
-    }
-    
-    public partial class Msg_LeaveRoom :BaseFormater{
-        public int pad;
-    }
-    public partial class Msg_LeaveRoomResult:BaseFormater {
-        public byte result;
-    }  
-    public partial class Msg_PlayerReady:BaseFormater {
-        public byte pad;
-    }
-    public partial class Msg_PlayerReadyResult:BaseFormater {
-        public byte result;
-    } 
-    public partial class Msg_StartGame :BaseFormater{
-        public string ip;
-        public int port;
-        public int roomId;
-        public byte localId;
-        public byte[] allActorIds;
-    }
-    public partial class Msg_LobbyStatus :BaseFormater{
-        public RoomInfo[] modifiedRooms;
-        public int[] deleteRooms;
-    }
-    public partial class Msg_RoomStatus :BaseFormater {
-        public RoomInfo roomInfo;
-    }
-    
-    
 }

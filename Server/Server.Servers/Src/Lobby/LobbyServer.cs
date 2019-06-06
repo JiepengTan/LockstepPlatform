@@ -3,491 +3,428 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security.AccessControl;
 using System.Text;
+using System.Xml;
+using LiteDB;
 using LiteNetLib;
 using Lockstep.Serialization;
 using Lockstep.Logging;
+using Lockstep.Networking;
 using Lockstep.Server.Common;
+using Lockstep.Server.Database;
+using Lockstep.Util;
 using NetMsg.Common;
+using NetMsg.Server;
+using IRecyclable = Lockstep.Util.IRecyclable;
 
 namespace Lockstep.Server.Lobby {
-    public class LobbyServer :BaseServer, ILobby {
-        //account map
-        private Dictionary<string, long> account2PlayerId = new Dictionary<string, long>();
-        private long PlayerAutoIncId = 1;
-        private Dictionary<long, IRoom> playerId2Room = new Dictionary<long, IRoom>();
+    public interface ILobbyServer : IServer {
+        //room operator
+        List<IRoom> GetRooms(int roomType);
+        IRoom GetRoom(int roomId);
+        IRoom GetRoomByUserID(int id);
+        IRoom CreateRoom(int type, Player master, string roomName, byte size);
+        void RemoveRoom(IRoom room);
+        bool JoinRoom(Player player, int roomID);
+        bool LeaveRoom(Player player);
 
-        //Player map
-        private Dictionary<long, Player> playerID2Player = new Dictionary<long, Player>();
-        private Dictionary<int, Player> netId2Player = new Dictionary<int, Player>();
-        private Dictionary<int, Player> netId2PlayerRoom = new Dictionary<int, Player>();
+        //players
+        void TickOut(Player player, int reason);
+        Player GetPlayer(long playerId);
 
-        //room map
-        private int RoomAutoIncId = 1;
-        private List<IRoom> _allRooms = new List<IRoom>();
-        private Dictionary<int, IRoom> roomId2Room = new Dictionary<int, IRoom>();
-        private Dictionary<int, List<IRoom>> gameId2Rooms = new Dictionary<int, List<IRoom>>();
+        //Net status
+        void OnClientConnected(object peer);
 
+        void OnCilentDisconnected(object peer);
+        //msg handle 
+    }
 
-        private const int MAX_NAME_LEN = 30;
+    public class LobbyServer : Common.Server {
+        public class Room : BaseRecyclable {
+            public RoomInfo Info = new RoomInfo();
 
-        public NetServer<EMsgSC,INetProxy> serverLobby;
-        public NetServer<EMsgSC,INetProxy> serverRoom;
+            public bool IsPlaying {
+                get => Info.State == 1;
+                set => Info.State = (byte) (value ? 1 : 0);
+            }
 
-        public const byte MAX_HANDLER_IDX = (byte) EMsgSC.EnumCount;
-        public const byte INIT_MSG_IDX = (byte) EMsgSC.C2L_ReqLogin;
-        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgSC.EnumCount];
+            public int GameType {
+                get => Info.GameType;
+                set => Info.GameType = value;
+            }
 
-        private delegate IRoom FuncCreateRoom();
+            public int RoomId {
+                get => Info.RoomId;
+                set => Info.RoomId = value;
+            }
 
-        private delegate void DealNetMsg(Player player, Deserializer reader);
+            public int MapId {
+                get => Info.MapId;
+                set => Info.MapId = value;
+            }
 
-        private Dictionary<int, FuncCreateRoom> _roomFactoryFuncs = new Dictionary<int, FuncCreateRoom>();
+            public string Name {
+                get => Info.Name;
+                set => Info.Name = value;
+            }
 
-        private string RoomIP = "";
-        private ushort RoomPort = 0;
+            public byte CurPlayerCount {
+                get => Info.CurPlayerCount;
+                set => Info.CurPlayerCount = value;
+            }
 
-        //TODO read from config
-        string RoomType2DllPath(int type){
-            return "Game.Tank" + ".dll";
+            public byte MaxPlayerCount {
+                get => Info.MaxPlayerCount;
+                set => Info.MaxPlayerCount = value;
+            }
+
+            public string OwnerName {
+                get => Info.OwnerName;
+                set => Info.OwnerName = value;
+            }
+
+            public bool IsFull => CurPlayerCount >= MaxPlayerCount;
+
+            public bool IsEmpty => CurPlayerCount <= 0;
+            public List<User> Users = new List<User>(10);
+            public User Owner;
+
+            public void Init(int type, int roomId, string name, int mapId, byte maxPlayerCount, User owner){
+                Name = name;
+                GameType = type;
+                RoomId = roomId;
+                MaxPlayerCount = maxPlayerCount;
+                CurPlayerCount = 1;
+                OwnerName = owner.Name;
+                IsPlaying = false;
+                Users.Add(owner);
+                Owner = owner;
+            }
+
+            public override void OnRecycle(){
+                Users.Clear();
+                Owner = null;
+            }
+
+            public void AddUser(User user){
+                Users.Add(user);
+                CurPlayerCount++;
+            }
+
+            public void RemoveUser(User user){
+                if (Users.Remove(user)) {
+                    CurPlayerCount--;
+                }
+            }
         }
 
+        public class User : BaseRecyclable {
+            public long UserId;
+            public int GameType;
+            public string Name;
+            public string Account;
+            public string LoginHash; //用于校验玩家
+            public IPeer Peer;
+            public Room Room;
 
-        #region LifeCycle
+            public void Init(long userID, int gameType, string name, string account, string loginHash){
+                this.UserId = userID;
+                this.GameType = gameType;
+                this.Name = name;
+                this.Account = account;
+                this.LoginHash = loginHash;
+            }
 
-        public override void DoStart( ){
+            public override void OnRecycle(){
+                Room = null;
+                Peer = null;
+            }
+        }
+
+        //room
+        private Dictionary<int, List<Room>> _gameType2Rooms = new Dictionary<int, List<Room>>();
+
+        private Dictionary<int, Room> _roomId2Room = new Dictionary<int, Room>();
+
+        //player  
+        private Dictionary<long, User> _uid2Player = new Dictionary<long, User>();
+
+        private int _RoomIdCounter;
+
+        public override void DoStart(){
             base.DoStart();
-            RegisterMsgHandlers();
-            //serverLobby = new NetServer(Define.ClientKey);
-            //serverLobby.DataReceived += OnDataReceived;
-            //serverLobby.ClientConnected += OnClientConnected;
-            //serverLobby.ClientDisconnected += OnCilentDisconnected;
-            //serverLobby.Run(tcpPort);
-            //this.RoomPort = udpPort;
-            //this.RoomIP = "127.0.0.1";
-            //serverRoom = new NetServer(Define.ClientKey);
-            //serverRoom.DataReceived += OnDataReceivedRoom;
-            //serverRoom.ClientConnected += OnClientConnectedRoom;
-            //serverRoom.ClientDisconnected += OnCilentDisconnectedRoom;
-            //serverRoom.Run(udpPort);
-            //Debug.Log($"Listen tcpPort {tcpPort} udpPort {udpPort}");
+            InitNetInfo();
         }
 
-        public void OnDataReceivedRoom(NetPeer peer, byte[] data){
-            int netID = peer.Id;
-            try {
-                var reader = new Deserializer(Compressor.Decompress(data));
-                var playerID = reader.GetInt64();
-                var player = GetPlayer(playerID);
-                if (player.gameSock == null) {
-                    player.gameSock = peer;
-                    netId2PlayerRoom.Add(peer.Id, player);
-                }
+        #region Status
 
-                var room = player.room;
-                if (room == null) {
-                    Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
-                    return;
-                }
+        private Dictionary<int, List<RoomInfo>> _type2RroomInfos = new Dictionary<int, List<RoomInfo>>();
+        private Dictionary<int, RoomInfo[]> _cachedType2RoomInfos = new Dictionary<int, RoomInfo[]>();
 
-                room.OnRecvMsg(player, reader);
-            }
-            catch (Exception e) {
-                Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
-            }
-        }
-
-        public void OnClientConnectedRoom(object objPeer){
-            var peer = (NetPeer) objPeer;
-            Debug.Log($"OnClientConnectedRoom netID = {peer.Id}");
-        }
-
-        public void OnCilentDisconnectedRoom(object objPeer){
-            var peer = (NetPeer) objPeer;
-            Debug.Log($"OnCilentDisconnectedRoom netID = {peer.Id}");
-            var player = GetPlayerRoom(peer.Id);
-            if (player != null) {
-                RemovePlayer(player);
-            }
-        }
-
-
-        public override void DoUpdate(int deltaTime){
-            foreach (var room in _allRooms) {
-                try {
-                    room?.DoUpdate(deltaTime);
-                }
-                catch (Exception e) {
-                    Debug.LogError(e.ToString());
-                }
-            }
-        }
-
-        public override void DoDestroy(){ }
-
-        public override void PollEvents(){
-            serverLobby?.PollEvents();
-            serverRoom?.PollEvents();
-        }
-
-        #endregion
-
-        #region rooms
-
-        public List<IRoom> GetRooms(int roomType){
-            return DictExtensions.GetRefVal(gameId2Rooms, roomType);
-        }
-
-        public IRoom GetRoom(int roomId){
-            return DictExtensions.GetRefVal(roomId2Room, roomId);
-        }
-
-        public IRoom GetRoomByUserID(int id){
-            var player = GetPlayerLobby(id);
-            if (player != null) {
-                return player.room;
-            }
-
-            return null;
-        }
-
-        public void RemoveRoom(IRoom room){
-            var ids = room.GetAllPlayerIDs();
-            if (ids != null) {
-                foreach (var playerId in ids) {
-                    if (playerId2Room.TryGetValue(playerId, out var tRoom)) {
-                        if (tRoom.RoomId == room.RoomId) {
-                            playerId2Room.Remove(playerId);
-                        }
-                    }
-                }
-            }
-
-            roomId2Room.Remove(room.RoomId);
-            _allRooms.Remove(room);
-            gameId2Rooms[room.TypeId].Remove(room);
-            if (gameId2Rooms[room.TypeId].Count == 0) {
-                gameId2Rooms.Remove(room.TypeId);
-            }
-
-            room.DoDestroy();
-        }
-
-        /// Create From Dll by reflect 
-        private IRoom CreateRoom(int type){
-            //TODO Pool
-            if (_roomFactoryFuncs.TryGetValue(type, out FuncCreateRoom _func)) {
-                return _func?.Invoke();
-            }
-
-            var path = RoomType2DllPath(type);
-            if (path == null) {
-                return null;
-            }
-
-            var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
-            var assembly = Assembly.LoadFrom(dllPath);
-            Debug.Log("Load dll " + dllPath);
-            if (assembly == null) {
-                Debug.LogError("Load dll failed  " + dllPath);
-                _roomFactoryFuncs[type] = null;
-                return null;
-            }
-
-            var types = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IRoom))).ToArray();
-            if (types.Length != 1) {
-                Debug.LogError("dll do not have type of IRoom :" + dllPath);
-                _roomFactoryFuncs[type] = null;
-                return null;
-            }
-
-            FuncCreateRoom factory = () => { return (IRoom) System.Activator.CreateInstance(types[0], true); };
-            _roomFactoryFuncs[type] = factory;
-            return factory();
-        }
-
-
-        public IRoom CreateRoom(int type, Player master, string roomName, byte size){
-            if (RoomAutoIncId == int.MaxValue - 1) {
-                RoomAutoIncId = 0;
-            }
-
-            var id = ++RoomAutoIncId;
-
-            IRoom room = CreateRoom(type);
-            if (room == null) {
-                Debug.LogError($"Can not load game DLL type = {type} roomName = {roomName}");
-                return null;
-            }
-
-            Debug.Log($"CreateRoom type = {type} name = {roomName}");
-            roomId2Room.Add(id, room);
-            _allRooms.Add(room);
-            if (gameId2Rooms.TryGetValue(type, out var roomLst)) {
-                roomLst.Add(room);
+        private RoomInfo[] GetRoomInfos(int gameType){
+            if (_cachedType2RoomInfos.TryGetValue(gameType, out var infos)) {
+                return infos;
             }
             else {
-                var lst = new List<IRoom>();
-                lst.Add(room);
-                gameId2Rooms.Add(type, lst);
+                var roomInfos = _type2RroomInfos.GetRefVal(gameType);
+                if (roomInfos == null || roomInfos.Count == 0) {
+                    return null;
+                }
+                else {
+                    var retInfos = roomInfos.ToArray();
+                    _cachedType2RoomInfos.Add(gameType, retInfos);
+                    return retInfos;
+                }
+            }
+        }
+
+        private List<Room> GetRooms(int gameType){
+            return _gameType2Rooms.GetRefVal(gameType);
+        }
+
+        private Room GetRoom(int roomId){
+            return _roomId2Room.GetRefVal(roomId);
+        }
+
+        private void OnPlayerLogin(long userID, int gameType, string name, string account, string loginHash){
+            if (_uid2Player.TryGetValue(userID, out var oldPlayer)) {
+                oldPlayer.LoginHash = loginHash;
+                oldPlayer.GameType = gameType;
+            }
+            else {
+                var player = Pool.Get<User>();
+                player.Init(userID, gameType, name, account, loginHash);
+                _uid2Player.Add(userID, player);
+            }
+        }
+
+        private void RemovePlayer(User user){
+            user.Room?.RemoveUser(user);
+            user.Room = null;
+            _uid2Player.Remove(user.UserId);
+        }
+
+        private Room AddRoom(User owner, string name, int mapId, byte size){
+            var room = Pool.Get<Room>();
+            var gameType = owner.GameType;
+            owner.Room = room;
+            room.Init(gameType, _RoomIdCounter++, name, mapId, size, owner);
+            _roomId2Room.Add(room.RoomId, room);
+            if (_gameType2Rooms.TryGetValue(gameType, out var prooms)) {
+                prooms.Add(room);
+            }
+            else {
+                var rooms = new List<Room>();
+                rooms.Add(room);
+                _gameType2Rooms.Add(gameType, rooms);
             }
 
-            room.DoStart(type, id, this, size, roomName);
-            room.OnPlayerEnter(master);
-            SendCreateRoomResult(master);
+            if (_type2RroomInfos.TryGetValue(gameType, out var pRoomInfos)) {
+                pRoomInfos.Add(room.Info);
+            }
+            else {
+                var roomInfos = new List<RoomInfo>();
+                roomInfos.Add(room.Info);
+                _type2RroomInfos.Add(gameType, roomInfos);
+            }
+
+            _cachedType2RoomInfos.Remove(gameType);
             return room;
         }
 
-
-        private void SendCreateRoomResult(Player player){
-            var writer = new Serializer();
-            writer.PutByte((byte) EMsgSC.L2C_CreateRoom);
-            new Msg_CreateRoomResult() {roomId = player.RoomId}.Serialize(writer);
-            var bytes = Compressor.Compress(writer);
-            player.SendLobby(bytes);
-        }
-
-        public bool JoinRoom(Player player, int roomId){
-            var room = GetRoom(roomId);
-            if (room == null) {
-                Debug.Log($"player{player.PlayerId} try to enter a room which not exist {roomId} ");
-                return false;
+        private void RemoveRoom(Room room){
+            Debug.Assert(room.CurPlayerCount == 0);
+            _roomId2Room.Remove(room.RoomId);
+            if (_gameType2Rooms.TryGetValue(room.GameType, out var lst)) {
+                lst.Remove(room);
+                if (lst.Count == 0) {
+                    _gameType2Rooms.Remove(room.GameType);
+                }
             }
 
-            if (player.status != EPlayerStatus.Idle) {
-                Debug.Log($"player status {player.status} can not sit down");
-                return false;
+            if (_type2RroomInfos.TryGetValue(room.GameType, out var pInfolst)) {
+                pInfolst.Remove(room.Info);
+                if (lst.Count == 0) {
+                    _gameType2Rooms.Remove(room.GameType);
+                }
             }
 
-            if (player.room != null) {
-                Debug.Log($"player  {player.PlayerId} already in room, should leave the room first");
-                return false;
-            }
-            playerId2Room[player.PlayerId] = room;
-            room.OnPlayerEnter(player);
-            return true;
-        }
+            _cachedType2RoomInfos.Remove(room.GameType);
 
-        public bool LeaveRoom(Player player){
-            return true;
+            Pool.Return(room);
         }
 
         #endregion
 
-        #region player
 
-        public void TickOut(Player player, int reason){
-            Debug.LogError($"TickPlayer reason:{reason} {player.ToString()}");
-            player.lobbySock.Disconnect();
+        #region Server Net Info
+
+        //Server DS
+        private NetServer<EMsgLS, IServerProxy> _netServerLS;
+        private NetServer<EMsgSC, IServerProxy> _netServerSC;
+
+        void InitNetInfo(){
+            InitServerLS();
+            InitServerSC();
         }
 
-        public Player GetPlayer(long playerId){
-            return DictExtensions.GetRefVal(playerID2Player, playerId);
+        private void InitServerLS(){
+            InitNetServer(ref _netServerLS, _serverConfig.serverPort);
         }
 
-        public Player GetPlayerLobby(int netId){
-            return DictExtensions.GetRefVal(netId2Player, netId);
-        }
-
-        public Player GetPlayerRoom(int netId){
-            return DictExtensions.GetRefVal(netId2PlayerRoom, netId);
-        }
-
-
-        public void RemovePlayer(Player player){
-            if (player.lobbySock == null) return;
-            playerID2Player.Remove(player.PlayerId);
-            netId2Player.Remove(player.lobbySock.Id);
-            if (player.gameSock != null) netId2PlayerRoom.Remove(player.gameSock.Id);
-            player.gameSock = null;
-            player.lobbySock = null;
-            player.room?.OnDisconnect(player);
-            player.room = null;
-            player.status = EPlayerStatus.Idle;
-        }
-
-        public Player AddPlayer(NetPeer peer){
-            if (PlayerAutoIncId >= long.MaxValue - 1) {
-                PlayerAutoIncId = 1;
-            }
-
-            var playerID = PlayerAutoIncId++;
-            return CreatePlayer(playerID, peer);
-        }
-
-        public Player CreatePlayer(long playerID, NetPeer peer){
-            var netID = peer.Id;
-            var player = new Player();
-            player.PlayerId = playerID;
-            player.lobbySock = peer;
-            netId2Player[netID] = player;
-            playerID2Player[playerID] = player;
-            return player;
+        private void InitServerSC(){
+            InitNetServer(ref _netServerSC, _serverConfig.tcpPort);
         }
 
         #endregion
 
-        #region Conn status
 
-        //Net infos
-        public void OnClientConnected(object objPeer){
-            var peer = (NetPeer) objPeer;
-            Debug.Log($"OnClientConnected netID = {peer.Id}");
+        #region msgs
+
+        public Dictionary<int, IPeer> _peerId2Servers = new Dictionary<int, IPeer>();
+        public List<IPeer> _allGameServers = new List<IPeer>();
+
+        protected void I2L_UserLogin(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_I2L_UserLogin>();
+            Debug.Log("I2L_UserLogin" + msg);
+            OnPlayerLogin(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
         }
 
-        public void OnCilentDisconnected(object objPeer){
-            var peer = (NetPeer) objPeer;
-            Debug.Log($"OnCilentDisconnected netID = {peer.Id}");
-            var player = GetPlayerLobby(peer.Id);
-            if (player != null) {
-                RemovePlayer(player);
+        protected void G2L_RegisterServer(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_RegisterServer>();
+            Debug.Log("I2L_UserLogin" + msg);
+            _peerId2Servers[reader.Peer.Id] = reader.Peer;
+        }
+
+        protected void C2L_UserLogin(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_UserLogin>();
+            Debug.Log("C2L_UserLogin" + msg);
+            var uid = msg.userId;
+            if (_uid2Player.TryGetValue(uid, out var info)) {
+                if (info.LoginHash == msg.LoginHash) {
+                    info.Peer = reader.Peer;
+                    reader.Peer.AddExtension(info);
+                    var roomInfos = GetRoomInfos(info.GameType);
+                    reader.Respond(EMsgSC.L2C_RoomList, new Msg_L2C_RoomList() {
+                        GameType = info.GameType,
+                        Rooms = roomInfos
+                    });
+                }
+                else {
+                    reader.Respond((int) ELoginResult.NotLogin, EResponseStatus.Failed);
+                }
+            }
+            else {
+                reader.Respond((int) ELoginResult.NotLogin, EResponseStatus.Failed);
             }
         }
 
-        #endregion
-
-        #region Msg Handler
-
-        public void OnDataReceived(NetPeer peer, byte[] data){
-            int netID = peer.Id;
-            try {
-                var reader = new Deserializer(Compressor.Decompress(data));
-                var msgType = reader.GetByte();
-                if (msgType >= MAX_HANDLER_IDX) {
-                    Debug.LogError("msgType out of range " + msgType);
+        protected void C2L_JoinRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_JoinRoom>();
+            Debug.Log("C2L_JoinRoom" + msg);
+            var roomId = msg.RoomId;
+            if (_roomId2Room.TryGetValue(roomId, out var room)) {
+                if (room.IsFull) {
+                    reader.Respond((int) ERoomOperatorResult.Full, EResponseStatus.Failed);
                     return;
                 }
-
-                if (msgType == (byte) EMsgSC.C2L_ReqLogin) {
-                    Msg_ReqLogin initMsg = null;
-                    try {
-                        initMsg = reader.Parse<Msg_ReqLogin>();
-                    }
-#pragma warning disable 168
-                    catch (Exception _e) {
-#pragma warning restore 168
-                        return;
-                    }
-
-                    var ep = peer.EndPoint;
-                    DealLogin(initMsg, peer, reader);
-                    return;
-                }
-
-                //Debug.Log($"OnDataReceived netID = {netID}  type:{(EMsgCL)msgType}");
-                {
-                    if (!CheckMsg(reader, netID, out var player)) return;
-                    var _func = allMsgDealFuncs[msgType];
-                    if (_func != null) {
-                        _func(player, reader);
+                else {
+                    var user = reader.Peer.GetExtension<User>();
+                    if (user.Room != room) {
+                        user.Room = room;
+                        room.Users.Add(user);
                     }
                     else {
-                        Debug.LogError("ErrorMsg type :no msgHnadler" + msgType);
+                        reader.Respond((int) ERoomOperatorResult.AlreadyExist, EResponseStatus.Failed);
                     }
                 }
             }
-            catch (Exception e) {
-                Debug.LogError($"netID{netID} parse msg Error:{e.ToString()}");
-            }
-        }
-
-
-        private void DealLogin(Msg_ReqLogin initMsg, NetPeer peer, Deserializer reader){
-            var netId = peer.Id;
-            var account = initMsg.account;
-            Player player = null;
-            if (account2PlayerId.TryGetValue(account, out long id)) {
-                player = GetPlayer(id);
-                if (player == null) {
-                    player = CreatePlayer(id, peer);
-                }
-            }
             else {
-                player = AddPlayer(peer);
-                account2PlayerId.Add(account, player.PlayerId);
-            }
-
-            IRoom room = null;
-            if (playerId2Room.TryGetValue(player.PlayerId, out IRoom tRoom)) {
-                room = tRoom;
-                player.room = room;
-                room.OnReconnect(player);
-            }
-            
-            var writer = new Serializer();
-            writer.PutByte((byte) EMsgSC.L2C_RepLogin);
-            var msg = new Msg_RepLogin() {playerId = player.PlayerId};
-            if (room != null) {
-                msg.roomId = room.RoomId;
-                msg.port = RoomPort;
-                msg.ip = RoomIP;
-                msg.childMsg = room.GetReconnectMsg(player);
-            }
-            else {
-                msg.roomId = -1;
-                msg.ip = "";
-            }
-
-            Debug.Log($"Deal Init msg roomId {msg.roomId} isReconnect {room != null}");
-            msg.Serialize(writer);
-            var bytes = Compressor.Compress(writer);
-            player.SendLobby(bytes);
-        }
-
-
-        private void RegisterMsgHandlers(){
-            //RegisterNetMsgHandler(EMsgSC.C2L_JoinRoom, JoinRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_CreateRoom, CreateRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_LeaveRoom, LeaveRoom);
-            //RegisterNetMsgHandler(EMsgSC.C2L_RoomMsg, RoomMsg);
-        }
-
-        private void RegisterNetMsgHandler(EMsgSC type, DealNetMsg func){
-            allMsgDealFuncs[(int) type] = func;
-        }
-
-        private bool CheckMsg(Deserializer reader, int netID, out Player player){
-            player = GetPlayerLobby(netID);
-            if (player == null) {
-                Debug.LogError($"ErrorMsg: have no player {netID}");
-            }
-
-            return player != null;
-        }
-
-        private void CreateRoom(Player player, Deserializer reader){
-            var msg = reader.Parse<Msg_CreateRoom>();
-            if (_allRooms.Count > 0) {
-                JoinRoom(player, _allRooms[0].RoomId);
-                SendCreateRoomResult(player);
-            }
-            else {
-                CreateRoom(msg.type, player, msg.name, msg.size);
+                reader.Respond((int) ERoomOperatorResult.NotExist, EResponseStatus.Failed);
             }
         }
 
-        private void LeaveRoom(Player player, Deserializer reader){
-            var room = player.room;
-            if (room == null) {
-                Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
-            }
-
-            room.OnPlayerLeave(player);
-        }
-
-        private void JoinRoom(Player player, Deserializer reader){
-            var msg = reader.Parse<Msg_JoinRoom>();
-            JoinRoom(player, msg.roomId);
-        }
-
-        private void RoomMsg(Player player, Deserializer reader){
-            var room = player.room;
-            if (room == null) {
-                Debug.LogError($"MsgError:Player {player.PlayerId} not in room");
+        protected void C2L_LeaveRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_LeaveRoom>();
+            var user = reader.Peer.GetExtension<User>();
+            if (user?.Room == null) {
                 return;
             }
 
-            room.OnRecvMsg(player, reader);
+            var room = user.Room;
+            room.RemoveUser(user);
+            if (room.IsEmpty) {
+                RemoveRoom(user.Room);
+                reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
+                return;
+            }
+
+            if (room.Owner == user) {
+                room.Owner = room.Users[0];
+            }
+
+            user.Room = null;
+            reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
+        }
+
+        protected void C2L_CreateRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_CreateRoom>();
+            var user = reader.Peer.GetExtension<User>();
+            if (user?.Room != null) {
+                reader.Respond(1, EResponseStatus.Failed);
+                return;
+            }
+
+            var room = AddRoom(user, msg.Name, msg.MapId, msg.MaxPlayerCount);
+            reader.Respond(EMsgSC.L2C_CreateRoomResult, new Msg_L2C_CreateRoom() {Info = room.Info});
+        }
+
+        protected void C2L_StartGame(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_StartGame>();
+            Debug.Log("C2L_StartGame" + msg);
+            var user = reader.Peer.GetExtension<User>();
+            var room = user.Room;
+            if (room?.Owner != user
+                || room.IsPlaying
+                || _allGameServers.Count <= 0
+            ) {
+                reader.Respond(1, EResponseStatus.Failed);
+                return;
+            }
+
+            var gameHash = "game" + LRandom.Next();
+            var playerInfos = new GamePlayerInfo[room.Users.Count];
+            for (int i = 0; i < room.Users.Count; i++) {
+                var puser = room.Users[i];
+                playerInfos[i] = new GamePlayerInfo() {
+                    UserId = puser.UserId,
+                    Account = puser.Account,
+                    LoginHash = puser.LoginHash,
+                };
+            }
+
+            var server = _allGameServers[LRandom.Next(_allGameServers.Count)];
+            server.SendMessage((short) EMsgLS.L2G_StartGame, new Msg_L2G_StartGame() {
+                    GameType = user.GameType,
+                    Players = playerInfos,
+                    GameHash = gameHash
+                }, (status, response) => {
+                    if (status != EResponseStatus.Failed) {
+                        var retMsg = new Msg_L2C_StartGame() {
+                            GameServerEnd = new IPEndInfo() {
+                                Ip = server.EndPoint.Address.ToString(),
+                                Port = (ushort) server.EndPoint.Port
+                            },
+                            GameHash = gameHash,
+                            RoomId = response.AsInt()
+                        };
+                        foreach (var roomUser in room.Users) {
+                            roomUser.Peer?.SendMessage((short) EMsgSC.C2L_StartGame,retMsg);
+                        }
+                    }
+                }
+            );
         }
 
         #endregion

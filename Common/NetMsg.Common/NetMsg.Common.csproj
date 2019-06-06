@@ -41,6 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Server\Networking\Networking.csproj">
+      <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
+      <Name>Networking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>

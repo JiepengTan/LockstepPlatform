@@ -13,6 +13,8 @@
 */
 {
   "isDebugMode": true,//all server run in the same process
+  "YMIp": "127.0.0.1",
+  "YMPort": 10103,
   "servers": [
     {
       "isMaster": true,

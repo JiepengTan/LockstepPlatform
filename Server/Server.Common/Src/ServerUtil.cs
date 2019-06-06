@@ -9,7 +9,41 @@ using Lockstep.Util;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
+    public static class NetworkUtil {
+        public static bool InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port,object target)
+            where TParam : class, INetProxy where TMsgType : struct{
+            if (refServer != null) return true;
+            var maxIdx = (short) (object) (TMsgType) Enum.Parse(typeof(TMsgType), "EnumCount");
+            var name = typeof(TMsgType).Name;
+            var tag = name.Replace("EMsg", "");
+            tag = tag.Substring(1, 1) + "2" + tag.Substring(0, 1);
+            refServer = new NetServer<TMsgType, TParam>(Define.MSKey, maxIdx, tag, target);
+            refServer.Listen(port);
+            return false;
+        }
+
+
+        public static bool InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port, Action onConnCallback,object target)
+            where TMsgType : struct{
+            if (refClient != null) return true;
+            var maxIdx = (short) (object) (TMsgType) Enum.Parse(typeof(TMsgType), "EnumCount");
+            var name = typeof(TMsgType).Name;
+            var tag = name.Replace("EMsg", "");
+            tag = tag.Substring(0, 1) + "2" + tag.Substring(1, 1);
+            refClient = new NetClient<TMsgType>(maxIdx, tag, target);
+            if (onConnCallback != null) {
+                refClient.OnConnected += onConnCallback;
+            }
+
+            refClient.Connect(ip, port, Define.MSKey);
+            return false;
+        }
+
+    }
+
     public static class ServerUtil {
+
+        
         public const string defaultConfigPath = "../Data/Config.json";
 
         public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
