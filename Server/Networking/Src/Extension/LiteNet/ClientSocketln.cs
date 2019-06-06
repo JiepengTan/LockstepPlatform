@@ -16,7 +16,6 @@ namespace Lockstep.Networking {
         protected EventBasedNetListener _listener;
         public static bool RethrowExceptionsInEditor = true;
 
-        private LnSocket _socket;
         private PeerLn _peer;
         private EConnectionStatus _status;
         private readonly Dictionary<short, IPacketHandler> _handlers;
@@ -229,9 +228,6 @@ namespace Lockstep.Networking {
             _ip = ip;
             _port = port;
 
-            if (_socket != null && _socket.IsConnected) {
-                _socket.Close();
-            }
 
             _isConnected = false;
             Status = EConnectionStatus.Connecting;
@@ -269,9 +265,6 @@ namespace Lockstep.Networking {
         }
 
         public void Disconnect(){
-            if (_socket != null) {
-                _socket.Close();
-            }
 
             if (_peer != null) {
                 _peer.Dispose();

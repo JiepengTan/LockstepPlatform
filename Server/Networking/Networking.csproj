@@ -49,7 +49,6 @@
     <Compile Include="Src\BaseClientSocket.cs" />
     <Compile Include="Src\BasePeer.cs" />
     <Compile Include="Src\Extension\LiteNet\ClientSocketln.cs" />
-    <Compile Include="Src\Extension\LiteNet\lnSocket.cs" />
     <Compile Include="Src\Extension\LiteNet\Peerln.cs" />
     <Compile Include="Src\Extension\LiteNet\ServerSocketln.cs" />
     <Compile Include="Src\Extension\SocketFactory.cs" />
