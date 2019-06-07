@@ -1,6 +1,26 @@
 ﻿
 namespace NetMsg.Common {
 
+    public enum EServerDetailPortType {
+        ServerPort,
+        TcpPort,
+        UdpPort,
+    }
+
+    public enum ELoginResult {
+        Succ,
+        PasswordMissMatch,
+        ErrorHash,
+        NotLogin,
+    }
+
+    public enum ERoomOperatorResult {
+        Succ,
+        Full,
+        NotExist,
+        AlreadyExist,
+    }
+    
     //msg between client RoomServer
     public enum EMsgSC : short {
         S2C_TickPlayer,

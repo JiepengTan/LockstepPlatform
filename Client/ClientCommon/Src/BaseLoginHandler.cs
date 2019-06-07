@@ -1,4 +1,3 @@
-using Lockstep.Server.Common;
 using NetMsg.Common;
 
 namespace Lockstep.Client {

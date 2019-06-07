@@ -1,17 +1,5 @@
-Build/
-#Game Record data
-Record/
-BackEntitas/
-#ignore jenny
-Jenny/
-# User-specific files  
-.idea/
-.vs/
-bin/
-
-#VS ignore
 # Build and Object Folders  
- 
+bin/  
 obj/  
 # Nuget packages directory  
 packages/  

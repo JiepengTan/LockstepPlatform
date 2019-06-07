@@ -8,6 +8,7 @@ using Lockstep.Networking;
 using Lockstep.Serialization;
 using NetMsg.Server;
 using Lockstep.Server.Common;
+using NetMsg.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {

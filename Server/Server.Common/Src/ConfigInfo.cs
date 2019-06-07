@@ -1,5 +1,6 @@
 using LitJson;
 using Lockstep.Server.Common;
+using NetMsg.Common;
 
 namespace Lockstep.Server.Common {
     public class ServerConfigInfo {

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>../Libs/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,29 +26,19 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>../bin/</OutputPath>
+    <OutputPath>../Libs/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
-      <HintPath>..\..\Server\Server.DB\Libs\LiteDB.dll</HintPath>
+      <HintPath>..\Libs\LiteDB.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Server\Networking\Networking.csproj">
-      <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
-      <Name>Networking</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Serializaition\Serializaition.csproj">
-      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
-      <Name>Serializaition</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\DictExtensions.cs" />
@@ -62,6 +52,12 @@
     <Compile Include="Src\Udp\MutilDiscFrames.cs" />
     <Compile Include="Src\Udp\MutilFrames.cs" />
     <Compile Include="Src\Udp\ServerFrame.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

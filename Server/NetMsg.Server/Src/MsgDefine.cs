@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using Lockstep.Serialization;
-using NetMsg.Common;
 
 
 namespace NetMsg.Server {
