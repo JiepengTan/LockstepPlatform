@@ -26,9 +26,7 @@ namespace Lockstep.Game {
         void RegisterTimeMachine(ITimeMachine roll);
     }
 
-    public class MainScript : MonoBehaviour {
-        public Main main;
-    }
+
 
     public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, ITimeMachineService,
         IEventRegisterService {
