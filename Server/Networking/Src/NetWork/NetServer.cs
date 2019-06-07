@@ -5,11 +5,9 @@ using LiteNetLib;
 using Lockstep.Logging;
 using Lockstep.Networking;
 using Lockstep.Serialization;
-using NetMsg.Server;
 
-namespace Lockstep.Server.Common {
-    public class NetServer<TMsgType, TParam> : IPollEvents
-        where TParam : class, INetProxy
+namespace Lockstep.Networking {
+    public class NetServer<TMsgType> : IPollEvents
         where TMsgType : struct {
         private readonly ServerSocketLn _server;
         private string _clientKey;
@@ -23,7 +21,7 @@ namespace Lockstep.Server.Common {
             this.maxMsgIdx = maxMsgIdx;
             _allDealFuncs = new IncommingMessageHandler[maxMsgIdx];
             foreach (var msgFlag in msgFlags) {
-                ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
+                NetworkUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
                     RegisterMsgHandler,
                     msgHandlerObj);
             }

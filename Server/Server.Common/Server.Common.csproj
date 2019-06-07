@@ -51,8 +51,6 @@
     <Compile Include="Src\Interfaces\IRoom.cs" />
     <Compile Include="Src\Interfaces\INetServer.cs" />
     <Compile Include="Src\Interfaces\INetProxy.cs" />
-    <Compile Include="Src\NetWork\NetClient.cs" />
-    <Compile Include="Src\NetWork\NetServer.cs" />
     <Compile Include="Src\Player.cs" />
     <Compile Include="Src\Server.cs" />
     <Compile Include="Src\ServerUtil.cs" />

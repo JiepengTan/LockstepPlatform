@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using Lockstep.FakeClient;
+using LitJson;
+using Lockstep.Client;
 using Lockstep.Networking;
 using Lockstep.Server.Common;
+using NetMsg.Common;
 
 namespace Test {
     internal class Program {
@@ -164,12 +166,19 @@ namespace Test {
             }
         }
 
+
+        static LoginManager GetDebugClient(){
+            var loginMgr = new LoginManager();
+            loginMgr.Init(new DebugLoginHandler(), "127.0.0.1", 7250);
+            return loginMgr;
+        }
+
         public static void Main(string[] args){
             //TestNetwork();
             ServerUtil.RunServerInThread(typeof(Lockstep.Server.Servers.Program).Assembly, EServerType.DaemonServer);
             Thread.Sleep(TimeSpan.FromSeconds(3));
 
-            ClientUtil.RunClient();
+            ClientUtil.RunClient(GetDebugClient());
             while (true) {
                 Thread.Sleep(30);
             }

@@ -40,6 +40,10 @@ namespace Lockstep.Util {
     }
     public class LRandom {
         private static Random _i = new Random(3274);
+
+        public static void SetSeed(uint seed){
+            _i = new Random(seed);
+        }
         public static uint Next(){return _i.Next();}
         public static uint Next(uint max){return _i.Next(max);}
         public static int Next(int max){return _i.Next(max);}

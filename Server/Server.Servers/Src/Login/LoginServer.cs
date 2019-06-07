@@ -8,7 +8,7 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Login {
     public class LoginServer : Common.Server {
-        private NetServer<EMsgSC, IServerProxy> _netServerSC;
+        private NetServer<EMsgSC> _netServerSC;
         private NetClient<EMsgDS> _netClientDS;
         protected NetClient<EMsgLS> _netClientLI; //其他类型的Master 用于提供服务
 

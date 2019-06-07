@@ -272,8 +272,8 @@ namespace Lockstep.Server.Lobby {
         #region Server Net Info
 
         //Server DS
-        private NetServer<EMsgLS, IServerProxy> _netServerLS;
-        private NetServer<EMsgSC, IServerProxy> _netServerSC;
+        private NetServer<EMsgLS> _netServerLS;
+        private NetServer<EMsgSC> _netServerSC;
 
         void InitNetInfo(){
             InitServerLS();

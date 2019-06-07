@@ -320,7 +320,7 @@ namespace NetMsg.Common{
     }
 
 
-    public partial class Msg_L2C_RoomChangedInfo{
+    public partial class Msg_L2C_RoomInfoUpdate{
         public override void Serialize(Serializer writer){
 			writer.PutArray(AddInfo);
 			writer.PutArray(ChangedInfo);

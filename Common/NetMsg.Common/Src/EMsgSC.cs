@@ -13,7 +13,7 @@ namespace NetMsg.Common {
         I2L_UserLogin,
         C2L_UserLogin,
         L2C_RoomList,
-        L2C_RoomChangedInfo,
+        L2C_RoomInfoUpdate,
 
         C2L_JoinRoom,
         C2L_LeaveRoom,

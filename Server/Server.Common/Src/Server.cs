@@ -11,11 +11,10 @@ using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
-    public class MasterMessageHandler { }
 
     public class Server : BaseServer {
         //Server MS
-        protected NetServer<EMsgMS, IServerProxy> _netServerMS;
+        protected NetServer<EMsgMS> _netServerMS;
         protected NetClient<EMsgMS> _netClientMS; //同类型的Master
         protected NetClient<EMsgYM> _netClientYM;
         protected NetClient<EMsgXS> _netClientXS;
@@ -56,9 +55,7 @@ namespace Lockstep.Server.Common {
         #region ServerMS_ClientMS_ClientXS
 
         //Client MS
-        protected void InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port)
-            where TParam : class, INetProxy
-            where TMsgType : struct{
+        protected void InitNetServer<TMsgType>(ref NetServer<TMsgType> refServer, int port)where TMsgType : struct{
             if (NetworkUtil.InitNetServer(ref refServer, port, this)) return;
             _allServerNet.Add(refServer);
             _cachedAllServerNet = null;

@@ -1,12 +1,10 @@
 #define DEBUG_FRAME_DELAY
 using System;
-using LiteNetLib;
 using Lockstep.Networking;
 using Lockstep.Serialization;
-using Debug = Lockstep.Logging.Debug;
 
 
-namespace Lockstep.Server.Common {
+namespace Lockstep.Networking {
     public interface IPollEvents {
         void PollEvents();
     }
@@ -35,7 +33,7 @@ namespace Lockstep.Server.Common {
         public NetClient(int maxMsgHandlerIdx, string[] msgFlags, object msgHandlerObj){
             _allDealFuncs = new IncommingMessageHandler[maxMsgHandlerIdx];
             foreach (var msgFlag in msgFlags) {
-                ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
+                NetworkUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
                     RegisterMsgHandler,msgHandlerObj);
             }
         }

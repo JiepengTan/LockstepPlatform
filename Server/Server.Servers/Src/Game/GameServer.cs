@@ -9,7 +9,7 @@ using NetMsg.Common;
 
 namespace Lockstep.Server.Game {
     public class GameServer : Common.Server {
-        private NetServer<EMsgSC, IServerProxy> _netServerSC;
+        private NetServer<EMsgSC> _netServerSC;
         private NetClient<EMsgDS> _netClientDS;
         protected NetClient<EMsgLS> _netClientLG; //其他类型的Master 用于提供服务
 

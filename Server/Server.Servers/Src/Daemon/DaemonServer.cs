@@ -33,9 +33,9 @@ namespace Lockstep.Server.Daemon {
         #region Server YX
 
         //Server YX
-        private NetServer<EMsgYX, IDaemonProxy> _netServerYX;
-        private NetServer<EMsgXS, IServerProxy> _netServerXS;
-        private NetServer<EMsgYM, IServerProxy> _netServerYM;
+        private NetServer<EMsgYX> _netServerYX;
+        private NetServer<EMsgXS> _netServerXS;
+        private NetServer<EMsgYM> _netServerYM;
         protected NetClient<EMsgYX> _netClientYX;
         public Dictionary<EServerType, IPeer> _type2MasterPeer = new Dictionary<EServerType, IPeer>();
         public Dictionary<EServerType, ServerIpInfo> _type2MasterInfo = new Dictionary<EServerType, ServerIpInfo>();

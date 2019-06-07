@@ -5,11 +5,8 @@ using LiteDB;
 using Lockstep.Serialization;
 using NetMsg.Common;
 
-namespace Lockstep.Server.Database
-{   
-
-    public interface IAuthDatabase
-    {
+namespace Lockstep.Server.Database {
+    public interface IAuthDatabase {
         /// <summary>
         ///     Should create an empty object with account data.
         /// </summary>
@@ -20,7 +17,7 @@ namespace Lockstep.Server.Database
         void GetAccountByToken(string token, Action<IAccountData> callback);
         void GetAccountByEmail(string email, Action<IAccountData> callback);
 
-        void SavePasswordResetCode(IAccountData account, string code, Action doneCallback );
+        void SavePasswordResetCode(IAccountData account, string code, Action doneCallback);
         void GetPasswordResetData(string email, Action<IPasswordResetData> callback);
 
         void SaveEmailConfirmationCode(string email, string code, Action doneCallback);
@@ -30,8 +27,8 @@ namespace Lockstep.Server.Database
         void InsertNewAccount(IAccountData account, Action<long> doneCallback);
         void InsertToken(IAccountData account, string token, Action doneCallback);
     }
-    public class AuthDbLdb : IAuthDatabase
-    {
+
+    public class AuthDbLdb : IAuthDatabase {
         private readonly LiteCollection<UserIdInfo> _userIds;
         private readonly LiteCollection<AccountData> _accounts;
         private readonly LiteCollection<PasswordResetData> _resetCodes;
@@ -41,31 +38,31 @@ namespace Lockstep.Server.Database
 
         public class UserIdInfo {
             [BsonId] public string Name { get; set; }
-            public long Id{ get; set; }
+            public long Id { get; set; }
         }
 
-        public AuthDbLdb(LiteDatabase database)
-        {
+        public AuthDbLdb(LiteDatabase database){
             _db = database;
             _userIds = _db.GetCollection<UserIdInfo>("userId");
-            _userIds.EnsureIndex(a => a.Name, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true});
-            
+            _userIds.EnsureIndex(a => a.Name,
+                new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
+
             _accounts = _db.GetCollection<AccountData>("accounts");
-            _accounts.EnsureIndex(a => a.Username, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true});
-            _accounts.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
+            _accounts.EnsureIndex(a => a.Username,
+                new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
+            //_accounts.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
 
             _resetCodes = _db.GetCollection<PasswordResetData>("resets");
-            _resetCodes.EnsureIndex(a => a.Email, new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
+            //_resetCodes.EnsureIndex(a => a.Email, new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
 
             _emailConfirmations = _db.GetCollection<EmailConfirmationData>("emailConf");
-            _emailConfirmations.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
+            //_emailConfirmations.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
             userId = GetCurMaxUserID();
         }
 
         private long userId;
 
-        public IAccountData CreateAccountObject()
-        {
+        public IAccountData CreateAccountObject(){
             var account = new AccountData();
             return account;
         }
@@ -81,9 +78,9 @@ namespace Lockstep.Server.Database
             }
 
             return info.Id;
-        } 
-        public void SaveCurMaxUserID(long userId)
-        {
+        }
+
+        public void SaveCurMaxUserID(long userId){
             var info = new UserIdInfo() {
                 Name = "Unique",
                 Id = userId
@@ -91,35 +88,30 @@ namespace Lockstep.Server.Database
             _userIds.Update(info);
         }
 
-        public void GetAccount(string username, Action<IAccountData> callback)
-        {
+        public void GetAccount(string username, Action<IAccountData> callback){
             var account = _accounts.FindOne(a => a.Username == username);
 
             callback.Invoke(account);
         }
 
-        public void GetAccountByToken(string token, Action<IAccountData> callback)
-        {
+        public void GetAccountByToken(string token, Action<IAccountData> callback){
             var account = _accounts.FindOne(a => a.Token == token);
 
             callback.Invoke(account);
         }
 
-        public void GetAccountByEmail(string email, Action<IAccountData> callback)
-        {
+        public void GetAccountByEmail(string email, Action<IAccountData> callback){
             var emailLower = email.ToLower();
             var account = _accounts.FindOne(Query.EQ("Email", emailLower));
 
             callback.Invoke(account);
         }
 
-        public void SavePasswordResetCode(IAccountData account, string code, Action doneCallback )
-        {
+        public void SavePasswordResetCode(IAccountData account, string code, Action doneCallback){
             // Delete older codes
             _resetCodes.Delete(Query.EQ("Email", account.Email.ToLower()));
 
-            _resetCodes.Insert(new PasswordResetData()
-            {
+            _resetCodes.Insert(new PasswordResetData() {
                 Email = account.Email,
                 Code = code
             });
@@ -127,17 +119,14 @@ namespace Lockstep.Server.Database
             doneCallback.Invoke();
         }
 
-        public void GetPasswordResetData(string email, Action<IPasswordResetData> callback )
-        {
+        public void GetPasswordResetData(string email, Action<IPasswordResetData> callback){
             var code = _resetCodes.FindOne(Query.EQ("Email", email.ToLower()));
             callback.Invoke(code);
         }
 
-        public void SaveEmailConfirmationCode(string email, string code, Action doneCallback )
-        {
+        public void SaveEmailConfirmationCode(string email, string code, Action doneCallback){
             _emailConfirmations.Delete(Query.EQ("Email", email));
-            _emailConfirmations.Insert(new EmailConfirmationData()
-            {
+            _emailConfirmations.Insert(new EmailConfirmationData() {
                 Code = code,
                 Email = email
             });
@@ -145,15 +134,13 @@ namespace Lockstep.Server.Database
             doneCallback.Invoke();
         }
 
-        public void GetEmailConfirmationCode(string email, Action<string> callback)
-        {
+        public void GetEmailConfirmationCode(string email, Action<string> callback){
             var entry = _emailConfirmations.FindOne(Query.EQ("Email", email));
 
             callback.Invoke(entry != null ? entry.Code : null);
         }
 
-        public void UpdateAccount(IAccountData account, Action doneCallback)
-        {
+        public void UpdateAccount(IAccountData account, Action doneCallback){
             _accounts.Update(account as AccountData);
 
             doneCallback.Invoke();
@@ -166,22 +153,19 @@ namespace Lockstep.Server.Database
             doneCallback.Invoke(account.UserId);
         }
 
-        public void InsertToken(IAccountData account, string token, Action doneCallback)
-        {
+        public void InsertToken(IAccountData account, string token, Action doneCallback){
             account.Token = token;
             _accounts.Update(account as AccountData);
 
             doneCallback.Invoke();
         }
 
-        private class PasswordResetData : IPasswordResetData
-        {
+        private class PasswordResetData : IPasswordResetData {
             public string Email { get; set; }
             public string Code { get; set; }
         }
 
-        private class EmailConfirmationData
-        {
+        private class EmailConfirmationData {
             public string Email { get; set; }
             public string Code { get; set; }
         }

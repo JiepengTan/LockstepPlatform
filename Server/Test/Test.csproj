@@ -39,17 +39,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DebugLoginHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
     </ProjectReference>
-    <ProjectReference Include="..\FakeClient\FakeClient.csproj">
-      <Project>{4beac3a9-752c-4f4c-9bc4-0c9f6ea341b5}</Project>
-      <Name>FakeClient</Name>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <Project>{1901d1a3-83f8-405a-933b-62040ff982ab}</Project>
+      <Name>Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Networking\Networking.csproj">
       <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>

@@ -4,10 +4,10 @@ using System.Diagnostics;
 using System.Threading;
 using Lockstep.Util;
 
-namespace Lockstep.FakeClient {
+namespace Lockstep.Client {
  
     public class ClientUtil {
-        private static List<Client> clients = new List<Client>();
+        private static List<LoginManager> clients = new List<LoginManager>();
 
         private static void StartServices(){
             Time.DoStart();
@@ -19,8 +19,8 @@ namespace Lockstep.FakeClient {
             CoroutineHelper.DoUpdate();
         }
 
-        public static void RunClient(){
-            clients.Add(new Client());
+        public static void RunClient(LoginManager loginManager){
+            clients.Add(loginManager);
             Console.WriteLine(
                 "=============== LockstepPlatform FakeClient" + clients.Count + " Start!! ===============");
             if (clients.Count == 1) {

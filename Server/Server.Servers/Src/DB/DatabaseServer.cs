@@ -17,7 +17,7 @@ namespace Lockstep.Server.Database {
         private IProfilesDatabase _profilesDb;
 
         //Server DS
-        private NetServer<EMsgDS, IServerProxy> _netServerDS;
+        private NetServer<EMsgDS> _netServerDS;
 
         public override void DoAwake(ServerConfigInfo info){
             base.DoAwake(info);
@@ -27,6 +27,7 @@ namespace Lockstep.Server.Database {
 
         public override void DoStart(){
             base.DoStart();
+            LRandom.SetSeed((uint)DateTime.Now.Millisecond);
             InitServerDS();
         }
 

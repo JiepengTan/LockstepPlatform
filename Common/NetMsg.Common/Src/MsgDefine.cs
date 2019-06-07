@@ -95,7 +95,7 @@ namespace NetMsg.Common{
         public RoomInfo[] Rooms;
     }
 
-    public partial class Msg_L2C_RoomChangedInfo : BaseFormater {
+    public partial class Msg_L2C_RoomInfoUpdate : BaseFormater {
         public RoomInfo[] AddInfo;
         public int[] DeleteInfo;
         public RoomChangedInfo[] ChangedInfo;
