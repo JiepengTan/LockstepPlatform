@@ -1,7 +1,7 @@
 #define DEBUG_FRAME_DELAY
 using System;
 using System.Collections.Generic;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 

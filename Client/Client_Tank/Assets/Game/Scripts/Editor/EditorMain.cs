@@ -2,18 +2,18 @@ using System.IO;
 using Lockstep.Core;
 using Lockstep.Game;
 using Lockstep.Serialization;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 using UnityEditor;
 
 namespace Editor {
-    [CustomEditor(typeof(Main))]
+    [CustomEditor(typeof(MainScript))]
     public class EditorMain : UnityEditor.Editor {
         private Main owner;
 
         public override void OnInspectorGUI(){
             base.OnInspectorGUI();
-            owner = target as Main;
+            owner = (target as MainScript).main;
             ShowLoadRecord();
             ShowRecordInfo();
             ShowJumpTo();

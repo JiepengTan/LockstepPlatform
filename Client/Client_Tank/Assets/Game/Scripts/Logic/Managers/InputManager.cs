@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Lockstep.Math;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 
 namespace Lockstep.Game {

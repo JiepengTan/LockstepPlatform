@@ -7,7 +7,7 @@ using Lockstep.ECS;
 using Lockstep.Logging;
 using Lockstep.Math;
 using Lockstep.Serialization;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -61,9 +61,9 @@ namespace Lockstep.Game {
         }
 
         void OnEvent_OnRoomGameStart(object param){
-            var msg = param as Msg_StartRoomGame;
-            OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
-            EventHelper.Trigger(EEvent.OnSimulationInited, null);
+            //var msg = param as Msg_StartRoomGame;
+            //OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
+            //EventHelper.Trigger(EEvent.OnSimulationInited, null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){

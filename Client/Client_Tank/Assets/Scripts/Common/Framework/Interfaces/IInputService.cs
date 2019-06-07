@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lockstep.Math;
-using NetMsg.Game;
+using NetMsg.Common;
 
 namespace Lockstep.Game
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using NetMsg.Game;
+using NetMsg.Common;
 
 namespace Lockstep.Game {
     /// <summary>

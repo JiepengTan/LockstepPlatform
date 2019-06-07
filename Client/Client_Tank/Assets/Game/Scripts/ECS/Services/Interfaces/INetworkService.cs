@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Lockstep.Serialization;
-using NetMsg.Game;
+using NetMsg.Common;
 
 namespace Lockstep.Game {
     public interface INetworkService :IService {

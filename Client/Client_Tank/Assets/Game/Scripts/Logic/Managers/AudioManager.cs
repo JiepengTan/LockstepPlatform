@@ -13,7 +13,7 @@ namespace Lockstep.Game {
         public override void DoStart(){
             base.DoStart();
             _config =   Resources.Load<AudioConfig>(AudioConfigPath);
-            _source = GetComponent<AudioSource>();
+            _source = gameObject.GetComponent<AudioSource>();
             if ( _source== null) {
                 _source = gameObject.AddComponent<AudioSource>();
             }

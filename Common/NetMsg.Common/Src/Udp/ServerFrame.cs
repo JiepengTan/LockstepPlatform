@@ -5,15 +5,15 @@ namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
     public partial class ServerFrame : BaseFormater {
-        public byte[] InputDatas; //包含玩家的输入& 游戏输入
-        public int Tick;
+        public byte[] inputDatas; //包含玩家的输入& 游戏输入
+        public int tick;
         public Msg_PlayerInput[] _inputs;
 
         public Msg_PlayerInput[] Inputs {
             get { return _inputs; }
             set {
                 _inputs = value;
-                InputDatas = null;
+                inputDatas = null;
             }
         }
 
@@ -23,12 +23,12 @@ namespace NetMsg.Common {
             get { return _serverInputs; }
             set {
                 _serverInputs = value;
-                InputDatas = null;
+                inputDatas = null;
             }
         }
 
         public void BeforeSerialize(){
-            if (InputDatas != null) return;
+            if (inputDatas != null) return;
             var writer = new Serializer();
             var inputLen = (byte) (Inputs?.Length ?? 0);
             writer.PutByte(inputLen);
@@ -42,16 +42,16 @@ namespace NetMsg.Common {
             }
 
             writer.PutBytes_255(_serverInputs);
-            InputDatas = writer.CopyData();
+            inputDatas = writer.CopyData();
         }
 
         public void AfterDeserialize(){
-            var reader = new Deserializer(InputDatas);
+            var reader = new Deserializer(inputDatas);
             var inputLen = reader.GetByte();
             _inputs = new Msg_PlayerInput[inputLen];
             for (byte i = 0; i < inputLen; i++) {
                 var input = new Msg_PlayerInput();
-                input.Tick = Tick;
+                input.Tick = tick;
                 input.ActorId = i;
                 _inputs[i] = input;
                 var len = reader.GetByte();
@@ -73,20 +73,20 @@ namespace NetMsg.Common {
 
         public override void Serialize(Serializer writer){
             BeforeSerialize();
-            writer.PutInt32(Tick);
-            writer.PutBytes(InputDatas);
+            writer.PutInt32(tick);
+            writer.PutBytes(inputDatas);
         }
 
         public override void Deserialize(Deserializer reader){
-            Tick = reader.GetInt32();
-            InputDatas = reader.GetBytes();
+            tick = reader.GetInt32();
+            inputDatas = reader.GetBytes();
             AfterDeserialize();
         }
 
         public override string ToString(){
-            var count = (InputDatas == null) ? 0 : InputDatas.Length;
+            var count = (inputDatas == null) ? 0 : inputDatas.Length;
             return
-                $"t:{Tick} " +
+                $"t:{tick} " +
                 $"inputNum:{count}";
         }
 
@@ -97,15 +97,15 @@ namespace NetMsg.Common {
         }
 
         public override int GetHashCode(){
-            return Tick;
+            return tick;
         }
 
         public bool Equals(ServerFrame frame){
             if (frame == null) return false;
-            if (Tick != frame.Tick) return false;
+            if (tick != frame.tick) return false;
             BeforeSerialize();
             frame.BeforeSerialize();
-            return InputDatas.EqualsEx(frame.InputDatas);
+            return inputDatas.EqualsEx(frame.inputDatas);
         }
     }
 }

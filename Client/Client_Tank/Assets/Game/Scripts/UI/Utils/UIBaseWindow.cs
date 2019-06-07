@@ -1,4 +1,5 @@
-﻿using NetMsg.Lobby;
+﻿
+using NetMsg.Common;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -56,6 +57,6 @@ namespace Lockstep.Game {
             uiService.OpenWindow(windowInfo);
         }
 
-        protected void SendMessage(EMsgCL type, object body){ }
+        protected void SendMessage(EMsgSC type, object body){ }
     }
 }

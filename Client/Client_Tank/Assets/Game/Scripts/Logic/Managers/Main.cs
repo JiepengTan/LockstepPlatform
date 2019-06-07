@@ -1,16 +1,8 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using Lockstep.Core;
-using Lockstep.Logging;
-using Lockstep.Math;
 using Lockstep.Serialization;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Debug = UnityEngine.Debug;
 #if UNITY_EDITOR
 using UnityEditor;
 
@@ -24,7 +16,7 @@ namespace Lockstep.Game {
 
         public string RecordPath;
         public int MaxRunTick = int.MaxValue;
-        public Msg_StartRoomGame gameInfo;
+        public Msg_L2C_StartGame gameInfo;
         public Msg_RepMissFrame framesInfo;
 
         public float realtimeSinceStartup;
@@ -42,12 +34,12 @@ namespace Lockstep.Game {
             var msg = new Msg_RepMissFrame();
             msg.startTick = 0;
             msg.Deserialize(reader);
-            var msgStartGame = new Msg_StartRoomGame();
-            msgStartGame.RoomID = RoomId;
-            msgStartGame.Seed = Seed;
-            msgStartGame.AllActors = AllActors;
-            msgStartGame.SimulationSpeed = 60;
-            MaxRunTick = msg.frames.Length + 1;
+            var msgStartGame = new Msg_L2C_StartGame();
+            //msgStartGame.RoomID = RoomId;
+            //msgStartGame.Seed = Seed;
+            //msgStartGame.AllActors = AllActors;
+            //msgStartGame.SimulationSpeed = 60;
+            //MaxRunTick = msg.frames.Length + 1;
             IsVideoMode = true;
             framesInfo = msg;
             gameInfo = msgStartGame;

@@ -3,8 +3,8 @@ using System;
 using System.Collections;
 using LiteNetLib;
 using Lockstep.Serialization;
-using NetMsg.Game;
-using NetMsg.Lobby;
+using NetMsg.Common;
+
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 

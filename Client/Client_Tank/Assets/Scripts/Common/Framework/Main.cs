@@ -26,6 +26,10 @@ namespace Lockstep.Game {
         void RegisterTimeMachine(ITimeMachine roll);
     }
 
+    public class MainScript : MonoBehaviour {
+        public Main main;
+    }
+
     public partial class Main : ManagerReferenceHolder, IServiceContainer, IManagerContainer, ITimeMachineService,
         IEventRegisterService {
         private int _curTick;
@@ -184,7 +188,7 @@ namespace Lockstep.Game {
             var name = manager.GetType().Name;
             if (_name2Mgr.ContainsKey(name)) {
                 Debug.LogError(
-                    $"Duplicate Register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.name ?? ""}");
+                    $"Duplicate Register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.gameObject.name ?? ""}");
                 return;
             }
 

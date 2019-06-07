@@ -2,7 +2,7 @@ using System.IO;
 using Lockstep.Core;
 using Lockstep.Game;
 using Lockstep.Serialization;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 using UnityEditor;
 

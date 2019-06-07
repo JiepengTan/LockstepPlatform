@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Lockstep.Game;
 using Lockstep.Math;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 

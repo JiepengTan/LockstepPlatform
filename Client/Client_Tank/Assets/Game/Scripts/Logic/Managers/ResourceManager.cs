@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using Lockstep.Math;
-using NetMsg.Game;
+using NetMsg.Common;
 using UnityEngine;
 
 namespace Lockstep.Game {
@@ -30,7 +30,6 @@ namespace Lockstep.Game {
         private RollbackableRes head;
         private RollbackableRes tail;
 
-       
 
         public void ShowDiedEffect(LVector2 pos){
             CreateEffect(_config.DiedPrefab, pos);

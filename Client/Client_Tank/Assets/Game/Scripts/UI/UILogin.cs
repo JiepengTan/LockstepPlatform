@@ -1,6 +1,6 @@
 ﻿using Lockstep.Core;
-using NetMsg.Game;
-using NetMsg.Lobby;
+using NetMsg.Common;
+
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -107,7 +107,7 @@ namespace Lockstep.Game.UI
 
         public virtual void OnLoginClick()
         {
-            SendMessage(EMsgCL.C2L_ReqLogin,new Msg_RoomInitMsg() {name = Username.text});
+            //SendMessage(EMsgSC.C2L_ReqLogin,new Msg_RoomInitMsg() {name = Username.text});
             HandleRemembering();
             EventHelper.Trigger(EEvent.OnLoginResult,null);
 

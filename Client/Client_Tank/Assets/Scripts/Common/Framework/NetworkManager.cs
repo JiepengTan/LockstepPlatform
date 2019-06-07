@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Lockstep.Core;
 using Lockstep.Serialization;
-using NetMsg.Game;
-using NetMsg.Lobby;
+using NetMsg.Common;
+
 using UnityEngine;
 
 namespace Lockstep.Game {
@@ -21,12 +21,12 @@ namespace Lockstep.Game {
         public bool IsConnected => _netProxyLobby != null && _netProxyLobby.Connected;
 
         public override void DoAwake(IServiceContainer services){
-            _netProxyRoom = new BaseNetProxy((int) EMsgCS.EnumCount);
-            _netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
-            _eventRegisterService.RegisterManagersEvent<EMsgCL, NetMsgHandler>("OnMsg_L2C", "OnMsg_".Length,
-                RegisterMsgHandler);
-            _eventRegisterService.RegisterManagersEvent<EMsgCS, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
-                RegisterMsgHandler);
+            //_netProxyRoom = new BaseNetProxy((int) EMsgSC.EnumCount);
+            //_netProxyLobby = new BaseNetProxy((int) EMsgCL.EnumCount);
+            //_eventRegisterService.RegisterManagersEvent<EMsgCL, NetMsgHandler>("OnMsg_L2C", "OnMsg_".Length,
+            //    RegisterMsgHandler);
+            //_eventRegisterService.RegisterManagersEvent<EMsgSC, NetMsgHandler>("OnMsg_S2C", "OnMsg_".Length,
+            //    RegisterMsgHandler);
             //Editor mode don't need network
             if (_constStateService.IsVideoMode) return;
             InitLobby(ServerIp, ServerPort, NetworkDefine.NetKey);
@@ -46,11 +46,11 @@ namespace Lockstep.Game {
             _netProxyRoom?.DoDestroy();
         }
 
-        public void RegisterMsgHandler(EMsgCL type, NetMsgHandler handler){
-            _netProxyLobby.RegisterMsgHandler((byte) type, handler);
-        }
+       //public void RegisterMsgHandler(EMsgLC type, NetMsgHandler handler){
+       //    _netProxyLobby.RegisterMsgHandler((byte) type, handler);
+       //}
 
-        public void RegisterMsgHandler(EMsgCS type, NetMsgHandler handler){
+        public void RegisterMsgHandler(EMsgSC type, NetMsgHandler handler){
             _netProxyRoom.RegisterMsgHandler((byte) type, handler);
         }
 
@@ -66,9 +66,9 @@ namespace Lockstep.Game {
             _netProxyRoom.Init(ip, port, NetworkDefine.NetKey);
             //Register msgs
 
-            //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_StartGame, OnMsg_S2C_StartGame);
-            //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_FrameData, OnMsg_S2C_FrameData);
-            //_netProxyRoom.RegisterMsgHandler((byte) EMsgCS.S2C_RepMissPack,OnNet_ReqInit);
+            //_netProxyRoom.RegisterMsgHandler((byte) EMsgSC.S2C_StartGame, OnMsg_S2C_StartGame);
+            //_netProxyRoom.RegisterMsgHandler((byte) EMsgSC.S2C_FrameData, OnMsg_S2C_FrameData);
+            //_netProxyRoom.RegisterMsgHandler((byte) EMsgSC.S2C_RepMissPack,OnNet_ReqInit);
         }
 
 
@@ -89,7 +89,7 @@ namespace Lockstep.Game {
         public void OnConnectedRoom(){
             Logging.Debug.Log("OnConnected room");
             if (!IsReconnected) {
-                SendMsgRoom(EMsgCS.C2S_PlayerReady, new NetMsg.Lobby.Msg_PlayerReady { });
+               // SendMsgRoom(EMsgSC.C2S_PlayerReady, new NetMsg.Lobby.Msg_PlayerReady { });
             }
             else {
                 EventHelper.Trigger(EEvent.OnRoomGameStart, reconnectedInfo);
@@ -97,17 +97,17 @@ namespace Lockstep.Game {
         }
 
         public void SendInput(Msg_PlayerInput msg){
-            SendMsgRoom(EMsgCS.C2S_PlayerInput, msg);
+           // SendMsgRoom(EMsgSC.C2S_PlayerInput, msg);
         }
 
-        public void SendMsgLobby(EMsgCL msgId, ISerializable body){
+        public void SendMsgLobby(EMsgSC msgId, ISerializable body){
             var writer = new Serializer();
             writer.PutByte((byte) msgId);
             body.Serialize(writer);
             _netProxyLobby.Send(Compressor.Compress(writer));
         }
 
-        public void SendMsgRoom(EMsgCS msgId, ISerializable body){
+        public void SendMsgRoom(EMsgSC msgId, ISerializable body){
             var writer = new Serializer();
             writer.PutInt64(_playerID);
             writer.PutByte((byte) msgId);
@@ -117,24 +117,24 @@ namespace Lockstep.Game {
 
         public void SendMissFrameReq(int missFrameTick){
             Debug.Log($"SendMissFrameReq");
-            SendMsgRoom(EMsgCS.C2S_ReqMissFrame,
-                new Msg_ReqMissFrame() {startTick = missFrameTick});
+           // SendMsgRoom(EMsgSC.C2S_ReqMissFrame,
+            //    new Msg_ReqMissFrame() {startTick = missFrameTick});
         }
 
         public void SendMissFrameRepAck(int missFrameTick){
             Debug.Log($"SendMissFrameRepAck");
-            SendMsgRoom(EMsgCS.C2S_RepMissFrameAck, new Msg_RepMissFrameAck() {missFrameTick = missFrameTick});
+           // SendMsgRoom(EMsgSC.C2S_RepMissFrameAck, new Msg_RepMissFrameAck() {missFrameTick = missFrameTick});
         }
 
         public void SendHashCodes(int firstHashTick, List<long> allHashCodes, int startIdx, int count){
-            Msg_HashCode msg = new Msg_HashCode();
-            msg.startTick = firstHashTick;
-            msg.hashCodes = new long[count];
-            for (int i = startIdx; i < count; i++) {
-                msg.hashCodes[i] = allHashCodes[i];
-            }
-
-            SendMsgRoom(EMsgCS.C2S_HashCode, msg);
+           // Msg_HashCode msg = new Msg_HashCode();
+           // msg.startTick = firstHashTick;
+           // msg.hashCodes = new long[count];
+           // for (int i = startIdx; i < count; i++) {
+           //     msg.hashCodes[i] = allHashCodes[i];
+           // }
+//
+           // SendMsgRoom(EMsgSC.C2S_HashCode, msg);
         }
 
         private void OnMsg_S2C_RepMissFrame(Deserializer reader){
@@ -144,40 +144,40 @@ namespace Lockstep.Game {
         }
 
         void OnMsg_L2C_RoomMsg(Deserializer reader){
-            var msg = reader.Parse<Msg_CreateRoomResult>();
-            _roomId = msg.roomId;
-            UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + 32);
-            InitRoom("127", 32, NetworkDefine.NetKey);
-            StartRoom();
+           // var msg = reader.Parse<Msg_CreateRoomResult>();
+           // _roomId = msg.roomId;
+           // UnityEngine.Debug.Log("OnMsgLobby_CreateRoom " + 32);
+           // InitRoom("127", 32, NetworkDefine.NetKey);
+           // StartRoom();
         }
 
         private object reconnectedInfo;
 
         void OnMsg_L2C_RepLogin(Deserializer reader){
-            var msg = reader.Parse<NetMsg.Lobby.Msg_RepLogin>();
-            _playerID = msg.playerId;
-            Debug.Log("PlayerID " + _playerID + " roomId:" + msg.roomId);
-            if (msg.roomId > 0) {
-                IsReconnected = true;
-                InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
-                var subMsg = new Msg_StartGame();
-                subMsg.Deserialize(new Deserializer(msg.childMsg));
-                reconnectedInfo = subMsg;
-                StartRoom();
-            }
-            else {
-                EventHelper.Trigger(EEvent.OnLoginResult, msg);
-            }
+           //var msg = reader.Parse<NetMsg.Lobby.Msg_RepLogin>();
+           //_playerID = msg.playerId;
+           //Debug.Log("PlayerID " + _playerID + " roomId:" + msg.roomId);
+           //if (msg.roomId > 0) {
+           //    IsReconnected = true;
+           //    InitRoom(msg.ip, msg.port, NetworkDefine.NetKey);
+           //    var subMsg = new Msg_StartGame();
+           //    subMsg.Deserialize(new Deserializer(msg.childMsg));
+           //    reconnectedInfo = subMsg;
+           //    StartRoom();
+           //}
+           //else {
+           //    EventHelper.Trigger(EEvent.OnLoginResult, msg);
+           //}
         }
 
         void SendInitMsg(){
-            SendMsgLobby(EMsgCL.C2L_ReqLogin,
-                new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
+           // SendMsgLobby(EMsgCL.C2L_ReqLogin,
+           //     new Msg_RoomInitMsg() {name = "FishMan:" + Application.dataPath.GetHashCode()});
         }
 
         void SendCreateRoomMsg(){
             UnityEngine.Debug.Log("SendCreateRoomMsg");
-            SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom", size = 2});
+           // SendMsgLobby(EMsgCL.C2L_CreateRoom, new Msg_CreateRoom() {type = 1, name = "FishManRoom", size = 2});
         }
 
 
@@ -187,21 +187,21 @@ namespace Lockstep.Game {
         }
 
         public void OnMsg_S2C_StartGame(Deserializer reader){
-            var msg = reader.Parse<Msg_StartRoomGame>();
-            _roomId = msg.RoomID;
-            Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
-            EventHelper.Trigger(EEvent.OnRoomGameStart, msg);
+           // var msg = reader.Parse<Msg_StartRoomGame>();
+           // _roomId = msg.RoomID;
+           // Debug.Log($"Starting simulation. Total actors: {msg.AllActors.Length}. Local ActorID: {msg.ActorID}");
+           // EventHelper.Trigger(EEvent.OnRoomGameStart, msg);
         }
 
         public void OnMsg_S2C_LoadingProgress(Deserializer reader){
-            var msg = reader.Parse<Msg_AllLoadingProgress>();
-            var isDone = msg.isAllDone;
-            if (isDone) {
-                EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
-            }
-            else {
-                EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
-            }
+           // var msg = reader.Parse<Msg_AllLoadingProgress>();
+           // var isDone = msg.isAllDone;
+           // if (isDone) {
+           //     EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
+           // }
+           // else {
+           //     EventHelper.Trigger(EEvent.OnLoadingProgress, msg);
+           // }
         }
 
         public void OnEvent_LoadMapDone(object param){
@@ -212,7 +212,7 @@ namespace Lockstep.Game {
                 EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
             }
             else {
-                SendMsgRoom(EMsgCS.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
+               // SendMsgRoom(EMsgSC.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
             }
         }
     }

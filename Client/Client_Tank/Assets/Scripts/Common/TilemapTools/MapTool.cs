@@ -14,12 +14,11 @@ public class MapTool : UnityEngine.MonoBehaviour {
         get { return mainMgr?.CurTick ?? 0; }
         set {
             if (mainMgr != null) {
-                mainMgr.CurTick = curTick;    
+                mainMgr.CurTick = curTick;
             }
         }
     }
-    
-    
+
 
     [HideInInspector] public Main mainMgr;
 
@@ -30,7 +29,7 @@ public class MapTool : UnityEngine.MonoBehaviour {
     }
 
     public void StopEditorSimulate(){
-        if (mainMgr != null) GameObject.DestroyImmediate(mainMgr);
+        if (mainMgr != null) GameObject.DestroyImmediate(mainMgr.gameObject);
     }
 #if false
     [Button("LoadLevel")]

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Barebones.MasterServer;
 using Barebones.Utils;
 using Lockstep.Core;
-using NetMsg.Game;
-using NetMsg.Lobby;
+using NetMsg.Common;
+
 using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Events;

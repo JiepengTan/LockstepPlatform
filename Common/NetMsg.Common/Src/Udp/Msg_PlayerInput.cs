@@ -12,7 +12,7 @@ namespace NetMsg.Common {
         public int Tick;
         public InputCmd[] Commands;
 #if DEBUG_FRAME_DELAY
-        public float TimeSinceStartUp;
+        public float timeSinceStartUp;
 #endif
 
         public Msg_PlayerInput(int tick, byte actorID, List<InputCmd> inputs){
@@ -47,7 +47,7 @@ namespace NetMsg.Common {
 
         public override void Serialize(Serializer writer){
 #if DEBUG_FRAME_DELAY
-            writer.PutSingle(TimeSinceStartUp);
+            writer.PutSingle(timeSinceStartUp);
 #endif
             writer.PutByte(ActorId);
             writer.PutInt32(Tick);
@@ -60,7 +60,7 @@ namespace NetMsg.Common {
 
         public override void Deserialize(Deserializer reader){
 #if DEBUG_FRAME_DELAY
-            TimeSinceStartUp = reader.GetSingle();
+            timeSinceStartUp = reader.GetSingle();
 #endif
             ActorId = reader.GetByte();
             Tick = reader.GetInt32();
