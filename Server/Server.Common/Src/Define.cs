@@ -26,7 +26,14 @@ namespace Lockstep.Server.Common  {
         EnumCount,
     }
 
+    public enum EServerDetailPortType {
+        ServerPort,
+        TcpPort,
+        UdpPort,
+    }
+
     public enum ELoginResult {
+        Succ,
         PasswordMissMatch,
         ErrorHash,
         NotLogin,

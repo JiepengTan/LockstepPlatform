@@ -54,7 +54,7 @@ namespace Lockstep.FakeClient {
         public virtual void DoAwake(){ }
 
         public virtual void DoStart(){
-            InitNetClient(ref _netClientIC, "127.0.0.1", 7150, OnConnLogin);
+            InitNetClient(ref _netClientIC, "127.0.0.1", 7250, OnConnLogin);
         }
 
         public virtual void DoUpdate(int deltaTime){
@@ -72,7 +72,7 @@ namespace Lockstep.FakeClient {
 
         protected void InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port,
             Action onConnCallback = null) where TMsgType : struct{
-            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback,this)) return;
+            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback, this)) return;
             _allClientNet.Add(refClient);
             _cachedAllClientNet = null;
         }
@@ -120,12 +120,11 @@ namespace Lockstep.FakeClient {
         }
 
         void UpdateRoomsState(){
+            Debug.Log("UpdateRoomsState " + (_roomInfos == null ? "null" : JsonMapper.ToJson(_roomInfos)));
             if (_roomInfos == null) {
                 CreateRoom(3, "TestRoom", 1);
                 return;
             }
-
-            Debug.Log("UpdateRoomsState " + JsonMapper.ToJson(_roomInfos));
         }
 
         public void CreateRoom(int mapId, string name, int size){
@@ -140,7 +139,7 @@ namespace Lockstep.FakeClient {
                 }
                 else {
                     var roomInfo = respond.Parse<Msg_L2C_CreateRoom>();
-                    Debug.Log(roomInfo.ToString());
+                    Debug.Log("CreateRoom " + roomInfo.ToString());
                     StartGame();
                 }
             });
@@ -150,7 +149,7 @@ namespace Lockstep.FakeClient {
             _netClientLC.SendMessage(EMsgSC.C2L_StartGame, new Msg_C2L_StartGame() { },
                 (status, respond) => {
                     if (status == EResponseStatus.Failed) {
-                        Debug.Log("StartGame failed reason ");
+                        Debug.Log("StartGame failed reason " + respond.AsInt());
                     }
                 }
             );

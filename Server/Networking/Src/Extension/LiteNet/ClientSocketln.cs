@@ -245,9 +245,9 @@ namespace Lockstep.Networking {
             _listener.PeerConnectedEvent += (peer) => {
                 _isConnected = false;
                 var pe = new PeerLn(peer);
+                pe.SetConnectedState(true);
                 pe.MessageReceived += HandleMessage;
                 _peer = pe;
-                pe.SetConnectedState(true);
                 Peer = pe;
                 Connected?.Invoke();
             };

@@ -50,6 +50,10 @@
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
       <Name>Logging</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

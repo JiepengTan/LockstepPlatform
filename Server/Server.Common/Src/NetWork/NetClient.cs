@@ -32,10 +32,12 @@ namespace Lockstep.Server.Common {
             _allDealFuncs[(short) (object) msgType] = handler;
         }
 
-        public NetClient(int maxMsgHandlerIdx, string msgFlag, object msgHandlerObj){
+        public NetClient(int maxMsgHandlerIdx, string[] msgFlags, object msgHandlerObj){
             _allDealFuncs = new IncommingMessageHandler[maxMsgHandlerIdx];
-            ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
-                RegisterMsgHandler, msgHandlerObj);
+            foreach (var msgFlag in msgFlags) {
+                ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
+                    RegisterMsgHandler,msgHandlerObj);
+            }
         }
 
         public void Connect(string ip, int port, string key){

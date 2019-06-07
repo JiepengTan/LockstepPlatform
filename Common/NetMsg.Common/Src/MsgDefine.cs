@@ -136,6 +136,7 @@ namespace NetMsg.Common{
 //LG
     public partial class Msg_L2G_StartGame : BaseFormater {
         public int GameType;
+        public int MapId;
         public GamePlayerInfo[] Players;
         public string GameHash;
     }

@@ -34,14 +34,6 @@ namespace Lockstep.Server.Database {
             InitNetServer(ref _netServerDS, _serverConfig.serverPort);
         }
 
-        protected override ServerIpInfo GetSlaveServeInfo(){
-            return new ServerIpInfo() {
-                Port = _serverConfig.serverPort,
-                Ip = IP,
-                ServerType = (byte) this.serverType,
-            };
-        }
-
         protected void S2D_ReqUserInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqAccountData>();
             _authDb.GetAccount(msg.account, (dbData) => {

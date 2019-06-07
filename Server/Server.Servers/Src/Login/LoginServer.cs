@@ -25,6 +25,8 @@ namespace Lockstep.Server.Login {
 
         protected override void OnMasterServerInfo(ServerIpInfo info){
             if (info.ServerType == (byte) EServerType.DatabaseServer) {
+                if (_netClientDS != null) return;
+                Debug.Log("OnMasterServerInfo" + info);
                 ReqOtherServerInfo(EServerType.DatabaseServer, (status, respond) => {
                     if (status != EResponseStatus.Failed) {
                         InitClientDS(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
@@ -33,16 +35,22 @@ namespace Lockstep.Server.Login {
             }
 
             if (info.ServerType == (byte) EServerType.LobbyServer) {
+                if (_netClientLI != null) return;
+                Debug.Log("OnMasterServerInfo" + info);
                 ReqOtherServerInfo(EServerType.LobbyServer, (status, respond) => {
                     if (status != EResponseStatus.Failed) {
                         InitClientLI(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
                     }
                 });
+                ReqOtherServerInfo(EServerType.LobbyServer, (status, respond) => {
+                    if (status != EResponseStatus.Failed) {
+                        lobbyInfo = respond.Parse<Msg_RepOtherServerInfo>().ServerInfo;
+                    }
+                }, EServerDetailPortType.TcpPort);
             }
         }
 
         private void InitClientLI(ServerIpInfo info){
-            lobbyInfo = info;
             InitNetClient(ref _netClientLI, info.Ip, info.Port, OnLobbyConn);
         }
 
@@ -53,10 +61,12 @@ namespace Lockstep.Server.Login {
 
         private void OnLobbyConn(){
             //TestDB();
+            Debug.Log("OnLobbyConn");
         }
 
         private void OnDBConn(){
             //TestDB();
+            Debug.Log("OnDBConn");
         }
 
         protected void C2I_UserLogin(IIncommingMessage reader){
@@ -103,7 +113,8 @@ namespace Lockstep.Server.Login {
         void NotifyLobbyUserLoginResult(string password, long userId, Msg_C2I_UserLogin cInfo,
             IIncommingMessage reader){
             if (cInfo.Password != password) {
-                reader.Respond(EMsgSC.I2C_LoginResult, new Msg_I2C_LoginResult() {LoginResult = 0});
+                reader.Respond(EMsgSC.I2C_LoginResult,
+                    new Msg_I2C_LoginResult() {LoginResult = (byte) ELoginResult.PasswordMissMatch});
             }
             else {
                 var loginHash = "LSHash" + Time.timeSinceLevelLoad;
@@ -115,7 +126,7 @@ namespace Lockstep.Server.Login {
                     },
                     (sta, res) => {
                         reader.Respond(EMsgSC.I2C_LoginResult, new Msg_I2C_LoginResult() {
-                            LoginResult = 1,
+                            LoginResult = (byte) ELoginResult.Succ,
                             UserId = userId,
                             LoginHash = loginHash,
                             LobbyEnd = new IPEndInfo() {Ip = lobbyInfo.Ip, Port = lobbyInfo.Port}

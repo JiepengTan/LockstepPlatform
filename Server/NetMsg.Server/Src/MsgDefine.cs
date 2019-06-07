@@ -22,6 +22,7 @@ namespace NetMsg.Server {
 //OMS
     public partial class Msg_ReqOtherServerInfo : BaseFormater {
         public byte ServerType;
+        public byte DetailType;
     }
 
     public partial class Msg_RepOtherServerInfo : BaseFormater {
@@ -37,7 +38,7 @@ namespace NetMsg.Server {
     }
 
     public partial class Msg_RepMasterInfo : BaseFormater {
-        public ServerIpInfo[] ServerInfos;
+        public ServerIpInfo ServerInfo;
     }
 
     public partial class Msg_BorderMasterInfo : BaseFormater {

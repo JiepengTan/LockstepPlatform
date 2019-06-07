@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lockstep.FakeClient;
 using Lockstep.Networking;
+using Lockstep.Server.Common;
 
 namespace Test {
     internal class Program {
@@ -130,7 +132,7 @@ namespace Test {
         private static List<TestServer> servers = new List<TestServer>();
         private static List<TestClient> clients = new List<TestClient>();
 
-        public static void Main(string[] args){
+        public static void TestNetwork(){
             TestServer ts = new TestServer();
             ts.Init();
             servers.Add(ts);
@@ -159,6 +161,17 @@ namespace Test {
 
                     Thread.Sleep(1);
                 }
+            }
+        }
+
+        public static void Main(string[] args){
+            //TestNetwork();
+            ServerUtil.RunServerInThread(typeof(Lockstep.Server.Servers.Program).Assembly, EServerType.DaemonServer);
+            Thread.Sleep(TimeSpan.FromSeconds(3));
+
+            ClientUtil.RunClient();
+            while (true) {
+                Thread.Sleep(30);
             }
         }
     }

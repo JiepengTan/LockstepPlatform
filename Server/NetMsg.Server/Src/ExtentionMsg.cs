@@ -57,11 +57,11 @@ namespace NetMsg.Server{
 
     public partial class Msg_RepMasterInfo{
         public override void Serialize(Serializer writer){
-			writer.PutArray(ServerInfos);
+			writer.Put(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfos = reader.GetArray(ref this.ServerInfos);
+			ServerInfo = reader.Get(ref this.ServerInfo);
         }
     }
 
@@ -90,10 +90,12 @@ namespace NetMsg.Server{
 
     public partial class Msg_ReqOtherServerInfo{
         public override void Serialize(Serializer writer){
+			writer.PutByte(DetailType);
 			writer.PutByte(ServerType);
         }
     
         public override void Deserialize(Deserializer reader){
+			DetailType = reader.GetByte();
 			ServerType = reader.GetByte();
         }
     }

@@ -40,8 +40,8 @@ namespace Lockstep.Server.Database
         private readonly LiteDatabase _db;
 
         public class UserIdInfo {
-            public string Name;
-            public long Id;
+            [BsonId] public string Name { get; set; }
+            public long Id{ get; set; }
         }
 
         public AuthDbLdb(LiteDatabase database)

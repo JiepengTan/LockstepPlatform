@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -27,7 +27,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>../bin/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -47,9 +47,21 @@
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FakeClient\FakeClient.csproj">
+      <Project>{4beac3a9-752c-4f4c-9bc4-0c9f6ea341b5}</Project>
+      <Name>FakeClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Networking\Networking.csproj">
       <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
       <Name>Networking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Common\Server.Common.csproj">
+      <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
+      <Name>Server.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Servers\Server.Servers.csproj">
+      <Project>{23ad1c5b-cf67-4c22-92ff-2ce9e2be8fee}</Project>
+      <Name>Server.Servers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

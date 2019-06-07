@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using LitJson;
 
 namespace Lockstep.Util {
     public interface IRecyclable {
@@ -10,6 +11,9 @@ namespace Lockstep.Util {
     public class BaseRecyclable : IRecyclable {
         public virtual void OnReuse(){ }
         public virtual void OnRecycle(){ }
+        public override string ToString(){
+            return JsonMapper.ToJson(this);
+        }
     }
 
     public class Pool {

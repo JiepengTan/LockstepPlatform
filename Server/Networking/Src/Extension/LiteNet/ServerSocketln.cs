@@ -49,6 +49,7 @@ namespace Lockstep.Networking
                 var speer = new PeerLn(pe);
                 _id2Peer[pe.Id] = speer;
                 _allPeers = null;
+                speer.SetConnectedState(true);
                 speer.MessageReceived += OnMessage;
                 Connected?.Invoke(speer);
             };
@@ -61,6 +62,7 @@ namespace Lockstep.Networking
             _listener.PeerDisconnectedEvent += (pe, info) => {
                 var peer = _id2Peer[pe.Id];
                 _allPeers = null;
+                peer.SetConnectedState(false);
                 peer.MessageReceived -= OnMessage;
                 Disconnected?.Invoke(peer);
                 peer.NotifyDisconnectEvent();

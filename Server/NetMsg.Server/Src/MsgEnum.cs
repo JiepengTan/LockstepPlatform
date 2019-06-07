@@ -67,12 +67,13 @@ namespace NetMsg.Server {
         EnumCount,
     }
     //I login L lobby
-    public enum EMsgLS {
+    public enum EMsgLS:short {
         I2L_UserLogin,
         L2G_StartGame,
         G2L_RegisterServer,
         G2L_OnStartGame,
         G2L_OnGameFinished,
+        EnumCount,
     }
 
     // Server to Server

@@ -369,12 +369,14 @@ namespace NetMsg.Common{
         public override void Serialize(Serializer writer){
 			writer.PutString(GameHash);
 			writer.PutInt32(GameType);
+			writer.PutInt32(MapId);
 			writer.PutArray(Players);
         }
     
         public override void Deserialize(Deserializer reader){
 			GameHash = reader.GetString();
 			GameType = reader.GetInt32();
+			MapId = reader.GetInt32();
 			Players = reader.GetArray(ref this.Players);
         }
     }

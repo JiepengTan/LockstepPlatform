@@ -8,6 +8,7 @@ using LiteNetLib;
 using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Server.Common;
+using NetMsg.Common;
 using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
@@ -39,11 +40,12 @@ namespace Lockstep.Server.Daemon {
         public Dictionary<EServerType, IPeer> _type2MasterPeer = new Dictionary<EServerType, IPeer>();
         public Dictionary<EServerType, ServerIpInfo> _type2MasterInfo = new Dictionary<EServerType, ServerIpInfo>();
 
-        private void InitServerYX(){
+        private void InitServerYXM(){
             if (!_serverConfig.isMaster) return;
             InitNetServer(ref _netServerYX, _serverConfig.masterPort);
             InitNetServer(ref _netServerYM, _allConfig.YMPort);
         }
+
 
         private void InitServerXS(){
             InitNetServer(ref _netServerXS, _serverConfig.serverPort);
@@ -67,7 +69,7 @@ namespace Lockstep.Server.Daemon {
             _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
             _memCounter = new PerformanceCounter("Memory", "Available MBytes");
             InitServerXS();
-            InitServerYX();
+            InitServerYXM();
             InitClientYX();
             foreach (var serverConfig in _allConfig.servers.ToArray()) {
                 if (serverConfig.type == EServerType.DaemonServer) continue;
@@ -119,6 +121,7 @@ namespace Lockstep.Server.Daemon {
             var oServerType = (EServerType) msg.ServerInfo.ServerType;
             if (!_type2MasterPeer.TryGetValue(oServerType, out var info)) {
                 _type2MasterPeer.Add(oServerType,reader.Peer);
+                _type2MasterInfo[oServerType] = msg.ServerInfo;
             }
         }  
         protected void S2X_ReqOtherServerInfo(IIncommingMessage reader){
@@ -179,14 +182,10 @@ namespace Lockstep.Server.Daemon {
             var serverInfo = reader.Parse<Msg_ReqMasterInfo>().ServerInfo;
             var type = (EServerType) serverInfo.ServerType;
             if (serverInfo.IsMaster) {
-                _type2MasterPeer[type] = reader.Peer;
-                _type2MasterInfo[type] = serverInfo;
                 _netServerYX.BorderMessage(EMsgYX.Y2X_BorderMasterInfo,
                     new Msg_BorderMasterInfo() {ServerInfo = serverInfo});
             }
-
-            var infos = _type2MasterInfo.Values.ToArray();
-            reader.Respond(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {ServerInfos = infos});
+            reader.Respond(EMsgYX.Y2X_RepMasterInfo, new Msg_RepMasterInfo() {ServerInfo = _type2MasterInfo.GetRefVal(type)});
         }
 
 

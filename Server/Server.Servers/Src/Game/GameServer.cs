@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using Lockstep.Logging;
 using NetMsg.Server;
 using Lockstep.Server.Common;
 using Lockstep.Networking;
@@ -10,7 +11,7 @@ namespace Lockstep.Server.Game {
     public class GameServer : Common.Server {
         private NetServer<EMsgSC, IServerProxy> _netServerSC;
         private NetClient<EMsgDS> _netClientDS;
-        protected NetClient<EMsgLS> _netClientLI; //其他类型的Master 用于提供服务
+        protected NetClient<EMsgLS> _netClientLG; //其他类型的Master 用于提供服务
 
         private ServerIpInfo lobbyInfo;
 
@@ -35,15 +36,15 @@ namespace Lockstep.Server.Game {
             if (info.ServerType == (byte) EServerType.LobbyServer) {
                 ReqOtherServerInfo(EServerType.LobbyServer, (status, respond) => {
                     if (status != EResponseStatus.Failed) {
-                        InitClientLI(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
+                        InitClientLG(respond.Parse<Msg_RepOtherServerInfo>().ServerInfo);
                     }
                 });
             }
         }
 
-        private void InitClientLI(ServerIpInfo info){
+        private void InitClientLG(ServerIpInfo info){
             lobbyInfo = info;
-            InitNetClient(ref _netClientLI, info.Ip, info.Port, OnLobbyConn);
+            InitNetClient(ref _netClientLG, info.Ip, info.Port, OnLobbyConn);
         }
 
         private void InitClientDS(ServerIpInfo info){
@@ -51,11 +52,18 @@ namespace Lockstep.Server.Game {
         }
 
         private void OnLobbyConn(){
-            //TestDB();
+            _netClientLG.SendMessage(EMsgLS.G2L_RegisterServer,new Msg_RegisterServer {
+                ServerInfo = new ServerIpInfo() {
+                    ServerType = (byte) serverType,
+                    Ip = this.IP,
+                    Port = _serverConfig.tcpPort
+                }
+            });
+            Debug.Log("OnLobbyConn");
         }
 
         private void OnDBConn(){
-            //TestDB();
+            Debug.Log("OnDBConn");
         }
 
         public class Player : BaseRecyclable {
@@ -121,9 +129,12 @@ namespace Lockstep.Server.Game {
 
         protected void L2G_StartGame(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2G_StartGame>();
+            Debug.Log("L2G_StartGame" + msg);
             var room = Pool.Get<GameRoom>();
             var roomId = CurRoomId++;
             room.GameType = msg.GameType;
+            room.GameHash = msg.GameHash;
+            room.MapId = msg.MapId;
             var count = msg.Players.Length;
             var players = new Player[count];
             for (int i = 0; i < count; i++) {
@@ -132,9 +143,10 @@ namespace Lockstep.Server.Game {
                 player.UserId = user.UserId;
                 player.Account = user.Account;
                 player.LoginHash = user.LoginHash;
-                player.LocalId = (byte)i;
+                player.LocalId = (byte) i;
                 players[i] = player;
             }
+
             room.Players = players;
             room.Init();
             _roomId2Rooms.Add(roomId, room);
@@ -143,6 +155,7 @@ namespace Lockstep.Server.Game {
 
         protected void C2G_Hello(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2G_Hello>();
+            Debug.Log("C2G_Hello" + msg);
             var userInfo = msg.UserInfo;
             if (userInfo == null)
                 return;

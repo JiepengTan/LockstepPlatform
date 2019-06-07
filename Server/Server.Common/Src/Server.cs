@@ -59,14 +59,14 @@ namespace Lockstep.Server.Common {
         protected void InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port)
             where TParam : class, INetProxy
             where TMsgType : struct{
-            if (NetworkUtil.InitNetServer(ref refServer, port,this)) return;
+            if (NetworkUtil.InitNetServer(ref refServer, port, this)) return;
             _allServerNet.Add(refServer);
             _cachedAllServerNet = null;
         }
 
         protected void InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port,
             Action onConnCallback = null) where TMsgType : struct{
-            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback,this)) return;
+            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback, this)) return;
             _allClientNet.Add(refClient);
             _cachedAllClientNet = null;
         }
@@ -100,7 +100,7 @@ namespace Lockstep.Server.Common {
         }
 
         private void InitClientXS(){
-            InitNetClient(ref _netClientXS, "127.0.0.1", _allConfig.YMPort,
+            InitNetClient(ref _netClientXS, "127.0.0.1", _allConfig.DeamonPort,
                 () => {
                     _netClientXS.SendMessage(EMsgXS.S2X_ReqMasterInfo, new Msg_ReqMasterInfo() {
                             ServerInfo = new ServerIpInfo() {
@@ -110,14 +110,12 @@ namespace Lockstep.Server.Common {
                             }
                         }, (status, respond) => {
                             var msg = respond.Parse<Msg_RepMasterInfo>();
-                            if (msg.ServerInfos != null) {
-                                foreach (var serverInfo in msg.ServerInfos) {
-                                    if (serverInfo.ServerType == (byte) serverType) {
-                                        InitClientMS(serverInfo);
-                                    }
-
-                                    OnMasterServerInfo(serverInfo);
+                            if (msg.ServerInfo != null) {
+                                if (msg.ServerInfo.ServerType == (byte) serverType) {
+                                    InitClientMS(msg.ServerInfo);
                                 }
+
+                                OnMasterServerInfo(msg.ServerInfo);
                             }
                         }
                     );
@@ -126,9 +124,10 @@ namespace Lockstep.Server.Common {
 
         #endregion
 
-        protected void ReqOtherServerInfo(EServerType type,ResponseCallback callback){
+        protected void ReqOtherServerInfo(EServerType type,ResponseCallback callback,EServerDetailPortType detailPortType = EServerDetailPortType.ServerPort){
             _netClientXS.SendMessage(EMsgXS.S2X_ReqOtherServerInfo, new Msg_ReqOtherServerInfo() {
-                    ServerType = (byte) type
+                    ServerType = (byte) type,
+                    DetailType = (byte) detailPortType
                 }, callback
             );
         }
@@ -138,18 +137,19 @@ namespace Lockstep.Server.Common {
             var type = (EServerType) msg.ServerType;
             if (type == serverType) {
                 //TODO 
-                var info = GetSlaveServeInfo();
+                var info = GetSlaveServeInfo(msg.DetailType);
                 reader.Respond(EMsgMS.M2S_RepOtherServerInfo, new Msg_RepOtherServerInfo() {
                     ServerInfo = info
                 });
             }
         }
+
         protected void S2M_ReqOtherServerInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_ReqOtherServerInfo>();
             var type = (EServerType) msg.ServerType;
             if (type == serverType) {
                 //TODO 
-                var info = GetSlaveServeInfo();
+                var info = GetSlaveServeInfo(msg.DetailType);
                 reader.Respond(EMsgMS.M2S_RepOtherServerInfo, new Msg_RepOtherServerInfo() {
                     ServerInfo = info
                 });
@@ -157,8 +157,14 @@ namespace Lockstep.Server.Common {
         }
 
         /// 更加负载情况 自动分配相遇的服务器
-        protected virtual ServerIpInfo GetSlaveServeInfo(){
-            return null;
+
+ 
+        protected virtual ServerIpInfo GetSlaveServeInfo(byte detailType){
+            return new ServerIpInfo() {
+                Port = _serverConfig.GetDetailPort(detailType),
+                Ip = IP,
+                ServerType = (byte) this.serverType,
+            };
         }
 
         protected void S2M_RegisterServer(IIncommingMessage reader){

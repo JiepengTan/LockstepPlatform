@@ -8,9 +8,10 @@ using Lockstep.Server.Login;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Servers {
-    internal class Program {
+
+
+    public class Program {
         static void Main(string[] args){
-            var config = ServerUtil.LoadConfig();
             EServerType serverType = EServerType.DaemonServer;
             if (args.Length > 0) {
                 if (Enum.TryParse<EServerType>(args[0], out var type)) {
@@ -21,7 +22,7 @@ namespace Lockstep.Server.Servers {
                     return;
                 }
             }
-            ServerUtil.RunServer(typeof(Program).Assembly, serverType, config);
+            ServerUtil.RunServerInThread(typeof(Program).Assembly, serverType);
         }
     }
 }

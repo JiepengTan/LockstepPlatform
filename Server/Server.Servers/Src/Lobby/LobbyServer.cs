@@ -8,6 +8,7 @@ using System.Text;
 using System.Xml;
 using LiteDB;
 using LiteNetLib;
+using LitJson;
 using Lockstep.Serialization;
 using Lockstep.Logging;
 using Lockstep.Networking;
@@ -91,10 +92,12 @@ namespace Lockstep.Server.Lobby {
             public User Owner;
 
             public void Init(int type, int roomId, string name, int mapId, byte maxPlayerCount, User owner){
-                Name = name;
                 GameType = type;
                 RoomId = roomId;
+                Name = name;
+                MapId = mapId;
                 MaxPlayerCount = maxPlayerCount;
+                
                 CurPlayerCount = 1;
                 OwnerName = owner.Name;
                 IsPlaying = false;
@@ -116,6 +119,10 @@ namespace Lockstep.Server.Lobby {
                 if (Users.Remove(user)) {
                     CurPlayerCount--;
                 }
+            }
+
+            public override string ToString(){
+                return JsonMapper.ToJson(this);
             }
         }
 
@@ -139,6 +146,10 @@ namespace Lockstep.Server.Lobby {
             public override void OnRecycle(){
                 Room = null;
                 Peer = null;
+            }
+
+            public override string ToString(){
+                return JsonMapper.ToJson(this);
             }
         }
 
@@ -279,7 +290,6 @@ namespace Lockstep.Server.Lobby {
 
         #endregion
 
-
         #region msgs
 
         public Dictionary<int, IPeer> _peerId2Servers = new Dictionary<int, IPeer>();
@@ -289,12 +299,17 @@ namespace Lockstep.Server.Lobby {
             var msg = reader.Parse<Msg_I2L_UserLogin>();
             Debug.Log("I2L_UserLogin" + msg);
             OnPlayerLogin(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
+            reader.Respond(1, EResponseStatus.Success);
         }
 
         protected void G2L_RegisterServer(IIncommingMessage reader){
             var msg = reader.Parse<Msg_RegisterServer>();
             Debug.Log("I2L_UserLogin" + msg);
-            _peerId2Servers[reader.Peer.Id] = reader.Peer;
+            if (!_peerId2Servers.ContainsKey(reader.Peer.Id)) {
+                _peerId2Servers[reader.Peer.Id] = reader.Peer;
+                reader.Peer.AddExtension(msg.ServerInfo);
+                _allGameServers.Add(reader.Peer);
+            }
         }
 
         protected void C2L_UserLogin(IIncommingMessage reader){
@@ -385,11 +400,13 @@ namespace Lockstep.Server.Lobby {
             Debug.Log("C2L_StartGame" + msg);
             var user = reader.Peer.GetExtension<User>();
             var room = user.Room;
-            if (room?.Owner != user
-                || room.IsPlaying
-                || _allGameServers.Count <= 0
-            ) {
+            if (room?.Owner != user) {
                 reader.Respond(1, EResponseStatus.Failed);
+                return;
+            }
+
+            if (room.IsPlaying || _allGameServers.Count <= 0) {
+                reader.Respond(room.IsPlaying ? 2 : 3, EResponseStatus.Failed);
                 return;
             }
 
@@ -408,19 +425,21 @@ namespace Lockstep.Server.Lobby {
             server.SendMessage((short) EMsgLS.L2G_StartGame, new Msg_L2G_StartGame() {
                     GameType = user.GameType,
                     Players = playerInfos,
+                    MapId = room.MapId,
                     GameHash = gameHash
                 }, (status, response) => {
                     if (status != EResponseStatus.Failed) {
+                        var ipInfo = server.GetExtension<ServerIpInfo>();
                         var retMsg = new Msg_L2C_StartGame() {
                             GameServerEnd = new IPEndInfo() {
-                                Ip = server.EndPoint.Address.ToString(),
-                                Port = (ushort) server.EndPoint.Port
+                                Ip = ipInfo.Ip,
+                                Port = ipInfo.Port
                             },
                             GameHash = gameHash,
                             RoomId = response.AsInt()
                         };
                         foreach (var roomUser in room.Users) {
-                            roomUser.Peer?.SendMessage((short) EMsgSC.C2L_StartGame,retMsg);
+                            roomUser.Peer?.SendMessage((short) EMsgSC.L2C_StartGame, retMsg);
                         }
                     }
                 }

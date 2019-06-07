@@ -32,7 +32,7 @@ namespace Lockstep.Server.Common {
             IP = NetworkHelper.GetLocalIP();
             serverType = info.type;
             _allConfig = ServerUtil.LoadConfig();
-            _allConfig.YMPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
+            _allConfig.DeamonPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
             _serverConfig = info;
             masterType = _allConfig.isMaster ? EMasterType.Master : EMasterType.Slave;
         }

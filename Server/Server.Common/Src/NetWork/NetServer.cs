@@ -18,13 +18,15 @@ namespace Lockstep.Server.Common {
         private int maxMsgIdx;
 
 
-        public NetServer(string clientKey, int maxMsgIdx, string msgFlag, object msgHandlerObj){
+        public NetServer(string clientKey, int maxMsgIdx, string[] msgFlags, object msgHandlerObj){
             this._clientKey = clientKey;
             this.maxMsgIdx = maxMsgIdx;
             _allDealFuncs = new IncommingMessageHandler[maxMsgIdx];
-            ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
-                RegisterMsgHandler,
-                msgHandlerObj);
+            foreach (var msgFlag in msgFlags) {
+                ServerUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
+                    RegisterMsgHandler,
+                    msgHandlerObj);
+            }
             _server = new ServerSocketLn();
             _server.MessageReceived += OnMessage;
         }

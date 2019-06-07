@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using LitJson;
@@ -10,27 +11,35 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
     public static class NetworkUtil {
-        public static bool InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port,object target)
+        public static bool InitNetServer<TMsgType, TParam>(ref NetServer<TMsgType, TParam> refServer, int port,
+            object target)
             where TParam : class, INetProxy where TMsgType : struct{
             if (refServer != null) return true;
             var maxIdx = (short) (object) (TMsgType) Enum.Parse(typeof(TMsgType), "EnumCount");
-            var name = typeof(TMsgType).Name;
-            var tag = name.Replace("EMsg", "");
-            tag = tag.Substring(1, 1) + "2" + tag.Substring(0, 1);
-            refServer = new NetServer<TMsgType, TParam>(Define.MSKey, maxIdx, tag, target);
+            HashSet<string> tags = new HashSet<string>();
+            for (short i = 0; i < maxIdx; i++) {
+                var enumStr = ((TMsgType) (object) i).ToString();
+                tags.Add(enumStr.Split('_')[0]);
+            }
+
+            refServer = new NetServer<TMsgType, TParam>(Define.MSKey, maxIdx, tags.ToArray(), target);
             refServer.Listen(port);
             return false;
         }
 
 
-        public static bool InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port, Action onConnCallback,object target)
+        public static bool InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port,
+            Action onConnCallback, object target)
             where TMsgType : struct{
             if (refClient != null) return true;
             var maxIdx = (short) (object) (TMsgType) Enum.Parse(typeof(TMsgType), "EnumCount");
-            var name = typeof(TMsgType).Name;
-            var tag = name.Replace("EMsg", "");
-            tag = tag.Substring(0, 1) + "2" + tag.Substring(1, 1);
-            refClient = new NetClient<TMsgType>(maxIdx, tag, target);
+            HashSet<string> tags = new HashSet<string>();
+            for (short i = 0; i < maxIdx; i++) {
+                var enumStr = ((TMsgType) (object) i).ToString();
+                tags.Add(enumStr.Split('_')[0]);
+            }
+
+            refClient = new NetClient<TMsgType>(maxIdx, tags.ToArray(), target);
             if (onConnCallback != null) {
                 refClient.OnConnected += onConnCallback;
             }
@@ -38,12 +47,9 @@ namespace Lockstep.Server.Common {
             refClient.Connect(ip, port, Define.MSKey);
             return false;
         }
-
     }
 
     public static class ServerUtil {
-
-        
         public const string defaultConfigPath = "../Data/Config.json";
 
         public static T CreateDelegateFromMethodInfo<T>(System.Object instance, MethodInfo method) where T : Delegate{
@@ -100,6 +106,14 @@ namespace Lockstep.Server.Common {
         public static void UpdateServices(){
             Time.DoUpdate();
             CoroutineHelper.DoUpdate();
+        }
+
+        public static void RunServerInThread(Assembly Assembly, EServerType serverType){
+            var thread = new Thread(() => {
+                var config = ServerUtil.LoadConfig();
+                ServerUtil.RunServer(Assembly, serverType, config);
+            });
+            thread.Start();
         }
 
         public static void RunServer(Assembly assembly, EServerType serverType, ConfigInfo allConfig){
