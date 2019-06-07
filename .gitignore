@@ -8,6 +8,7 @@ Jenny/
 .idea/
 .vs/
 bin/
+*.db
 
 #VS ignore
 # Build and Object Folders  
