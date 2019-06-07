@@ -882,11 +882,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 440b2f40fbe64636b2fb22907196b809, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ErrorText: {fileID: 0}
-  LoginButton: {fileID: 0}
-  Password: {fileID: 0}
-  Remember: {fileID: 0}
-  Username: {fileID: 0}
+  CreateRoomWindow: {fileID: 0}
+  GameJoinButton: {fileID: 0}
+  ItemPrefab: {fileID: 0}
+  LayoutGroup: {fileID: 0}
 --- !u!1 &3165438152830958946
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,7 +1782,7 @@ GameObject:
   - component: {fileID: 3387244162821820701}
   - component: {fileID: 3029365003480773388}
   m_Layer: 5
-  m_Name: Create Lobby
+  m_Name: CreateLobby
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2285,7 +2284,7 @@ GameObject:
   - component: {fileID: 8884498210034659704}
   - component: {fileID: 7021349928878771306}
   m_Layer: 5
-  m_Name: Join Game
+  m_Name: JoinRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -91,6 +91,7 @@ namespace Lockstep.Client {
             _loginHandler.OnConnectedLoginServer();
         }
 
+        public bool isLogining = false;
         public void Login(string account, string password){
             _account = account;
             _password = _password;
@@ -98,12 +99,16 @@ namespace Lockstep.Client {
 
             if (!isConnectedToLoginServer)
                 return;
+            if(isLogining) return;
+            
+            isLogining = true;
             _netClientIC.SendMessage(EMsgSC.C2I_UserLogin, new Msg_C2I_UserLogin() {
                     Account = _account,
                     EncryptHash = _encryptHash,
                     GameType = 1,
                     Password = _password
                 }, (status, response) => {
+                    isLogining = false;
                     var rMsg = response.Parse<Msg_I2C_LoginResult>();
                     if (rMsg.LoginResult != 0) {
                         OnLoginFailed(ELoginResult.PasswordMissMatch);

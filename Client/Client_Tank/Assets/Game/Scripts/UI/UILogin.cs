@@ -27,7 +27,7 @@ namespace Lockstep.Game.UI
             Password = Password ?? transform.Find("Password").GetComponent<InputField>();
             Remember = Remember ?? transform.Find("Remember").GetComponent<Toggle>();
             Username = Username ?? transform.Find("Username").GetComponent<InputField>();
-
+            LoginButton.onClick.AddListener(OnLoginClick);
             ErrorText.gameObject.SetActive(false);
         }
 
@@ -109,7 +109,10 @@ namespace Lockstep.Game.UI
         {
             //SendMessage(EMsgSC.C2L_ReqLogin,new Msg_RoomInitMsg() {name = Username.text});
             HandleRemembering();
-            EventHelper.Trigger(EEvent.OnLoginResult,null);
+            EventHelper.Trigger(EEvent.TryLogin,new LoginParam() {
+                account = Username.text,
+                password =  Password.text
+            });
 
         }
 

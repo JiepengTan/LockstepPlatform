@@ -10,6 +10,7 @@ using Debug = Lockstep.Logging.Debug;
 namespace Lockstep.Core {
     public enum EEvent {
         LoadMapDone,
+        TryLogin,
         OnLoginResult,
         OnRoomGameStart,
         OnSimulationInited,

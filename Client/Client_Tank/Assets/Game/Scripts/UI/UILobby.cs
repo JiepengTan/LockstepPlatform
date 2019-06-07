@@ -25,10 +25,10 @@ namespace Lockstep.Game.UI {
     /// </summary>
     public class UILobby : UIBaseWindow {
         protected virtual void Awake(){
-            BindEvent("JoinRoom", OnBtn_JoinRoom);
-            BindEvent("CreateGame", OnBtn_CreateGame);
-            BindEvent("CreateLobby", OnBtn_CreateLobby);
-            BindEvent("Refresh", OnBtn_Refresh);
+            BindEvent("Window/JoinRoom", OnBtn_JoinRoom);
+            BindEvent("Window/CreateGame", OnBtn_CreateGame);
+            BindEvent("Window/CreateLobby", OnBtn_CreateLobby);
+            BindEvent("Window/Refresh", OnBtn_Refresh);
         }
 
         void OnBtn_JoinRoom(){ }

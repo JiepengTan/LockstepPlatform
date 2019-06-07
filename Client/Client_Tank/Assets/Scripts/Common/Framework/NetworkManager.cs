@@ -10,13 +10,12 @@ namespace Lockstep.Game {
     public class LoginHandler : BaseLoginHandler {
         public override void OnConnectedLoginServer(){
             _loginMgr.Log("OnConnLogin ");
-            var _account = "FakeClient " + (int) (Random.value * 10000);
-            var _password = "1234";
-            _loginMgr.Login(_account, _password);
         }
 
         public override void OnRoomInfo(RoomInfo[] roomInfos){
             _loginMgr.Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
+            EventHelper.Trigger(EEvent.OnLoginResult);
+            return;
             if (roomInfos == null || roomInfos.Length < 3) {
                 _loginMgr.CreateRoom(3, "TestRoom", 1);
                 return;
@@ -41,6 +40,17 @@ namespace Lockstep.Game {
 
         public override void OnGameStart(int mapId, byte localId){
             _loginMgr.Log("mapId" + mapId + " localId" + localId);
+        }
+    }
+
+    public class LoginParam {
+        public string password;
+        public string account;
+    }
+
+    public static class JsonExtension {
+        public static string ToJson(this object obj){
+            return obj == null ? "null" : JsonMapper.ToJson(obj);
         }
     }
 
@@ -70,6 +80,15 @@ namespace Lockstep.Game {
 
         public override void DoUpdate(float elapsedMilliseconds){
             _loginMgr.DoUpdate((int) elapsedMilliseconds);
+        }
+
+
+        public void OnEvent_TryLogin(object param){
+            Debug.Log("OnEvent_TryLogin" + param.ToJson());
+            var loginInfo = param as LoginParam;
+            var _account = loginInfo.account;
+            var _password = loginInfo.password;
+            _loginMgr.Login(_account, _password);
         }
 
         public override void DoDestroy(){ }
