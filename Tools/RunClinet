@@ -3,4 +3,4 @@ clear
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
 cd $dir/../
 ps -ef | grep "LSClient" | grep -v grep |awk '{print $2}' | xargs kill -9
-open -n Build/LSClient.app
+open -n bin/LPClient.app

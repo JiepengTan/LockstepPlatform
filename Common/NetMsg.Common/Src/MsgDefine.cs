@@ -176,7 +176,9 @@ namespace NetMsg.Common{
         public GamePlayerInfo[] Players;
         public string GameHash;
     }
-
+    public partial class Msg_G2L_OnGameFinished : BaseFormater {
+        public int RoomId;
+    }
 //GC
     public partial class Msg_C2G_Hello : BaseFormater {
         public GamePlayerInfo UserInfo;

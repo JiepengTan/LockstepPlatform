@@ -14,7 +14,7 @@ namespace Lockstep.Networking {
         //所有的消息处理函数
         protected IncommingMessageHandler[] _allDealFuncs;
         private int maxMsgIdx;
-
+        public event PeerActionHandler OnDisconnected;
 
         public NetServer(string clientKey, int maxMsgIdx, string[] msgFlags, object msgHandlerObj){
             this._clientKey = clientKey;
@@ -27,6 +27,7 @@ namespace Lockstep.Networking {
             }
             _server = new ServerSocketLn();
             _server.MessageReceived += OnMessage;
+            _server.OnDisconnected += OnDisconnected;
         }
 
         public void RegisterMsgHandler(TMsgType msgType, IncommingMessageHandler handler){

@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Barebones.MasterServer;
+﻿using System.Collections.Generic;
 using Barebones.Utils;
-using Lockstep.Core;
 using NetMsg.Common;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Lockstep.Game.UI {

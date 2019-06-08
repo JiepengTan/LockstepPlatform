@@ -6,44 +6,38 @@ using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Util;
 
-namespace Lockstep.Networking
-{
+namespace Lockstep.Networking {
     /// <summary>
     /// Server socket, which accepts websocket connections
     /// </summary>
-    public class ServerSocketLn : IServerSocket
-    {
+    public class ServerSocketLn : IServerSocket {
         public event PeerActionHandler Connected;
         public event PeerActionHandler Disconnected;
-        public event Action<IIncommingMessage> MessageReceived; 
-        public event PeerActionHandler OnConnected
-        {
-            add { Connected += value; }
-            remove { Connected -= value; }
+        public event Action<IIncommingMessage> MessageReceived;
+
+        public event PeerActionHandler OnConnected {
+            add => Connected += value;
+            remove => Connected -= value;
         }
 
-        public event PeerActionHandler OnDisconnected
-        {
-            add { Disconnected += value; }
-            remove { Disconnected -= value; }
+        public event PeerActionHandler OnDisconnected {
+            add => Disconnected += value;
+            remove => Disconnected -= value;
         }
-        
+
         private NetManager _server;
-        private Dictionary<int ,PeerLn> _id2Peer = new Dictionary<int, PeerLn>();
+        private Dictionary<int, PeerLn> _id2Peer = new Dictionary<int, PeerLn>();
         private PeerLn[] _allPeers;
 
-        public ServerSocketLn(){}
-        
+        public ServerSocketLn(){ }
+
         /// Opens the socket and starts listening to a given port
-        public void Listen(int port,string key = "")
-        {
-           var _listener = new EventBasedNetListener();
+        public void Listen(int port, string key = ""){
+            var _listener = new EventBasedNetListener();
             _server = new NetManager(_listener) {
                 DisconnectTimeout = 300000,
             };
-            _listener.ConnectionRequestEvent += request => {
-                request.AcceptIfKey(key);
-            };
+            _listener.ConnectionRequestEvent += request => { request.AcceptIfKey(key); };
 
             _listener.PeerConnectedEvent += pe => {
                 var speer = new PeerLn(pe);
@@ -70,7 +64,6 @@ namespace Lockstep.Networking
             };
 
             _server.Start(port);
-
         }
 
         public void BorderMessage(short type, ISerializablePacket data){
@@ -91,17 +84,13 @@ namespace Lockstep.Networking
         /// <summary>
         /// Stops listening
         /// </summary>
-        public void Stop()
-        {
+        public void Stop(){
             _server.Stop();
         }
 
-        public void Update()
-        {
-        }
+        public void Update(){ }
 
         public void PollEvents(){
-            
             _server?.PollEvents();
         }
     }

@@ -312,6 +312,17 @@ namespace NetMsg.Common{
     }
 
 
+    public partial class Msg_G2L_OnGameFinished{
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(RoomId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			RoomId = reader.GetInt32();
+        }
+    }
+
+
     public partial class Msg_HashCode{
         public override void Serialize(Serializer writer){
 			writer.PutInt32(StartTick);

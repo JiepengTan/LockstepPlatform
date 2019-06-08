@@ -12,7 +12,6 @@ using NetMsg.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
-
     public class Server : BaseServer {
         //Server MS
         protected NetServer<EMsgMS> _netServerMS;
@@ -56,8 +55,11 @@ namespace Lockstep.Server.Common {
         #region ServerMS_ClientMS_ClientXS
 
         //Client MS
-        protected void InitNetServer<TMsgType>(ref NetServer<TMsgType> refServer, int port)where TMsgType : struct{
+        protected void InitNetServer<TMsgType>(ref NetServer<TMsgType> refServer, int port,
+            PeerActionHandler disconnectedHandler = null
+        ) where TMsgType : struct{
             if (NetworkUtil.InitNetServer(ref refServer, port, this)) return;
+            if (disconnectedHandler != null) refServer.OnDisconnected += disconnectedHandler;
             _allServerNet.Add(refServer);
             _cachedAllServerNet = null;
         }
@@ -122,7 +124,8 @@ namespace Lockstep.Server.Common {
 
         #endregion
 
-        protected void ReqOtherServerInfo(EServerType type,ResponseCallback callback,EServerDetailPortType detailPortType = EServerDetailPortType.ServerPort){
+        protected void ReqOtherServerInfo(EServerType type, ResponseCallback callback,
+            EServerDetailPortType detailPortType = EServerDetailPortType.ServerPort){
             _netClientXS.SendMessage(EMsgXS.S2X_ReqOtherServerInfo, new Msg_ReqOtherServerInfo() {
                     ServerType = (byte) type,
                     DetailType = (byte) detailPortType
@@ -155,8 +158,6 @@ namespace Lockstep.Server.Common {
         }
 
         /// 更加负载情况 自动分配相遇的服务器
-
- 
         protected virtual ServerIpInfo GetSlaveServeInfo(byte detailType){
             return new ServerIpInfo() {
                 Port = _serverConfig.GetDetailPort(detailType),
