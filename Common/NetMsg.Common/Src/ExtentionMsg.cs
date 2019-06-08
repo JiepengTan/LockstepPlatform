@@ -164,6 +164,39 @@ namespace NetMsg.Common{
     }
 
 
+    public partial class Msg_C2L_ReadyInRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(State);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			State = reader.GetByte();
+        }
+    }
+
+
+    public partial class Msg_C2L_ReqRoomList{
+        public override void Serialize(Serializer writer){
+			writer.PutInt16(StartIdx);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			StartIdx = reader.GetInt16();
+        }
+    }
+
+
+    public partial class Msg_C2L_RoomChatInfo{
+        public override void Serialize(Serializer writer){
+			writer.Put(ChatInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			ChatInfo = reader.Get(ref this.ChatInfo);
+        }
+    }
+
+
     public partial class Msg_C2L_StartGame{
         public override void Serialize(Serializer writer){
 			writer.PutByte(Reason);
@@ -312,10 +345,69 @@ namespace NetMsg.Common{
     public partial class Msg_L2C_CreateRoom{
         public override void Serialize(Serializer writer){
 			writer.Put(Info);
+			writer.PutArray(PlayerInfos);
         }
     
         public override void Deserialize(Deserializer reader){
 			Info = reader.Get(ref this.Info);
+			PlayerInfos = reader.GetArray(ref this.PlayerInfos);
+        }
+    }
+
+
+    public partial class Msg_L2C_JoinRoom{
+        public override void Serialize(Serializer writer){
+			writer.Put(PlayerInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			PlayerInfo = reader.Get(ref this.PlayerInfo);
+        }
+    }
+
+
+    public partial class Msg_L2C_JoinRoomResult{
+        public override void Serialize(Serializer writer){
+			writer.PutArray(PlayerInfos);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			PlayerInfos = reader.GetArray(ref this.PlayerInfos);
+        }
+    }
+
+
+    public partial class Msg_L2C_LeaveRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(UserId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			UserId = reader.GetInt64();
+        }
+    }
+
+
+    public partial class Msg_L2C_ReadyInRoom{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(State);
+			writer.PutInt64(UserId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			State = reader.GetByte();
+			UserId = reader.GetInt64();
+        }
+    }
+
+
+    public partial class Msg_L2C_RoomChatInfo{
+        public override void Serialize(Serializer writer){
+			writer.Put(ChatInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			ChatInfo = reader.Get(ref this.ChatInfo);
         }
     }
 
@@ -443,13 +535,30 @@ namespace NetMsg.Common{
 
     public partial class RoomChangedInfo{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(CurPlayerCount);
+			writer.PutByte(CurPlayerCount);
 			writer.PutInt32(RoomId);
         }
     
         public override void Deserialize(Deserializer reader){
-			CurPlayerCount = reader.GetInt32();
+			CurPlayerCount = reader.GetByte();
 			RoomId = reader.GetInt32();
+        }
+    }
+
+
+    public partial class RoomChatInfo{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Channel);
+			writer.PutInt64(DstUserId);
+			writer.PutInt64(SrcUserId);
+			writer.PutArray(Message);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Channel = reader.GetByte();
+			DstUserId = reader.GetInt64();
+			SrcUserId = reader.GetInt64();
+			Message = reader.GetArray(ref this.Message);
         }
     }
 
@@ -475,6 +584,21 @@ namespace NetMsg.Common{
 			OwnerName = reader.GetString();
 			RoomId = reader.GetInt32();
 			State = reader.GetByte();
+        }
+    }
+
+
+    public partial class RoomPlayerInfo{
+        public override void Serialize(Serializer writer){
+			writer.PutString(Name);
+			writer.PutByte(Status);
+			writer.PutInt64(UserId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Name = reader.GetString();
+			Status = reader.GetByte();
+			UserId = reader.GetInt64();
         }
     }
 

@@ -12,7 +12,18 @@ namespace Lockstep.Core {
         LoadMapDone,
         TryLogin,
         OnLoginResult,
+        OnLeaveRoom,
+        OnJoinRoomResult,
+        OnPlayerJoinRoom,
+        OnPlayerLeaveRoom,
+        OnPlayerReadyInRoom,
+        OnRoomChatInfo,
+        OnRoomInfoUpdate,
+        OnRoomGameBegin,
+        
+
         OnRoomGameStart,
+        OnCreateRoom,
         OnSimulationInited,
         OnLoadingProgress,
         OnAllPlayerFinishedLoad,
@@ -29,6 +40,7 @@ namespace Lockstep.Core {
     public class EventHelper {
         private static Dictionary<int, List<GlobalEventHandler>> allListeners =
             new Dictionary<int, List<GlobalEventHandler>>();
+
         private static Queue<MsgInfo> allPendingMsgs = new Queue<MsgInfo>();
         private static Queue<ListenerInfo> allPendingListeners = new Queue<ListenerInfo>();
         private static Queue<EEvent> allNeedRemoveTypes = new Queue<EEvent>();
@@ -40,6 +52,7 @@ namespace Lockstep.Core {
                 allNeedRemoveTypes.Enqueue(type);
                 return;
             }
+
             allListeners.Remove((int) type);
         }
 
@@ -77,7 +90,7 @@ namespace Lockstep.Core {
                 }
             }
 
-            Debug.LogError("Try remove a not exist listner " + type);
+            //Debug.LogError("Try remove a not exist listner " + type);
         }
 
         public static void Trigger(EEvent type, object param = null){
@@ -97,12 +110,19 @@ namespace Lockstep.Core {
             IsTriggingEvent = false;
             while (allPendingListeners.Count > 0) {
                 var msgInfo = allPendingListeners.Dequeue();
-                RemoveListener(msgInfo.type, msgInfo.param);
+                if (msgInfo.isRegister) {
+                    AddListener(msgInfo.type, msgInfo.param);
+                }
+                else {
+                    RemoveListener(msgInfo.type, msgInfo.param);
+                }
             }
+
             while (allNeedRemoveTypes.Count > 0) {
                 var rmType = allNeedRemoveTypes.Dequeue();
                 RemoveAllListener(rmType);
             }
+
             while (allPendingMsgs.Count > 0) {
                 var msgInfo = allPendingMsgs.Dequeue();
                 Trigger(msgInfo.type, msgInfo.param);
@@ -130,6 +150,5 @@ namespace Lockstep.Core {
                 this.param = param;
             }
         }
-
     }
 }

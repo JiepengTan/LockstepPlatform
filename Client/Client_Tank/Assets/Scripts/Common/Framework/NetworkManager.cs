@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using LitJson;
 using Lockstep.Core;
@@ -8,27 +9,30 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public class LoginHandler : BaseLoginHandler {
+        private NetworkManager _networkManager;
+
         public override void OnConnectedLoginServer(){
             _loginMgr.Log("OnConnLogin ");
         }
 
-        public override void OnRoomInfo(RoomInfo[] roomInfos){
-            _loginMgr.Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
-            EventHelper.Trigger(EEvent.OnLoginResult);
-            return;
-            if (roomInfos == null || roomInfos.Length < 3) {
-                _loginMgr.CreateRoom(3, "TestRoom", 1);
-                return;
+        public override void OnConnLobby(RoomInfo[] roomInfos){
+            if (roomInfos != null) {
+                EventHelper.Trigger(EEvent.OnLoginResult);
             }
         }
 
+        public override void OnRoomInfo(RoomInfo[] roomInfos){
+            _loginMgr.Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
+            EventHelper.Trigger(EEvent.OnRoomInfoUpdate, roomInfos);
+        }
 
-        public override void OnCreateRoom(RoomInfo roomInfo){
+
+        public override void OnCreateRoom(RoomInfo roomInfo, RoomPlayerInfo[] playerInfos){
             if (roomInfo == null)
                 _loginMgr.Log("CreateRoom failed reason ");
             else {
                 _loginMgr.Log("CreateRoom " + roomInfo.ToString());
-                _loginMgr.StartGame();
+                EventHelper.Trigger(EEvent.OnCreateRoom, roomInfo);
             }
         }
 
@@ -40,7 +44,28 @@ namespace Lockstep.Game {
 
         public override void OnGameStart(int mapId, byte localId){
             _loginMgr.Log("mapId" + mapId + " localId" + localId);
+            EventHelper.Trigger(EEvent.OnRoomGameBegin);
         }
+
+        public override void OnPlayerJoinRoom(RoomPlayerInfo info){
+            EventHelper.Trigger(EEvent.OnPlayerJoinRoom, info);
+        }
+
+        public override void OnPlayerLeaveRoom(long userId){
+            EventHelper.Trigger(EEvent.OnPlayerLeaveRoom, userId);
+        }
+
+        public override void OnRoomChatInfo(RoomChatInfo info){
+            EventHelper.Trigger(EEvent.OnRoomChatInfo, info);
+        }
+
+        public override void OnPlayerReadyInRoom(long userId, byte state){
+            EventHelper.Trigger(EEvent.OnPlayerReadyInRoom, new object[]{userId,state});
+        }
+        public override void OnLeaveRoom(){
+            EventHelper.Trigger(EEvent.OnLeaveRoom);
+        }
+        public override void OnRoomInfoUpdate(RoomInfo[] addInfo, int[] deleteInfos, RoomChangedInfo[] changedInfos){ }
     }
 
     public class LoginParam {
@@ -66,6 +91,9 @@ namespace Lockstep.Game {
         public int Ping { get; set; } //=> _netProxyRoom.IsInit ? _netProxyRoom.Ping : _netProxyLobby.Ping;
         public bool IsConnected; // => _netProxyLobby != null && _netProxyLobby.Connected;
 
+        public RoomInfo[] RoomInfos => _loginMgr.RoomInfos;
+        public List<RoomPlayerInfo> PlayerInfos => _loginMgr.PlayerInfos;
+
         public override void DoAwake(IServiceContainer services){
             if (_constStateService.IsVideoMode) return;
             _loginHandler = new LoginHandler();
@@ -82,6 +110,47 @@ namespace Lockstep.Game {
             _loginMgr.DoUpdate((int) elapsedMilliseconds);
         }
 
+        public void CreateRoom(int mapId, string name, int size){
+            _loginMgr.CreateRoom(mapId, name, size);
+        }
+
+        public void StartGame(){
+            _loginMgr.StartGame();
+        }
+        public void ReadyInRoom(bool isReady){
+            _loginMgr.ReadyInRoom(isReady);
+        }
+        public void JoinRoom(int roomId){
+            _loginMgr.JoinRoom(roomId, (infos) => { EventHelper.Trigger(EEvent.OnJoinRoomResult, infos); });
+        }
+
+        public void ReqRoomList(int startIdx){
+            _loginMgr.ReqRoomList(startIdx);
+        }
+
+        public void LeaveRoom(){
+            _loginMgr.LeaveRoom();
+        }
+
+        public void OnPlayerJoinRoom(RoomPlayerInfo info){
+            EventHelper.Trigger(EEvent.OnPlayerJoinRoom, info);
+        }
+
+        public void OnPlayerLeaveRoom(long userId){
+            EventHelper.Trigger(EEvent.OnPlayerLeaveRoom, userId);
+        }
+
+        public void OnRoomChatInfo(RoomChatInfo info){
+            EventHelper.Trigger(EEvent.OnRoomChatInfo, info);
+        }
+
+        public void OnRoomInfoUpdate(RoomInfo[] addInfo, int[] deleteInfos, RoomChangedInfo[] changedInfos){ }
+
+
+        public void SendChatInfo(RoomChatInfo chatInfo){
+            _loginMgr.SendChatInfo(chatInfo);
+            
+        }
 
         public void OnEvent_TryLogin(object param){
             Debug.Log("OnEvent_TryLogin" + param.ToJson());

@@ -169,14 +169,22 @@ namespace Test {
 
         static LoginManager GetDebugClient(){
             var loginMgr = new LoginManager();
-            loginMgr.Init(new DebugLoginHandler(), "127.0.0.1", 7250);
+            loginMgr.Init(new DebugLoginHandler() {RandomSeed = _RandomSeed}, "127.0.0.1", 7250);
             return loginMgr;
         }
 
+        private static int _RandomSeed = 1173;
+
         public static void Main(string[] args){
             //TestNetwork();
-            ServerUtil.RunServerInThread(typeof(Lockstep.Server.Servers.Program).Assembly, EServerType.DaemonServer);
-            Thread.Sleep(TimeSpan.FromSeconds(3));
+            if (args.Length == 0) {
+                ServerUtil.RunServerInThread(typeof(Lockstep.Server.Servers.Program).Assembly,
+                    EServerType.DaemonServer);
+                Thread.Sleep(TimeSpan.FromSeconds(3));
+            }
+            else {
+                _RandomSeed = DateTime.Now.Millisecond;
+            }
 
             ClientUtil.RunClient(GetDebugClient());
             while (true) {

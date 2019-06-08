@@ -38,7 +38,7 @@ namespace NetMsg.Common{
 
     public partial class RoomChangedInfo : BaseFormater {
         public int RoomId;
-        public int CurPlayerCount;
+        public byte CurPlayerCount;
     }
 
     public partial class RoomInfo : BaseFormater {
@@ -64,8 +64,18 @@ namespace NetMsg.Common{
         public string LoginHash;
     }
 
-    
-    
+    public partial class RoomPlayerInfo : BaseFormater {
+        public long UserId;
+        public string Name;
+        public byte Status;
+    }
+    public partial class RoomChatInfo : BaseFormater {
+        public byte Channel;
+        public long SrcUserId;
+        public long DstUserId;
+        public byte[] Message;
+    }
+
 //IC
     public partial class Msg_C2I_UserLogin : BaseFormater {
         public string Account;
@@ -90,6 +100,9 @@ namespace NetMsg.Common{
     }
 
 
+    public partial class Msg_C2L_ReqRoomList : BaseFormater {
+        public short StartIdx;
+    }  
     public partial class Msg_L2C_RoomList : BaseFormater {
         public int GameType;
         public RoomInfo[] Rooms;
@@ -105,21 +118,44 @@ namespace NetMsg.Common{
     public partial class Msg_C2L_JoinRoom : BaseFormater {
         public int RoomId;
     }
-
+    public partial class Msg_L2C_JoinRoomResult : BaseFormater {
+        public RoomPlayerInfo[] PlayerInfos;
+    }
+    public partial class Msg_C2L_ReadyInRoom : BaseFormater {
+        public byte State;
+    }
+    public partial class Msg_L2C_ReadyInRoom : BaseFormater {
+        public long UserId;
+        public byte State;
+    }
+    public partial class Msg_L2C_JoinRoom : BaseFormater {
+        public RoomPlayerInfo PlayerInfo;
+    }
     public partial class Msg_C2L_LeaveRoom : BaseFormater {
         public byte Reason;
     }
-
+    
+    public partial class Msg_L2C_LeaveRoom : BaseFormater {
+        public long UserId;
+    }
+    
+    public partial class Msg_C2L_RoomChatInfo : BaseFormater {
+        public RoomChatInfo ChatInfo;
+    }
+    public partial class Msg_L2C_RoomChatInfo : BaseFormater {
+        public RoomChatInfo ChatInfo;
+    }
+    
     public partial class Msg_C2L_CreateRoom : BaseFormater {
         public int GameType;
         public int MapId;
         public string Name;
         public byte MaxPlayerCount;
     }
-
-
+  
     public partial class Msg_L2C_CreateRoom : BaseFormater {
         public RoomInfo Info;
+        public RoomPlayerInfo[] PlayerInfos;
     }
 
     public partial class Msg_C2L_StartGame : BaseFormater {

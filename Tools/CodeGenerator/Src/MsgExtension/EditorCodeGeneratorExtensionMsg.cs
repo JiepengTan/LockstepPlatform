@@ -36,7 +36,7 @@ namespace Lockstep.CodeGenerator {
             return typeof(EMsgSC).Namespace;
         }
         protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../Common/NetMsg.Common/Src/"); }
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/NetMsg.Common/Src/"); }
         }
     }
     public partial class EditorCodeGeneratorExtensionMsgServer : EditorCodeGeneratorExtensionMsg {
@@ -50,7 +50,7 @@ namespace Lockstep.CodeGenerator {
         }
         
         protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../NetMsg.Server/Src/"); }
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Server/NetMsg.Server/Src/"); }
         }
     }
     public abstract partial class EditorCodeGeneratorExtensionMsg : EditorBaseCodeGenerator {

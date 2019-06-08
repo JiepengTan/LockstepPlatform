@@ -85,7 +85,7 @@ namespace Lockstep.Server.Login {
         void ReqUserInfo(Msg_C2I_UserLogin cInfo, IIncommingMessage reader){
             var account = cInfo.Account;
             var password = cInfo.Password;
-            _netClientDS.SendMessage(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
+            _netClientDS?.SendMessage(EMsgDS.S2D_ReqUserInfo, new Msg_ReqAccountData() {
                 account = account,
                 password = password
             }, (status, response) => {
@@ -119,7 +119,7 @@ namespace Lockstep.Server.Login {
             else {
                 var loginHash = "LSHash" + Time.timeSinceLevelLoad;
                 _netClientLI.SendMessage(EMsgLS.I2L_UserLogin, new Msg_I2L_UserLogin() {
-                        Account = cInfo.Password,
+                        Account = cInfo.Account,
                         GameType = cInfo.GameType,
                         UserId = userId,
                         LoginHash = loginHash

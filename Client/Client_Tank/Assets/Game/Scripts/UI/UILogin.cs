@@ -117,7 +117,7 @@ namespace Lockstep.Game.UI
         }
 
         public void OnEvent_OnLoginResult(object param){
-            OpenWindow(UIDefine.UILobby);
+            OpenWindow(UIDefine.UIRoomList);
             Close();
         }
 

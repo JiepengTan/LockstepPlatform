@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lockstep.Logging;
 using Lockstep.Networking;
 using NetMsg.Common;
 
 namespace Lockstep.Client {
-
     public class LoginManager {
         public bool HasInit;
         private string _name = "";
@@ -32,12 +32,22 @@ namespace Lockstep.Client {
         private IUpdate[] _cachedAllClientNet;
         private RoomInfo[] _roomInfos;
 
+        public RoomInfo[] RoomInfos {
+            get { return _roomInfos; }
+        }
 
         private BaseLoginHandler _loginHandler;
 
         private string _serverIp;
         private ushort _serverPort;
 
+        private List<RoomPlayerInfo> _playerInfos;
+        public List<RoomPlayerInfo> PlayerInfos => _playerInfos;
+        private RoomInfo _curRoomInfo;
+        public RoomInfo CurRoomInfo => _curRoomInfo;
+
+        private List<RoomChatInfo> _chatInfos = new List<RoomChatInfo>();
+        public List<RoomChatInfo> ChatInfos => _chatInfos;
 
         private DebugInstance Debug;
 
@@ -92,15 +102,16 @@ namespace Lockstep.Client {
         }
 
         public bool isLogining = false;
+
         public void Login(string account, string password){
             _account = account;
-            _password = _password;
-            Debug.SetPrefix(_account+": ");
+            _password = password;
+            Debug.SetPrefix(_account + ": ");
 
             if (!isConnectedToLoginServer)
                 return;
-            if(isLogining) return;
-            
+            if (isLogining) return;
+
             isLogining = true;
             _netClientIC.SendMessage(EMsgSC.C2I_UserLogin, new Msg_C2I_UserLogin() {
                     Account = _account,
@@ -137,13 +148,9 @@ namespace Lockstep.Client {
 
                     var rMsg = response.Parse<Msg_L2C_RoomList>();
                     _roomInfos = rMsg.Rooms;
-                    UpdateRoomsState();
+                    _loginHandler.OnConnLobby(_roomInfos);
                 }
             );
-        }
-
-        void UpdateRoomsState(){
-            _loginHandler.OnRoomInfo(_roomInfos);
         }
 
         public void CreateRoom(int mapId, string name, int size){
@@ -154,13 +161,54 @@ namespace Lockstep.Client {
                 MaxPlayerCount = (byte) size
             }, (status, respond) => {
                 if (status == EResponseStatus.Failed) {
-                    _loginHandler.OnCreateRoom(null);
+                    _loginHandler.OnCreateRoom(null, null);
                 }
                 else {
                     var roomInfo = respond.Parse<Msg_L2C_CreateRoom>();
-                    _loginHandler.OnCreateRoom(roomInfo.Info);
+                    _curRoomInfo = roomInfo.Info;
+                    _playerInfos = new List<RoomPlayerInfo>(roomInfo.PlayerInfos);
+                    _loginHandler.OnCreateRoom(_curRoomInfo, roomInfo.PlayerInfos);
                 }
             });
+        }
+
+        public void JoinRoom(int roomId, Action<RoomPlayerInfo[]> resultCallBack){
+            _netClientLC.SendMessage(EMsgSC.C2L_JoinRoom, new Msg_C2L_JoinRoom() {
+                    RoomId = roomId
+                }
+                , (status, respond) => {
+                    if (status == EResponseStatus.Failed) {
+                        resultCallBack(null);
+                    }
+                    else {
+                        var msg = respond.Parse<Msg_L2C_JoinRoomResult>();
+                        _playerInfos = new List<RoomPlayerInfo>(msg.PlayerInfos);
+                        resultCallBack(msg.PlayerInfos);
+                    }
+                });
+        }
+
+        public void ReqRoomList(int startIdx){
+            _netClientLC.SendMessage(EMsgSC.C2L_ReqRoomList, new Msg_C2L_ReqRoomList() {
+                    StartIdx = (short) startIdx
+                }
+            );
+        }
+
+        public void LeaveRoom(){
+            _netClientLC.SendMessage(EMsgSC.C2L_LeaveRoom, new Msg_C2L_LeaveRoom() { },
+                (status, respond) => {
+                    if (status != EResponseStatus.Failed) {
+                        _loginHandler.OnLeaveRoom();
+                        ClearRoomInfo();
+                    }
+                });
+        }
+
+        private void ClearRoomInfo(){
+            _chatInfos.Clear();
+            _playerInfos.Clear();
+            _curRoomInfo = null;
         }
 
         public void StartGame(){
@@ -171,6 +219,16 @@ namespace Lockstep.Client {
             );
         }
 
+        public void ReadyInRoom(bool isReady){
+            _netClientLC.SendMessage(EMsgSC.C2L_ReadyInRoom, new Msg_C2L_ReadyInRoom() {
+                State = (byte) (isReady ? 1 : 0)
+            });
+        }
+
+        public void SendChatInfo(RoomChatInfo chatInfo){
+            _netClientLC.SendMessage(EMsgSC.C2L_RoomChatInfo, new Msg_C2L_RoomChatInfo() {ChatInfo = chatInfo});
+        }
+
         private void OnLoginFailed(ELoginResult result){
             _loginHandler.OnLoginFailed(result);
         }
@@ -178,13 +236,83 @@ namespace Lockstep.Client {
         protected void L2C_RoomList(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_RoomList>();
             _roomInfos = msg.Rooms;
-            UpdateRoomsState();
+            _loginHandler.OnRoomInfo(_roomInfos);
         }
+
 
         protected void L2C_RoomInfoUpdate(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_RoomInfoUpdate>();
-            _loginHandler.OnRoomInfoUpdate();
+            var roomInfos = RoomInfos;
+            var roomDict = new Dictionary<int, RoomInfo>();
+            if (roomInfos != null) {
+                foreach (var rawInfo in roomInfos) {
+                    roomDict.Add(rawInfo.RoomId, rawInfo);
+                }
+            }
+
+            if (msg.ChangedInfo != null) {
+                foreach (var info in msg.ChangedInfo) {
+                    if (roomDict.TryGetValue(info.RoomId, out var rawInfo)) {
+                        rawInfo.CurPlayerCount = info.CurPlayerCount;
+                    }
+                }
+            }
+
+            if (msg.AddInfo != null) {
+                foreach (var info in msg.AddInfo) {
+                    roomDict[info.RoomId] = info;
+                }
+            }
+
+            if (msg.DeleteInfo != null) {
+                foreach (var delId in msg.DeleteInfo) {
+                    roomDict.Remove(delId);
+                }
+            }
+
+            _roomInfos = roomDict.Values.ToArray();
+            _loginHandler.OnRoomInfo(_roomInfos);
         }
+
+        protected void L2C_RoomChatInfo(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2C_RoomChatInfo>();
+            _chatInfos.Add(msg.ChatInfo);
+            _loginHandler.OnRoomChatInfo(msg.ChatInfo);
+        }
+
+        protected void L2C_ReadyInRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2C_ReadyInRoom>();
+            var info = _playerInfos.Find((a) => a.UserId == msg.UserId);
+            if (info != null) {
+                info.Status = msg.State;
+                _loginHandler.OnPlayerReadyInRoom(msg.UserId, msg.State);
+            }
+        }
+
+        protected void L2C_LeaveRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2C_LeaveRoom>();
+            var idx = _playerInfos.FindIndex((item) => { return item.UserId == msg.UserId; });
+            if (idx != -1) {
+                _playerInfos.RemoveAt(idx);
+            }
+
+            _loginHandler.OnPlayerLeaveRoom(msg.UserId);
+        }
+
+        protected void L2C_JoinRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2C_JoinRoom>();
+            var userId = msg.PlayerInfo.UserId;
+            var idx = _playerInfos.FindIndex((item) => { return item.UserId == userId; });
+            if (idx == -1) {
+                _playerInfos.Add(msg.PlayerInfo);
+            }
+            else {
+                _playerInfos[idx] = msg.PlayerInfo;
+            }
+
+            _loginHandler.OnPlayerJoinRoom(msg.PlayerInfo);
+        }
+
 
         protected void L2C_StartGame(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_StartGame>();

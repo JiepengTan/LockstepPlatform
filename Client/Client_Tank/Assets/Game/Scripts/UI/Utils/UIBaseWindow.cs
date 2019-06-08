@@ -19,8 +19,8 @@ namespace Lockstep.Game {
         public static WindowCreateInfo UIRoot = new WindowCreateInfo("UIRoot", EWindowDepth.Normal);
         public static WindowCreateInfo UILogin = new WindowCreateInfo("UILogin", EWindowDepth.Normal);
         public static WindowCreateInfo UILobby = new WindowCreateInfo("UILobby", EWindowDepth.Normal);
-        public static WindowCreateInfo UICreateRoom = new WindowCreateInfo("UICreateTeam", EWindowDepth.Normal);
-        public static WindowCreateInfo UIRoomList = new WindowCreateInfo("UIGameList", EWindowDepth.Normal);
+        public static WindowCreateInfo UICreateRoom = new WindowCreateInfo("UICreateRoom", EWindowDepth.Normal);
+        public static WindowCreateInfo UIRoomList = new WindowCreateInfo("UIRoomList", EWindowDepth.Normal);
         public static WindowCreateInfo UINetStatus = new WindowCreateInfo("UINetStatus", EWindowDepth.Normal);
 
         //common
@@ -48,9 +48,10 @@ namespace Lockstep.Game {
         public virtual void DoStart(){ }
         public virtual void OnClose(){ }
 
-        protected void BindEvent(string name, UnityAction func){
+        protected Button BindEvent(string name, UnityAction func){
             var btn = transform.Find(name).GetComponent<Button>();
             btn.onClick.AddListener(func);
+            return btn;
         }
 
         protected void OpenWindow(WindowCreateInfo windowInfo){

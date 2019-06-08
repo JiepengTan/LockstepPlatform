@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Lockstep.Logging;
 using Lockstep.Serialization;
 
 
-namespace Lockstep.Networking
-{
+namespace Lockstep.Networking {
     /// <summary>
     ///     Helper class, that uses <see cref="IMessageFactory" /> implementation
     ///     to help create messages
     /// </summary>
-    public static class MessageHelper
-    {
+    public static class MessageHelper {
         private static IMessageFactory _factory;
 
 
-        static MessageHelper()
-        {
+        static MessageHelper(){
             _factory = new MessageFactory();
         }
 
@@ -25,8 +23,7 @@ namespace Lockstep.Networking
         ///     Changes current message factory.
         /// </summary>
         /// <param name="factory"></param>
-        public static void SetFactory(IMessageFactory factory)
-        {
+        public static void SetFactory(IMessageFactory factory){
             _factory = factory;
         }
 
@@ -38,7 +35,7 @@ namespace Lockstep.Networking
         /// <param name="packet"></param>
         /// <returns></returns>
         public static T Deserialize<T>(byte[] data, T packet) where T : ISerializablePacket{
-            return packet;// SerializablePacket.FromBytes(data, packet);
+            return packet; // SerializablePacket.FromBytes(data, packet);
         }
 
 
@@ -47,8 +44,7 @@ namespace Lockstep.Networking
         /// </summary>
         /// <param name="opCode"></param>
         /// <returns></returns>
-        public static IMessage Create(short opCode)
-        {
+        public static IMessage Create(short opCode){
             return _factory.Create(opCode);
         }
 
@@ -58,8 +54,7 @@ namespace Lockstep.Networking
         /// <param name="opCode"></param>
         /// <param name="data"></param>
         /// <returns></returns>
-        public static IMessage Create(short opCode, byte[] data)
-        {
+        public static IMessage Create(short opCode, byte[] data){
             return _factory.Create(opCode, data);
         }
 
@@ -69,8 +64,7 @@ namespace Lockstep.Networking
         /// <param name="opCode"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public static IMessage Create(short opCode, string message)
-        {
+        public static IMessage Create(short opCode, string message){
             return _factory.Create(opCode, Encoding.UTF8.GetBytes(message));
         }
 
@@ -80,16 +74,14 @@ namespace Lockstep.Networking
         /// <param name="opCode"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static IMessage Create(short opCode, int value)
-        {
+        public static IMessage Create(short opCode, int value){
             var bytes = new byte[4];
             ByteHelper.CopyBytes(value, bytes, 0);
             return _factory.Create(opCode, bytes);
         }
 
 
-        public static IMessage Create(short opCode, ISerializablePacket packet)
-        {
+        public static IMessage Create(short opCode, ISerializablePacket packet){
             return Create(opCode, packet.ToBytes());
         }
 
@@ -99,8 +91,7 @@ namespace Lockstep.Networking
         /// <param name="buffer"></param>
         /// <param name="peer"></param>
         /// <returns></returns>
-        public static IIncommingMessage FromBytes(byte[] buffer, int start, IPeer peer)
-        {
+        public static IIncommingMessage FromBytes(byte[] buffer, int start, IPeer peer){
             return _factory.FromBytes(buffer, start, peer);
         }
     }

@@ -14,7 +14,7 @@ namespace Barebones.MasterServer
         public GameObject CreateRoomWindow;
 
         public Button GameJoinButton;
-        public GamesListUiItem ItemPrefab;
+        //public GamesListUiItem ItemPrefab;
         public LayoutGroup LayoutGroup;
 /*
         private GenericUIList<GameInfoPacket> _items;

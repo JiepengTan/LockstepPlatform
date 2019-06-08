@@ -6,23 +6,24 @@ using NetMsg.Common;
 namespace Test {
     
     public class DebugLoginHandler : BaseLoginHandler {
+        public int RandomSeed = 1167;
         public override void OnConnectedLoginServer(){
             _loginMgr.Log("OnConnLogin ");
-            var _account = "FakeClient " + new Random(1154).Next();
+            var _account = "FakeClient " +  new Random(RandomSeed).Next();
             var  _password = "1234";
             _loginMgr.Login(_account, _password);
         }
             
-        public override void OnRoomInfo(RoomInfo[] roomInfos){
+        public override void OnConnLobby(RoomInfo[] roomInfos){
             _loginMgr.Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
             if (roomInfos == null) {
-                _loginMgr.CreateRoom(3, "TestRoom", 1);
+                _loginMgr.CreateRoom(3, "DebugTestRoom", 2);
                 return;
             }
         }
 
 
-        public override void OnCreateRoom(RoomInfo roomInfo){
+        public override void OnCreateRoom(RoomInfo roomInfo,RoomPlayerInfo[] playerInfos){
             if (roomInfo == null)
                 _loginMgr.Log("CreateRoom failed reason ");
             else {

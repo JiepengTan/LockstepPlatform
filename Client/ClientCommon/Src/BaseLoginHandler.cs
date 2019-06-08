@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using NetMsg.Common;
 
 namespace Lockstep.Client {
@@ -9,9 +10,12 @@ namespace Lockstep.Client {
         }
 
         public virtual void OnConnectedLoginServer(){ }
+        public virtual void OnConnLobby(RoomInfo[] roomInfos){ }
         public virtual void OnRoomInfo(RoomInfo[] roomInfos){ }
-        public virtual void OnCreateRoom(RoomInfo info){ }
-        public virtual void OnRoomInfoUpdate(){ }
+        public virtual void OnCreateRoom(RoomInfo info,RoomPlayerInfo[] playerInfos){ }
+
+        public virtual void OnRoomInfoUpdate(RoomInfo[] addInfo,int[] deleteInfos,RoomChangedInfo[] changedInfos){ }
+
         public virtual void OnStartRoomResult(int reason){ }
         public virtual void OnGameStart(int mapId, byte localId){ }
 
@@ -20,5 +24,11 @@ namespace Lockstep.Client {
         }
 
         public virtual void OnGameStartFailed(){ }
+        public virtual void OnPlayerJoinRoom(RoomPlayerInfo info){ }
+        public virtual void OnPlayerLeaveRoom(long userId){ }
+        public virtual void OnRoomChatInfo(RoomChatInfo info){ }
+        public virtual void OnPlayerReadyInRoom(long userId,byte state){ }
+        public virtual void OnLeaveRoom(){ }
+        
     }
 }

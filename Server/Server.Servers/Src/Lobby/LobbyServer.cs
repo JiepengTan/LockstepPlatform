@@ -90,6 +90,40 @@ namespace Lockstep.Server.Lobby {
             public bool IsEmpty => CurPlayerCount <= 0;
             public List<User> Users = new List<User>(10);
             public User Owner;
+            private RoomPlayerInfo[] _roomPlayerInfos;
+
+            public RoomPlayerInfo[] RoomPlayerInfos {
+                get {
+                    if (_roomPlayerInfos != null)
+                        return _roomPlayerInfos;
+                    _roomPlayerInfos = new RoomPlayerInfo[Users.Count];
+                    for (int i = 0; i < Users.Count; i++) {
+                        var user = Users[i];
+                        var info = new RoomPlayerInfo() {
+                            UserId = user.UserId,
+                            Name = user.Name,
+                            Status = user.IsReady
+                        };
+                        _roomPlayerInfos[i] = info;
+                    }
+
+                    return _roomPlayerInfos;
+                }
+            }
+
+
+            public void BorderMessage(short opCode, ISerializablePacket packet){
+                var msg = MessageHelper.Create(opCode, packet.ToBytes());
+                foreach (var user in Users) {
+                    user.SendMessage(msg);
+                }
+            }
+
+            public void BorderMessage(IMessage msg){
+                foreach (var user in Users) {
+                    user.SendMessage(msg);
+                }
+            }
 
             public void Init(int type, int roomId, string name, int mapId, byte maxPlayerCount, User owner){
                 GameType = type;
@@ -97,7 +131,7 @@ namespace Lockstep.Server.Lobby {
                 Name = name;
                 MapId = mapId;
                 MaxPlayerCount = maxPlayerCount;
-                
+
                 CurPlayerCount = 1;
                 OwnerName = owner.Name;
                 IsPlaying = false;
@@ -108,16 +142,19 @@ namespace Lockstep.Server.Lobby {
             public override void OnRecycle(){
                 Users.Clear();
                 Owner = null;
+                _roomPlayerInfos = null;
             }
 
             public void AddUser(User user){
                 Users.Add(user);
                 CurPlayerCount++;
+                _roomPlayerInfos = null;
             }
 
             public void RemoveUser(User user){
                 if (Users.Remove(user)) {
                     CurPlayerCount--;
+                    _roomPlayerInfos = null;
                 }
             }
 
@@ -127,9 +164,10 @@ namespace Lockstep.Server.Lobby {
         }
 
         public class User : BaseRecyclable {
-            public long UserId;
             public int GameType;
+            public long UserId;
             public string Name;
+            public byte IsReady;
             public string Account;
             public string LoginHash; //用于校验玩家
             public IPeer Peer;
@@ -150,6 +188,18 @@ namespace Lockstep.Server.Lobby {
 
             public override string ToString(){
                 return JsonMapper.ToJson(this);
+            }
+
+            public void SendMessage(short opCode, ISerializablePacket packet){
+                Peer?.SendMessage(opCode, packet);
+            }
+
+            public void SendMessage(IMessage message){
+                Peer?.SendMessage(message);
+            }
+
+            public void SendMessage(IMessage message, ResponseCallback responseCallback){
+                Peer?.SendMessage(message, responseCallback);
             }
         }
 
@@ -312,6 +362,21 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
+        protected void C2L_ReadyInRoom(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_ReadyInRoom>();
+            var user = reader.Peer.GetExtension<User>();
+            var uid = user.UserId;
+            if (_uid2Player.TryGetValue(uid, out var info)) {
+                if (info.IsReady != msg.State && user.Room != null && !user.Room.IsPlaying) {
+                    info.IsReady = msg.State;
+                    user.Room.BorderMessage((short) EMsgSC.L2C_ReadyInRoom, new Msg_L2C_ReadyInRoom() {
+                        UserId = uid,
+                        State = msg.State
+                    });
+                }
+            }
+        }
+
         protected void C2L_UserLogin(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_UserLogin>();
             Debug.Log("C2L_UserLogin" + msg);
@@ -335,6 +400,15 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
+        protected void C2L_RoomChatInfo(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_C2L_RoomChatInfo>();
+            Debug.Log("C2L_RoomChatInfo" + msg);
+            var user = reader.Peer.GetExtension<User>();
+            user?.Room?.BorderMessage((short) EMsgSC.L2C_RoomChatInfo, new Msg_L2C_RoomChatInfo() {
+                ChatInfo = msg.ChatInfo
+            });
+        }
+
         protected void C2L_JoinRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_JoinRoom>();
             Debug.Log("C2L_JoinRoom" + msg);
@@ -346,9 +420,19 @@ namespace Lockstep.Server.Lobby {
                 }
                 else {
                     var user = reader.Peer.GetExtension<User>();
-                    if (user.Room != room) {
+                    if (user.Room == null) {
                         user.Room = room;
-                        room.Users.Add(user);
+                        room.AddUser(user);
+                        reader.Respond((short) EMsgSC.L2C_JoinRoomResult, new Msg_L2C_JoinRoomResult() {
+                            PlayerInfos = room.RoomPlayerInfos
+                        });
+                        room.BorderMessage((short) EMsgSC.L2C_JoinRoom, new Msg_L2C_JoinRoom() {
+                            PlayerInfo = new RoomPlayerInfo() {
+                                UserId = user.UserId,
+                                Name = user.Name,
+                                Status = user.IsReady
+                            }
+                        });
                     }
                     else {
                         reader.Respond((int) ERoomOperatorResult.AlreadyExist, EResponseStatus.Failed);
@@ -370,8 +454,21 @@ namespace Lockstep.Server.Lobby {
             var room = user.Room;
             room.RemoveUser(user);
             if (room.IsEmpty) {
+                var roomId = user.Room.RoomId;
+                //TODO 缓存
+                if (_gameType2Rooms.TryGetValue(user.GameType, out var rooms)) {
+                    var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate,
+                        new Msg_L2C_RoomInfoUpdate() {
+                            DeleteInfo = new[] {roomId}
+                        }.ToBytes());
+                    foreach (var tRoom in rooms) {
+                        tRoom.BorderMessage(bMsg);
+                    }
+                }
+
                 RemoveRoom(user.Room);
                 reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
+                user.Room = null;
                 return;
             }
 
@@ -381,6 +478,9 @@ namespace Lockstep.Server.Lobby {
 
             user.Room = null;
             reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
+            room.BorderMessage((short) EMsgSC.L2C_LeaveRoom, new Msg_L2C_LeaveRoom() {
+                UserId = user.UserId
+            });
         }
 
         protected void C2L_CreateRoom(IIncommingMessage reader){
@@ -392,8 +492,22 @@ namespace Lockstep.Server.Lobby {
             }
 
             var room = AddRoom(user, msg.Name, msg.MapId, msg.MaxPlayerCount);
-            reader.Respond(EMsgSC.L2C_CreateRoomResult, new Msg_L2C_CreateRoom() {Info = room.Info});
+            reader.Respond(EMsgSC.L2C_CreateRoomResult, new Msg_L2C_CreateRoom() {
+                Info = room.Info,
+                PlayerInfos = room.RoomPlayerInfos
+            });
+            //TODO 缓存信息 批量发送
+            if (_gameType2Rooms.TryGetValue(user.GameType, out var rooms)) {
+                var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate,
+                    new Msg_L2C_RoomInfoUpdate() {
+                        AddInfo = new RoomInfo[] {room.Info}
+                    }.ToBytes());
+                foreach (var tRoom in rooms) {
+                    tRoom.BorderMessage(bMsg);
+                }
+            }
         }
+
 
         protected void C2L_StartGame(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_StartGame>();

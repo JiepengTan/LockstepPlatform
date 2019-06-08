@@ -20,6 +20,8 @@ namespace NetMsg.Common {
         NotExist,
         AlreadyExist,
     }
+
+  
     
     //msg between client RoomServer
     public enum EMsgSC : short {
@@ -30,13 +32,25 @@ namespace NetMsg.Common {
         I2C_LoginResult,
 
         //LC
+        //chat
+        C2L_RoomChatInfo,
+        L2C_RoomChatInfo,
+        
+        //Room Operator
         I2L_UserLogin,
         C2L_UserLogin,
+        //Room Operator
+        C2L_ReqRoomList,
         L2C_RoomList,
         L2C_RoomInfoUpdate,
-
+        
         C2L_JoinRoom,
+        L2C_JoinRoom,
+        L2C_JoinRoomResult,
+        C2L_ReadyInRoom,
+        L2C_ReadyInRoom,
         C2L_LeaveRoom,
+        L2C_LeaveRoom,
         C2L_CreateRoom,
         L2C_CreateRoomResult,
         C2L_StartGame,
