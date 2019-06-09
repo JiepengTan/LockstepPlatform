@@ -25,18 +25,14 @@ namespace Lockstep.Networking {
 
         public event Action<EConnectionStatus> StatusChanged;
 
-        private bool _isConnected;
 
-        public bool IsConnected {
-            get { return _isConnected; }
-        }
+        public bool IsConnected => _status == EConnectionStatus.Connected;
 
-        public bool IsConnecting {
-            get { return _status == EConnectionStatus.Connecting; }
-        }
+        public bool IsConnecting => _status == EConnectionStatus.Connecting;
 
         private string _ip;
         private int _port;
+        private string _key;
 
         public string ConnectionIp {
             get { return _ip; }
@@ -151,13 +147,6 @@ namespace Lockstep.Networking {
             _handlers.Remove(handler.OpCode);
         }
 
-        /// <summary>
-        /// Disconnects and connects again
-        /// </summary>
-        public void Reconnect(){
-            Disconnect();
-            Connect(_ip, _port);
-        }
 
         // Update is called once per frame
         public void Update(){
@@ -227,23 +216,51 @@ namespace Lockstep.Networking {
         public IClientSocket Connect(string ip, int port, int timeoutMillis, string key = ""){
             _ip = ip;
             _port = port;
-
-
-            _isConnected = false;
+            _key = key;
             Status = EConnectionStatus.Connecting;
-
             if (_peer != null) {
                 _peer.MessageReceived -= HandleMessage;
                 _peer.Dispose();
             }
 
+            if (_netManager == null) {
+                InitEvents();
+            }
+
+            _netManager.Connect(_ip, _port, _key);
+            return this;
+        }
+
+
+        public void Disconnect(){
+            if (_peer != null) {
+                _peer.Dispose();
+            }
+
+            if (_netManager != null) {
+                _netManager.DisconnectAll();
+            }
+
+            SetStatus(EConnectionStatus.Disconnected); // EMIL strikes again!
+        }
+
+        /// <summary>
+        /// Disconnects and connects again
+        /// </summary>
+        public void Reconnect(){
+            Debug.Log($"Reconnect {_ip}:{_port}:{_key}");
+            Disconnect();
+            Connect(_ip, _port, _key);
+        }
+
+        private void InitEvents(){
             _listener = new EventBasedNetListener();
             _listener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) => {
                 _peer.HandleDataReceived(dataReader.GetRemainingBytes(), 0);
                 dataReader.Recycle();
             };
             _listener.PeerConnectedEvent += (peer) => {
-                _isConnected = false;
+                Status = EConnectionStatus.Connected;
                 var pe = new PeerLn(peer);
                 pe.SetConnectedState(true);
                 pe.MessageReceived += HandleMessage;
@@ -252,26 +269,15 @@ namespace Lockstep.Networking {
                 Connected?.Invoke();
             };
             _listener.PeerDisconnectedEvent += (peer, disconnectInfo) => {
+                if (Peer != null) Peer.MessageReceived -= HandleMessage;
                 _peer?.SetConnectedState(false);
-                _isConnected = false;
+                Status = EConnectionStatus.Disconnected;
                 Disconnected?.Invoke();
             };
             _netManager = new NetManager(_listener) {
                 DisconnectTimeout = 300000
             };
             _netManager.Start();
-            _netManager.Connect(_ip, _port, key);
-            return this;
-        }
-
-        public void Disconnect(){
-
-            if (_peer != null) {
-                _peer.Dispose();
-            }
-
-            _isConnected = false; //EMIL Fix
-            SetStatus(EConnectionStatus.Disconnected); // EMIL strikes again!
         }
 
         private void HandleMessage(IIncommingMessage message){

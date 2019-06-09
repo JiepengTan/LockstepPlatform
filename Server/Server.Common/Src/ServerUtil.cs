@@ -10,7 +10,6 @@ using Lockstep.Util;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
-
     public static class ServerUtil {
         public const string defaultConfigPath = "../Data/Server/Config.json";
 
@@ -31,15 +30,6 @@ namespace Lockstep.Server.Common {
         private static List<BaseServer> servers = new List<BaseServer>();
         private static bool hasInited = false;
 
-        public static void StartServices(){
-            Time.DoStart();
-            CoroutineHelper.DoStart();
-        }
-
-        public static void UpdateServices(){
-            Time.DoUpdate();
-            CoroutineHelper.DoUpdate();
-        }
 
         public static void RunServerInThread(Assembly Assembly, EServerType serverType){
             var thread = new Thread(() => {
@@ -76,7 +66,7 @@ namespace Lockstep.Server.Common {
             }
 
             hasInited = true;
-            StartServices();
+            Utils.StartServices();
 
             var sw = new Stopwatch();
             sw.Start();
@@ -102,7 +92,7 @@ namespace Lockstep.Server.Common {
                     var elapse = curTick - lastTick;
                     if (elapse >= tickInterval) {
                         lastTick = curTick;
-                        UpdateServices();
+                        Utils.UpdateServices();
                         foreach (var svr in servers) {
                             svr.DoUpdate((int) elapse);
                         }

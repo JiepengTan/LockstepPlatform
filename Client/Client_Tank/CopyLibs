@@ -2,7 +2,6 @@
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
 cd $dir
 pwd
-rm -rf Assets/Plugins/Libs/*
 cp -rf ../../Common/Libs/* Assets/Plugins/Libs
 #rm -rf Assets/Plugins/Libs/LiteDB*
 rm -rf Assets/Plugins/Libs/UnityE*

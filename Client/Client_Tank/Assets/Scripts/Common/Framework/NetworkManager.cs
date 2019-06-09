@@ -5,6 +5,7 @@ using Lockstep.Core;
 using Lockstep.Serialization;
 using NetMsg.Common;
 using Lockstep.Client;
+using Lockstep.Util;
 using UnityEngine;
 
 namespace Lockstep.Game {
@@ -103,10 +104,12 @@ namespace Lockstep.Game {
         }
 
         public override void DoStart(){
+            Utils.StartServices();
             _loginMgr.DoStart();
         }
 
         public override void DoUpdate(float elapsedMilliseconds){
+            Utils.UpdateServices();
             _loginMgr.DoUpdate((int) elapsedMilliseconds);
         }
 

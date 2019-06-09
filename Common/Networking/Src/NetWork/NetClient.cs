@@ -1,7 +1,9 @@
 #define DEBUG_FRAME_DELAY
 using System;
+using Lockstep.Logging;
 using Lockstep.Networking;
 using Lockstep.Serialization;
+using Lockstep.Util;
 
 
 namespace Lockstep.Networking {
@@ -21,10 +23,10 @@ namespace Lockstep.Networking {
 
         private bool _isInit = false;
         public Action OnConnected;
+        public bool IsConnected => _client?.IsConnected ?? false;
 
-        private string _ip;
-        private int _port;
-        private string _key;
+        private float nextCheckConnectTimeStamp = 0;
+        public float ReconnectInterval = 1;
 
         public void RegisterMsgHandler(TMsgType msgType, IncommingMessageHandler handler){
             _allDealFuncs[(short) (object) msgType] = handler;
@@ -34,14 +36,11 @@ namespace Lockstep.Networking {
             _allDealFuncs = new IncommingMessageHandler[maxMsgHandlerIdx];
             foreach (var msgFlag in msgFlags) {
                 NetworkUtil.RegisterEvent<TMsgType, IncommingMessageHandler>("" + msgFlag, "".Length,
-                    RegisterMsgHandler,msgHandlerObj);
+                    RegisterMsgHandler, msgHandlerObj);
             }
         }
 
-        public void Connect(string ip, int port, string key){
-            this._ip = ip;
-            this._port = port;
-            this._key = key;
+        public void Connect(string ip, int port, string key = ""){
             _client = new ClientSocketLn();
             _isInit = true;
             for (short i = 0; i < _allDealFuncs.Length; i++) {
@@ -50,18 +49,33 @@ namespace Lockstep.Networking {
                     _client.SetHandler(i, func);
                 }
             }
+
             _client.Connected += OnConnected;
-            _client.Connect(_ip, _port, _key);
+            _client.Connect(ip, port, key);
+            nextCheckConnectTimeStamp = Time.timeSinceLevelLoad + ReconnectInterval;
         }
 
+
         public void DoDestroy(){
+            _client.Disconnect();
             _client.Connected -= OnConnected;
+            _client = null;
             _isInit = false;
         }
 
         public void DoUpdate(){
             if (!_isInit) return;
-            _client?.Update();
+            if (_client != null) {
+                //Reconnect
+                if (nextCheckConnectTimeStamp < Time.timeSinceLevelLoad) {
+                    nextCheckConnectTimeStamp = Time.timeSinceLevelLoad + ReconnectInterval;
+                    if (!_client.IsConnected) {
+                        _client.Reconnect();
+                    }
+                }
+
+                _client.Update();
+            }
         }
 
         public void SendMessage(TMsgType type, BaseFormater data){

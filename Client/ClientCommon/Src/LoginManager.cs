@@ -11,7 +11,6 @@ namespace Lockstep.Client {
         private string _name = "";
         private string _account = "";
         private string _password = "";
-        private bool isConnectedToLoginServer;
         private string _encryptHash;
         private string _loginHash;
         private long _userId;
@@ -97,7 +96,6 @@ namespace Lockstep.Client {
 
 
         void OnConnLogin(){
-            isConnectedToLoginServer = true;
             _loginHandler.OnConnectedLoginServer();
         }
 
@@ -108,10 +106,12 @@ namespace Lockstep.Client {
             _password = password;
             Debug.SetPrefix(_account + ": ");
 
-            if (!isConnectedToLoginServer)
+            if (_netClientIC != null && !_netClientIC.IsConnected) { 
+                Debug.Log("Has not connect to LoginServer");
                 return;
-            if (isLogining) return;
+            }
 
+            if (isLogining) return;
             isLogining = true;
             _netClientIC.SendMessage(EMsgSC.C2I_UserLogin, new Msg_C2I_UserLogin() {
                     Account = _account,
@@ -136,6 +136,7 @@ namespace Lockstep.Client {
         }
 
         private void OnConnLobby(){
+            _netClientIC.DoDestroy();
             Debug.Log("OnConnLobby ");
             _netClientLC.SendMessage(EMsgSC.C2L_UserLogin, new Msg_C2L_UserLogin() {
                     userId = _userId,

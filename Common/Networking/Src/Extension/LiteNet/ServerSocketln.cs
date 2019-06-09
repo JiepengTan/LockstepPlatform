@@ -54,13 +54,14 @@ namespace Lockstep.Networking {
             };
 
             _listener.PeerDisconnectedEvent += (pe, info) => {
-                var peer = _id2Peer[pe.Id];
                 _allPeers = null;
-                peer.SetConnectedState(false);
-                peer.MessageReceived -= OnMessage;
-                Disconnected?.Invoke(peer);
-                peer.NotifyDisconnectEvent();
-                _id2Peer.Remove(pe.Id);
+                if (_id2Peer.TryGetValue(pe.Id,out var peer)) {
+                    peer.SetConnectedState(false);
+                    peer.MessageReceived -= OnMessage;
+                    Disconnected?.Invoke(peer);
+                    peer.NotifyDisconnectEvent();
+                    _id2Peer.Remove(pe.Id);
+                }
             };
 
             _server.Start(port);
