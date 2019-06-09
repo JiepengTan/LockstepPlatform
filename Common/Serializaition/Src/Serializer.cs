@@ -435,9 +435,9 @@ namespace Lockstep.Serialization {
                 return;
             }
 
-            ResizeIfNeed(_position + bytesCount);
             // if we are LE, just do a block copy
             Buffer.BlockCopy(x, 0, _data, _position, bytesCount);
+            _position += bytesCount;
         }
     }
 }

@@ -9,6 +9,12 @@ using User = Server.Servers.Lobby.LobbyServer.User;
 
 namespace Lockstep.Server.Lobby {
     public partial class LobbyServer : Common.Server {
+        public enum ELobbyBorderType {
+            InRoom,
+            OutRoom,
+            All
+        }
+
         //Server DS
         private NetServer<EMsgLS> _netServerLS;
         private NetServer<EMsgSC> _netServerSC;
@@ -79,7 +85,7 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
-        private void AddPlayer(IPeer peer, long userId, int gameType, string name, string account, string loginHash){
+        private void AddPlayer(long userId, int gameType, string name, string account, string loginHash){
             var player = Pool.Get<User>();
             player.Init(userId, gameType, name, account, loginHash);
             _uid2Player.Add(userId, player);
@@ -194,7 +200,7 @@ namespace Lockstep.Server.Lobby {
                 oldPlayer.GameType = msg.GameType;
             }
             else {
-                AddPlayer(reader.Peer, msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
+                AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
             }
 
             reader.Respond(1, EResponseStatus.Success);
@@ -204,9 +210,9 @@ namespace Lockstep.Server.Lobby {
         protected void C2L_UserLogin(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_UserLogin>();
             var uid = msg.userId;
-            if (_uid2Player.TryGetValue(uid, out var info)) {
-                if (info.LoginHash == msg.LoginHash) {
-                    var isReconnected = info.Room != null && info.Room.IsPlaying;
+            if (_uid2Player.TryGetValue(uid, out var user)) {
+                if (user.LoginHash == msg.LoginHash) {
+                    var isReconnected = user.Room != null && user.Room.IsPlaying;
                     Debug.Log("UserLogin " + msg + " isReconnect: " + isReconnected);
                     //断线重连
                     if (isReconnected) {
@@ -214,11 +220,12 @@ namespace Lockstep.Server.Lobby {
                         return;
                     }
                     else {
-                        info.Peer = reader.Peer;
-                        reader.Peer.AddExtension(info);
-                        var roomInfos = GetRoomInfos(info.GameType);
+                        user.Peer = reader.Peer;
+                        _peerId2Player[user.Peer.Id] = user;
+                        reader.Peer.AddExtension(user);
+                        var roomInfos = GetRoomInfos(user.GameType);
                         reader.Respond(EMsgSC.L2C_RoomList, new Msg_L2C_RoomList() {
-                            GameType = info.GameType,
+                            GameType = user.GameType,
                             Rooms = roomInfos
                         });
                     }
@@ -246,17 +253,12 @@ namespace Lockstep.Server.Lobby {
                 Info = room.Info,
                 PlayerInfos = room.RoomPlayerInfos
             });
-            //TODO 缓存信息 批量发送
-            if (_gameType2Rooms.TryGetValue(user.GameType, out var rooms)) {
-                var bytes = new Msg_L2C_RoomInfoUpdate() {
-                    AddInfo = new RoomInfo[] {room.Info}
-                }.ToBytes();
-                //var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate,);
-                foreach (var tRoom in rooms) {
-                    tRoom.BorderMessage((short) EMsgSC.L2C_RoomInfoUpdate,bytes);
-                }
-            }
+            var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate, new Msg_L2C_RoomInfoUpdate() {
+                AddInfo = new RoomInfo[] {room.Info}
+            });
+            BorderMessage(bMsg, user.GameType, ELobbyBorderType.OutRoom);
         }
+
 
         protected void C2L_JoinRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_JoinRoom>();
@@ -282,6 +284,12 @@ namespace Lockstep.Server.Lobby {
                                 Status = user.IsReady
                             }
                         });
+
+                        var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate, new Msg_L2C_RoomInfoUpdate() {
+                            ChangedInfo = new RoomChangedInfo[]
+                                {new RoomChangedInfo() {RoomId = room.RoomId, CurPlayerCount = room.CurPlayerCount}}
+                        });
+                        BorderMessage(bMsg, user.GameType, ELobbyBorderType.OutRoom);
                     }
                     else {
                         reader.Respond((int) ERoomOperatorResult.AlreadyExist, EResponseStatus.Failed);
@@ -303,29 +311,16 @@ namespace Lockstep.Server.Lobby {
             var room = user.Room;
             room.RemoveUser(user);
             if (room.IsEmpty) {
-                var roomId = user.Room.RoomId;
-                //TODO 缓存
-                if (_gameType2Rooms.TryGetValue(user.GameType, out var rooms)) {
-                    //var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate,
-                    //    new Msg_L2C_RoomInfoUpdate() {
-                    //        DeleteInfo = new[] {roomId}
-                    //    }.ToBytes());
-                    
-                    //foreach (var tRoom in rooms) {
-                    //    tRoom.BorderMessage(bMsg);
-                    //}
-                    var bytes = new Msg_L2C_RoomInfoUpdate() {
-                        DeleteInfo = new[] {roomId}
-                    }.ToBytes();
-                    //var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate,);
-                    foreach (var tRoom in rooms) {
-                        tRoom.BorderMessage((short) EMsgSC.L2C_RoomInfoUpdate,bytes);
-                    }
-                }
-
-                RemoveRoom(user.Room);
-                reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
+                var roomId = room.RoomId;
                 user.Room = null;
+                //TODO 缓存      
+                var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate, new Msg_L2C_RoomInfoUpdate() {
+                    DeleteInfo = new[] {roomId}
+                });
+                BorderMessage(bMsg, user.GameType, ELobbyBorderType.OutRoom);
+
+                RemoveRoom(room);
+                reader.Respond((int) ERoomOperatorResult.Succ, EResponseStatus.Success);
                 return;
             }
 
@@ -338,6 +333,13 @@ namespace Lockstep.Server.Lobby {
             room.BorderMessage((short) EMsgSC.L2C_LeaveRoom, new Msg_L2C_LeaveRoom() {
                 UserId = user.UserId
             });
+            {
+                var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate, new Msg_L2C_RoomInfoUpdate() {
+                    ChangedInfo = new RoomChangedInfo[]
+                        {new RoomChangedInfo() {RoomId = room.RoomId, CurPlayerCount = room.CurPlayerCount}}
+                });
+                BorderMessage(bMsg, user.GameType, ELobbyBorderType.OutRoom);
+            }
         }
 
 
@@ -435,6 +437,35 @@ namespace Lockstep.Server.Lobby {
             user?.Room?.BorderMessage((short) EMsgSC.L2C_RoomChatInfo, new Msg_L2C_RoomChatInfo() {
                 ChatInfo = msg.ChatInfo
             });
+        }
+
+        private void BorderMessage(IMessage msg, int gameType, ELobbyBorderType type){
+            switch (type) {
+                case ELobbyBorderType.InRoom:
+                    if (_gameType2Rooms.TryGetValue(gameType, out var rooms)) {
+                        foreach (var tRoom in rooms) {
+                            tRoom.BorderMessage(msg);
+                        }
+                    }
+
+                    break;
+                case ELobbyBorderType.OutRoom:
+                    foreach (var pair in _peerId2Player) {
+                        var user = pair.Value;
+                        if (user != null && user.Room == null) {
+                            user.SendMessage(msg);
+                        }
+                    }
+
+                    break;
+                case ELobbyBorderType.All:
+                    foreach (var pair in _peerId2Player) {
+                        var user = pair.Value;
+                        user?.SendMessage(msg);
+                    }
+
+                    break;
+            }
         }
 
         #endregion

@@ -37,7 +37,7 @@ namespace Lockstep.Networking {
             _acks = new Dictionary<int, ResponseCallback>(30);
             _ackTimeoutQueue = new List<long[]>();
             _extensions = new Dictionary<Type, object>();
-
+            _id = -1;
             LTimer.OnTickPerSeconds += HandleAckDisposalTick;
 
             _timeoutMessage = new IncommingMessage(-1, 0, "Time out".ToBytes(), EDeliveryMethod.Reliable, this) {
