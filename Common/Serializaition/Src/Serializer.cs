@@ -389,7 +389,15 @@ namespace Lockstep.Serialization {
                 val?.Serialize(this);
             }
         }
-
+        public void PutList(List<BaseFormater> value){
+            ushort len = (ushort) (value?.Count ?? 0);
+            PutUInt16(len);
+            for (int i = 0; i < len; i++) {
+                var val = value[i];
+                PutBoolean(val == null);
+                val?.Serialize(this);
+            }
+        }
 
         public void PutArray(byte[] value){
             var isNull = value == null;

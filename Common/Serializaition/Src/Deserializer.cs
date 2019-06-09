@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Lockstep.Serialization
@@ -283,7 +284,23 @@ namespace Lockstep.Serialization
             }
             return formatters;
         }
-
+        public List<T> GetList<T>(ref List<T> _) where T:BaseFormater ,new ()
+        {
+            ushort len = GetUInt16();
+            if (len == 0)
+                return null;
+            var formatters = new List<T>(len);
+            for (int i = 0; i < len; i++) {
+                if (GetBoolean())
+                    formatters[i] = null;
+                else {
+                    var val = new T();
+                    val.Deserialize(this);
+                    formatters[i] = val;
+                }
+            }
+            return formatters;
+        }
         public bool GetBoolean()
         {
             bool res = _data[_position] > 0;

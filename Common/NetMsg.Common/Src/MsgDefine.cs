@@ -180,30 +180,35 @@ namespace NetMsg.Common{
         public int RoomId;
     }
 //GC
-    public partial class Msg_C2G_Hello : BaseFormater {
+    public partial class MessageHello : BaseFormater {
         public GamePlayerInfo UserInfo;
         public int GameType;
         public string GameHash;
         public int RoomId;
-
+    }
+    public partial class Msg_C2G_Hello : BaseFormater {
+        public MessageHello Hello;
     }
 
     public partial class Msg_G2C_Hello : BaseFormater {
         public int MapId;
         public byte LocalId;
+        public IPEndInfo UdpEnd;
     }
 
-    public partial class Msg_G2C_GameInfo : BaseFormater {
+    public partial class Msg_G2C_GameStartInfo : BaseFormater {
         public int MapId;
+        public int RoomId;
         public int Seed;
         public int UserCount;
-        public UserGameInfo[] UserInfos;
+        public GameData[] UserInfos;
         public IPEndInfo UdpEnd;
+        public IPEndInfo TcpEnd;
         public int SimulationSpeed;
     }
 
     public partial class Msg_C2G_UdpHello : BaseFormater {
-        public GamePlayerInfo UserInfo;
+        public MessageHello Hello;
     }
 
     public partial class Msg_G2C_GameStatu : BaseFormater {

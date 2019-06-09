@@ -58,6 +58,11 @@ namespace NetMsg.Server {
     public enum EMsgDS:short {
         S2D_ReqUserInfo,
         D2S_RepUserInfo,
+        S2D_ReqGameData,
+        D2S_RepGameData,
+        S2D_SaveGameData,
+        D2S_SaveGameData,
+        
         S2D_ReqCreateUser,
         D2S_RepCreateUser,
         S2D_RepChangeUserInfo,

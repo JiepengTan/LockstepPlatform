@@ -21,7 +21,7 @@ namespace Lockstep.Networking
       
         void SendMessage(short opCode, ResponseCallback responseCallback);
 
-        void SendMessage(short opCode, byte[] data);
+        void SendMessage(short opCode, byte[] data, EDeliveryMethod method = EDeliveryMethod.ReliableSequenced);
         void SendMessage(short opCode, byte[] data, ResponseCallback responseCallback);
         void SendMessage(short opCode, byte[] data, ResponseCallback responseCallback, int timeoutSecs);
 

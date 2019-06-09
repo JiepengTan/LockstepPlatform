@@ -43,7 +43,7 @@ namespace Test {
             public void SendTest(short id){
                 foreach (var peer in peers) {
                     peer.SendMessage(MessageHelper.Create((short) id, new byte[4] {1, 2, 3, 4}),
-                        EDeliveryMethod.Reliable);
+                        EDeliveryMethod.ReliableUnordered);
                 }
             }
 

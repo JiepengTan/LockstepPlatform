@@ -18,11 +18,6 @@ namespace Lockstep.Server.Common {
         protected NetClient<EMsgMS> _netClientMS; //同类型的Master
         protected NetClient<EMsgYM> _netClientYM;
         protected NetClient<EMsgXS> _netClientXS;
-        public List<IPollEvents> _allServerNet = new List<IPollEvents>();
-        private IPollEvents[] _cachedAllServerNet;
-        public List<IUpdate> _allClientNet = new List<IUpdate>();
-        private IUpdate[] _cachedAllClientNet;
-
         public override void DoStart(){
             base.DoStart();
             InitClientYM();
@@ -30,47 +25,8 @@ namespace Lockstep.Server.Common {
             InitClientXS();
         }
 
-        public override void DoUpdate(int deltaTime){
-            base.DoUpdate(deltaTime);
-            if (_cachedAllClientNet == null) {
-                _cachedAllClientNet = _allClientNet.ToArray();
-            }
-
-            foreach (var net in _cachedAllClientNet) {
-                net.DoUpdate();
-            }
-        }
-
-        public override void PollEvents(){
-            if (_cachedAllServerNet == null) {
-                _cachedAllServerNet = _allServerNet.ToArray();
-            }
-
-            foreach (var net in _cachedAllServerNet) {
-                net.PollEvents();
-            }
-        }
-
 
         #region ServerMS_ClientMS_ClientXS
-
-        //Client MS
-        protected void InitNetServer<TMsgType>(ref NetServer<TMsgType> refServer, int port,
-            PeerActionHandler disconnectedHandler = null
-        ) where TMsgType : struct{
-            if (NetworkUtil.InitNetServer(ref refServer, port, this)) return;
-            if (disconnectedHandler != null) refServer.OnDisconnected += disconnectedHandler;
-            _allServerNet.Add(refServer);
-            _cachedAllServerNet = null;
-        }
-
-        protected void InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port,
-            Action onConnCallback = null) where TMsgType : struct{
-            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback, this)) return;
-            _allClientNet.Add(refClient);
-            _cachedAllClientNet = null;
-        }
-
 
         private void InitServerMS(ServerConfigInfo info){
             if (_serverConfig.isMaster) {
@@ -161,7 +117,7 @@ namespace Lockstep.Server.Common {
         protected virtual ServerIpInfo GetSlaveServeInfo(byte detailType){
             return new ServerIpInfo() {
                 Port = _serverConfig.GetDetailPort(detailType),
-                Ip = IP,
+                Ip = Ip,
                 ServerType = (byte) this.serverType,
             };
         }

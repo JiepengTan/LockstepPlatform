@@ -21,10 +21,38 @@ namespace NetMsg.Common {
         AlreadyExist,
     }
 
-  
+    public enum EGameState {
+        Idle,
+        WaitingToPlay,
+        PartLoading,
+        PartLoaded,
+        Playing,
+        PartFinished,
+        FinishAll,
+    }
     
     //msg between client RoomServer
     public enum EMsgSC : short {
+        //GC 
+        //!! please ensure udp msg's id < 255
+        //Room msg
+        C2G_UdpHello,
+        G2C_UdpHello,
+        C2G_UdpMessage,
+        G2C_UdpMessage,
+        C2G_TcpMessage,
+        G2C_TcpMessage,
+        //udp
+        C2G_ReqMissFrame,
+        C2G_RepMissFrameAck,
+        G2C_RepMissFrame,
+        C2G_HashCode,
+        C2G_PlayerInput,
+        G2C_FrameData,
+        //end of Udp
+        EnumEndOfUdpMessage,
+        
+        
         S2C_TickPlayer,
 
         //IC
@@ -62,25 +90,21 @@ namespace NetMsg.Common {
         //GC Tcp
         C2G_Hello,
         G2C_Hello,
-        G2C_GameInfo,
-
-        G2C_GameStatu,
+        G2C_GameStartInfo,
         C2G_LoadingProgress,
         G2C_LoadingProgress,
         G2C_AllFinishedLoaded,
+        
+        C2G_FinishedLevel,
+        /// <summary>
+        ///  game state:Failed Success PartLoaded
+        /// </summary>
+        G2C_GameStatu,
 
         //
         C2G_GameEvent,
         G2C_GameEvent,
 
-        //GC udp
-        C2G_UdpHello,
-        C2G_ReqMissFrame,
-        C2G_RepMissFrameAck,
-        G2C_RepMissFrame,
-        C2G_HashCode,
-        C2G_PlayerInput,
-        G2C_FrameData,
 
         EnumCount
     }

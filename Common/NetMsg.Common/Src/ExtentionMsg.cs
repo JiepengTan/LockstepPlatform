@@ -256,7 +256,7 @@ namespace NetMsg.Common{
     }
 
 
-    public partial class Msg_G2C_GameInfo{
+    public partial class Msg_G2C_GameStartInfo{
         public override void Serialize(Serializer writer){
 			writer.PutInt32(MapId);
 			writer.PutInt32(Seed);

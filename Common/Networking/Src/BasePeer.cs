@@ -40,7 +40,7 @@ namespace Lockstep.Networking {
             _id = -1;
             LTimer.OnTickPerSeconds += HandleAckDisposalTick;
 
-            _timeoutMessage = new IncommingMessage(-1, 0, "Time out".ToBytes(), EDeliveryMethod.Reliable, this) {
+            _timeoutMessage = new IncommingMessage(-1, 0, "Time out".ToBytes(), EDeliveryMethod.ReliableUnordered, this) {
                 Status = EResponseStatus.Timeout
             };
         }
@@ -250,11 +250,11 @@ namespace Lockstep.Networking {
         #region SendMessage
 
         public void SendMessage(short opCode){
-            SendMessage(MessageHelper.Create(opCode), EDeliveryMethod.Reliable);
+            SendMessage(MessageHelper.Create(opCode), EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, ISerializablePacket packet){
-            SendMessage(MessageHelper.Create(opCode, packet), EDeliveryMethod.Reliable);
+            SendMessage(MessageHelper.Create(opCode, packet), EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, ISerializablePacket packet, EDeliveryMethod method){
@@ -269,15 +269,16 @@ namespace Lockstep.Networking {
         public void SendMessage(short opCode, ISerializablePacket packet, ResponseCallback responseCallback,
             int timeoutSecs){
             var message = MessageHelper.Create(opCode, packet.ToBytes());
-            SendMessage(message, responseCallback, timeoutSecs, EDeliveryMethod.Reliable);
+            SendMessage(message, responseCallback, timeoutSecs, EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, ResponseCallback responseCallback){
             SendMessage(MessageHelper.Create(opCode), responseCallback);
         }
 
-        public void SendMessage(short opCode, byte[] data){
-            SendMessage(MessageHelper.Create(opCode, data), EDeliveryMethod.Reliable);
+        public void SendMessage(short opCode, byte[] data,
+            EDeliveryMethod deliveryMethod = EDeliveryMethod.ReliableOrdered){
+            SendMessage(MessageHelper.Create(opCode, data),deliveryMethod);
         }
 
         public void SendMessage(short opCode, byte[] data, ResponseCallback ackCallback){
@@ -291,7 +292,7 @@ namespace Lockstep.Networking {
         }
 
         public void SendMessage(short opCode, string data){
-            SendMessage(MessageHelper.Create(opCode, data), EDeliveryMethod.Reliable);
+            SendMessage(MessageHelper.Create(opCode, data), EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, string data, ResponseCallback responseCallback){
@@ -305,7 +306,7 @@ namespace Lockstep.Networking {
         }
 
         public void SendMessage(short opCode, int data){
-            SendMessage(MessageHelper.Create(opCode, data), EDeliveryMethod.Reliable);
+            SendMessage(MessageHelper.Create(opCode, data), EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, int data, ResponseCallback responseCallback){
@@ -319,7 +320,7 @@ namespace Lockstep.Networking {
         }
 
         public void SendMessage(IMessage message){
-            SendMessage(message, EDeliveryMethod.Reliable);
+            SendMessage(message, EDeliveryMethod.ReliableOrdered);
         }
 
         void IMsgDispatcher.SendMessage(IMessage message, ResponseCallback responseCallback){
@@ -349,7 +350,7 @@ namespace Lockstep.Networking {
         /// <returns></returns>
         public int SendMessage(IMessage message, ResponseCallback responseCallback,
             int timeoutSecs){
-            return SendMessage(message, responseCallback, timeoutSecs, EDeliveryMethod.Reliable);
+            return SendMessage(message, responseCallback, timeoutSecs, EDeliveryMethod.ReliableOrdered);
         }
 
         /// <summary>

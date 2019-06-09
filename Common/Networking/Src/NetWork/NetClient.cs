@@ -39,7 +39,9 @@ namespace Lockstep.Networking {
                     RegisterMsgHandler, msgHandlerObj);
             }
         }
-
+        public NetClient(IncommingMessageHandler[] allDealFuncs){
+            _allDealFuncs = allDealFuncs;
+        }
         public void Connect(string ip, int port, string key = ""){
             _client = new ClientSocketLn();
             _isInit = true;
@@ -77,7 +79,9 @@ namespace Lockstep.Networking {
                 _client.Update();
             }
         }
-
+        public void SendMessage(TMsgType type, byte[] data,EDeliveryMethod method = EDeliveryMethod.ReliableSequenced){
+            _client?.SendMessage((short) (object) type, data);
+        }
         public void SendMessage(TMsgType type, BaseFormater data){
             _client?.SendMessage((short) (object) type, data);
         }

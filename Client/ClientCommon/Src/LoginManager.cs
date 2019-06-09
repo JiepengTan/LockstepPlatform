@@ -6,7 +6,7 @@ using Lockstep.Networking;
 using NetMsg.Common;
 
 namespace Lockstep.Client {
-    public class LoginManager {
+    public class LoginManager : NetworkProxy {
         public bool HasInit;
         private string _name = "";
         private string _account = "";
@@ -17,18 +17,17 @@ namespace Lockstep.Client {
         private int _gameType = 1;
 
         //match infos
-        protected IPEndInfo _gameServerInfo;
+        protected IPEndInfo _gameUdpEnd;
+        protected IPEndInfo _gameTcpEnd;
         protected string _gameHash;
         protected int _curMapId;
         protected byte _localId;
         protected int _roomId;
 
+
         private NetClient<EMsgSC> _netClientIC;
         private NetClient<EMsgSC> _netClientLC;
-        private NetClient<EMsgSC> _netClientGC;
 
-        public List<IUpdate> _allClientNet = new List<IUpdate>();
-        private IUpdate[] _cachedAllClientNet;
         private RoomInfo[] _roomInfos;
 
         public RoomInfo[] RoomInfos {
@@ -66,32 +65,12 @@ namespace Lockstep.Client {
             Debug.Log(msg);
         }
 
-        public virtual void DoAwake(){
+        public override void DoAwake(){
             Debug = new DebugInstance(_account + ": ");
         }
 
-        public virtual void DoStart(){
+        public override void DoStart(){
             InitNetClient(ref _netClientIC, _serverIp, _serverPort, OnConnLogin);
-        }
-
-        public virtual void DoUpdate(int deltaTime){
-            if (_cachedAllClientNet == null) {
-                _cachedAllClientNet = _allClientNet.ToArray();
-            }
-
-            foreach (var net in _cachedAllClientNet) {
-                net.DoUpdate();
-            }
-        }
-
-        public virtual void DoDestroy(){ }
-        public virtual void PollEvents(){ }
-
-        protected void InitNetClient<TMsgType>(ref NetClient<TMsgType> refClient, string ip, int port,
-            Action onConnCallback = null) where TMsgType : struct{
-            if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback, this)) return;
-            _allClientNet.Add(refClient);
-            _cachedAllClientNet = null;
         }
 
 
@@ -106,7 +85,7 @@ namespace Lockstep.Client {
             _password = password;
             Debug.SetPrefix(_account + ": ");
 
-            if (_netClientIC != null && !_netClientIC.IsConnected) { 
+            if (_netClientIC != null && !_netClientIC.IsConnected) {
                 Debug.Log("Has not connect to LoginServer");
                 return;
             }
@@ -318,33 +297,22 @@ namespace Lockstep.Client {
         protected void L2C_StartGame(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_StartGame>();
             Debug.Log("L2C_StartGame" + msg);
-            _gameServerInfo = msg.GameServerEnd;
+            _gameTcpEnd = msg.GameServerEnd;
             _gameHash = msg.GameHash;
             _roomId = msg.RoomId;
-            InitNetClient(ref _netClientGC, _gameServerInfo.Ip, _gameServerInfo.Port, () => {
-                _netClientGC.SendMessage(EMsgSC.C2G_Hello,
-                    new Msg_C2G_Hello() {
-                        GameHash = _gameHash,
-                        RoomId = _roomId,
-                        GameType = _gameType,
-                        UserInfo = new GamePlayerInfo() {
-                            UserId = _userId,
-                            Account = _account,
-                            LoginHash = _loginHash,
-                        }
-                    }, (status, respond) => {
-                        if (status != EResponseStatus.Failed) {
-                            var rMsg = respond.Parse<Msg_G2C_Hello>();
-                            _curMapId = rMsg.MapId;
-                            _localId = rMsg.LocalId;
-                            _loginHandler.OnGameStart(_curMapId, _localId);
-                        }
-                        else {
-                            _loginHandler.OnGameStartFailed();
-                        }
+            var rmsg = new Msg_C2G_Hello() {
+                Hello = new MessageHello() {
+                    GameHash = _gameHash,
+                    RoomId = _roomId,
+                    GameType = _gameType,
+                    UserInfo = new GamePlayerInfo() {
+                        UserId = _userId,
+                        Account = _account,
+                        LoginHash = _loginHash,
                     }
-                );
-            });
+                }
+            };
+            _loginHandler.OnGameStart(rmsg, _gameTcpEnd);
         }
     }
 }

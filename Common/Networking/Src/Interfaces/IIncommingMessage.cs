@@ -126,6 +126,8 @@ namespace Lockstep.Networking
         T Deserialize<T>(T packetToBeFilled) where T : ISerializablePacket;
 
         T Parse<T>() where T : BaseFormater, new();
+        Deserializer GetData();
+        
         void Respond(object type, BaseFormater msg, EResponseStatus responseStatus = EResponseStatus.Default);
 
     }

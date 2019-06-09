@@ -69,6 +69,7 @@
     <Compile Include="Src\MessageHelper.cs" />
     <Compile Include="Src\NetWork\NetClient.cs" />
     <Compile Include="Src\NetWork\NetServer.cs" />
+    <Compile Include="Src\NetWork\NetworkProxy.cs" />
     <Compile Include="Src\NetWork\NetworkUtil.cs" />
     <Compile Include="Src\PacketHandler.cs" />
     <Compile Include="Src\SerializationExtensions.cs" />

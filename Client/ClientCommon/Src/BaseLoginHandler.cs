@@ -18,6 +18,7 @@ namespace Lockstep.Client {
 
         public virtual void OnStartRoomResult(int reason){ }
         public virtual void OnGameStart(int mapId, byte localId){ }
+        public virtual void OnGameStart(Msg_C2G_Hello msg,IPEndInfo tcpEnd){ }
 
         public virtual void OnLoginFailed(ELoginResult result){
             _loginMgr.Log("Login failed reason " + result);

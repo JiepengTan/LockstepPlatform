@@ -14,7 +14,7 @@ namespace Lockstep.Networking
 
         public void SendMessage(short opCode, ISerializablePacket packet)
         {
-            SendMessage(opCode, packet, EDeliveryMethod.Reliable);
+            SendMessage(opCode, packet, EDeliveryMethod.ReliableOrdered);
         }
 
         public void SendMessage(short opCode, ISerializablePacket packet, EDeliveryMethod method)
@@ -42,12 +42,7 @@ namespace Lockstep.Networking
             SendMessage(msg, responseCallback);
         }
 
-        public void SendMessage(short opCode, byte[] data)
-        {
-            SendMessage(opCode, data, EDeliveryMethod.Reliable);
-        }
-
-        public void SendMessage(short opCode, byte[] data, EDeliveryMethod method)
+        public void SendMessage(short opCode, byte[] data, EDeliveryMethod method = EDeliveryMethod.ReliableSequenced)
         {
             var msg = MessageHelper.Create(opCode, data);
             Peer.SendMessage(msg, method);
@@ -67,7 +62,7 @@ namespace Lockstep.Networking
 
         public void SendMessage(short opCode, string data)
         {
-            SendMessage(opCode, data, EDeliveryMethod.Reliable);
+            SendMessage(opCode, data, EDeliveryMethod.ReliableUnordered);
         }
 
         public void SendMessage(short opCode, string data, EDeliveryMethod method)
@@ -90,7 +85,7 @@ namespace Lockstep.Networking
 
         public void SendMessage(short opCode, int data)
         {
-            SendMessage(opCode, data, EDeliveryMethod.Reliable);
+            SendMessage(opCode, data, EDeliveryMethod.ReliableUnordered);
         }
 
         public void SendMessage(short opCode, int data, EDeliveryMethod method)
@@ -113,7 +108,7 @@ namespace Lockstep.Networking
 
         public void SendMessage(IMessage message)
         {
-            SendMessage(message, EDeliveryMethod.Reliable);
+            SendMessage(message, EDeliveryMethod.ReliableUnordered);
         }
 
         public void SendMessage(IMessage message, EDeliveryMethod method)

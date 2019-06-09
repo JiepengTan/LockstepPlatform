@@ -72,7 +72,7 @@ namespace Lockstep.Networking {
             if (AckResponseId.HasValue)
                 message.AckResponseId = AckResponseId.Value;
 
-            Peer.SendMessage(message, EDeliveryMethod.Reliable);
+            Peer.SendMessage(message, EDeliveryMethod.ReliableUnordered);
         }
 
         /// <summary>
@@ -171,7 +171,11 @@ namespace Lockstep.Networking {
             return val;
         }
 
-        public void Respond(object type, BaseFormater msg,EResponseStatus responseStatus = EResponseStatus.Default){
+        public Deserializer GetData(){
+            return _data == null ? null : new Deserializer(_data);
+        }
+
+        public void Respond(object type, BaseFormater msg, EResponseStatus responseStatus = EResponseStatus.Default){
             Respond(MessageHelper.Create((short) type, msg.ToBytes()), responseStatus);
         }
     }

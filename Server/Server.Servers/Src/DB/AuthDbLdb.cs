@@ -13,6 +13,8 @@ namespace Lockstep.Server.Database {
         /// <returns></returns>
         IAccountData CreateAccountObject();
 
+        void GetGameData(string username, Action<GameData> callback);
+        void UpdateGameData(GameData gameData, Action doneCallback);
         void GetAccount(string username, Action<IAccountData> callback);
         void GetAccountByToken(string token, Action<IAccountData> callback);
         void GetAccountByEmail(string email, Action<IAccountData> callback);
@@ -31,6 +33,7 @@ namespace Lockstep.Server.Database {
     public class AuthDbLdb : IAuthDatabase {
         private readonly LiteCollection<UserIdInfo> _userIds;
         private readonly LiteCollection<AccountData> _accounts;
+        private readonly LiteCollection<GameData> _gameData;
         private readonly LiteCollection<PasswordResetData> _resetCodes;
         private readonly LiteCollection<EmailConfirmationData> _emailConfirmations;
 
@@ -49,6 +52,9 @@ namespace Lockstep.Server.Database {
 
             _accounts = _db.GetCollection<AccountData>("accounts");
             _accounts.EnsureIndex(a => a.Username,
+                new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
+            _gameData = _db.GetCollection<GameData>("gameData");
+            _gameData.EnsureIndex(a => a.Username,
                 new IndexOptions() {Unique = true, IgnoreCase = true, TrimWhitespace = true});
             //_accounts.EnsureIndex(a => a.Email, new IndexOptions() { Unique = true, IgnoreCase = true, TrimWhitespace = true });
 
@@ -88,11 +94,23 @@ namespace Lockstep.Server.Database {
             _userIds.Update(info);
         }
 
+        public void GetGameData(string username, Action<GameData> callback){
+            var account = _gameData.FindOne(a => a.Username == username);
+            callback.Invoke(account);
+        }
+
+        public void UpdateGameData(GameData gameData, Action doneCallback){
+            _gameData.Update(gameData as GameData);
+            doneCallback.Invoke();
+        }
+
+
         public void GetAccount(string username, Action<IAccountData> callback){
             var account = _accounts.FindOne(a => a.Username == username);
 
             callback.Invoke(account);
         }
+
 
         public void GetAccountByToken(string token, Action<IAccountData> callback){
             var account = _accounts.FindOne(a => a.Token == token);
@@ -150,6 +168,13 @@ namespace Lockstep.Server.Database {
             account.UserId = userId++;
             SaveCurMaxUserID(userId);
             _accounts.Insert(account as AccountData);
+            _gameData.Insert(new GameData() {
+                Username = account.Username,
+                UserId = account.UserId,
+                Datas = new List<GameProperty>() {
+                    new GameProperty() {Name = "Padding"}
+                }
+            });
             doneCallback.Invoke(account.UserId);
         }
 

@@ -27,12 +27,28 @@ namespace Lockstep.Server.Database {
 
         public override void DoStart(){
             base.DoStart();
-            LRandom.SetSeed((uint)DateTime.Now.Millisecond);
+            LRandom.SetSeed((uint) DateTime.Now.Millisecond);
             InitServerDS();
         }
 
         private void InitServerDS(){
             InitNetServer(ref _netServerDS, _serverConfig.serverPort);
+        }
+
+        //TODO CacheInfo
+        protected void S2D_ReqGameData(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_S2D_ReqGameData>();
+            _authDb.GetGameData(msg.account, (dbData) => {
+                reader.Respond(EMsgDS.D2S_RepUserInfo,
+                    new Msg_D2S_RepGameData() {data = dbData as GameData});
+            });
+        }
+
+        protected void S2D_SaveGameData(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_S2D_SaveGameData>();
+            _authDb.UpdateGameData(msg.data, () => {
+                reader.Respond(1,EResponseStatus.Success);
+            });
         }
 
         protected void S2D_ReqUserInfo(IIncommingMessage reader){
@@ -42,7 +58,7 @@ namespace Lockstep.Server.Database {
                     new Msg_RepAccountData() {accountData = dbData as AccountData});
             });
         }
-        
+
         protected void S2D_ReqCreateUser(IIncommingMessage reader){
             var msg = reader.Parse<Msg_CreateAccount>();
             _authDb.GetAccount(msg.account, (dbData) => {
@@ -56,9 +72,7 @@ namespace Lockstep.Server.Database {
                     newInfo.IsGuest = false;
                     newInfo.IsEmailConfirmed = false;
                     _authDb.InsertNewAccount(newInfo
-                        , (userId) => {
-                            reader.Respond(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0,userId =  userId});
-                        });
+                        , (userId) => { reader.Respond(EMsgDS.D2S_RepCreateUser, new Msg_RepCreateResult() {result = 0, userId = userId}); });
                 }
                 else {
                     reader.Respond(EMsgDS.D2S_RepCreateUser,

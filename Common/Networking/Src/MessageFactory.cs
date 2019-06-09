@@ -26,7 +26,7 @@ namespace Lockstep.Networking {
                 Array.Copy(buffer, pointer, data, 0, dataLength);
                 pointer += dataLength;
 
-                var message = new IncommingMessage(opCode, flags, data, EDeliveryMethod.Reliable, peer) {
+                var message = new IncommingMessage(opCode, flags, data, EDeliveryMethod.ReliableUnordered, peer) {
                     SequenceChannel = 0
                 };
 

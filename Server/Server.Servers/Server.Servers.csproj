@@ -53,6 +53,10 @@
     <Compile Include="Src\DB\IProfilesDatabase.cs" />
     <Compile Include="Src\DB\ProfilesDatabaseLdb.cs" />
     <Compile Include="Src\Game\GameServer.cs" />
+    <Compile Include="Src\Game\BaseGame.cs" />
+    <Compile Include="Src\Game\IGameServer.cs" />
+    <Compile Include="Src\Game\Player.cs" />
+    <Compile Include="Src\Game\Room.cs" />
     <Compile Include="Src\Lobby\Global.cs" />
     <Compile Include="Src\Lobby\ILobbyServer.cs" />
     <Compile Include="Src\Lobby\LobbyServer.cs" />

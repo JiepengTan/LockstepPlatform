@@ -15,7 +15,7 @@ namespace NetMsg.Common {
     public interface IAccountData {
         string Username { get; set; }
         string Password { get; set; }
-        long UserId{ get; set; }
+        long UserId { get; set; }
         string Email { get; set; }
         string Token { get; set; }
         bool IsAdmin { get; set; }
@@ -26,6 +26,18 @@ namespace NetMsg.Common {
 
         event Action<IAccountData> OnChange;
         void MarkAsDirty();
+    }
+
+    public partial class GameProperty : BaseFormater {
+        public string Name { get; set; }
+        public byte Type { get; set; }
+        public byte[] Data { get; set; }
+    }
+
+    public partial class GameData : BaseFormater {
+        [BsonId] public string Username { get; set; }
+        public long UserId { get; set; }
+        public List<GameProperty> Datas { get; set; }
     }
 
     public partial class AccountData : BaseFormater, IAccountData {
@@ -44,6 +56,18 @@ namespace NetMsg.Common {
         public void MarkAsDirty(){ }
     }
 
+    public partial class Msg_S2D_ReqGameData : BaseFormater {
+        public string account;
+    }
+    public partial class Msg_D2S_RepGameData : BaseFormater {
+        public GameData data;
+    }
+    public partial class Msg_S2D_SaveGameData : BaseFormater {
+        public GameData data;
+    }
+    public partial class Msg_D2S_SaveGameData : BaseFormater {
+        public byte result;
+    }
     public partial class Msg_ReqAccountData : BaseFormater {
         public string account;
         public string password;

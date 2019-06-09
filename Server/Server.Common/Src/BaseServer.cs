@@ -1,14 +1,17 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using Lockstep.Logging;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using NetMsg.Server;
 using Lockstep.Server.Common;
 using Lockstep.Util;
 
 namespace Lockstep.Server.Common {
-    public class BaseServer : IServer {
+
+    public class BaseServer :NetworkProxy{
 
         public DebugInstance Debug;
         public bool HasInit { get; private set; }
@@ -24,23 +27,18 @@ namespace Lockstep.Server.Common {
         public bool IsMaster => masterType == EMasterType.Master;
         public bool IsCandidateMaster => masterType == EMasterType.CandidateMaster;
 
-        public string IP;
+        public string Ip;
 
         public virtual void DoAwake(ServerConfigInfo info){
             Debug = new DebugInstance(GetType().Name + ": ");
             HasInit = true;
-            IP = NetworkHelper.GetLocalIP();
+            Ip = NetworkHelper.GetLocalIP();
             serverType = info.type;
             _allConfig = ServerUtil.LoadConfig();
             _allConfig.DeamonPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
             _serverConfig = info;
             masterType = _allConfig.isMaster ? EMasterType.Master : EMasterType.Slave;
         }
-
-        public virtual void DoStart(){ }
-        public virtual void DoUpdate(int deltaTime){ }
-        public virtual void DoDestroy(){ }
-        public virtual void PollEvents(){ }
 
         public virtual void OnMasterCrash(){ }
         public virtual void OnBecomeMaster(){ }
