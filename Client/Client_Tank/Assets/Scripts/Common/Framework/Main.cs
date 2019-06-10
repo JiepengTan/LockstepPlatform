@@ -55,7 +55,7 @@ namespace Lockstep.Game {
 
             Instance = this;
             contexts = Contexts.sharedInstance;
-            Log.OnMessage += OnLog;
+            Lockstep.Logging.Logger.OnMessage += OnLog;
             //AutoCreateManagers;
             var types = typeof(Main).Assembly.GetTypes();
             foreach (var ty in types) {

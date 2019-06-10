@@ -56,6 +56,7 @@ namespace Lockstep.Game.UI {
             Close();
         }
         void OnEvent_OnRoomGameBegin(object param){
+            OpenWindow(UIDefine.UILoading);
             Close();
         }
         
@@ -70,6 +71,6 @@ namespace Lockstep.Game.UI {
         public void Select(ListItemPlayer listItemRoom){
             _items.Iterate<ListItemPlayer>(
                 item => { item.SetIsSelected(!item.IsSelected && (listItemRoom == item)); });
-        }
+        }    
     }
 }

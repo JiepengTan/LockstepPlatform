@@ -21,7 +21,7 @@ namespace Lockstep.ECS.Systems.Debugging
                 {         
                     if (temp[entity.backup.tick].Contains(entity.backup.localEntityId))
                     {     
-                        Log.Warn(this, "Backup duplicate: " + temp[entity.backup.tick].Count + " backups in tick "+ entity.backup.tick +" are already pointing to " + entity.backup.localEntityId);
+                        Logger.Warn(this, "Backup duplicate: " + temp[entity.backup.tick].Count + " backups in tick "+ entity.backup.tick +" are already pointing to " + entity.backup.localEntityId);
                     }    
                 }
                 else

@@ -36,7 +36,7 @@ namespace Lockstep.ECS {
 
         public void Predict(bool isNeedGenSnap = true){
             SetNeedGenSnapShot(isNeedGenSnap);
-            Log.Trace(this, "Predict " + _gameStateContext.tick.value);
+            Logger.Trace(this, "Predict " + _gameStateContext.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();
@@ -59,7 +59,7 @@ namespace Lockstep.ECS {
 
         public void Simulate(bool isNeedGenSnap = true){
             SetNeedGenSnapShot(isNeedGenSnap);
-            Log.Trace(this, "Simulate " + _gameStateContext.tick.value);
+            Logger.Trace(this, "Simulate " + _gameStateContext.tick.value);
             _timeMachineService.Backup(Tick);
             _systems.Execute();
             _systems.Cleanup();

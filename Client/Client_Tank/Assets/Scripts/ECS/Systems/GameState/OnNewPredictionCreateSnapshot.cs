@@ -74,7 +74,7 @@ namespace Lockstep.ECS.Systems.GameState
                 shadowEntity.AddBackup(entity.id.value, currentTick);
             }
 
-            Log.Trace(this, "New snapshot for " + currentTick + "(" + _activeActors.count + " actors, " + _activeEntities.count + " entities)");
+          Lockstep.Logging.Logger.Trace(this, "New snapshot for " + currentTick + "(" + _activeActors.count + " actors, " + _activeEntities.count + " entities)");
         }
     }
 }

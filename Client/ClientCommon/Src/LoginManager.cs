@@ -46,13 +46,13 @@ namespace Lockstep.Client {
         private List<RoomChatInfo> _chatInfos = new List<RoomChatInfo>();
         public List<RoomChatInfo> ChatInfos => _chatInfos;
 
-        private RoomMsgManager _roomMsgMgr;
+        private IRoomMsgManager _roomMsgMgr;
         public int GameType {
             get => _gameType;
             set => _gameType = value;
         }
 
-        public void Init(RoomMsgManager roomMsgMgr, BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
+        public void Init(IRoomMsgManager roomMsgMgr, BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
             _roomMsgMgr = roomMsgMgr;
             _loginHandler = loginHandler ?? new BaseLoginHandler();
             _loginHandler.Init(this);

@@ -49,9 +49,9 @@ namespace Lockstep.Util {
     }
 
 
-    public class YieldInsInfo { }
+    internal class YieldInsInfo { }
 
-    public class WaitForSecondsInfo : YieldInsInfo {
+    internal class WaitForSecondsInfo : YieldInsInfo {
         public WaitForSecondsInfo(float beginTime){
             BeginTime = beginTime;
         }
@@ -59,7 +59,7 @@ namespace Lockstep.Util {
         public float BeginTime { get; }
     }
 
-    public class RoutineInfo {
+    internal class RoutineInfo {
         public void Reset(){
             objYield = null;
             objYieldInfo = null;
@@ -71,7 +71,7 @@ namespace Lockstep.Util {
         public IEnumerator routine;
     }
 
-    public class CoroutineRunner {
+    internal class CoroutineRunner {
         private List<RoutineInfo> lstRoutine = new List<RoutineInfo>();
 
         public void StartCoroutine(IEnumerator routine){

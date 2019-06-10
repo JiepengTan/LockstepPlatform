@@ -10,6 +10,7 @@ using Lockstep.Serialization;
 using NetMsg.Common;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using Logger = Lockstep.Logging.Logger;
 
 namespace Lockstep.Game {
     public interface ISimulation : IService {
@@ -395,7 +396,7 @@ namespace Lockstep.Game {
                 GameLog.Add(frame.tick, input);
                 if (input.Commands == null) continue;
                 foreach (var command in input.Commands) {
-                    Log.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
+                    Logger.Trace(this, input.ActorId + " >> " + input.Tick + ": " + input.Commands.Count());
                     var inputEntity = _context.input.CreateEntity();
                     _inputService.Execute(command, inputEntity);
                     inputEntity.AddTick(input.Tick);

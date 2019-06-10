@@ -103,6 +103,7 @@ namespace Lockstep.Client {
         }
 
         public void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd){
+            Log("ConnectToGameServer  " + helloBody);
             ResetStatus();
             this.helloBody = helloBody.Hello;
             InitNetClient(ref _netTcp, _gameTcpEnd.Ip, _gameTcpEnd.Port, () => {
