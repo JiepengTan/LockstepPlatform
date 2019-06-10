@@ -254,20 +254,20 @@ namespace Lockstep.Serialization
             return arr;
         }
 
-        public byte[] GetArray(ref byte[] _){return GetBytes();}
-        public short[] GetArray(ref short[] _){return GetShortArray();}
-        public ushort[] GetArray(ref ushort[] _){return GetUShortArray();}
-        public int[] GetArray(ref int[] _){return GetIntArray();}
-        public uint[] GetArray(ref uint[] _){return GetUIntArray();}
-        public long[] GetArray(ref long[] _){return GetLongArray();}
-        public ulong[] GetArray(ref ulong[] _){return GetULongArray();}
-        public float[] GetArray(ref float[] _){return GetFloatArray();}
-        public double[] GetArray(ref double[] _){return GetDoubleArray();}
-        public bool[] GetArray(ref bool[] _){return GetBoolArray();}
-        public string[] GetArray(ref string[] _){return GetStringArray();}
+        public byte[] GetArray(byte[] _){return GetBytes();}
+        public short[] GetArray(short[] _){return GetShortArray();}
+        public ushort[] GetArray(ushort[] _){return GetUShortArray();}
+        public int[] GetArray(int[] _){return GetIntArray();}
+        public uint[] GetArray(uint[] _){return GetUIntArray();}
+        public long[] GetArray(long[] _){return GetLongArray();}
+        public ulong[] GetArray(ulong[] _){return GetULongArray();}
+        public float[] GetArray(float[] _){return GetFloatArray();}
+        public double[] GetArray( double[] _){return GetDoubleArray();}
+        public bool[] GetArray(bool[] _){return GetBoolArray();}
+        public string[] GetArray(string[] _){return GetStringArray();}
         
 
-        public T[] GetArray<T>(ref T[] _) where T:BaseFormater ,new ()
+        public T[] GetArray<T>(T[] _) where T:BaseFormater ,new ()
         {
             ushort len = GetUInt16();
             if (len == 0)
@@ -284,7 +284,7 @@ namespace Lockstep.Serialization
             }
             return formatters;
         }
-        public List<T> GetList<T>(ref List<T> _) where T:BaseFormater ,new ()
+        public List<T> GetList<T>(List<T> _) where T:BaseFormater ,new ()
         {
             ushort len = GetUInt16();
             if (len == 0)
@@ -296,7 +296,7 @@ namespace Lockstep.Serialization
                 else {
                     var val = new T();
                     val.Deserialize(this);
-                    formatters[i] = val;
+                    formatters.Add(val);
                 }
             }
             return formatters;

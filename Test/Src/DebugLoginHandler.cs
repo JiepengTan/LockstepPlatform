@@ -8,14 +8,14 @@ namespace Test {
     public class DebugLoginHandler : BaseLoginHandler {
         public int RandomSeed = 1167;
         public override void OnConnectedLoginServer(){
-            _loginMgr.Log("OnConnLogin ");
+            Log("OnConnLogin ");
             var _account = "FakeClient " +  new Random(RandomSeed).Next();
             var  _password = "1234";
             _loginMgr.Login(_account, _password);
         }
             
         public override void OnConnLobby(RoomInfo[] roomInfos){
-            _loginMgr.Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
+            Log("UpdateRoomsState " + (roomInfos == null ? "null" : JsonMapper.ToJson(roomInfos)));
             if (roomInfos == null) {
                 _loginMgr.CreateRoom(3, "DebugTestRoom", 2);
                 return;
@@ -25,21 +25,21 @@ namespace Test {
 
         public override void OnCreateRoom(RoomInfo roomInfo,RoomPlayerInfo[] playerInfos){
             if (roomInfo == null)
-                _loginMgr.Log("CreateRoom failed reason ");
+                Log("CreateRoom failed reason ");
             else {
-                _loginMgr.Log("CreateRoom " + roomInfo.ToString());
+                Log("CreateRoom " + roomInfo.ToString());
                 _loginMgr.StartGame();
             }
         }
 
         public override void OnStartRoomResult(int reason){
             if (reason != 0) {
-                _loginMgr.Log("StartGame failed reason " + reason);
+                Log("StartGame failed reason " + reason);
             }
         }
 
         public override void OnGameStart(int mapId, byte localId){
-            _loginMgr.Log("mapId" + mapId + " localId" + localId);
+            Log("mapId" + mapId + " localId" + localId);
         }
     }
 }

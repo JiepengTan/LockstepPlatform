@@ -39,14 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DebugLoginHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\DebugGameMsgHandler.cs" />
+    <Compile Include="Src\DebugLoginHandler.cs" />
+    <Compile Include="Src\FakeClient.cs" />
+    <Compile Include="Src\TestNetwork.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Client\ClientCommon\ClientCommon.csproj">
       <Project>{1ae6c358-53d2-4b7d-9451-7db18b00cfaf}</Project>
       <Name>ClientCommon</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\NetMsg.Common\NetMsg.Common.csproj">
       <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
@@ -59,6 +66,10 @@
     <ProjectReference Include="..\Common\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\Util\Util.csproj">
+      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
+      <Name>Util</Name>
     </ProjectReference>
     <ProjectReference Include="..\Server\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>

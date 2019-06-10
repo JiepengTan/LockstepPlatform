@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace Lockstep.Logging {
-    public static class Log {
+    public static class Logger {
         public static LogSeverity LogSeverityLevel =
             LogSeverity.Info | LogSeverity.Warn | LogSeverity.Error | LogSeverity.Exception;
 

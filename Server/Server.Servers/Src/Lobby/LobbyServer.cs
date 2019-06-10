@@ -387,7 +387,7 @@ namespace Lockstep.Server.Lobby {
 
             //TODO 使用平衡策略去获取服务器
             var server = _allGameServers[LRandom.Next(_allGameServers.Count)];
-            server?.SendMessage((short) EMsgLS.L2G_StartGame, new Msg_L2G_StartGame() {
+            server?.SendMessage((short) EMsgLS.L2G_CreateRoom, new Msg_L2G_CreateRoom() {
                     GameType = user.GameType,
                     Players = playerInfos,
                     MapId = room.MapId,

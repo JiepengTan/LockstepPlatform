@@ -74,7 +74,7 @@ namespace NetMsg.Server {
     //I login L lobby
     public enum EMsgLS:short {
         I2L_UserLogin,
-        L2G_StartGame,
+        L2G_CreateRoom,
         G2L_RegisterServer,
         G2L_OnStartGame,
         G2L_OnGameFinished,

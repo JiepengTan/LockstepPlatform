@@ -14,7 +14,7 @@ namespace NetMsg.Common {
 
         public override void Deserialize(Deserializer reader){
             startTick = reader.GetInt32();
-            frames = reader.GetArray(ref frames);
+            frames = reader.GetArray(frames);
         }
     }
 }

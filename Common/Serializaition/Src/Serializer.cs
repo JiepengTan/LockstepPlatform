@@ -380,7 +380,7 @@ namespace Lockstep.Serialization {
         }
 
 
-        public void PutArray(BaseFormater[] value){
+        public void PutArray<T>(T[] value)where T:BaseFormater{
             ushort len = (ushort) (value?.Length ?? 0);
             PutUInt16(len);
             for (int i = 0; i < len; i++) {
@@ -389,7 +389,7 @@ namespace Lockstep.Serialization {
                 val?.Serialize(this);
             }
         }
-        public void PutList(List<BaseFormater> value){
+        public void PutList<T>(List<T> value) where T:BaseFormater{
             ushort len = (ushort) (value?.Count ?? 0);
             PutUInt16(len);
             for (int i = 0; i < len; i++) {
@@ -400,11 +400,11 @@ namespace Lockstep.Serialization {
         }
 
         public void PutArray(byte[] value){
-            var isNull = value == null;
-            PutBoolean(isNull);
-            if (isNull) return;
-            PutInt32(value.Length);
-            Put(value);
+            ushort len = (ushort) (value?.Length ?? 0);
+            PutUInt16(len);
+            if (len > 0) {
+                Put(value);
+            }
         }
 
         public void PutBytes_255(byte[] value){

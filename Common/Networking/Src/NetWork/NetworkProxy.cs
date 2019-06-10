@@ -1,19 +1,21 @@
 using System;
 using System.Collections.Generic;
+using Lockstep.Logging;
 
 namespace Lockstep.Networking {
 
-    public class NetworkProxy {
+    public class NetworkProxy : BaseLogger {
         protected List<IPollEvents> _allServerNet = new List<IPollEvents>();
         private IPollEvents[] _cachedAllServerNet;
         protected List<IUpdate> _allClientNet = new List<IUpdate>();
         private IUpdate[] _cachedAllClientNet;
-        
-        
+
+        public bool HasInit { get; protected set; }
+
         public virtual void DoAwake(){ }
         public virtual void DoStart(){ }
         public virtual void DoDestroy(){ }
-        
+
         public virtual void DoUpdate(int deltaTime){
             if (_cachedAllClientNet == null) {
                 _cachedAllClientNet = _allClientNet.ToArray();
@@ -23,6 +25,7 @@ namespace Lockstep.Networking {
                 net.DoUpdate();
             }
         }
+
         public virtual void PollEvents(){
             if (_cachedAllServerNet == null) {
                 _cachedAllServerNet = _allServerNet.ToArray();
@@ -48,6 +51,5 @@ namespace Lockstep.Networking {
             _allClientNet.Add(refClient);
             _cachedAllClientNet = null;
         }
-        
     }
 }

@@ -31,7 +31,7 @@ namespace NetMsg.Common {
     public partial class GameProperty : BaseFormater {
         public string Name { get; set; }
         public byte Type { get; set; }
-        public byte[] Data { get; set; }
+        public byte[] Data{ get; set; }
     }
 
     public partial class GameData : BaseFormater {

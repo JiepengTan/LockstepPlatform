@@ -7,7 +7,6 @@ using NetMsg.Common;
 
 namespace Lockstep.Client {
     public class LoginManager : NetworkProxy {
-        public bool HasInit;
         private string _name = "";
         private string _account = "";
         private string _password = "";
@@ -47,23 +46,21 @@ namespace Lockstep.Client {
         private List<RoomChatInfo> _chatInfos = new List<RoomChatInfo>();
         public List<RoomChatInfo> ChatInfos => _chatInfos;
 
-        private DebugInstance Debug;
-
+        private RoomMsgManager _roomMsgMgr;
         public int GameType {
             get => _gameType;
             set => _gameType = value;
         }
 
-        public void Init(BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
+        public void Init(RoomMsgManager roomMsgMgr, BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
+            _roomMsgMgr = roomMsgMgr;
             _loginHandler = loginHandler ?? new BaseLoginHandler();
             _loginHandler.Init(this);
+            _loginHandler.SetLogger(this.Debug);
             _serverIp = serverIp;
             _serverPort = serverPort;
         }
 
-        public void Log(string msg){
-            Debug.Log(msg);
-        }
 
         public override void DoAwake(){
             Debug = new DebugInstance(_account + ": ");
@@ -115,7 +112,7 @@ namespace Lockstep.Client {
         }
 
         private void OnConnLobby(){
-            _netClientIC.DoDestroy();
+            //_netClientIC.DoDestroy();
             Debug.Log("OnConnLobby ");
             _netClientLC.SendMessage(EMsgSC.C2L_UserLogin, new Msg_C2L_UserLogin() {
                     userId = _userId,
@@ -313,6 +310,7 @@ namespace Lockstep.Client {
                 }
             };
             _loginHandler.OnGameStart(rmsg, _gameTcpEnd);
+            _roomMsgMgr.ConnectToGameServer(rmsg,_gameTcpEnd);
         }
     }
 }

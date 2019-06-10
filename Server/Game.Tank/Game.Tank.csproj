@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\Room.cs" />
+    <Compile Include="Src\GameTank.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
@@ -59,6 +59,10 @@
     <ProjectReference Include="..\Server.Common\Server.Common.csproj">
       <Project>{0b0a7d5e-dddd-46af-bfa0-6700b4eb6a8e}</Project>
       <Name>Server.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Server.Servers\Server.Servers.csproj">
+      <Project>{23ad1c5b-cf67-4c22-92ff-2ce9e2be8fee}</Project>
+      <Name>Server.Servers</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

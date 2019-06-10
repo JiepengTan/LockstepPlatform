@@ -2,15 +2,15 @@ using Lockstep.Server.Common;
 
 namespace Lockstep.Server.Game {
     public interface IGameServer  {
-        Player GetPlayer(long playerId);
+       // Player GetPlayer(long playerId);
 
-        void RemoveRoom(IGame game);
+       void OnGameEmpty(IRoom room);
 
         //players
-        void TickOut(Player player, int reason);
+       void TickOut(Player player, int reason);
 
         //Net
-        void OnClientConnected(object peer);
-        void OnCilentDisconnected(object peer);
+       // void OnClientConnected(object peer);
+       // void OnCilentDisconnected(object peer);
     }
 }

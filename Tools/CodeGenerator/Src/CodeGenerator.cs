@@ -218,7 +218,7 @@ namespace Lockstep.CodeGenerator {
             }
 
             for (; i < count; i++) {
-                var property = properties[i];
+                var property = properties[i-fileds.Count];
                 var ty = property.PropertyType;
                 DealMemberType(Handler, ty, property, AppendString);
             }

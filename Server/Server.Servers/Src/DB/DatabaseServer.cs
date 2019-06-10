@@ -39,7 +39,7 @@ namespace Lockstep.Server.Database {
         protected void S2D_ReqGameData(IIncommingMessage reader){
             var msg = reader.Parse<Msg_S2D_ReqGameData>();
             _authDb.GetGameData(msg.account, (dbData) => {
-                reader.Respond(EMsgDS.D2S_RepUserInfo,
+                reader.Respond(EMsgDS.D2S_RepGameData,
                     new Msg_D2S_RepGameData() {data = dbData as GameData});
             });
         }

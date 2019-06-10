@@ -17,9 +17,9 @@ namespace Lockstep.Client {
 
         void SendGameEvent(byte[] data);
         void SendLoadingProgress(byte progress);
-        
-        
-        void ConnectToGameServer(IPEndInfo _gameTcpEnd, Msg_C2G_Hello helloBody);
+
+
+        void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd);
         void OnLoadLevelProgress(float progress);
     }
 
@@ -56,13 +56,16 @@ namespace Lockstep.Client {
             _maxMsgId = (byte) System.Math.Min((int) EMsgSC.EnumCount, (int) byte.MaxValue);
             _allMsgDealFuncs = new DealNetMsg[_maxMsgId];
             _allMsgParsers = new ParseNetMsg[_maxMsgId];
+            Debug = new DebugInstance("Client " + ": ");
             RegisterMsgHandlers();
+            msgHandler.SetLogger(Debug);
+            msgHandler.SetMsgHandler(this);
             _handler = msgHandler;
         }
 
         public override void DoUpdate(int deltaTime){
             base.DoUpdate(deltaTime);
-            if (CurGameState == EGameState.PartLoading) {
+            if (CurGameState == EGameState.Loading) {
                 if (_nextSendLoadProgressTimer < Time.timeSinceLevelLoad) {
                     SendLoadingProgress(CurProgress);
                 }
@@ -78,7 +81,7 @@ namespace Lockstep.Client {
 
         public byte CurProgress {
             get {
-                if (_curLoadProgress > 0) _curLoadProgress = 1;
+                if (_curLoadProgress > 1) _curLoadProgress = 1;
                 if (_curLoadProgress < 0) _curLoadProgress = 0;
                 var val = _curLoadProgress * 70 +
                           (HasRecvGameDta ? 10 : 0) +
@@ -91,7 +94,7 @@ namespace Lockstep.Client {
 
 
         public void OnLoadLevelProgress(float progress){
-            _curLoadProgress = (byte) progress;
+            _curLoadProgress = progress;
             if (CurProgress >= 100) {
                 CurGameState = EGameState.PartLoaded;
                 _nextSendLoadProgressTimer += Time.timeSinceLevelLoad + 0.5f;
@@ -99,12 +102,12 @@ namespace Lockstep.Client {
             }
         }
 
-        public void ConnectToGameServer(IPEndInfo _gameTcpEnd, Msg_C2G_Hello helloBody){
+        public void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd){
             ResetStatus();
-            CurGameState = EGameState.PartLoading;
             this.helloBody = helloBody.Hello;
             InitNetClient(ref _netTcp, _gameTcpEnd.Ip, _gameTcpEnd.Port, () => {
                 HasConnGameTcp = true;
+                CurGameState = EGameState.Loading;
                 _netTcp.SendMessage(EMsgSC.C2G_Hello, helloBody, (status, respond) => {
                         if (status != EResponseStatus.Failed) {
                             var rMsg = respond.Parse<Msg_G2C_Hello>();
@@ -130,7 +133,7 @@ namespace Lockstep.Client {
                         Hello = helloBody
                     }
                 );
-                _handler.OnTcpHello(_curMapId, _localId);
+                _handler.OnUdpHello(_curMapId, _localId);
             });
         }
 
@@ -139,12 +142,6 @@ namespace Lockstep.Client {
 
         public Msg_G2C_GameStartInfo GameStartInfo { get; private set; }
 
-        public void SendTcp(EMsgSC msgId, BaseFormater body){
-            var writer = new Serializer();
-            writer.PutByte((byte) msgId);
-            body.Serialize(writer);
-            _netTcp?.SendMessage(EMsgSC.C2G_TcpMessage, Compressor.Compress(writer));
-        }
 
         protected void C2G_GameEvent(IIncommingMessage reader){
             var msg = reader.Parse<Msg_G2C_GameEvent>();
@@ -153,9 +150,23 @@ namespace Lockstep.Client {
 
         protected void G2C_GameStartInfo(IIncommingMessage reader){
             var msg = reader.Parse<Msg_G2C_GameStartInfo>();
+            Log("G2C_GameStartInfo " + msg);
+            HasRecvGameDta = true;
+            GameStartInfo = msg;
             _handler.OnGameStartInfo(msg);
         }
 
+        private short curLevel;
+        protected void G2C_LoadingProgress(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_G2C_LoadingProgress>();
+            _handler.OnLoadingProgress(msg.Progress);
+        }
+        protected void G2C_AllFinishedLoaded(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_G2C_AllFinishedLoaded>();
+            curLevel = msg.Level;
+            _handler.OnAllFinishedLoaded(msg.Level);
+        }
+        
         public void SendGameEvent(byte[] msg){
             SendTcp(EMsgSC.C2G_GameEvent, new Msg_C2G_GameEvent() {Data = msg});
         }
@@ -176,8 +187,8 @@ namespace Lockstep.Client {
 
 
         private void RegisterMsgHandlers(){
-            RegisterNetMsgHandler(EMsgSC.G2C_RepMissFrame, G2C_RepMissFrame, ParseData<Msg_ServerFrames>);
-            RegisterNetMsgHandler(EMsgSC.G2C_FrameData, G2C_FrameData, ParseData<Msg_ServerFrames>);
+            RegisterNetMsgHandler(EMsgSC.G2C_RepMissFrame, OnMsg_G2C_RepMissFrame, ParseData<Msg_ServerFrames>);
+            RegisterNetMsgHandler(EMsgSC.G2C_FrameData, OnMsg_G2C_FrameData, ParseData<Msg_ServerFrames>);
         }
 
         private void RegisterNetMsgHandler(EMsgSC type, DealNetMsg func, ParseNetMsg parseFunc){
@@ -215,19 +226,26 @@ namespace Lockstep.Client {
 
         public void SendUdp(EMsgSC msgId, ISerializable body){
             var writer = new Serializer();
-            writer.PutByte((byte) msgId);
+            writer.PutInt16((short) msgId);
             body.Serialize(writer);
-            _netUdp.SendMessage(EMsgSC.C2G_UdpMessage, Compressor.Compress(writer), EDeliveryMethod.Unreliable);
+            _netUdp.SendMessage(EMsgSC.C2G_UdpMessage, writer.CopyData(), EDeliveryMethod.Unreliable);
         }
 
+        public void SendTcp(EMsgSC msgId, BaseFormater body){
+            var writer = new Serializer();
+            writer.PutInt16((short) msgId);
+            body.Serialize(writer);
+            _netTcp?.SendMessage(EMsgSC.C2G_TcpMessage, writer.CopyData());
+        }
 
         protected void G2C_UdpMessage(IIncommingMessage reader){
-            var data = reader.GetData();
+            var bytes = reader.GetRawBytes();
+            var data = new Deserializer(Compressor.Decompress(bytes));
             OnRecvMsg(data);
         }
 
         protected void OnRecvMsg(Deserializer reader){
-            var msgType = reader.GetByte();
+            var msgType = reader.GetInt16();
             if (msgType >= _maxMsgId) {
                 Debug.LogError($" send a Error msgType out of range {msgType}");
                 return;
@@ -244,16 +262,16 @@ namespace Lockstep.Client {
                 }
             }
             catch (Exception e) {
-                Debug.LogError($" Deal Msg Error :{msgType}  " + e);
+                Debug.LogError($" Deal Msg Error :{(EMsgSC) (msgType)}  " + e);
             }
         }
 
-        protected void G2C_FrameData(BaseFormater reader){
+        protected void OnMsg_G2C_FrameData(BaseFormater reader){
             var msg = reader as Msg_ServerFrames;
             _handler.OnServerFrames(msg);
         }
 
-        protected void G2C_RepMissFrame(BaseFormater reader){
+        protected void OnMsg_G2C_RepMissFrame(BaseFormater reader){
             var msg = reader as Msg_ServerFrames;
             _handler.OnMissFrames(msg);
         }

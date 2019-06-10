@@ -11,9 +11,9 @@ namespace Lockstep.CodeGenerator {
                 _defaultCodeTemplete = @"{0}{1} = reader.Get{2}();";
                 _enumCodeTemplete = @"{0}{1} = ({2})reader.GetInt32();";
                 _clsCodeTemplete = @"{0}{1} = reader.Get(ref this.{1});";
-                _arrayCodeTemplete = @"{0}{1} = reader.GetArray(ref this.{1});";
-                _lstCodeTemplete = @"{0}{1} = reader.GetList(ref this.{1});";
-                _dictCodeTemplete = @"{0}{1} = reader.GetDict(ref this.{1});";
+                _arrayCodeTemplete = @"{0}{1} = reader.GetArray(this.{1});";
+                _lstCodeTemplete = @"{0}{1} = reader.GetList(this.{1});";
+                _dictCodeTemplete = @"{0}{1} = reader.GetDict(this.{1});";
             }
         }
 

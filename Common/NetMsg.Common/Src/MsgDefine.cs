@@ -170,7 +170,7 @@ namespace NetMsg.Common{
     }
 
 //LG
-    public partial class Msg_L2G_StartGame : BaseFormater {
+    public partial class Msg_L2G_CreateRoom : BaseFormater {
         public int GameType;
         public int MapId;
         public GamePlayerInfo[] Players;
@@ -226,7 +226,7 @@ namespace NetMsg.Common{
     }
 
     public partial class Msg_G2C_AllFinishedLoaded : BaseFormater {
-        public byte Padding;
+        public short Level;
     }
 
     public partial class Msg_C2G_GameEvent : BaseFormater {

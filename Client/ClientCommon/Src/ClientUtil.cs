@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+using Lockstep.Networking;
 using Lockstep.Util;
 
 namespace Lockstep.Client {
  
     public class ClientUtil {
-        private static List<LoginManager> clients = new List<LoginManager>();
+        private static List<NetworkProxy> clients = new List<NetworkProxy>();
 
         private static void StartServices(){
             Time.DoStart();
@@ -19,7 +20,7 @@ namespace Lockstep.Client {
             CoroutineHelper.DoUpdate();
         }
 
-        public static void RunClient(LoginManager loginManager){
+        public static void RunClient(NetworkProxy loginManager){
             clients.Add(loginManager);
             Console.WriteLine(
                 "=============== LockstepPlatform FakeClient" + clients.Count + " Start!! ===============");

@@ -174,7 +174,9 @@ namespace Lockstep.Networking {
         public Deserializer GetData(){
             return _data == null ? null : new Deserializer(_data);
         }
-
+        public byte[] GetRawBytes(){
+            return _data ;
+        }
         public void Respond(object type, BaseFormater msg, EResponseStatus responseStatus = EResponseStatus.Default){
             Respond(MessageHelper.Create((short) type, msg.ToBytes()), responseStatus);
         }

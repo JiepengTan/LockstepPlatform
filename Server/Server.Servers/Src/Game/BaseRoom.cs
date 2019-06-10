@@ -3,12 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using LiteNetLib;
+using Lockstep.Logging;
+using Lockstep.Networking;
 using Lockstep.Serialization;
 using NetMsg.Common;
 using Lockstep.Server.Common;
-using Debug = Lockstep.Logging.Debug;
+using Lockstep.Util;
+using Random = System.Random;
 
-namespace Lockstep.Server {
+namespace Lockstep.Server.Game {
     public class HashCodeMatcher {
         public long hashCode;
         public bool[] sendResult;
@@ -23,34 +26,78 @@ namespace Lockstep.Server {
         public bool IsMatchered => count == sendResult.Length;
     }
 
-    public enum ERoomState {
-        Idle,
-        WaitingToPlay,
-        PartLoading,
-        PartLoaded,
-        Playing,
-        PartFinished,
-        FinishAll,
+
+    public interface IRoom : IRecyclable {
+        Msg_G2C_GameStartInfo GameStartInfo { get; set; }
+        int GameType { get; }
+        int RoomId { get; }
+        int CurPlayerCount { get; }
+
+        int MaxPlayerCount { get; }
+
+        //room life cycle
+        void DoStart(IGameServer server, int roomId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
+            string gameHash);
+
+        void DoUpdate(int deltaTime);
+        void DoDestroy();
+
+        //net status
+        void OnPlayerConnect(Player player);
+        void OnPlayerReconnect(Player player);
+        void OnPlayerDisconnect(Player player);
+        void OnPlayerLeave(Player player);
+
+        //game status
+        void StartGame();
+
+        void FinishedGame();
+
+        //net msg
+        void SendUdp(Player player, byte[] data);
+        void BorderUdp(byte[] data);
+        void BorderTcp(EMsgSC type, BaseFormater info);
+        void SetStartInfo(Msg_G2C_GameStartInfo info);
+        void OnRecvMsg(Player player, Deserializer reader);
     }
-#if false
-    public class Room : IRoom {
-        public ERoomState State = ERoomState.Idle;
-        public int TypeId { get; protected set; }
-        public int RoomId { get; protected set; }
-        
+
+    public class BaseRoom : BaseLogger, IRoom, IRecyclable {
+        public int MapId { get; set; }
+        public string GameHash { get; set; }
+
+        public IPEndInfo TcpEnd { get; set; }
+        public IPEndInfo UdpEnd { get; set; }
+
+        public EGameState State = EGameState.Idle;
+        public int GameType { get; set; }
+        public int RoomId { get; set; }
 
         public int CurPlayerCount {
-            get { return _allPlayers.Count; }
+            get {
+                int count = 0;
+                foreach (var player in Players) {
+                    if (player != null) {
+                        count++;
+                    }
+                }
+
+                return count;
+            }
         }
 
-        public int MaxPlayerCount { get; private set; }
+        public int MaxPlayerCount { get; set; }
 
         public bool IsRunning { get; private set; }
-        public string name;
+        public string Name;
+        public float TimeSinceCreate;
+        public bool IsFinished = false;
 
-        private Dictionary<long, byte> _playerId2LocalId = new Dictionary<long, byte>();
-        private Dictionary<byte, Player> _localId2Player = new Dictionary<byte, Player>();
-        private List<Player> _allPlayers = new List<Player>();
+        public Msg_G2C_GameStartInfo GameStartInfo { get; set; }
+
+
+        private Dictionary<long, byte> _userId2LocalId = new Dictionary<long, byte>();
+        public Player[] Players { get; private set; }
+
 
         //hashcode 
         public int Tick = 0;
@@ -59,8 +106,9 @@ namespace Lockstep.Server {
 
         private IGameServer _gameServer;
 
-        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[(int) EMsgSC.EnumCount];
-        private ParseNetMsg[] allMsgParsers = new ParseNetMsg[(int) EMsgSC.EnumCount];
+        private const int MaxMsgIdx = (short) EMsgSC.EnumCount;
+        private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[MaxMsgIdx];
+        private ParseNetMsg[] allMsgParsers = new ParseNetMsg[MaxMsgIdx];
 
         private delegate void DealNetMsg(Player player, BaseFormater data);
 
@@ -69,25 +117,92 @@ namespace Lockstep.Server {
         public long timeSinceLoaded;
         private long firstFrameTimeStamp = 0;
         private int waitTimer = 0;
-        private int seed;
 
         //所有需要等待输入到来的Ids
         public List<byte> allNeedWaitInputPlayerIds;
-        List<ServerFrame> allHistoryFrames = new List<ServerFrame>(); //所有的历史帧
+        private List<ServerFrame> allHistoryFrames = new List<ServerFrame>(); //所有的历史帧
+
+
+        public void OnRecvPlayerGameData(Player player){
+            if (player == null || MaxPlayerCount <= player.LocalId || Players[player.LocalId] != player) {
+                return;
+            }
+
+            bool hasRecvAll = true;
+            foreach (var user in Players) {
+                if (user != null && user.GameData == null) {
+                    hasRecvAll = false;
+                    break;
+                }
+            }
+
+            var playerCount = MaxPlayerCount;
+            if (hasRecvAll) {
+                var userInfos = new GameData[playerCount];
+                for (int i = 0; i < playerCount; i++) {
+                    userInfos[i] = Players[i]?.GameData;
+                }
+
+                //all user data ready notify game start
+                SetStartInfo(new Msg_G2C_GameStartInfo() {
+                    MapId = MapId,
+                    RoomId = RoomId,
+                    Seed = LRandom.Next(100000),
+                    UserCount = MaxPlayerCount,
+                    TcpEnd = TcpEnd,
+                    UdpEnd = UdpEnd,
+                    SimulationSpeed = 60,
+                    UserInfos = userInfos
+                });
+            }
+        }
+
+
+        public int GetUserLocalId(long userId){
+            if (_userId2LocalId.TryGetValue(userId, out var id)) {
+                return id;
+            }
+
+            return -1;
+        }
 
 
         #region  life cycle
 
-        public void DoStart(int type, int roomId, IGameServer server, int size, string name){
-            this.RoomId = roomId;
-            this.MaxPlayerCount = size;
-            this.name = name;
+        public void DoStart(IGameServer server, int roomId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
+            string gameHash){
+            State = EGameState.Loading;
             _gameServer = server;
             Tick = 0;
-            TypeId = type;
             timeSinceLoaded = 0;
             firstFrameTimeStamp = 0;
             RegisterMsgHandlers();
+            Debug = new DebugInstance("Room" + RoomId + ": ");
+            var count = playerInfos.Length;
+            GameType = gameType;
+            GameHash = gameHash;
+            RoomId = roomId;
+            MaxPlayerCount = count;
+            Name = roomId.ToString();
+            MapId = mapId;
+            Players = new Player[count];
+            for (int i = 0; i < count; i++) {
+                var user = playerInfos[i];
+                var player = Pool.Get<Player>();
+                player.UserId = user.UserId;
+                player.Account = user.Account;
+                player.LoginHash = user.LoginHash;
+                player.LocalId = (byte) i;
+                player.Room = this;
+                Players[i] = player;
+            }
+
+            _userId2LocalId.Clear();
+            TimeSinceCreate = Time.timeSinceLevelLoad;
+            for (byte i = 0; i < count; i++) {
+                var player = Players[i];
+                _userId2LocalId.Add(player.UserId, player.LocalId);
+            }
         }
 
         public void DoUpdate(int deltaTime){
@@ -95,10 +210,14 @@ namespace Lockstep.Server {
             BorderServerFrame(deltaTime);
         }
 
+        public void DoDestroy(){
+            Log($"Room {RoomId} Destroy");
+            DumpGameFrames();
+        }
 
         private void BorderServerFrame(int deltaTime){
             waitTimer += deltaTime;
-            if (State != ERoomState.Playing) return;
+            if (State != EGameState.Playing) return;
             while (true) { // 如果落后太多 就一直追帧
                 var iTick = (int) Tick;
                 if (allHistoryFrames.Count <= iTick) {
@@ -117,7 +236,7 @@ namespace Lockstep.Server {
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
                         if (inputs[i] == null) {
-                            Debug.Log($"Overtime wait remove localId = {i}");
+                            Log($"Overtime wait remove localId = {i}");
                             allNeedWaitInputPlayerIds.Remove((byte) i);
                         }
                     }
@@ -145,9 +264,9 @@ namespace Lockstep.Server {
                     frames[count - i - 1] = allHistoryFrames[iTick - i];
                 }
 
-                msg.StartTick = frames[0].Tick;
-                msg.Frames = frames;
-                SendToAll(EMsgSC.G2C_FrameData, msg);
+                msg.startTick = frames[0].tick;
+                msg.frames = frames;
+                BorderUdp(EMsgSC.G2C_FrameData, msg);
                 if (firstFrameTimeStamp <= 0) {
                     firstFrameTimeStamp = timeSinceLoaded;
                 }
@@ -156,57 +275,52 @@ namespace Lockstep.Server {
             }
         }
 
-
-        public void DoDestroy(){
-            Debug.Log($"Room {RoomId} Destroy");
-            DumpGameFrames();
-        }
-
         private void DumpGameFrames(){
             var msg = new Msg_RepMissFrame();
             int count = Math.Min((Tick - 1), allHistoryFrames.Count);
             if (count <= 0) return;
+            var writer = new Serializer();
+            GameStartInfo.Serialize(writer);
             var frames = new ServerFrame[count];
             for (int i = 0; i < count; i++) {
                 frames[i] = allHistoryFrames[i];
-                Debug.Assert(frames[i] != null, "!!!!!!!!!!!!!!!!!");
+                Logging.Debug.Assert(frames[i] != null, "!!!!!!!!!!!!!!!!!");
             }
 
-            msg.StartTick = frames[0].Tick;
-            msg.Frames = frames;
-            var writer = new Serializer();
-            writer.PutInt32(TypeId);
-            writer.PutInt32(RoomId);
-            writer.PutInt32(seed);
-            writer.PutBytes_255(_playerId2LocalId.Values.ToArray());
-
+            msg.startTick = frames[0].tick;
+            msg.frames = frames;
             msg.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                "../../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + TypeId + "_" + RoomId +
+                "../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + GameType + "_" + RoomId +
                 ".record");
             var dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir)) {
                 Directory.CreateDirectory(dir);
             }
-            Debug.Log("Create Record " + path);
+
+            Log("Create Record " + path);
             File.WriteAllBytes(path, bytes);
         }
 
         #endregion
 
-
         #region net msg
+
+        public void SetStartInfo(Msg_G2C_GameStartInfo info){
+            GameStartInfo = info;
+            BorderTcp(EMsgSC.G2C_GameStartInfo, GameStartInfo);
+        }
 
         public void OnRecvMsg(Player player, Deserializer reader){
             if (reader.IsEnd) {
-                DealMsgHandlerError(player, $"{player.PlayerId} send a Error:Net Msg");
+                DealMsgHandlerError(player, $"{player.UserId} send a Error:Net Msg");
                 return;
             }
 
-            var msgType = reader.GetByte();
-            if (msgType >= (byte) EMsgSC.EnumCount) {
-                DealMsgHandlerError(player, $"{player.PlayerId} send a Error msgType out of range {msgType}");
+            var msgType = reader.GetInt16();
+            if (msgType >= MaxMsgIdx) {
+                DealMsgHandlerError(player, $"{player.UserId} send a Error msgType out of range {msgType}");
                 return;
             }
 
@@ -218,7 +332,7 @@ namespace Lockstep.Server {
                     var data = _parser(reader);
                     if (data == null) {
                         DealMsgHandlerError(player,
-                            $"ErrorMsg type :parser data error playerID = {player.PlayerId} msgType:{msgType}");
+                            $"ErrorMsg type :parser data error playerID = {player.UserId} msgType:{msgType}");
                         return;
                     }
 
@@ -226,13 +340,13 @@ namespace Lockstep.Server {
                 }
                 else {
                     DealMsgHandlerError(player,
-                        $" {player.PlayerId} ErrorMsg type :no msg handler or parser {msgType}");
+                        $" {player.UserId} ErrorMsg type :no msg handler or parser {msgType}");
                 }
             }
         }
 
         void DealMsgHandlerError(Player player, string msg){
-            Debug.LogError(msg);
+            LogError(msg);
             TickOut(player, 0);
         }
 
@@ -246,7 +360,7 @@ namespace Lockstep.Server {
             RegisterNetMsgHandler(EMsgSC.C2G_HashCode, OnNet_HashCode,
                 (reader) => { return ParseData<Msg_HashCode>(reader); });
             RegisterNetMsgHandler(EMsgSC.C2G_LoadingProgress, OnNet_LoadingProgress,
-                (reader) => { return ParseData<Msg_LoadingProgress>(reader); });
+                (reader) => { return ParseData<Msg_C2G_LoadingProgress>(reader); });
             RegisterNetMsgHandler(EMsgSC.C2G_ReqMissFrame, OnNet_ReqMissFrame,
                 (reader) => { return ParseData<Msg_ReqMissFrame>(reader); });
             RegisterNetMsgHandler(EMsgSC.C2G_RepMissFrameAck, OnNet_RepMissFrameAck,
@@ -267,134 +381,92 @@ namespace Lockstep.Server {
                 }
             }
             catch (Exception e) {
-                Debug.LogError("Parse Msg Error:" + e);
+                LogError("Parse Msg Error:" + e);
                 data = null;
             }
 
             return data;
         }
 
-
-        public void SendTo(Player player, byte[] data){
-            player.SendRoom(data);
-        }
-
-        public void SendToAll(byte[] data){
-            foreach (var player in _allPlayers) {
-                SendTo(player, data);
+        public void BorderTcp(EMsgSC type, BaseFormater data){
+            var msg = MessageHelper.Create((short) type, data);
+            foreach (var player in Players) {
+                player.SendTcp(msg);
             }
         }
 
-        public void SendTo(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
+        public void BorderUdp(byte[] data){
+            foreach (var player in Players) {
+                SendUdp(player, data);
+            }
+        }
+
+        public void BorderUdp(EMsgSC type, ISerializable body){
             var writer = new Serializer();
-            writer.PutByte((byte) type);
+            writer.PutInt16((short) type);
+            body.Serialize(writer);
+            var bytes = Compressor.Compress(writer);
+            foreach (var player in Players) {
+                player.SendUdp(bytes);
+            }
+        }
+
+
+        public void SendUdp(Player player, byte[] data){
+            player.SendUdp(data);
+        }
+        public void SendUdp(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
+            var writer = new Serializer();
+            writer.PutInt16((short) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             if (isNeedDebugSize) {
-                Debug.Log($"msg :type {type} size{bytes.Length}");
+                Log($"msg :type {type} size{bytes.Length}");
             }
 
-            player.SendRoom(bytes);
+            player.SendUdp(bytes);
         }
 
-        public void SendToAll(EMsgSC type, ISerializable body){
-            var writer = new Serializer();
-            writer.PutByte((byte) type);
-            body.Serialize(writer);
-            var bytes = Compressor.Compress(writer);
-            foreach (var player in _allPlayers) {
-                player.SendRoom(bytes);
-            }
-        }
-
-        #endregion
-
-        public long[] GetAllPlayerIDs(){
-            return _playerId2LocalId.Keys.ToArray();
-        }
-
-        public byte[] GetReconnectMsg(Player player){
-            var ids = _playerId2LocalId.Values.ToArray();
-            var body = CreateStartGame(player.localId, ids);
-            var writer = new Serializer();
-            body.Serialize(writer);
-            return writer.CopyData();
-        }
-
-        #region player operator
-
-        public void OnPlayerEnter(Player player){
-            if (State == ERoomState.Idle) {
-                State = ERoomState.WaitingToPlay;
-            }
-            if(State != ERoomState.WaitingToPlay) return;
-            if (_allPlayers.Contains(player)) {
-                Debug.LogError("Player already exist" + player.PlayerId);
-                return;
-            }
-
-            Debug.Log($"Player{player.PlayerId} Enter room {RoomId}");
-            player.room = this;
-            _allPlayers.Add(player);
-        }
-
-        public void OnPlayerReady(Player tempplayer){
-            Debug.Log("OnPlayerReady " + tempplayer.PlayerId);
-            tempplayer.status = EPlayerStatus.ReadyToPlay;
-            int readyCount = 0;
-            foreach (var player in _allPlayers) {
-                if (player.status == EPlayerStatus.ReadyToPlay) {
-                    readyCount++;
-                }
-            }
-
-            if (readyCount == MaxPlayerCount) {
-                Debug.Log("Room is full, starting new simulation...");
-                StartGame();
-            }
-            else {
-                Debug.Log(readyCount + " / " + MaxPlayerCount + " players have ready.");
-            }
-        }
-
-        public void OnPlayerLeave(Player player){
-            RemovePlayer(player);
-            _playerId2LocalId.Remove(player.PlayerId); //同时还需要彻底的移除记录 避免玩家重连
-            Debug.Log($"Player{player.PlayerId} OnPlayerLeave room {RoomId}");
-        }
 
         #endregion
 
         #region net status
 
-        //net status
-        public void OnReconnect(Player player){
-            player.localId = _playerId2LocalId[player.PlayerId];
-            _localId2Player[player.localId] = player;
-            if (_allPlayers.Contains(player)) {
-                Debug.LogError("Duplicate add players" + player.PlayerId);
-                return;
+        public void OnPlayerConnect(Player player){
+            if (GameStartInfo != null) {
+                player.SendTcp(EMsgSC.G2C_GameStartInfo, GameStartInfo);
             }
-
-            _allPlayers.Add(player);
         }
 
-        public void OnDisconnect(Player player){
-            Debug.Log($"Player{player.PlayerId} OnDisconnect room {RoomId}");
+        //net status
+        public void OnPlayerReconnect(Player player){
+            player.LocalId = _userId2LocalId[player.UserId];
+            Players[player.LocalId] = player;
+        }
+
+        public void OnPlayerDisconnect(Player player){
+            Log($"Player{player.UserId} OnDisconnect room {RoomId}");
             RemovePlayer(player);
         }
 
+        public void OnPlayerLeave(Player player){
+            RemovePlayer(player);
+            _userId2LocalId.Remove(player.UserId); //同时还需要彻底的移除记录 避免玩家重连
+            Log($"Player{player.UserId} OnPlayerLeave room {RoomId}");
+        }
+
         void RemovePlayer(Player player){
-            _allPlayers.Remove(player);
-            _localId2Player.Remove(player.localId);
-            if (_localId2Player.Count == 0) {
+            if (Players[player.LocalId] == null) return;
+            Players[player.LocalId] = null;
+            var curCount = CurPlayerCount;
+            if (curCount == 0) {
                 Console.WriteLine("All players left, stopping current simulation...");
                 IsRunning = false;
-                State = ERoomState.Idle;
-                _gameServer.RemoveRoom(this);
+                State = EGameState.Idle;
+                _gameServer.OnGameEmpty(this);
             }
             else {
-                Console.WriteLine(CurPlayerCount + " players remaining.");
+                Console.WriteLine(curCount + " players remaining.");
             }
         }
 
@@ -402,22 +474,7 @@ namespace Lockstep.Server {
 
         #region game status
 
-        public void StartGame(){
-            byte localId = 0;
-            foreach (var player in _allPlayers) {
-                player.localId = localId;
-                _playerId2LocalId[player.PlayerId] = localId;
-                _localId2Player[localId] = player;
-                localId++;
-            }
-            
-            allNeedWaitInputPlayerIds = new List<byte>();
-            foreach (var val in _playerId2LocalId.Values) {
-                allNeedWaitInputPlayerIds.Add(val);
-            }
-            State = ERoomState.PartLoading;
-            StartSimulationOnConnectedPeers();
-        }
+        public void StartGame(){ }
 
         public void FinishedGame(){ }
 
@@ -429,11 +486,16 @@ namespace Lockstep.Server {
         public void OnReuse(){ }
 
         public void OnRecycle(){
-            _playerId2LocalId.Clear();
-            _localId2Player.Clear();
-            _allPlayers.Clear();
+            _userId2LocalId.Clear();
             _hashCodes.Clear();
             Tick = 0;
+            RoomId = -1;
+            if (Players == null) return;
+            foreach (var player in Players) {
+                Pool.Return(player);
+            }
+
+            Players = null;
         }
 
         #endregion
@@ -441,9 +503,10 @@ namespace Lockstep.Server {
         #region Net msg handler
 
         void OnNet_PlayerInput(Player player, BaseFormater data){
-            if (State != ERoomState.PartLoaded && State != ERoomState.Playing) return;
-            if (State == ERoomState.PartLoaded) {
-                State = ERoomState.Playing;
+            if (State != EGameState.PartLoaded && State != EGameState.Playing) return;
+            if (State == EGameState.PartLoaded) {
+                Log("First input: game start playing");
+                State = EGameState.Playing;
             }
 
             var input = data as Msg_PlayerInput;
@@ -464,7 +527,7 @@ namespace Lockstep.Server {
             }
 
             if (allHistoryFrames[iTick] == null) {
-                allHistoryFrames[iTick] = new ServerFrame() {Tick = tick};
+                allHistoryFrames[iTick] = new ServerFrame() {tick = tick};
             }
 
             var frame = allHistoryFrames[iTick];
@@ -486,7 +549,7 @@ namespace Lockstep.Server {
 
         void OnNet_HashCode(Player player, BaseFormater data){
             var hashInfo = data as Msg_HashCode;
-            var id = player.localId;
+            var id = player.LocalId;
             for (int i = 0; i < hashInfo.HashCodes.Length; i++) {
                 var code = hashInfo.HashCodes[i];
                 var tick = hashInfo.StartTick + i;
@@ -524,12 +587,8 @@ namespace Lockstep.Server {
             }
 
             if (!isMatched) {
-                Debug.Log($"!!!!!!!!!!!! Hash not match tick{tick} hash{hash} ");
+                Log($"!!!!!!!!!!!! Hash not match tick{tick} hash{hash} ");
             }
-        }
-
-        void OnNet_PlayerReady(Player player, BaseFormater data){
-            OnPlayerReady(player);
         }
 
         private byte[] playerLoadingProgress;
@@ -539,7 +598,7 @@ namespace Lockstep.Server {
         void OnNet_ReqMissFrame(Player player, BaseFormater data){
             var reqMsg = data as Msg_ReqMissFrame;
             var nextCheckTick = reqMsg.StartTick;
-            Debug.Log($"OnNet_ReqMissFrame nextCheckTick id:{player.localId}:{nextCheckTick}");
+            Log($"OnNet_ReqMissFrame nextCheckTick id:{player.LocalId}:{nextCheckTick}");
             var msg = new Msg_RepMissFrame();
             int count = Math.Min(Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
                 MaxRepMissFrameCountPerPack);
@@ -547,30 +606,35 @@ namespace Lockstep.Server {
             var frames = new ServerFrame[count];
             for (int i = 0; i < count; i++) {
                 frames[i] = allHistoryFrames[nextCheckTick + i];
-                Debug.Assert(frames[i] != null);
+                Logging.Debug.Assert(frames[i] != null);
             }
 
-            msg.StartTick = frames[0].Tick;
-            msg.Frames = frames;
-            SendTo(player, EMsgSC.G2C_RepMissFrame, msg, true);
+            msg.startTick = frames[0].tick;
+            msg.frames = frames;
+            SendUdp(player, EMsgSC.G2C_RepMissFrame, msg, true);
         }
 
         void OnNet_RepMissFrameAck(Player player, BaseFormater data){
             var msg = data as Msg_RepMissFrameAck;
-            Debug.Log($"OnNet_RepMissFrameAck missFrameTick:{msg.MissFrameTick}");
+            Log($"OnNet_RepMissFrameAck missFrameTick:{msg.MissFrameTick}");
         }
 
 
         void OnNet_LoadingProgress(Player player, BaseFormater data){
-            if (State != ERoomState.PartLoading) return;
-            var msg = data as Msg_LoadingProgress;
+            if (State != EGameState.Loading) return;
+            var msg = data as Msg_C2G_LoadingProgress;
             if (playerLoadingProgress == null) {
                 playerLoadingProgress = new byte[MaxPlayerCount];
             }
 
-            playerLoadingProgress[player.localId] = msg.progress;
+            playerLoadingProgress[player.LocalId] = msg.Progress;
 
-            Debug.Log($"palyer{player.localId} Load {msg.progress}");
+            //Log($"palyer{player.LocalId} Load {msg.Progress}");
+
+            BorderTcp(EMsgSC.G2C_LoadingProgress, new Msg_G2C_LoadingProgress() {
+                Progress = playerLoadingProgress
+            });
+
             var isDone = true;
             foreach (var progress in playerLoadingProgress) {
                 if (progress < 100) {
@@ -579,41 +643,27 @@ namespace Lockstep.Server {
                 }
             }
 
-            var retmsg = new Msg_AllLoadingProgress();
-            retmsg.isAllDone = isDone;
-            retmsg.progress = playerLoadingProgress;
-            SendToAll(EMsgSC.G2C_LoadingProgress, retmsg);
             if (isDone) {
-                for (int i = 0; i < playerLoadingProgress.Length; i++) {
-                    playerLoadingProgress[i] = 0;
-                }
-
-                State = ERoomState.PartLoaded;
-                Debug.Log("All Load done");
+                OnFinishedLoaded();
             }
+        }
+
+
+        void OnFinishedLoaded(){
+            Log("All Load done");
+            State = EGameState.PartLoaded;
+            for (int i = 0; i < playerLoadingProgress.Length; i++) {
+                playerLoadingProgress[i] = 0;
+            }
+
+            allNeedWaitInputPlayerIds = new List<byte>();
+            foreach (var val in _userId2LocalId.Values) {
+                allNeedWaitInputPlayerIds.Add(val);
+            }
+            //BorderTcp(EMsgSC.G2C_GameStartInfo, GameStartInfo);
+            BorderTcp(EMsgSC.G2C_AllFinishedLoaded, new Msg_G2C_AllFinishedLoaded() { });
         }
 
         #endregion
-
-
-        private void StartSimulationOnConnectedPeers(){
-            seed = new Random().Next(int.MinValue, int.MaxValue);
-            var ids = _playerId2LocalId.Values.ToArray();
-            foreach (var player in _allPlayers) {
-                SendTo(player, EMsgSC.G2C_StartGame, CreateStartGame(player.localId, ids));
-            }
-        }
-
-        Msg_StartRoomGame CreateStartGame(byte playerId, byte[] ids){
-            return new Msg_StartRoomGame {
-                RoomID = RoomId,
-                Seed = seed,
-                ActorID = playerId,
-                AllActors = ids,
-                SimulationSpeed = Define.SimulationSpeed
-            };
-        }
-
-}
-#endif
+    }
 }

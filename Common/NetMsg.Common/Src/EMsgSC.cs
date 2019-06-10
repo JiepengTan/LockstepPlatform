@@ -23,8 +23,7 @@ namespace NetMsg.Common {
 
     public enum EGameState {
         Idle,
-        WaitingToPlay,
-        PartLoading,
+        Loading,
         PartLoaded,
         Playing,
         PartFinished,
@@ -85,7 +84,7 @@ namespace NetMsg.Common {
         L2C_StartGame,
 
         //LG
-        L2G_StartGame,
+        L2G_CreateRoom,
 
         //GC Tcp
         C2G_Hello,
@@ -94,7 +93,6 @@ namespace NetMsg.Common {
         C2G_LoadingProgress,
         G2C_LoadingProgress,
         G2C_AllFinishedLoaded,
-        
         C2G_FinishedLevel,
         /// <summary>
         ///  game state:Failed Success PartLoaded

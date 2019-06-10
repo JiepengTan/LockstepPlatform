@@ -38,8 +38,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\BaseLogger.cs" />
     <Compile Include="Src\Debug.cs" />
-    <Compile Include="Src\Log.cs" />
+    <Compile Include="Src\Logger.cs" />
     <Compile Include="Src\LogEventArgs.cs" />
     <Compile Include="Src\LogSeverity.cs" />
   </ItemGroup>

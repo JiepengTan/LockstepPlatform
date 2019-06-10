@@ -12,9 +12,6 @@ using Lockstep.Util;
 namespace Lockstep.Server.Common {
 
     public class BaseServer :NetworkProxy{
-
-        public DebugInstance Debug;
-        public bool HasInit { get; private set; }
         protected ConfigInfo _allConfig;
         protected ServerConfigInfo _serverConfig;
 
