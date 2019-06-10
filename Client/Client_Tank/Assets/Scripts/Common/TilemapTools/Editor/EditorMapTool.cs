@@ -18,6 +18,15 @@ namespace Editor {
             ShowSaveLevel();
             //ShowLoadRecord();
             ShowRecordInfo();
+            ShowEnum();
+        }
+
+        public int EnumIdx;
+        public void ShowEnum(){
+            EnumIdx = EditorGUILayout.IntField("EnumIdx ", EnumIdx);
+            if (GUILayout.Button("ShowEnum")) {
+                Debug.LogError($"idx {EnumIdx}EMsgSC {((EMsgSC)EnumIdx)}" );
+            }
         }
 
         public void ShowRecordInfo(){

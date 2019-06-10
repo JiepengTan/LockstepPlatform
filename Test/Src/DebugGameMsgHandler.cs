@@ -6,32 +6,33 @@ using Lockstep.Util;
 
 namespace Test {
     public class DebugGameMsgHandler : BaseRoomMsgHandler {
+        private RoomMsgManager _roomMsgManager;
+        public DebugGameMsgHandler(RoomMsgManager rmm){
+            _roomMsgManager = rmm;
+        }
         public override void OnServerFrames(Msg_ServerFrames msg){ }
         public override void OnMissFrames(Msg_ServerFrames msg){ }
         public override void OnGameEvent(byte[] data){ }
         public override void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }
 
         public override void OnLoadingProgress(byte[] progresses){
-            Log("OnLoadingProgress " + JsonMapper.ToJson(progresses));
+            //Log("OnLoadingProgress " + JsonMapper.ToJson(progresses));
         }
 
         public override void OnAllFinishedLoaded(short level){
             Log("OnAllFinishedLoaded " + level);
-        }
-        public override void OnGameInfo(Msg_G2C_GameStartInfo msg){
-            Log($"OnUdpHello msg:{msg} ");
         }
 
         IEnumerator YiledLoadingMap(){
             int i = 0;
             while (i++ <= 20) {
                 yield return new WaitForSeconds(0.1f);
-                this._mgr.OnLoadLevelProgress(i * 0.05f);
+                _roomMsgManager.OnLoadLevelProgress(i * 0.05f);
             }
         }
 
-        public override void OnTcpHello(int mapId, byte localId){
-            Log($"OnTcpHello mapId:{mapId} localId:{localId}");
+        public override void OnTcpHello(Msg_G2C_Hello msg){
+            Log($"OnTcpHello msg:{msg} ");
             CoroutineHelper.StartCoroutine(YiledLoadingMap());
         }
 

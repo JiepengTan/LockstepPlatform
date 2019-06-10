@@ -359,12 +359,18 @@ namespace NetMsg.Common{
         public override void Serialize(Serializer writer){
 			writer.PutByte(LocalId);
 			writer.PutInt32(MapId);
+			writer.PutInt32(RoomId);
+			writer.PutInt32(Seed);
+			writer.PutByte(UserCount);
 			writer.Put(UdpEnd);
         }
     
         public override void Deserialize(Deserializer reader){
 			LocalId = reader.GetByte();
 			MapId = reader.GetInt32();
+			RoomId = reader.GetInt32();
+			Seed = reader.GetInt32();
+			UserCount = reader.GetByte();
 			UdpEnd = reader.Get(ref this.UdpEnd);
         }
     }

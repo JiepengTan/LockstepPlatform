@@ -12,7 +12,6 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public class LoginHandler : BaseLoginHandler {
-        private NetworkManager _networkManager;
 
         public override void OnConnectedLoginServer(){
             Log("OnConnLogin ");
@@ -47,7 +46,7 @@ namespace Lockstep.Game {
 
         public override void OnGameStart(Msg_C2G_Hello msg, IPEndInfo tcpEnd){
             Log("OnGameStart " + msg + " tcpEnd " + tcpEnd);
-            EventHelper.Trigger(EEvent.OnRoomGameBegin);
+            EventHelper.Trigger(EEvent.OnConnectToGameServer);
         }
 
         public override void OnPlayerJoinRoom(RoomPlayerInfo info){
@@ -74,44 +73,35 @@ namespace Lockstep.Game {
     }
 
     public class GameMsgHandler : BaseRoomMsgHandler {
-        public override void OnServerFrames(Msg_ServerFrames msg){ }
-        public override void OnMissFrames(Msg_ServerFrames msg){ }
-        public override void OnGameEvent(byte[] data){ }
-        public override void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }
 
-        public override void OnLoadingProgress(byte[] progresses){
-            EventHelper.Trigger(EEvent.OnLoadingProgress, progresses);
-        }
 
-        public override void OnAllFinishedLoaded(short level){
-            Log("OnAllFinishedLoaded " + level);
-            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, level);
-        }
-
-        public override void OnGameInfo(Msg_G2C_GameStartInfo msg){
-            Log($"OnUdpHello msg:{msg} ");
-        }
-
-        IEnumerator YiledLoadingMap(){
-            int i = 0;
-            while (i++ <= 20) {
-                yield return new Lockstep.Util.WaitForSeconds(0.1f);
-                this._mgr.OnLoadLevelProgress(i * 0.05f);
-            }
-        }
-
-        public override void OnTcpHello(int mapId, byte localId){
-            Log($"OnTcpHello mapId:{mapId} localId:{localId}");
-            CoroutineHelper.StartCoroutine(YiledLoadingMap());
+        public override void OnTcpHello(Msg_G2C_Hello msg){
+            Log($"OnTcpHello msg:{msg} ");
+            EventHelper.Trigger(EEvent.OnGameCreate, msg);
+            //CoroutineHelper.StartCoroutine(YiledLoadingMap());
         }
 
         public override void OnUdpHello(int mapId, byte localId){
             Log($"OnUdpHello mapId:{mapId} localId:{localId}");
         }
 
+        public override void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }
+        
         public override void OnGameStartFailed(){
             Log($"OnGameStartFailed");
         }
+        
+        public override void OnLoadingProgress(byte[] progresses){
+            EventHelper.Trigger(EEvent.OnLoadingProgress, progresses);
+        }
+        public override void OnAllFinishedLoaded(short level){
+            Log("OnAllFinishedLoaded " + level);
+            EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, level);
+        }
+        
+        public override void OnServerFrames(Msg_ServerFrames msg){ }
+        public override void OnMissFrames(Msg_ServerFrames msg){ }
+        public override void OnGameEvent(byte[] data){ }
     }
 
     public class LoginParam {
@@ -172,23 +162,31 @@ namespace Lockstep.Game {
             _loginMgr.Login(_account, _password);
         }
 
+        public void OnEvent_LoadLevelProgress(object param){
+            var progress = (float) param;
+            _roomMsgMgr.OnLoadLevelProgress(progress);
+        }
+
+        public void OnEvent_LoadLevelDone(object param){
+            _roomMsgMgr.OnLoadLevelProgress(1);
+        }
         public override void DoDestroy(){ }
 
 
         private object reconnectedInfo;
 
 
-        public void OnEvent_LoadMapDone(object param){
-            var level = (int) param;
-            _constStateService.curLevel = level;
-            Debug.Log($"OnEvent_LoadMapDone isReconnected {IsReconnected}  isPlaying:{Application.isPlaying} ");
-            if (IsReconnected || _constStateService.IsVideoMode) {
-                EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
-            }
-            else {
-                // SendMsgRoom(EMsgSC.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
-            }
-        }
+       // public void OnEvent_LoadLevelDone(object param){
+       //     var level = (int) param;
+       //     _constStateService.curLevel = level;
+       //     Debug.Log($"OnEvent_LoadLevelDone isReconnected {IsReconnected}  isPlaying:{Application.isPlaying} ");
+       //     if (IsReconnected || _constStateService.IsVideoMode) {
+       //         EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
+       //     }
+       //     else {
+       //         // SendMsgRoom(EMsgSC.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
+       //     }
+       // }
 
         #region Login Handler
 

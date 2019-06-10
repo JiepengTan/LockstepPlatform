@@ -210,6 +210,12 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!20 &786172798 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8028312660079559817, guid: 80545df8adf084ac08ba96ce0258d0b5,
+    type: 3}
+  m_PrefabInstance: {fileID: 8028312659748073177}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1118818247
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,15 +310,13 @@ MonoBehaviour:
   IsVideoMode: 0
   RecordPath: /Users/jiepengtan/Projects/LockstepDemo/Record/20190528101843_1_2.record
   MaxRunTick: 7425
-  gameInfo:
-    RoomID: 2
-    Seed: -773508906
-    ActorID: 0
-    AllActors: 0001
-    SimulationSpeed: 60
   realtimeSinceStartup: 0
   isRunVideo: 0
   JumpToTick: 7690
+  gameCamera: {fileID: 786172798}
+  renderTextureSize: {x: 768, y: 768}
+  mainCamera: {fileID: 1118818249}
+  rt: {fileID: 0}
 --- !u!1 &2070322205
 GameObject:
   m_ObjectHideFlags: 0

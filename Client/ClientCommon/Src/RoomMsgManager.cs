@@ -59,7 +59,6 @@ namespace Lockstep.Client {
             Debug = new DebugInstance("Client " + ": ");
             RegisterMsgHandlers();
             msgHandler.SetLogger(Debug);
-            msgHandler.SetMsgHandler(this);
             _handler = msgHandler;
         }
 
@@ -115,7 +114,7 @@ namespace Lockstep.Client {
                             _curMapId = rMsg.MapId;
                             _localId = rMsg.LocalId;
                             _gameUdpEnd = rMsg.UdpEnd;
-                            _handler.OnTcpHello(_curMapId, _localId);
+                            _handler.OnTcpHello(rMsg);
                             ConnectUdp();
                         }
                         else {

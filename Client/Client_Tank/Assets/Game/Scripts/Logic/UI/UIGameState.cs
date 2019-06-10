@@ -3,7 +3,7 @@ using Lockstep.Game;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIGameState : MonoBehaviour {
+public class UIGameState : UIBaseWindow {
     public Transform tranLevel;
     public Transform tranEnemy;
     public Transform tranMsg;
@@ -12,6 +12,7 @@ public class UIGameState : MonoBehaviour {
     public Transform tranScore2;
     public Transform tranLife2;
 
+    public RawImage rawImage;
     void ShowPlayerInfo(ActorEntity entity, Transform tranScore, Transform tranLife){
         if (entity == null) return;
         var score = entity.score.value;
@@ -22,7 +23,7 @@ public class UIGameState : MonoBehaviour {
 
     void ShowText(Transform parent, string txt){
         if (parent == null) return;
-        var text = parent.Find("txtContent")?.GetComponent<Text>();
+        var text = parent.GetComponent<Text>();
         if (text != null) {
             text.text = txt;
         }
@@ -33,6 +34,7 @@ public class UIGameState : MonoBehaviour {
             return;
         }
 
+        rawImage.texture = Main.Instance.rt;
         var actor = Contexts.sharedInstance.actor;
         var player1 = actor.GetEntityWithId(0);
         var player2 = actor.GetEntityWithId(1);

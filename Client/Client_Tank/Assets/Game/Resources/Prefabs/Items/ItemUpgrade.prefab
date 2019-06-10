@@ -88,7 +88,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8545725408842799340}
-  - component: {fileID: 3220947795903690427}
   m_Layer: 0
   m_Name: ItemUpgrade
   m_TagString: Untagged
@@ -111,27 +110,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3220947795903690427
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8545725408842799341}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa97f442149243cdb25fed9c1dde38d5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camp: 0
-  detailType: 0
-  health: 1
-  moveSpd: 2
-  MaxMoveSpd: 2
-  _dir: 0
-  pos: {x: 0, y: 0}
-  size: {x: 0, y: 0}
-  radius: 0
-  Type: 0
-  lifeTime: 0
-  isEnable: 1

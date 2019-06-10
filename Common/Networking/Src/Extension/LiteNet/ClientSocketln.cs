@@ -298,8 +298,7 @@ namespace Lockstep.Networking {
                     throw;
 #endif
 
-                Debug.LogError("Failed to handle a message. OpCode: " + message.OpCode);
-                Debug.LogError(e);
+                Debug.LogError("Failed to handle a message. OpCode: " + message.OpCode + " e:" + e);
 
                 if (!message.IsExpectingResponse)
                     return;

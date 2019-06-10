@@ -27,6 +27,8 @@ namespace Lockstep.Server.Game {
 
         private BaseRoom[] _cachedBaseRooms;
 
+        public IPEndInfo TcpEnd { get; set; }
+        public IPEndInfo UdpEnd { get; set; }
         private BaseRoom[] CachedBaseRooms {
             get {
                 if (_cachedBaseRooms == null) {
@@ -40,6 +42,8 @@ namespace Lockstep.Server.Game {
         public override void DoStart(){
             base.DoStart();
             InitServerSC();
+            TcpEnd = new IPEndInfo() {Ip = Ip, Port = _serverConfig.tcpPort};
+            UdpEnd = new IPEndInfo() {Ip = Ip, Port = _serverConfig.udpPort};
         }
 
         public override void DoUpdate(int deltaTime){
@@ -118,7 +122,6 @@ namespace Lockstep.Server.Game {
             Debug.Log("OnDBConn");
         }
 
-
         protected void L2G_CreateRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2G_CreateRoom>();
             var room = CreateGame(msg.GameType) as BaseRoom;
@@ -127,6 +130,8 @@ namespace Lockstep.Server.Game {
                 return;
             }
 
+            room.TcpEnd = TcpEnd;
+            room.UdpEnd = UdpEnd;
             Debug.Log("L2G_CreateRoom" + msg);
             var roomId = CurRoomId++;
             _roomId2Rooms.Add(roomId, room);
@@ -175,8 +180,11 @@ namespace Lockstep.Server.Game {
                         player.PeerTcp = reader.Peer;
                         reader.Peer.AddExtension(player);
                         reader.Respond(EMsgSC.G2C_Hello, new Msg_G2C_Hello() {
-                            MapId = room.MapId,
                             LocalId = (byte) localId,
+                            UserCount = (byte)room.MaxPlayerCount,
+                            MapId = room.MapId,
+                            RoomId = room.RoomId,
+                            Seed = room.Seed,
                             UdpEnd = new IPEndInfo() {
                                 Ip = this.Ip,
                                 Port = _serverConfig.udpPort

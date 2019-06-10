@@ -17,6 +17,7 @@ public class UILoading : UIBaseWindow {
 
     void OnEvent_OnAllPlayerFinishedLoad(object param){
         sliderProgress.value = 1;
+        OpenWindow(UIDefine.UIGameStatus);
         Close();
     }
 }

@@ -9,7 +9,6 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Core {
     public enum EEvent {
-        LoadMapDone,
         TryLogin,
         OnLoginResult,
         OnLeaveRoom,
@@ -19,18 +18,21 @@ namespace Lockstep.Core {
         OnPlayerReadyInRoom,
         OnRoomChatInfo,
         OnRoomInfoUpdate,
-        OnRoomGameBegin,
+        OnConnectToGameServer,
         
 
-        OnRoomGameStart,
-        OnCreateRoom,
-        OnSimulationInited,
-        OnLoadingProgress,
-        OnAllPlayerFinishedLoad,
-        OnSimulationStart,
+        OnGameCreate,//连接GameServer 成功
+        SimulationInit,//初始化Simulation
+        LoadLevelProgress,//开始加载地图 本地load progress
+        OnLoadingProgress,//Server notify load progress
+        LoadLevelDone,//地图加载完成
+        OnAllPlayerFinishedLoad,//Server notify all user finished load
+        SimulationStart,//client start game lifecycle
+        
         OnServerMissFrame,
         OnServerFrame,
         BorderVideoFrame,
+        OnCreateRoom,
     }
 
     public delegate void GlobalEventHandler(object param);

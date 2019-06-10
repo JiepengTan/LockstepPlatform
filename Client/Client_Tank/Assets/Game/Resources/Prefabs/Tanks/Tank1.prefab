@@ -39,9 +39,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7207381074908001022}
-  - component: {fileID: 634504028208450909}
   m_Layer: 0
-  m_Name: Tank 1
+  m_Name: Tank1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,35 +62,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &634504028208450909
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7207381074908001021}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3853a65ea7fe440c0991924de3f83997, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  camp: 0
-  health: 2
-  moveSpd: 4
-  MaxMoveSpd: 7
-  _dir: 0
-  pos: {x: 0, y: 0}
-  size: {x: 0, y: 0}
-  radius: 0
-  skill:
-    owner: {fileID: 0}
-    CD: 0.2
-    prefabType: 0
-  brain:
-    owner: {fileID: 0}
-    updateInterval: 1
-    fireRate: 0.3
-    enabled: 1
 --- !u!1 &7207381075261074271
 GameObject:
   m_ObjectHideFlags: 0

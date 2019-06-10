@@ -61,7 +61,6 @@
     <Compile Include="Src\Lobby\ILobbyServer.cs" />
     <Compile Include="Src\Lobby\LobbyServer.cs" />
     <Compile Include="Src\Lobby\Room.cs" />
-    <Compile Include="Src\Lobby\SimpleDatabase.cs" />
     <Compile Include="Src\Lobby\User.cs" />
     <Compile Include="Src\Login\LoginServer.cs" />
   </ItemGroup>

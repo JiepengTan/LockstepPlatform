@@ -6,6 +6,11 @@ using NetMsg.Common;
 namespace Test {
     
     public class DebugLoginHandler : BaseLoginHandler {
+        private LoginManager _loginMgr;
+
+        public DebugLoginHandler(LoginManager lm){
+            _loginMgr = lm;
+        }
         public int RandomSeed = 1167;
         public override void OnConnectedLoginServer(){
             Log("OnConnLogin ");

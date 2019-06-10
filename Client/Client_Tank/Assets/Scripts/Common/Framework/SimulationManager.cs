@@ -61,10 +61,10 @@ namespace Lockstep.Game {
             _networkService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
         }
 
-        void OnEvent_OnRoomGameStart(object param){
-            //var msg = param as Msg_StartRoomGame;
-            //OnGameStart(msg.RoomID, msg.SimulationSpeed, msg.ActorID, msg.AllActors);
-            //EventHelper.Trigger(EEvent.OnSimulationInited, null);
+        void OnEvent_OnGameCreate(object param){
+            var msg = param as Msg_G2C_Hello;
+            OnGameCreate(msg.RoomId, 60, msg.LocalId, msg.UserCount);
+            EventHelper.Trigger(EEvent.SimulationInit, null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
@@ -73,7 +73,8 @@ namespace Lockstep.Game {
             _world.StartSimulate();
             Running = true;
             SetPurchaseTimestamp();
-            EventHelper.Trigger(EEvent.OnSimulationStart, null);
+            Debug.Log($"Game Start");
+            EventHelper.Trigger(EEvent.SimulationStart, null);
         }
 
         public override void DoAwake(IServiceContainer services){
@@ -303,9 +304,14 @@ namespace Lockstep.Game {
             Running = false;
         }
 
-        public void OnGameStart(int roomId, int targetFps, byte localActorId, byte[] allActors,
+        public void OnGameCreate(int roomId, int targetFps, byte localActorId, byte actorCount,
             bool isNeedRender = true){
             FrameBuffer.DebugMainActorID = localActorId;
+            var allActors = new byte[actorCount];
+            for (byte i = 0; i < actorCount; i++) {
+                allActors[i] = i;
+            }
+
             //初始化全局配置
             _constStateService.roomId = roomId;
             _constStateService.allActorIds = allActors;

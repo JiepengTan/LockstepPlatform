@@ -4,11 +4,6 @@ using NetMsg.Common;
 
 namespace Lockstep.Client {
     public class BaseLoginHandler : BaseLogger {
-        protected LoginManager _loginMgr;
-
-        public void Init(LoginManager loginMgr){
-            this._loginMgr = loginMgr;
-        }
 
         public virtual void OnConnectedLoginServer(){ }
         public virtual void OnConnLobby(RoomInfo[] roomInfos){ }

@@ -114,7 +114,7 @@ namespace Lockstep.Game {
                 if (mapMax.x > max.x) max.x = mapMax.x;
                 if (mapMax.y > max.y) max.y = mapMax.y;
             }
-
+            EventHelper.Trigger(EEvent.LoadLevelProgress,0.5f);
             mapMin = min;
             mapMax = max;
 
@@ -134,10 +134,10 @@ namespace Lockstep.Game {
                 Debug.Assert(_constStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
-            EventHelper.Trigger(EEvent.LoadMapDone, level);
+            EventHelper.Trigger(EEvent.LoadLevelDone, level);
         }
 
-        void OnEvent_OnSimulationInited(object param){
+        void OnEvent_SimulationInit(object param){
             LoadLevel(1);
         }
 

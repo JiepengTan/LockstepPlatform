@@ -47,7 +47,13 @@ namespace Lockstep.Game {
     }
 
     public partial class Main {
+        public Camera gameCamera;
+        public Vector2Int renderTextureSize;
+        public Camera mainCamera;
+        public RenderTexture rt;
         private void DoAwake(){
+            rt  = new RenderTexture(renderTextureSize.x,renderTextureSize.y,1,RenderTextureFormat.ARGB32);
+            gameCamera.targetTexture = rt;
 #if !UNITY_EDITOR
             IsVideoMode = false;
 #endif
@@ -66,7 +72,7 @@ namespace Lockstep.Game {
         private void AfterStart(){
             if (IsVideoMode) {
                 EventHelper.Trigger(EEvent.BorderVideoFrame, framesInfo);
-                EventHelper.Trigger(EEvent.OnRoomGameStart, gameInfo);
+                EventHelper.Trigger(EEvent.OnGameCreate, gameInfo);
             }
         }
 

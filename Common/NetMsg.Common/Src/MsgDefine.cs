@@ -191,8 +191,11 @@ namespace NetMsg.Common{
     }
 
     public partial class Msg_G2C_Hello : BaseFormater {
-        public int MapId;
         public byte LocalId;
+        public byte UserCount;
+        public int MapId;
+        public int RoomId;
+        public int Seed;
         public IPEndInfo UdpEnd;
     }
 

@@ -12,9 +12,9 @@ namespace Test {
 
         public FakeClient(){
             _roomMsgMgr = AddComponent<RoomMsgManager>();
-            _roomMsgMgr.Init(new DebugGameMsgHandler());
+            _roomMsgMgr.Init(new DebugGameMsgHandler(_roomMsgMgr));
             _loginMgr = AddComponent<LoginManager>();
-            _loginMgr.Init(_roomMsgMgr, new DebugLoginHandler() {RandomSeed = _RandomSeed}, "127.0.0.1", 7250);
+            _loginMgr.Init(_roomMsgMgr, new DebugLoginHandler(_loginMgr) {RandomSeed = _RandomSeed}, "127.0.0.1", 7250);
         }
     }
 }

@@ -33,14 +33,13 @@ namespace Lockstep.Game {
 
         //const variables
 
-        public Transform trans;
         #region LifeCycle
 
         public override void DoAwake(IServiceContainer services){
             CurLevel = PlayerPrefs.GetInt("GameLevel", 0);
             Func<string, Transform> FuncCreateTrans = (name) => {
                 var go = new GameObject(name);
-                go.transform.SetParent(trans, false);
+                go.transform.SetParent(transform, false);
                 return go.transform;
             };
             transParentPlayer = FuncCreateTrans("Players");
@@ -50,7 +49,7 @@ namespace Lockstep.Game {
             _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
         }
 
-        public void OnEvent_LoadMapDone(object param){
+        public void OnEvent_LoadLevelDone(object param){
             var level = (int) param;
             IsGameOver = false;
             _constStateService.curLevel = level;
@@ -145,7 +144,7 @@ namespace Lockstep.Game {
             var ecsPrefab = prefabLst[type];
             var assetId = ecsPrefab.asset.assetId;
             var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(assetId));
-            var go = GameObject.Instantiate(prefab, trans.position + createPos.ToVector3(),
+            var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
                 Quaternion.identity, parent);
             go.AddComponent<PosListener>();
             go.AddComponent<DirListener>();
@@ -184,7 +183,7 @@ namespace Lockstep.Game {
             entity.dir.value = rawDir;
             _viewService.DeleteView(entity.localId.value);
             var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
-            var go = GameObject.Instantiate(prefab, trans.position + rawPos.ToVector3(),
+            var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
                 Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
             go.AddComponent<PosListener>();
             go.AddComponent<DirListener>();
@@ -204,7 +203,7 @@ namespace Lockstep.Game {
             if (IsGameOver) return;
         }
 
-        public void OnEvent_OnSimulationStart(object param){
+        public void OnEvent_SimulationStart(object param){
             IsPlaying = true;
         }
         #endregion

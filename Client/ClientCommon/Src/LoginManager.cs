@@ -55,7 +55,6 @@ namespace Lockstep.Client {
         public void Init(IRoomMsgManager roomMsgMgr, BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
             _roomMsgMgr = roomMsgMgr;
             _loginHandler = loginHandler ?? new BaseLoginHandler();
-            _loginHandler.Init(this);
             _loginHandler.SetLogger(this.Debug);
             _serverIp = serverIp;
             _serverPort = serverPort;

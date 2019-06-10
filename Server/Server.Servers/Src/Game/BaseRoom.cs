@@ -122,6 +122,7 @@ namespace Lockstep.Server.Game {
         public List<byte> allNeedWaitInputPlayerIds;
         private List<ServerFrame> allHistoryFrames = new List<ServerFrame>(); //所有的历史帧
 
+        public int Seed { get; set; }
 
         public void OnRecvPlayerGameData(Player player){
             if (player == null || MaxPlayerCount <= player.LocalId || Players[player.LocalId] != player) {
@@ -147,7 +148,7 @@ namespace Lockstep.Server.Game {
                 SetStartInfo(new Msg_G2C_GameStartInfo() {
                     MapId = MapId,
                     RoomId = RoomId,
-                    Seed = LRandom.Next(100000),
+                    Seed = Seed,
                     UserCount = MaxPlayerCount,
                     TcpEnd = TcpEnd,
                     UdpEnd = UdpEnd,
@@ -173,6 +174,7 @@ namespace Lockstep.Server.Game {
             string gameHash){
             State = EGameState.Loading;
             _gameServer = server;
+            Seed = LRandom.Range(1, 100000);
             Tick = 0;
             timeSinceLoaded = 0;
             firstFrameTimeStamp = 0;
@@ -415,6 +417,7 @@ namespace Lockstep.Server.Game {
         public void SendUdp(Player player, byte[] data){
             player.SendUdp(data);
         }
+
         public void SendUdp(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
             var writer = new Serializer();
             writer.PutInt16((short) type);
@@ -426,7 +429,6 @@ namespace Lockstep.Server.Game {
 
             player.SendUdp(bytes);
         }
-
 
         #endregion
 
@@ -634,7 +636,8 @@ namespace Lockstep.Server.Game {
             BorderTcp(EMsgSC.G2C_LoadingProgress, new Msg_G2C_LoadingProgress() {
                 Progress = playerLoadingProgress
             });
-
+            
+            if (msg.Progress < 100) return;
             var isDone = true;
             foreach (var progress in playerLoadingProgress) {
                 if (progress < 100) {
@@ -660,6 +663,7 @@ namespace Lockstep.Server.Game {
             foreach (var val in _userId2LocalId.Values) {
                 allNeedWaitInputPlayerIds.Add(val);
             }
+
             //BorderTcp(EMsgSC.G2C_GameStartInfo, GameStartInfo);
             BorderTcp(EMsgSC.G2C_AllFinishedLoaded, new Msg_G2C_AllFinishedLoaded() { });
         }
