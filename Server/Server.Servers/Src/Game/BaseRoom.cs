@@ -35,6 +35,8 @@ namespace Lockstep.Server.Game {
 
         int MaxPlayerCount { get; }
 
+        long[] UserIds { get; }
+
         //room life cycle
         void DoStart(IGameServer server, int roomId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
             string gameHash);
@@ -158,7 +160,7 @@ namespace Lockstep.Server.Game {
             }
         }
 
-   
+
         public int GetUserLocalId(long userId){
             if (_userId2LocalId.TryGetValue(userId, out var id)) {
                 return id;
@@ -188,14 +190,9 @@ namespace Lockstep.Server.Game {
             Name = roomId.ToString();
             MapId = mapId;
             Players = new Player[count];
-            for (int i = 0; i < count; i++) {
+            for (byte i = 0; i < count; i++) {
                 var user = playerInfos[i];
-                var player = Pool.Get<Player>();
-                player.UserId = user.UserId;
-                player.Account = user.Account;
-                player.LoginHash = user.LoginHash;
-                player.LocalId = (byte) i;
-                player.Room = this;
+                var player = CreatePlayer(user, i);
                 Players[i] = player;
             }
 
@@ -217,6 +214,17 @@ namespace Lockstep.Server.Game {
             DumpGameFrames();
         }
 
+        Player CreatePlayer(GamePlayerInfo playerInfo, byte localId){
+            var player = Pool.Get<Player>();
+            player.UserId = playerInfo.UserId;
+            player.Account = playerInfo.Account;
+            player.LoginHash = playerInfo.LoginHash;
+            player.LocalId = localId;
+            player.Room = this;
+            return player;
+        }
+
+        
         private void BorderServerFrame(int deltaTime){
             waitTimer += deltaTime;
             if (State != EGameState.Playing) return;
@@ -237,10 +245,11 @@ namespace Lockstep.Server.Game {
                     waitTimer = 0;
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
-                        if (inputs[i] == null ) {
-                            if (Players[i] != null) { 
+                        if (inputs[i] == null) {
+                            if (Players[i] != null) {
                                 Log($"Overtime wait remove localId = {i}");
                             }
+
                             allNeedWaitInputPlayerIds.Remove((byte) i);
                         }
                     }
@@ -443,6 +452,12 @@ namespace Lockstep.Server.Game {
         }
 
         //net status
+        public void OnPlayerReconnect(GamePlayerInfo playerInfo){
+            var localId = _userId2LocalId[playerInfo.UserId];
+            var player = CreatePlayer(playerInfo, localId);
+            Players[localId] = player;
+        }
+
         public void OnPlayerReconnect(Player player){
             player.LocalId = _userId2LocalId[player.UserId];
             Players[player.LocalId] = player;
@@ -452,6 +467,7 @@ namespace Lockstep.Server.Game {
             Log($"Player{player.UserId} OnDisconnect room {RoomId}");
             RemovePlayer(player);
         }
+
         public void OnPlayerLeave(long userId){
             if (_userId2LocalId.TryGetValue(userId, out var localId)) {
                 var player = Players[localId];
@@ -460,6 +476,7 @@ namespace Lockstep.Server.Game {
                 }
             }
         }
+
         public void OnPlayerLeave(Player player){
             RemovePlayer(player);
             _userId2LocalId.Remove(player.UserId); //同时还需要彻底的移除记录 避免玩家重连
@@ -475,7 +492,7 @@ namespace Lockstep.Server.Game {
             player.PeerUdp.CleanExtension();
             player.PeerUdp.Disconnect("");
             player.PeerUdp = null;
-            
+
             var curCount = CurPlayerCount;
             if (curCount == 0) {
                 Log("All players left, stopping current simulation...");
@@ -652,7 +669,7 @@ namespace Lockstep.Server.Game {
             BorderTcp(EMsgSC.G2C_LoadingProgress, new Msg_G2C_LoadingProgress() {
                 Progress = playerLoadingProgress
             });
-            
+
             if (msg.Progress < 100) return;
             var isDone = true;
             foreach (var progress in playerLoadingProgress) {

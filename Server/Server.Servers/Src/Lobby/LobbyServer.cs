@@ -87,23 +87,27 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
-        private void AddPlayer(long userId, int gameType, string name, string account, string loginHash){
+        private User AddPlayer(long userId, int gameType, string name, string account, string loginHash){
             var player = Pool.Get<User>();
             player.Init(userId, gameType, name, account, loginHash);
-            _uid2Player[userId] =  player;
+            _uid2Player[userId] = player;
             Debug.Log("AddPlayer " + player.Account);
+            return player;
         }
 
         private void RemovePlayer(User user, bool isForce = false){
-            Debug.Log("RemovePlayer " + user.Account + " id " +  user.UserId);
+            Debug.Log("RemovePlayer " + user.Account + " id " + user.UserId);
             var room = user.Room;
 
             if (room != null) {
                 if (room.IsPlaying && !isForce) { //游戏中的玩家需要考虑断线重连
-                    user.Room = null;
                     _peerId2Player.Remove(user.Peer.Id);
+                    user.Peer.CleanExtension();
+                    user.Peer?.Disconnect("Remove");
+                    user.Peer = null;
                     return;
                 }
+
                 room.ServerPeer?.SendMessage((short) EMsgLS.L2G_UserLeave, new Msg_L2G_UserLeave() {
                     RoomId = room.RoomId,
                     UserId = user.UserId
@@ -204,46 +208,89 @@ namespace Lockstep.Server.Lobby {
         protected void I2L_UserLogin(IIncommingMessage reader){
             var msg = reader.Parse<Msg_I2L_UserLogin>();
             if (_uid2Player.TryGetValue(msg.UserId, out var oldPlayer)) {
-                oldPlayer.LoginHash = msg.LoginHash;//避免重连
-                //Tick out 
-                Debug.Log(oldPlayer.Account + " login at another place  id" + msg.UserId);
-                oldPlayer.SendMessage((short)EMsgSC.S2C_TickPlayer,new Msg_S2C_TickPlayer() {
-                    Reason =  1
+                //玩家被顶下线
+                oldPlayer.LoginHash = msg.LoginHash;
+                oldPlayer.SendMessage((short) EMsgSC.S2C_TickPlayer, new Msg_S2C_TickPlayer() {
+                    Reason = 1
                 });
                 CoroutineHelper.StartCoroutine(LoginAndTickPlayer(reader, oldPlayer, msg));
             }
-            else { 
+            else {
                 AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
                 reader.Respond(1, EResponseStatus.Success);
             }
         }
 
+        private void OnPlayerReconnect(User user){ }
+
         private IEnumerator LoginAndTickPlayer(IIncommingMessage reader, User oldPlayer, Msg_I2L_UserLogin msg){
             Debug.Log("before WaitRemovePlayer " + Time.timeSinceLevelLoad);
             yield return new WaitForSeconds(0.5f);
-            Debug.Log("after WaitRemovePlayer "+ Time.timeSinceLevelLoad);
-            RemovePlayer(oldPlayer,true);
-            AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
+            Debug.Log("after WaitRemovePlayer " + Time.timeSinceLevelLoad);
+            RemovePlayer(oldPlayer);
+            var room = oldPlayer.Room;
+            if (room != null && room.IsPlaying && room.GameType == msg.GameType) {
+                //断线重连
+                Log("断线重连 " + oldPlayer);
+                oldPlayer.LoginHash = msg.LoginHash;
+                oldPlayer.GameType = msg.GameType;
+            }
+            else {
+                Log("顶号 " + oldPlayer);
+                AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
+            }
+
             reader.Respond(1, EResponseStatus.Success);
         }
 
 
         protected void C2L_UserLogin(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_UserLogin>();
-            var uid = msg.userId;
+            var uid = msg.UserId;
             if (_uid2Player.TryGetValue(uid, out var user)) {
                 if (user.LoginHash == msg.LoginHash) {
-                    var isReconnected = user.Room != null && user.Room.IsPlaying;
-                    Debug.Log("UserLogin " + msg + " isReconnect: " + isReconnected);
+                    user.Peer = reader.Peer;
+                    _peerId2Player[user.Peer.Id] = user;
+                    reader.Peer.AddExtension(user);
+                    
+                    var room = user.Room;
+                    var roomIpInfo = room?.ServerPeer.GetExtension<ServerIpInfo>();
+                    var isReconnected = room != null && room.IsPlaying
+                                                     && room.GameType == user.GameType
+                                                     && roomIpInfo != null;
+                    
                     //断线重连
                     if (isReconnected) {
-                        Debug.Log("TODO Need deal reconnect");
-                        return;
+                        Log("断线重连 " + user);
+                        room.ServerPeer.SendMessage((short) EMsgSC.L2G_UserReconnect, new Msg_L2G_UserReconnect() {
+                            PlayerInfo = new GamePlayerInfo() {
+                                UserId = user.UserId,
+                                Account = user.Account,
+                                LoginHash = user.LoginHash,
+                            }
+                        }, (status, r) => {
+                            if (status == EResponseStatus.Failed) {
+                                var roomInfos = GetRoomInfos(user.GameType);
+                                reader.Respond(EMsgSC.L2C_RoomList, new Msg_L2C_RoomList() {
+                                    GameType = user.GameType,
+                                    Rooms = roomInfos
+                                });
+                            }
+                            else {
+                                Log("EMsgSC.L2C_StartGame  IsReconnect");
+                                reader.Respond(EMsgSC.L2C_StartGame, new Msg_L2C_StartGame() {
+                                    GameServerEnd = new IPEndInfo() {
+                                        Ip = roomIpInfo.Ip,
+                                        Port = roomIpInfo.Port
+                                    },
+                                    GameHash = room.GameHash,
+                                    RoomId = room.RoomId,
+                                    IsReconnect = true
+                                });
+                            }
+                        });
                     }
                     else {
-                        user.Peer = reader.Peer;
-                        _peerId2Player[user.Peer.Id] = user;
-                        reader.Peer.AddExtension(user);
                         var roomInfos = GetRoomInfos(user.GameType);
                         reader.Respond(EMsgSC.L2C_RoomList, new Msg_L2C_RoomList() {
                             GameType = user.GameType,
@@ -286,7 +333,7 @@ namespace Lockstep.Server.Lobby {
             Debug.Log("C2L_JoinRoom" + msg);
             var roomId = msg.RoomId;
             if (_roomId2Room.TryGetValue(roomId, out var room)) {
-                if (room.IsFull||room.IsPlaying) {
+                if (room.IsFull || room.IsPlaying) {
                     reader.Respond((int) ERoomOperatorResult.Full, EResponseStatus.Failed);
                     return;
                 }
@@ -367,7 +414,7 @@ namespace Lockstep.Server.Lobby {
         protected void C2L_ReadyInRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_ReadyInRoom>();
             var user = reader.Peer.GetExtension<User>();
-            if(user == null) return;
+            if (user == null) return;
             var uid = user.UserId;
             if (_uid2Player.TryGetValue(uid, out var info)) {
                 if (info.IsReady != msg.State && user.Room != null && !user.Room.IsPlaying) {
@@ -385,7 +432,7 @@ namespace Lockstep.Server.Lobby {
             var msg = reader.Parse<Msg_C2L_StartGame>();
             Debug.Log("C2L_StartGame" + msg);
             var user = reader.Peer.GetExtension<User>();
-            if(user == null) return;
+            if (user == null) return;
             var room = user.Room;
             if (room?.Owner != user) {
                 reader.Respond(1, EResponseStatus.Failed);
@@ -420,13 +467,15 @@ namespace Lockstep.Server.Lobby {
                         var ipInfo = server.GetExtension<ServerIpInfo>();
                         room.ServerPeer = server;
                         room.IsPlaying = true;
+                        room.GameHash = gameHash;
                         var retMsg = new Msg_L2C_StartGame() {
                             GameServerEnd = new IPEndInfo() {
                                 Ip = ipInfo.Ip,
                                 Port = ipInfo.Port
                             },
                             GameHash = gameHash,
-                            RoomId = response.AsInt()
+                            RoomId = response.AsInt(),
+                            IsReconnect = false
                         };
                         foreach (var roomUser in room.Users) {
                             roomUser.Peer?.SendMessage((short) EMsgSC.L2C_StartGame, retMsg);

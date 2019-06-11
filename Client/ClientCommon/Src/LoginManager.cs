@@ -22,6 +22,7 @@ namespace Lockstep.Client {
         protected int _curMapId;
         protected byte _localId;
         protected int _roomId;
+        public bool IsReconnect;
 
 
         private NetClient<EMsgSC> _netClientIC;
@@ -47,6 +48,7 @@ namespace Lockstep.Client {
         public List<RoomChatInfo> ChatInfos => _chatInfos;
 
         private IRoomMsgManager _roomMsgMgr;
+
         public int GameType {
             get => _gameType;
             set => _gameType = value;
@@ -114,7 +116,7 @@ namespace Lockstep.Client {
             //_netClientIC.DoDestroy();
             Debug.Log("OnConnLobby ");
             _netClientLC.SendMessage(EMsgSC.C2L_UserLogin, new Msg_C2L_UserLogin() {
-                    userId = _userId,
+                    UserId = _userId,
                     LoginHash = _loginHash,
                 }, (status, response) => {
                     if (status == EResponseStatus.Failed) {
@@ -122,9 +124,15 @@ namespace Lockstep.Client {
                         return;
                     }
 
-                    var rMsg = response.Parse<Msg_L2C_RoomList>();
-                    _roomInfos = rMsg.Rooms;
-                    _loginHandler.OnConnLobby(_roomInfos);
+                    if (response.OpCode == (short) EMsgSC.L2C_StartGame) {
+                        var rMsg = response.Parse<Msg_L2C_StartGame>();
+                        OnMsgStartGame(rMsg);
+                    }
+                    else {
+                        var rMsg = response.Parse<Msg_L2C_RoomList>();
+                        _roomInfos = rMsg.Rooms;
+                        _loginHandler.OnConnLobby(_roomInfos);
+                    }
                 }
             );
         }
@@ -213,12 +221,13 @@ namespace Lockstep.Client {
             var msg = reader.Parse<Msg_L2C_RoomList>();
             _roomInfos = msg.Rooms;
             _loginHandler.OnRoomInfo(_roomInfos);
-        }        
+        }
+
         protected void S2C_TickPlayer(IIncommingMessage reader){
             var msg = reader.Parse<Msg_S2C_TickPlayer>();
             _loginHandler.OnTickPlayer(msg.Reason);
         }
-        
+
 
         protected void L2C_RoomInfoUpdate(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_RoomInfoUpdate>();
@@ -296,15 +305,21 @@ namespace Lockstep.Client {
 
         protected void L2C_StartGame(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_StartGame>();
+            OnMsgStartGame(msg);
+        }
+
+        void OnMsgStartGame(Msg_L2C_StartGame msg){
             Debug.Log("L2C_StartGame" + msg);
             _gameTcpEnd = msg.GameServerEnd;
             _gameHash = msg.GameHash;
             _roomId = msg.RoomId;
+            IsReconnect = msg.IsReconnect;
             var rmsg = new Msg_C2G_Hello() {
                 Hello = new MessageHello() {
                     GameHash = _gameHash,
                     RoomId = _roomId,
                     GameType = _gameType,
+                    IsReconnect = IsReconnect,
                     UserInfo = new GamePlayerInfo() {
                         UserId = _userId,
                         Account = _account,
@@ -313,7 +328,7 @@ namespace Lockstep.Client {
                 }
             };
             _loginHandler.OnGameStart(rmsg, _gameTcpEnd);
-            _roomMsgMgr.ConnectToGameServer(rmsg,_gameTcpEnd);
+            _roomMsgMgr.ConnectToGameServer(rmsg, _gameTcpEnd, IsReconnect);
         }
     }
 }

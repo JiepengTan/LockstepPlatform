@@ -19,7 +19,7 @@ namespace Lockstep.Client {
         void SendLoadingProgress(byte progress);
 
 
-        void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd);
+        void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd, bool isReconnect);
         void OnLoadLevelProgress(float progress);
     }
 
@@ -34,6 +34,19 @@ namespace Lockstep.Client {
         private NetClient<EMsgSC> _netTcp;
 
         private float _curLoadProgress;
+        private float _framePursueRate;
+
+        public float FramePursueRate {
+            get { return _framePursueRate; }
+            set {
+                if (value >= 1) {
+                    IsReconnecting = false;
+                }
+
+                _framePursueRate = Math.Max(Math.Min(1f, value), 0f);
+            }
+        }
+
         private float _nextSendLoadProgressTimer;
         private BaseRoomMsgHandler _handler;
 
@@ -82,12 +95,23 @@ namespace Lockstep.Client {
             get {
                 if (_curLoadProgress > 1) _curLoadProgress = 1;
                 if (_curLoadProgress < 0) _curLoadProgress = 0;
-                var val = _curLoadProgress * 70 +
-                          (HasRecvGameDta ? 10 : 0) +
-                          (HasConnGameUdp ? 10 : 0) +
-                          (HasConnGameTcp ? 10 : 0);
+                if (IsReconnecting) {
+                    var val = (HasRecvGameDta ? 10 : 0) +
+                              (HasConnGameUdp ? 10 : 0) +
+                              (HasConnGameTcp ? 10 : 0) +
+                              _curLoadProgress * 20 +
+                              FramePursueRate * 50
+                        ;
+                    return (byte) val;
+                }
+                else {
+                    var val = _curLoadProgress * 70 +
+                              (HasRecvGameDta ? 10 : 0) +
+                              (HasConnGameUdp ? 10 : 0) +
+                              (HasConnGameTcp ? 10 : 0);
 
-                return (byte) val;
+                    return (byte) val;
+                }
             }
         }
 
@@ -101,8 +125,11 @@ namespace Lockstep.Client {
             }
         }
 
-        public void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd){
-            Log("ConnectToGameServer  " + helloBody);
+        public bool IsReconnecting { get; private set; }
+
+        public void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd, bool isReconnect){
+            Log("ConnectToGameServer  " + helloBody + " isReconnect=" + isReconnect);
+            IsReconnecting = isReconnect;
             ResetStatus();
             this.helloBody = helloBody.Hello;
             InitNetClient(ref _netTcp, _gameTcpEnd.Ip, _gameTcpEnd.Port, () => {
@@ -157,24 +184,28 @@ namespace Lockstep.Client {
         }
 
         private short curLevel;
+
         protected void G2C_LoadingProgress(IIncommingMessage reader){
             var msg = reader.Parse<Msg_G2C_LoadingProgress>();
             _handler.OnLoadingProgress(msg.Progress);
         }
+
         protected void G2C_AllFinishedLoaded(IIncommingMessage reader){
             var msg = reader.Parse<Msg_G2C_AllFinishedLoaded>();
             curLevel = msg.Level;
             _handler.OnAllFinishedLoaded(msg.Level);
         }
-        
+
         public void SendGameEvent(byte[] msg){
             SendTcp(EMsgSC.C2G_GameEvent, new Msg_C2G_GameEvent() {Data = msg});
         }
 
         public void SendLoadingProgress(byte progress){
-            SendTcp(EMsgSC.C2G_LoadingProgress, new Msg_C2G_LoadingProgress() {
-                Progress = progress
-            });
+            if (!IsReconnecting) {
+                SendTcp(EMsgSC.C2G_LoadingProgress, new Msg_C2G_LoadingProgress() {
+                    Progress = progress
+                });
+            }
         }
 
         #endregion

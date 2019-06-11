@@ -4,6 +4,7 @@ using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Util;
 using NetMsg.Common;
+using NetMsg.Server;
 using User = Server.Servers.Lobby.LobbyServer.User;
 
 namespace Server.Servers.Lobby {
@@ -51,6 +52,7 @@ namespace Server.Servers.Lobby {
                 set => Info.OwnerName = value;
             }
 
+            public string GameHash;
             public bool IsFull => CurPlayerCount >= MaxPlayerCount;
 
             public bool IsEmpty => CurPlayerCount <= 0;
@@ -97,6 +99,17 @@ namespace Server.Servers.Lobby {
                 }
             }
 
+            public void GetReconnectInfo(){
+                ServerPeer?.SendMessage((short) EMsgLS.L2G_UserReconnect, new Msg_L2G_CreateRoom() {
+                    GameType = user.GameType,
+                    Players = playerInfos,
+                    MapId = room.MapId,
+                    GameHash = gameHash
+                }, (status, response) => {
+                    
+                }
+            }
+
             public void Init(int type, int roomId, string name, int mapId, byte maxPlayerCount, User owner){
                 GameType = type;
                 RoomId = roomId;
@@ -133,7 +146,7 @@ namespace Server.Servers.Lobby {
             }
 
             public override string ToString(){
-                return JsonMapper.ToJson(this);
+                return JsonMapper.ToJson(Info);
             }
         }
     }

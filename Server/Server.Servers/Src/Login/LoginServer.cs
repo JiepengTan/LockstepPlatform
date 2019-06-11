@@ -126,7 +126,7 @@ namespace Lockstep.Server.Login {
                     },
                     (sta, res) => {
                         reader.Respond(EMsgSC.I2C_LoginResult, new Msg_I2C_LoginResult() {
-                            LoginResult = (byte) ELoginResult.Succ,
+                            LoginResult = (byte) ELoginResult.Success,
                             UserId = userId,
                             LoginHash = loginHash,
                             LobbyEnd = new IPEndInfo() {Ip = lobbyInfo.Ip, Port = lobbyInfo.Port}

@@ -8,7 +8,8 @@ namespace NetMsg.Common {
     }
 
     public enum ELoginResult {
-        Succ,
+        Success,
+        Reconnect,
         PasswordMissMatch,
         ErrorHash,
         NotLogin,
@@ -85,6 +86,7 @@ namespace NetMsg.Common {
 
         //LG
         L2G_CreateRoom,
+        L2G_UserReconnect,
 
         //GC Tcp
         C2G_Hello,

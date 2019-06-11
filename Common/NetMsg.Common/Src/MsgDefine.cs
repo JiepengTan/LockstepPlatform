@@ -97,7 +97,7 @@ namespace NetMsg.Common{
         public byte Reason;
     }
     public partial class Msg_C2L_UserLogin : BaseFormater {
-        public long userId;
+        public long UserId;
         public string LoginHash;
     }
 
@@ -169,9 +169,13 @@ namespace NetMsg.Common{
         public IPEndInfo GameServerEnd;
         public string GameHash;
         public int RoomId;
+        public bool IsReconnect;
     }
 
 //LG
+    public partial class Msg_L2G_UserReconnect : BaseFormater {
+        public GamePlayerInfo PlayerInfo;
+    }   
     public partial class Msg_L2G_CreateRoom : BaseFormater {
         public int GameType;
         public int MapId;
@@ -192,6 +196,7 @@ namespace NetMsg.Common{
         public int GameType;
         public string GameHash;
         public int RoomId;
+        public bool IsReconnect;
     }
     public partial class Msg_C2G_Hello : BaseFormater {
         public MessageHello Hello;

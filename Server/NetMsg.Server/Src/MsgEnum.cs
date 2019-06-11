@@ -75,6 +75,7 @@ namespace NetMsg.Server {
     public enum EMsgLS:short {
         I2L_UserLogin,
         L2G_UserLeave,
+        L2G_UserReconnect,
         L2G_CreateRoom,
         G2L_RegisterServer,
         G2L_OnStartGame,

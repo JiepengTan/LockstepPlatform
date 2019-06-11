@@ -58,23 +58,24 @@ namespace Lockstep.Server.Game {
         public void TickOut(Player player, int reason){ }
 
         public void OnGameEmpty(IRoom game){
-            if (_roomId2Rooms.TryGetValue(game.RoomId, out var room)) {
-                room.IsFinished = true;
-                _netClientLG.SendMessage(EMsgLS.G2L_OnGameFinished, new Msg_G2L_OnGameFinished() {
-                    RoomId = game.RoomId
-                });
-                _roomId2Rooms.Remove(game.RoomId);
-                _cachedBaseRooms = null;
-            }
+            RemoveGame(game);
         }
 
         public void OnGameFinished(IRoom game){
             Log($" OnGameFinished " + game.RoomId);
+            RemoveGame(game);
+        }
+
+        void RemoveGame(IRoom game){
             if (_roomId2Rooms.TryGetValue(game.RoomId, out var room)) {
-                room.IsFinished = true;
                 _netClientLG.SendMessage(EMsgLS.G2L_OnGameFinished, new Msg_G2L_OnGameFinished() {
                     RoomId = game.RoomId
                 });
+                room.IsFinished = true;
+                foreach (var uid in game.UserIds) {
+                    _uid2Players.Remove(uid);
+                }
+
                 _roomId2Rooms.Remove(game.RoomId);
                 _cachedBaseRooms = null;
             }
@@ -140,6 +141,21 @@ namespace Lockstep.Server.Game {
             if (_roomId2Rooms.TryGetValue(msg.RoomId, out var room)) {
                 room.OnPlayerLeave(msg.UserId);
             }
+        }
+
+        protected void L2G_UserReconnect(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2G_UserReconnect>();
+            Log("L2G_UserReconnect " + msg);
+            if (_uid2Players.TryGetValue(msg.PlayerInfo.UserId, out var player)) {
+                var room = player.Room;
+                if (room != null) {
+                    room.OnPlayerReconnect(msg.PlayerInfo);
+                    reader.Respond(1, EResponseStatus.Success);
+                    return;
+                }
+            }
+
+            reader.Respond(0, EResponseStatus.Failed);
         }
 
         protected void L2G_CreateRoom(IIncommingMessage reader){

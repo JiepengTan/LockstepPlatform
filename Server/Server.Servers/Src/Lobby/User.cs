@@ -2,8 +2,8 @@ using LitJson;
 using Lockstep.Networking;
 using Lockstep.Serialization;
 using Lockstep.Util;
-
 using Room = Server.Servers.Lobby.LobbyServer.Room;
+
 namespace Server.Servers.Lobby {
     public partial class LobbyServer {
         public class User : BaseRecyclable {
@@ -29,9 +29,6 @@ namespace Server.Servers.Lobby {
                 Peer = null;
             }
 
-            public override string ToString(){
-                return JsonMapper.ToJson(this);
-            }
 
             public void SendMessage(short opCode, ISerializablePacket packet){
                 Peer?.SendMessage(opCode, packet);
@@ -43,6 +40,16 @@ namespace Server.Servers.Lobby {
 
             public void SendMessage(IMessage message, ResponseCallback responseCallback){
                 Peer?.SendMessage(message, responseCallback);
+            }
+
+            public override string ToString(){
+                return "Account:" + Account
+                                  + " UserID:" + UserId
+                                  + " GameType:" + GameType
+                                  + " LoginHash:" + LoginHash
+                                  + " PeerId:" + (Peer?.Id ?? -1).ToString()
+                                  + " RoomId:" + (Room?.RoomId ?? -1).ToString()
+                    ;
             }
         }
     }

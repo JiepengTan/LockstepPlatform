@@ -252,12 +252,12 @@ namespace NetMsg.Common{
     public partial class Msg_C2L_UserLogin{
         public override void Serialize(Serializer writer){
 			writer.PutString(LoginHash);
-			writer.PutInt64(userId);
+			writer.PutInt64(UserId);
         }
     
         public override void Deserialize(Deserializer reader){
 			LoginHash = reader.GetString();
-			userId = reader.GetInt64();
+			UserId = reader.GetInt64();
         }
     }
 
