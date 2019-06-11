@@ -560,6 +560,19 @@ namespace NetMsg.Common{
     }
 
 
+    public partial class Msg_L2G_UserLeave{
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(RoomId);
+			writer.PutInt64(UserId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			RoomId = reader.GetInt32();
+			UserId = reader.GetInt64();
+        }
+    }
+
+
     public partial class Msg_RepAccountData{
         public override void Serialize(Serializer writer){
 			writer.Put(accountData);
@@ -615,6 +628,17 @@ namespace NetMsg.Common{
     
         public override void Deserialize(Deserializer reader){
 			StartTick = reader.GetInt32();
+        }
+    }
+
+
+    public partial class Msg_S2C_TickPlayer{
+        public override void Serialize(Serializer writer){
+			writer.PutByte(Reason);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			Reason = reader.GetByte();
         }
     }
 

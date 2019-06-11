@@ -92,6 +92,7 @@ namespace Lockstep.Networking
         /// <typeparam name="T"></typeparam>
         /// <param name="extension"></param>
         T AddExtension<T>(T extension);
+        void CleanExtension();
 
         /// <summary>
         /// Retrieves an extension of this peer

@@ -7,14 +7,17 @@ using Lockstep.Networking;
 using Lockstep.Serialization;
 
 namespace Lockstep.Networking {
-    public class NetServer<TMsgType> : IPollEvents
+    public class NetServer<TMsgType> : IPollEvents,IDoDestroy
         where TMsgType : struct {
         private readonly ServerSocketLn _server;
+
         private string _clientKey;
+
         //所有的消息处理函数
         protected IncommingMessageHandler[] _allDealFuncs;
         private int maxMsgIdx;
         public event PeerActionHandler OnDisconnected;
+
 
         public NetServer(string clientKey, int maxMsgIdx, string[] msgFlags, object msgHandlerObj){
             this._clientKey = clientKey;
@@ -25,9 +28,12 @@ namespace Lockstep.Networking {
                     RegisterMsgHandler,
                     msgHandlerObj);
             }
+
             _server = new ServerSocketLn();
             _server.MessageReceived += OnMessage;
-            _server.OnDisconnected += OnDisconnected;
+            _server.OnDisconnected += (pe) => {
+                OnDisconnected?.Invoke(pe);
+            };
         }
 
         public void RegisterMsgHandler(TMsgType msgType, IncommingMessageHandler handler){
@@ -40,7 +46,11 @@ namespace Lockstep.Networking {
         }
 
         public void Listen(int port){
-            _server.Listen(port,_clientKey);
+            _server.Listen(port, _clientKey);
+        }
+
+        public void DoDestroy(){
+            _server.Stop();
         }
 
         private void OnMessage(IIncommingMessage msg){

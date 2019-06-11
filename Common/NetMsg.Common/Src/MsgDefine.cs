@@ -93,7 +93,9 @@ namespace NetMsg.Common{
 
 
 //LC
-
+    public partial class Msg_S2C_TickPlayer : BaseFormater {
+        public byte Reason;
+    }
     public partial class Msg_C2L_UserLogin : BaseFormater {
         public long userId;
         public string LoginHash;
@@ -175,7 +177,12 @@ namespace NetMsg.Common{
         public int MapId;
         public GamePlayerInfo[] Players;
         public string GameHash;
+    }   
+    public partial class Msg_L2G_UserLeave : BaseFormater {
+        public long UserId;
+        public int RoomId;
     }
+    
     public partial class Msg_G2L_OnGameFinished : BaseFormater {
         public int RoomId;
     }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Lockstep.Logging;
 
 namespace Lockstep.Util {
     public class YieldInstruction { }
@@ -100,21 +101,26 @@ namespace Lockstep.Util {
                     continue;
                 }
 
-                bool bCallMoveNext = item.objYield == null || DealWithYieldInstruction(item);
-                if (!bCallMoveNext) {
-                    continue;
-                }
+                try {
+                    bool bCallMoveNext = item.objYield == null || DealWithYieldInstruction(item);
+                    if (!bCallMoveNext) {
+                        continue;
+                    }
 
-                if (item.routine.MoveNext()) {
-                    SetRoutineInfo(ref item);
+                    if (item.routine.MoveNext()) {
+                        SetRoutineInfo(ref item);
+                    }
+                    else {
+                        lstNeedDelIndex.Add(i);
+                    }
                 }
-                else {
-                    lstNeedDelIndex.Add(i);
+                catch (Exception e) {
+                    Debug.LogError(e);
                 }
             }
-            
-            for (int i = lstNeedDelIndex.Count-1; i >=0; i--) {
-                lstRoutine.RemoveAt(lstNeedDelIndex[i]);
+
+            for (int j = lstNeedDelIndex.Count - 1; j >= 0; j--) {
+                lstRoutine.RemoveAt(lstNeedDelIndex[j]);
             }
         }
 
@@ -123,6 +129,7 @@ namespace Lockstep.Util {
                 float objSpan = Time.timeSinceLevelLoad - ((WaitForSecondsInfo) objRoutineInfo.objYieldInfo).BeginTime;
                 return objSpan > waitForSec.Seconds;
             }
+
             return true;
         }
     }
@@ -133,10 +140,20 @@ namespace Lockstep.Util {
         public static void DoStart(){ }
 
         public static void DoUpdate(){
-            _runner.Update();
+            lock (_runner) {
+                try {
+                    _runner.Update();
+                }
+                catch (Exception e) {
+                    Debug.LogError(e);
+                }
+            }
         }
+
         public static void StartCoroutine(IEnumerator enumerator){
-            _runner.StartCoroutine(enumerator);
+            lock (_runner) {
+                _runner.StartCoroutine(enumerator);
+            }
         }
     }
 }

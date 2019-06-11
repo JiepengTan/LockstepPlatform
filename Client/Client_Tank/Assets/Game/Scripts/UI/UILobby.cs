@@ -46,7 +46,15 @@ namespace Lockstep.Game.UI {
             Debug.Log("OnBtn_Leave");
             NetworkManager.Instance.LeaveRoom();
         }
-
+        
+        void OnEvent_OnPlayerJoinRoom(object param){
+            Debug.Log("OnEvent_OnPlayerJoinRoom");
+            Setup(NetworkManager.Instance.PlayerInfos);
+        }      
+        void OnEvent_OnPlayerLeaveRoom(object param){
+            Debug.Log("OnEvent_OnPlayerLeaveRoom");
+            Setup(NetworkManager.Instance.PlayerInfos);
+        }  
         void OnEvent_OnPlayerReadyInRoom(object param){
             Debug.Log("OnEvent_OnPlayerReadyInRoom");
             Setup(NetworkManager.Instance.PlayerInfos);

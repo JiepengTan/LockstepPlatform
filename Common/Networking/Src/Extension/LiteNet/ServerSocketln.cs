@@ -35,7 +35,7 @@ namespace Lockstep.Networking {
         public void Listen(int port, string key = ""){
             var _listener = new EventBasedNetListener();
             _server = new NetManager(_listener) {
-                DisconnectTimeout = 300000,
+                DisconnectTimeout = 30000,
             };
             _listener.ConnectionRequestEvent += request => { request.AcceptIfKey(key); };
 
@@ -49,8 +49,9 @@ namespace Lockstep.Networking {
             };
 
             _listener.NetworkReceiveEvent += (pe, reader, method) => {
-                var peer = _id2Peer[pe.Id];
-                peer.HandleDataReceived(reader.GetRemainingBytes(), 0);
+                if (_id2Peer.TryGetValue(pe.Id, out var peer)) {
+                    peer.HandleDataReceived(reader.GetRemainingBytes(), 0);
+                }
             };
 
             _listener.PeerDisconnectedEvent += (pe, info) => {

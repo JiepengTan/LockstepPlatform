@@ -14,8 +14,12 @@ namespace Lockstep.Networking {
     public interface IUpdate {
         void DoUpdate();
     }
+    public interface IDoDestroy {
+        void DoDestroy();
+    }
+    
 
-    public class NetClient<TMsgType> : IUpdate where TMsgType : struct {
+    public class NetClient<TMsgType> : IUpdate,IDoDestroy where TMsgType : struct {
         protected ClientSocketLn _client;
 
         //所有的消息处理函数
@@ -59,9 +63,11 @@ namespace Lockstep.Networking {
 
 
         public void DoDestroy(){
-            _client.Disconnect();
-            _client.Connected -= OnConnected;
-            _client = null;
+            if (_client != null) {
+                _client.Disconnect();
+                _client.Connected -= OnConnected;
+                _client = null;
+            }
             _isInit = false;
         }
 

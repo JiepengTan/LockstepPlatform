@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Lockstep.Game.UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +15,7 @@ namespace Lockstep.Game {
     public interface IUIService : IService {
         void OpenWindow(WindowCreateInfo info, UICallback callback = null);
         void CloseWindow(UIBaseWindow window);
+        void ShowDialog(string title, string body, Action<bool> resultCallback);
     }
 
     public delegate void UICallback(UIBaseWindow windowObj);
@@ -53,8 +55,31 @@ namespace Lockstep.Game {
             return uiRoot.transform;
         }
 
+        protected void OnEvent_OnTickPlayer(object param){
+            ShowDialog("Message", "OnTickPlayer reason" + param, () => {
+                foreach (var window in openedWindows.ToArray()) {
+                    window.Close();
+                }
+
+                OpenWindow(UIDefine.UILogin);
+            });
+        }
+
+        protected void OnEvent_OnLoginFailed(object param){
+            ShowDialog("Message", "Login failed " + param.ToString());
+        }
 
         #region interfaces
+
+        public void ShowDialog(string title, string body, Action<bool> resultCallback){
+            OpenWindow(UIDefine.UIDialogBox,
+                (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
+        }
+
+        public void ShowDialog(string title, string body, Action resultCallback = null){
+            OpenWindow(UIDefine.UIDialogBox,
+                (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
+        }
 
         public void OpenWindow(WindowCreateInfo info, UICallback callback = null){
             OpenWindow(info.resDir, info.depth, callback);
@@ -64,6 +89,7 @@ namespace Lockstep.Game {
             if (window != null) {
                 //unbind Msgs
                 window.OnClose();
+                openedWindows.Remove(window);
                 _eventRegisterService.UnRegisterEvent(window);
                 if (_windowPool.ContainsKey(window.ResPath)) {
                     GameObject.Destroy(window.gameObject);
@@ -80,6 +106,8 @@ namespace Lockstep.Game {
         private void OpenWindow(string resPath, EWindowDepth depth, UICallback callback = null){
             OpenWindow(resPath, GetParentFromDepth(depth), callback);
         }
+
+        private HashSet<UIBaseWindow> openedWindows = new HashSet<UIBaseWindow>();
 
         private void OpenWindow(string resPath, Transform parent, UICallback callback){
             UIBaseWindow window = null;
@@ -101,6 +129,7 @@ namespace Lockstep.Game {
                 window.ResPath = resPath;
             }
 
+            openedWindows.Add(window);
             window.DoAwake();
             window.DoStart();
             window.uiService = this;

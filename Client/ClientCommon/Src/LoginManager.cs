@@ -213,8 +213,12 @@ namespace Lockstep.Client {
             var msg = reader.Parse<Msg_L2C_RoomList>();
             _roomInfos = msg.Rooms;
             _loginHandler.OnRoomInfo(_roomInfos);
+        }        
+        protected void S2C_TickPlayer(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_S2C_TickPlayer>();
+            _loginHandler.OnTickPlayer(msg.Reason);
         }
-
+        
 
         protected void L2C_RoomInfoUpdate(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_RoomInfoUpdate>();

@@ -15,12 +15,14 @@ namespace Lockstep.Game {
 
         public override void OnConnectedLoginServer(){
             Log("OnConnLogin ");
+        }     
+        public override void OnLoginFailed(ELoginResult result){
+            Log("Login failed reason " + result);
+            EventHelper.Trigger(EEvent.OnLoginFailed,result);
         }
 
         public override void OnConnLobby(RoomInfo[] roomInfos){
-            if (roomInfos != null) {
-                EventHelper.Trigger(EEvent.OnLoginResult);
-            }
+            EventHelper.Trigger(EEvent.OnLoginResult,roomInfos);
         }
 
         public override void OnRoomInfo(RoomInfo[] roomInfos){
@@ -69,6 +71,9 @@ namespace Lockstep.Game {
             EventHelper.Trigger(EEvent.OnLeaveRoom);
         }
 
+        public override void OnTickPlayer(byte reason){
+            EventHelper.Trigger(EEvent.OnTickPlayer,reason);
+        }
         public override void OnRoomInfoUpdate(RoomInfo[] addInfo, int[] deleteInfos, RoomChangedInfo[] changedInfos){ }
     }
 
@@ -173,7 +178,12 @@ namespace Lockstep.Game {
         public void OnEvent_LoadLevelDone(object param){
             _roomMsgMgr.OnLoadLevelProgress(1);
         }
-        public override void DoDestroy(){ }
+        public override void DoDestroy(){ 
+            _loginMgr?.DoDestroy();
+            _roomMsgMgr?.DoDestroy();
+            _loginMgr = null;
+            _roomMsgMgr = null;
+        }
 
 
         private object reconnectedInfo;

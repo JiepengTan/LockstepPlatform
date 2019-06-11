@@ -29,6 +29,7 @@ namespace Lockstep.Server.Game {
 
         public IPEndInfo TcpEnd { get; set; }
         public IPEndInfo UdpEnd { get; set; }
+
         private BaseRoom[] CachedBaseRooms {
             get {
                 if (_cachedBaseRooms == null) {
@@ -59,6 +60,9 @@ namespace Lockstep.Server.Game {
         public void OnGameEmpty(IRoom game){
             if (_roomId2Rooms.TryGetValue(game.RoomId, out var room)) {
                 room.IsFinished = true;
+                _netClientLG.SendMessage(EMsgLS.G2L_OnGameFinished, new Msg_G2L_OnGameFinished() {
+                    RoomId = game.RoomId
+                });
                 _roomId2Rooms.Remove(game.RoomId);
                 _cachedBaseRooms = null;
             }
@@ -77,8 +81,16 @@ namespace Lockstep.Server.Game {
         }
 
         private void InitServerSC(){
-            InitNetServer(ref _netServerSC, _serverConfig.tcpPort);
+            InitNetServer(ref _netServerSC, _serverConfig.tcpPort, OnPlayerDisconnected);
             InitNetServer(ref _netServerSCUdp, _serverConfig.udpPort);
+        }
+
+        void OnPlayerDisconnected(IPeer peer){
+            if (_peerId2Player.TryGetValue(peer.Id, out var player)) {
+                Log("OnPlayerDisconnected  " + player.Account);
+                _peerId2Player.Remove(peer.Id);
+                player.Room.OnPlayerDisconnect(player);
+            }
         }
 
         protected override void OnMasterServerInfo(ServerIpInfo info){
@@ -122,6 +134,14 @@ namespace Lockstep.Server.Game {
             Debug.Log("OnDBConn");
         }
 
+        protected void L2G_UserLeave(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2G_UserLeave>();
+            Log("L2G_UserLeave " + msg);
+            if (_roomId2Rooms.TryGetValue(msg.RoomId, out var room)) {
+                room.OnPlayerLeave(msg.UserId);
+            }
+        }
+
         protected void L2G_CreateRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2G_CreateRoom>();
             var room = CreateGame(msg.GameType) as BaseRoom;
@@ -137,7 +157,7 @@ namespace Lockstep.Server.Game {
             _roomId2Rooms.Add(roomId, room);
             _cachedBaseRooms = null;
 
-            room.DoStart(this,roomId, msg.GameType,msg.MapId,msg.Players,msg.GameHash);
+            room.DoStart(this, roomId, msg.GameType, msg.MapId, msg.Players, msg.GameHash);
             var players = room.Players;
             foreach (var player in players) {
                 _uid2Players[player.UserId] = player;
@@ -162,6 +182,8 @@ namespace Lockstep.Server.Game {
             reader.Respond(roomId, EResponseStatus.Success);
         }
 
+        private Dictionary<int, Player> _peerId2Player = new Dictionary<int, Player>();
+
         protected void C2G_Hello(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2G_Hello>().Hello;
             Debug.Log("C2G_Hello" + msg + " id" + reader.Peer.Id);
@@ -178,10 +200,11 @@ namespace Lockstep.Server.Game {
                     var player = room.Players[localId];
                     if (player.LoginHash == userInfo.LoginHash) {
                         player.PeerTcp = reader.Peer;
+                        _peerId2Player[reader.Peer.Id] = player;
                         reader.Peer.AddExtension(player);
                         reader.Respond(EMsgSC.G2C_Hello, new Msg_G2C_Hello() {
                             LocalId = (byte) localId,
-                            UserCount = (byte)room.MaxPlayerCount,
+                            UserCount = (byte) room.MaxPlayerCount,
                             MapId = room.MapId,
                             RoomId = room.RoomId,
                             Seed = room.Seed,
@@ -202,7 +225,7 @@ namespace Lockstep.Server.Game {
 
         protected void C2G_UdpHello(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2G_UdpHello>().Hello;
-            Debug.Log("C2G_UdpHello" + msg+ " id" + reader.Peer.Id);
+            Debug.Log("C2G_UdpHello" + msg + " id" + reader.Peer.Id);
             var userInfo = msg.UserInfo;
             if (userInfo == null)
                 return;
@@ -229,6 +252,7 @@ namespace Lockstep.Server.Game {
         protected void C2G_UdpMessage(IIncommingMessage reader){
             var player = reader.Peer?.GetExtension<Player>();
             if (player == null) {
+                reader.Peer?.Disconnect("");
                 Debug.Log("C2G_UdpMessage: Error msg unknown user peerId = " + reader.Peer.Id);
                 return;
             }
@@ -241,7 +265,8 @@ namespace Lockstep.Server.Game {
         protected void C2G_TcpMessage(IIncommingMessage reader){
             var player = reader.Peer?.GetExtension<Player>();
             if (player == null) {
-                Debug.Log("C2G_UdpMessage: Error msg unknown user peerId = " + reader.Peer.Id);
+                reader.Peer.Disconnect("");
+                Debug.Log("C2G_TcpMessage: Error msg unknown user peerId = " + reader.Peer.Id);
                 return;
             }
 

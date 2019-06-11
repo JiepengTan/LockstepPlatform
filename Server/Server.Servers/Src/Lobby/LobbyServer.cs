@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Lockstep.Logging;
 using Lockstep.Networking;
 using Lockstep.Server.Common;
 using Lockstep.Util;
@@ -88,29 +90,36 @@ namespace Lockstep.Server.Lobby {
         private void AddPlayer(long userId, int gameType, string name, string account, string loginHash){
             var player = Pool.Get<User>();
             player.Init(userId, gameType, name, account, loginHash);
-            _uid2Player.Add(userId, player);
+            _uid2Player[userId] =  player;
+            Debug.Log("AddPlayer " + player.Account);
         }
 
-        private void RemovePlayer(User user){
-            Debug.Log("RemoveRoom " + user.UserId);
+        private void RemovePlayer(User user, bool isForce = false){
+            Debug.Log("RemovePlayer " + user.Account + " id " +  user.UserId);
             var room = user.Room;
+
             if (room != null) {
-                if (room.IsPlaying) { //游戏中的玩家需要考虑断线重连
+                if (room.IsPlaying && !isForce) { //游戏中的玩家需要考虑断线重连
                     user.Room = null;
                     _peerId2Player.Remove(user.Peer.Id);
                     return;
                 }
-                else {
-                    room.RemoveUser(user);
-                    if (room.IsEmpty) {
-                        RemoveRoom(room);
-                    }
+                room.ServerPeer?.SendMessage((short) EMsgLS.L2G_UserLeave, new Msg_L2G_UserLeave() {
+                    RoomId = room.RoomId,
+                    UserId = user.UserId
+                });
+                room.RemoveUser(user);
+                if (room.IsEmpty) {
+                    RemoveRoom(room);
                 }
             }
 
             user.Room = null;
             _uid2Player.Remove(user.UserId);
             _peerId2Player.Remove(user.Peer.Id);
+            user.Peer.CleanExtension();
+            user.Peer?.Disconnect("Tick out");
+            user.Peer = null;
         }
 
 
@@ -145,7 +154,6 @@ namespace Lockstep.Server.Lobby {
         private void RemoveRoom(Room room){
             Debug.Log("RemoveRoom " + room.RoomId);
             Debug.Assert(room.CurPlayerCount == 0);
-            room.ServerPeer?.Disconnect("RoomRemove");
             _roomId2Room.Remove(room.RoomId);
             if (_gameType2Rooms.TryGetValue(room.GameType, out var lst)) {
                 lst.Remove(room);
@@ -196,13 +204,26 @@ namespace Lockstep.Server.Lobby {
         protected void I2L_UserLogin(IIncommingMessage reader){
             var msg = reader.Parse<Msg_I2L_UserLogin>();
             if (_uid2Player.TryGetValue(msg.UserId, out var oldPlayer)) {
-                oldPlayer.LoginHash = msg.LoginHash;
-                oldPlayer.GameType = msg.GameType;
+                oldPlayer.LoginHash = msg.LoginHash;//避免重连
+                //Tick out 
+                Debug.Log(oldPlayer.Account + " login at another place  id" + msg.UserId);
+                oldPlayer.SendMessage((short)EMsgSC.S2C_TickPlayer,new Msg_S2C_TickPlayer() {
+                    Reason =  1
+                });
+                CoroutineHelper.StartCoroutine(LoginAndTickPlayer(reader, oldPlayer, msg));
             }
-            else {
+            else { 
                 AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
+                reader.Respond(1, EResponseStatus.Success);
             }
+        }
 
+        private IEnumerator LoginAndTickPlayer(IIncommingMessage reader, User oldPlayer, Msg_I2L_UserLogin msg){
+            Debug.Log("before WaitRemovePlayer " + Time.timeSinceLevelLoad);
+            yield return new WaitForSeconds(0.5f);
+            Debug.Log("after WaitRemovePlayer "+ Time.timeSinceLevelLoad);
+            RemovePlayer(oldPlayer,true);
+            AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
             reader.Respond(1, EResponseStatus.Success);
         }
 
@@ -265,13 +286,13 @@ namespace Lockstep.Server.Lobby {
             Debug.Log("C2L_JoinRoom" + msg);
             var roomId = msg.RoomId;
             if (_roomId2Room.TryGetValue(roomId, out var room)) {
-                if (room.IsFull) {
+                if (room.IsFull||room.IsPlaying) {
                     reader.Respond((int) ERoomOperatorResult.Full, EResponseStatus.Failed);
                     return;
                 }
                 else {
                     var user = reader.Peer.GetExtension<User>();
-                    if (user.Room == null) {
+                    if (user?.Room == null) {
                         user.Room = room;
                         room.AddUser(user);
                         reader.Respond((short) EMsgSC.L2C_JoinRoomResult, new Msg_L2C_JoinRoomResult() {
@@ -346,6 +367,7 @@ namespace Lockstep.Server.Lobby {
         protected void C2L_ReadyInRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_C2L_ReadyInRoom>();
             var user = reader.Peer.GetExtension<User>();
+            if(user == null) return;
             var uid = user.UserId;
             if (_uid2Player.TryGetValue(uid, out var info)) {
                 if (info.IsReady != msg.State && user.Room != null && !user.Room.IsPlaying) {
@@ -363,6 +385,7 @@ namespace Lockstep.Server.Lobby {
             var msg = reader.Parse<Msg_C2L_StartGame>();
             Debug.Log("C2L_StartGame" + msg);
             var user = reader.Peer.GetExtension<User>();
+            if(user == null) return;
             var room = user.Room;
             if (room?.Owner != user) {
                 reader.Respond(1, EResponseStatus.Failed);
@@ -396,6 +419,7 @@ namespace Lockstep.Server.Lobby {
                     if (status != EResponseStatus.Failed) {
                         var ipInfo = server.GetExtension<ServerIpInfo>();
                         room.ServerPeer = server;
+                        room.IsPlaying = true;
                         var retMsg = new Msg_L2C_StartGame() {
                             GameServerEnd = new IPEndInfo() {
                                 Ip = ipInfo.Ip,
@@ -416,12 +440,16 @@ namespace Lockstep.Server.Lobby {
             var msg = reader.Parse<Msg_G2L_OnGameFinished>();
             var roomId = msg.RoomId;
             if (_roomId2Room.TryGetValue(roomId, out var room)) {
-                Debug.Log("OnGameFinished " + room);
-                foreach (var user in room.Users) {
+                Debug.Log("OnGameFinished " + room.RoomId);
+                foreach (var user in room.Users.ToArray()) {
                     room.RemoveUser(user);
                     user.Room = null;
                 }
 
+                var bMsg = MessageHelper.Create((short) EMsgSC.L2C_RoomInfoUpdate, new Msg_L2C_RoomInfoUpdate() {
+                    DeleteInfo = new int[] {room.RoomId}
+                });
+                BorderMessage(bMsg, room.GameType, ELobbyBorderType.OutRoom);
                 RemoveRoom(room);
             }
             else {

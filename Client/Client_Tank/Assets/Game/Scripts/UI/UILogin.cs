@@ -117,8 +117,10 @@ namespace Lockstep.Game.UI
         }
 
         public void OnEvent_OnLoginResult(object param){
-            OpenWindow(UIDefine.UIRoomList);
-            Close();
+            if (param != null) {
+                OpenWindow(UIDefine.UIRoomList);
+                Close();
+            }
         }
 
         public virtual void OnPasswordForgotClick()

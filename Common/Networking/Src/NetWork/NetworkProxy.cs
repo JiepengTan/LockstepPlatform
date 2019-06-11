@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Lockstep.Logging;
 
 namespace Lockstep.Networking {
-
     public class NetworkProxy : BaseLogger {
+        protected List<IDoDestroy> _allNets = new List<IDoDestroy>();
         protected List<IPollEvents> _allServerNet = new List<IPollEvents>();
         private IPollEvents[] _cachedAllServerNet;
         protected List<IUpdate> _allClientNet = new List<IUpdate>();
@@ -14,7 +14,13 @@ namespace Lockstep.Networking {
 
         public virtual void DoAwake(){ }
         public virtual void DoStart(){ }
-        public virtual void DoDestroy(){ }
+
+        public virtual void DoDestroy(){
+            foreach (var _net in _allNets) {
+                _net.DoDestroy();
+            }
+            _allNets.Clear();
+        }
 
         public virtual void DoUpdate(int deltaTime){
             if (_cachedAllClientNet == null) {
@@ -42,6 +48,7 @@ namespace Lockstep.Networking {
             if (NetworkUtil.InitNetServer(ref refServer, port, this)) return;
             if (disconnectedHandler != null) refServer.OnDisconnected += disconnectedHandler;
             _allServerNet.Add(refServer);
+            _allNets.Add(refServer);
             _cachedAllServerNet = null;
         }
 
@@ -49,6 +56,7 @@ namespace Lockstep.Networking {
             Action onConnCallback = null) where TMsgType : struct{
             if (NetworkUtil.InitNetClient(ref refClient, ip, port, onConnCallback, this)) return;
             _allClientNet.Add(refClient);
+            _allNets.Add(refClient);
             _cachedAllClientNet = null;
         }
     }

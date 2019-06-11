@@ -10,6 +10,8 @@ using Debug = Lockstep.Logging.Debug;
 namespace Lockstep.Core {
     public enum EEvent {
         TryLogin,
+        OnTickPlayer,
+        OnLoginFailed,
         OnLoginResult,
         OnLeaveRoom,
         OnJoinRoomResult,

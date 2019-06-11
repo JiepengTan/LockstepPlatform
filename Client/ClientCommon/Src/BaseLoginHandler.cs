@@ -5,6 +5,7 @@ using NetMsg.Common;
 namespace Lockstep.Client {
     public class BaseLoginHandler : BaseLogger {
 
+        public virtual void OnTickPlayer(byte reason){ }
         public virtual void OnConnectedLoginServer(){ }
         public virtual void OnConnLobby(RoomInfo[] roomInfos){ }
         public virtual void OnRoomInfo(RoomInfo[] roomInfos){ }

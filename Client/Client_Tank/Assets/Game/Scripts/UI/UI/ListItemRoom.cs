@@ -49,7 +49,7 @@ namespace Lockstep.Game.UI
              SetIsSelected(isSelected);
              RoomName.text = data.Name;
              RoomId = data.RoomId;
-             LockImage.SetActive(false);
+             LockImage.SetActive(data.State == 1 || data.CurPlayerCount >= data.MaxPlayerCount);
 
              Online.text = string.Format("{0}/{1}", data.CurPlayerCount, data.MaxPlayerCount);
              MapName.text = data.MapId.ToString();

@@ -158,7 +158,7 @@ namespace Lockstep.Server.Game {
             }
         }
 
-
+   
         public int GetUserLocalId(long userId){
             if (_userId2LocalId.TryGetValue(userId, out var id)) {
                 return id;
@@ -237,8 +237,10 @@ namespace Lockstep.Server.Game {
                     waitTimer = 0;
                     //移除还没有到来的帧的Player
                     for (int i = 0; i < inputs.Length; i++) {
-                        if (inputs[i] == null) {
-                            Log($"Overtime wait remove localId = {i}");
+                        if (inputs[i] == null ) {
+                            if (Players[i] != null) { 
+                                Log($"Overtime wait remove localId = {i}");
+                            }
                             allNeedWaitInputPlayerIds.Remove((byte) i);
                         }
                     }
@@ -393,7 +395,7 @@ namespace Lockstep.Server.Game {
         public void BorderTcp(EMsgSC type, BaseFormater data){
             var msg = MessageHelper.Create((short) type, data);
             foreach (var player in Players) {
-                player.SendTcp(msg);
+                player?.SendTcp(msg);
             }
         }
 
@@ -409,13 +411,13 @@ namespace Lockstep.Server.Game {
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             foreach (var player in Players) {
-                player.SendUdp(bytes);
+                player?.SendUdp(bytes);
             }
         }
 
 
         public void SendUdp(Player player, byte[] data){
-            player.SendUdp(data);
+            player?.SendUdp(data);
         }
 
         public void SendUdp(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
@@ -427,7 +429,7 @@ namespace Lockstep.Server.Game {
                 Log($"msg :type {type} size{bytes.Length}");
             }
 
-            player.SendUdp(bytes);
+            player?.SendUdp(bytes);
         }
 
         #endregion
@@ -450,7 +452,14 @@ namespace Lockstep.Server.Game {
             Log($"Player{player.UserId} OnDisconnect room {RoomId}");
             RemovePlayer(player);
         }
-
+        public void OnPlayerLeave(long userId){
+            if (_userId2LocalId.TryGetValue(userId, out var localId)) {
+                var player = Players[localId];
+                if (player != null) {
+                    OnPlayerLeave(player);
+                }
+            }
+        }
         public void OnPlayerLeave(Player player){
             RemovePlayer(player);
             _userId2LocalId.Remove(player.UserId); //同时还需要彻底的移除记录 避免玩家重连
@@ -460,15 +469,22 @@ namespace Lockstep.Server.Game {
         void RemovePlayer(Player player){
             if (Players[player.LocalId] == null) return;
             Players[player.LocalId] = null;
+            player.PeerTcp.CleanExtension();
+            player.PeerTcp.Disconnect("");
+            player.PeerTcp = null;
+            player.PeerUdp.CleanExtension();
+            player.PeerUdp.Disconnect("");
+            player.PeerUdp = null;
+            
             var curCount = CurPlayerCount;
             if (curCount == 0) {
-                Console.WriteLine("All players left, stopping current simulation...");
+                Log("All players left, stopping current simulation...");
                 IsRunning = false;
                 State = EGameState.Idle;
                 _gameServer.OnGameEmpty(this);
             }
             else {
-                Console.WriteLine(curCount + " players remaining.");
+                Log(curCount + " players remaining.");
             }
         }
 

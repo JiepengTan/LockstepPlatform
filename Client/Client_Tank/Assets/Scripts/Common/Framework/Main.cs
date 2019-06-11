@@ -127,12 +127,17 @@ namespace Lockstep.Game {
 
 
         public void OnDestroy(){
+            if (Instance == null) return;
             foreach (var mgr in _allMgrs) {
                 mgr.DoDestroy();
             }
 
             DoDestroy();
             Instance = null;
+        }
+
+        private void OnApplicationQuit(){
+            OnDestroy();
         }
 
         #endregion

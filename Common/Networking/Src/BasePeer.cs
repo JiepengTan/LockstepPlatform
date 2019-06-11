@@ -91,7 +91,9 @@ namespace Lockstep.Networking {
             _extensions[typeof(T)] = extension;
             return extension;
         }
-
+        public void CleanExtension(){
+            _extensions.Clear();
+        }
         public T GetExtension<T>(){
             object extension;
             _extensions.TryGetValue(typeof(T), out extension);
