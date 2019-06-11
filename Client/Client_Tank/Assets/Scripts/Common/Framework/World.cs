@@ -98,7 +98,6 @@ namespace Lockstep.ECS {
                 .Where(e => e.tick.value < (resultTick))) {
                 snapshotEntity.Destroy();
             }
-
             _systems.Cleanup();
         }
 

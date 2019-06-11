@@ -98,9 +98,12 @@ namespace Lockstep.Game {
             Log("OnAllFinishedLoaded " + level);
             EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, level);
         }
-        
-        public override void OnServerFrames(Msg_ServerFrames msg){ }
-        public override void OnMissFrames(Msg_ServerFrames msg){ }
+
+        public override void OnServerFrames(Msg_ServerFrames msg){
+            EventHelper.Trigger(EEvent.OnServerFrame, msg);
+        }
+        public override void OnMissFrames(Msg_RepMissFrame msg){
+            EventHelper.Trigger(EEvent.OnServerMissFrame, msg); }
         public override void OnGameEvent(byte[] data){ }
     }
 

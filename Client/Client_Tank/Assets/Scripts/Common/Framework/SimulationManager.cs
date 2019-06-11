@@ -346,7 +346,8 @@ namespace Lockstep.Game {
 
         public void CheckAndSendHashCodes(){
             if (cmdBuffer.nextTickToCheck > firstHashTick) {
-                var count = System.Math.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick));
+                
+                var count = LMath.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick),(1300/8));
                 if (count > 0) {
                     _networkService.SendHashCodes(firstHashTick, allHashCodes, 0, count);
                     firstHashTick = firstHashTick + count;

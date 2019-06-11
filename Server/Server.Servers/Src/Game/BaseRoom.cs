@@ -512,7 +512,7 @@ namespace Lockstep.Server.Game {
             }
 
             var input = data as Msg_PlayerInput;
-            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick} count = {input.Commands.Length}");
+            //Debug.Log($"RecvInput actorID:{input.ActorId} inputTick:{input.Tick} Tick{Tick}");
             if (input.Tick < Tick) {
                 return;
             }

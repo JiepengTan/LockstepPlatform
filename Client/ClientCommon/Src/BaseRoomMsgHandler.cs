@@ -10,7 +10,7 @@ namespace Lockstep.Client {
         void OnAllFinishedLoaded(short level);
         void OnGameStartFailed();
         void OnServerFrames(Msg_ServerFrames msg);
-        void OnMissFrames(Msg_ServerFrames msg);
+        void OnMissFrames(Msg_RepMissFrame msg);
         void OnGameEvent(byte[] data);
     }
 
@@ -23,7 +23,7 @@ namespace Lockstep.Client {
         public virtual void OnAllFinishedLoaded(short level){ }
         public virtual void OnGameStartFailed(){ }
         public virtual void OnServerFrames(Msg_ServerFrames msg){ }
-        public virtual void OnMissFrames(Msg_ServerFrames msg){ }
+        public virtual void OnMissFrames(Msg_RepMissFrame msg){ }
         public virtual void OnGameEvent(byte[] data){ }
     }
 }

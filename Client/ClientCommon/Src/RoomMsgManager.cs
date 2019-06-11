@@ -272,7 +272,7 @@ namespace Lockstep.Client {
         }
 
         protected void OnMsg_G2C_RepMissFrame(BaseFormater reader){
-            var msg = reader as Msg_ServerFrames;
+            var msg = reader as Msg_RepMissFrame;
             _handler.OnMissFrames(msg);
         }
 

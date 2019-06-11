@@ -11,7 +11,7 @@ namespace Test {
             _roomMsgManager = rmm;
         }
         public override void OnServerFrames(Msg_ServerFrames msg){ }
-        public override void OnMissFrames(Msg_ServerFrames msg){ }
+        public override void OnMissFrames(Msg_RepMissFrame msg){ }
         public override void OnGameEvent(byte[] data){ }
         public override void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }
 
