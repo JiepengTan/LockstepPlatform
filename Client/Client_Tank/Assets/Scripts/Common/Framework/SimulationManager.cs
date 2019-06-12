@@ -23,14 +23,18 @@ namespace Lockstep.Game {
         private Contexts _context;
         private GameLog GameLog = new GameLog();
         private byte _localActorId;
-        public bool Running;
+
+        public bool Running {
+            get;
+            set;
+        }
         private IServiceContainer _services;
         private float _tickDt;
         private float _accumulatedTime;
         private World _world;
         private FrameBuffer cmdBuffer;
         private int _localTick;
-        private int _roomId;
+        private int _gameId;
         private List<long> allHashCodes = new List<long>();
         private int firstHashTick = 0;
 
@@ -63,12 +67,23 @@ namespace Lockstep.Game {
 
         void OnEvent_OnGameCreate(object param){
             var msg = param as Msg_G2C_Hello;
-            OnGameCreate(msg.RoomId, 60, msg.LocalId, msg.UserCount);
+            OnGameCreate(msg.GameId, 60, msg.LocalId, msg.UserCount);
             EventHelper.Trigger(EEvent.SimulationInit, null);
         }
 
         void OnEvent_OnAllPlayerFinishedLoad(object param){
             Debug.Log($"OnEvent_OnAllPlayerFinishedLoad");
+            StartSimulate();
+        }
+
+        void OnEvent_LoadLevelDone(object param){
+            Debug.Log($"OnEvent_LoadLevelDone " + _constStateService.IsReconnecting);
+            if (_constStateService.IsReconnecting) {
+                StartSimulate();
+            }
+        }
+
+        public void StartSimulate(){
             if (Running) return;
             _world.StartSimulate();
             Running = true;
@@ -122,6 +137,11 @@ namespace Lockstep.Game {
             timestampOnPurcue = Time.realtimeSinceStartup;
         }
 
+        public float GetPursueProgress(){
+            return _world.Tick * 1.0f / cmdBuffer.curServerTick;
+        }
+
+        public bool IsFinishPursue = false;
         public override void DoUpdate(float deltaTime){
             if (!Running) {
                 return;
@@ -146,13 +166,17 @@ namespace Lockstep.Game {
 
             var minTickToBackup = missFrameTick - FrameBuffer.SnapshotFrameInterval;
             //追帧 无输入
-            _constStateService.isPursueFrame = true;
-            if (!PursueServer(minTickToBackup)) {
-                _constStateService.isPursueFrame = false;
+            var isPursueServer = !PursueServer(minTickToBackup);
+            if (isPursueServer) {
+                _constStateService.isPursueFrame = true;
                 Debug.Log($"PurchaseServering curTick:" + _world.Tick);
+                EventHelper.Trigger(EEvent.PursueFrameProcess,GetPursueProgress());
                 return;
             }
 
+            if (_constStateService.isPursueFrame) {
+                EventHelper.Trigger(EEvent.PursueFrameDone);
+            }
             _constStateService.isPursueFrame = false;
 
             var frameDeltaTime = (Time.realtimeSinceStartup - timestampOnPurcue) * 1000;
@@ -304,7 +328,7 @@ namespace Lockstep.Game {
             Running = false;
         }
 
-        public void OnGameCreate(int roomId, int targetFps, byte localActorId, byte actorCount,
+        public void OnGameCreate(int gameId, int targetFps, byte localActorId, byte actorCount,
             bool isNeedRender = true){
             FrameBuffer.DebugMainActorID = localActorId;
             var allActors = new byte[actorCount];
@@ -313,7 +337,7 @@ namespace Lockstep.Game {
             }
 
             //初始化全局配置
-            _constStateService.roomId = roomId;
+            _constStateService.roomId = gameId;
             _constStateService.allActorIds = allActors;
             _constStateService.actorCount = allActors.Length;
 
@@ -321,7 +345,7 @@ namespace Lockstep.Game {
             _allActors = allActors;
 
             _localTick = 0;
-            _roomId = roomId;
+            _gameId = gameId;
             GameLog.LocalActorId = localActorId;
             GameLog.AllActorIds = allActors;
 
@@ -346,8 +370,8 @@ namespace Lockstep.Game {
 
         public void CheckAndSendHashCodes(){
             if (cmdBuffer.nextTickToCheck > firstHashTick) {
-                
-                var count = LMath.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick),(1300/8));
+                var count = LMath.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick),
+                    (480 / 8));
                 if (count > 0) {
                     _networkService.SendHashCodes(firstHashTick, allHashCodes, 0, count);
                     firstHashTick = firstHashTick + count;

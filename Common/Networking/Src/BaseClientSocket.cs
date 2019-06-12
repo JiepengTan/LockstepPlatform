@@ -45,13 +45,13 @@ namespace Lockstep.Networking
         public void SendMessage(short opCode, byte[] data, EDeliveryMethod method = EDeliveryMethod.ReliableSequenced)
         {
             var msg = MessageHelper.Create(opCode, data);
-            Peer.SendMessage(msg, method);
+            Peer?.SendMessage(msg, method);
         }
 
         public void SendMessage(short opCode, byte[] data, ResponseCallback responseCallback)
         {
             var msg = MessageHelper.Create(opCode, data);
-            Peer.SendMessage(msg, responseCallback);
+            Peer?.SendMessage(msg, responseCallback);
         }
 
         public void SendMessage(short opCode, byte[] data, ResponseCallback responseCallback, int timeoutSecs)

@@ -39,10 +39,6 @@ namespace Lockstep.Client {
         public float FramePursueRate {
             get { return _framePursueRate; }
             set {
-                if (value >= 1) {
-                    IsReconnecting = false;
-                }
-
                 _framePursueRate = Math.Max(Math.Min(1f, value), 0f);
             }
         }
@@ -125,7 +121,7 @@ namespace Lockstep.Client {
             }
         }
 
-        public bool IsReconnecting { get; private set; }
+        public bool IsReconnecting { get; set; }
 
         public void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd, bool isReconnect){
             Log("ConnectToGameServer  " + helloBody + " isReconnect=" + isReconnect);
@@ -155,6 +151,7 @@ namespace Lockstep.Client {
         void ConnectUdp(){
             InitNetClient(ref _netUdp, _gameUdpEnd.Ip, _gameUdpEnd.Port, () => {
                 HasConnGameUdp = true;
+                Log("ConnectUdp succ");
                 _netUdp.SendMessage(EMsgSC.C2G_UdpHello,
                     new Msg_C2G_UdpHello() {
                         Hello = helloBody
@@ -218,7 +215,7 @@ namespace Lockstep.Client {
 
 
         private void RegisterMsgHandlers(){
-            RegisterNetMsgHandler(EMsgSC.G2C_RepMissFrame, OnMsg_G2C_RepMissFrame, ParseData<Msg_ServerFrames>);
+            RegisterNetMsgHandler(EMsgSC.G2C_RepMissFrame, OnMsg_G2C_RepMissFrame, ParseData<Msg_RepMissFrame>);
             RegisterNetMsgHandler(EMsgSC.G2C_FrameData, OnMsg_G2C_FrameData, ParseData<Msg_ServerFrames>);
         }
 
@@ -258,8 +255,8 @@ namespace Lockstep.Client {
         public void SendUdp(EMsgSC msgId, ISerializable body){
             var writer = new Serializer();
             writer.PutInt16((short) msgId);
-            body.Serialize(writer);
-            _netUdp.SendMessage(EMsgSC.C2G_UdpMessage, writer.CopyData(), EDeliveryMethod.Unreliable);
+            body?.Serialize(writer);
+            _netUdp?.SendMessage(EMsgSC.C2G_UdpMessage, writer.CopyData(), EDeliveryMethod.Unreliable);
         }
 
         public void SendTcp(EMsgSC msgId, BaseFormater body){

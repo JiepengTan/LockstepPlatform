@@ -91,15 +91,17 @@ namespace NetMsg.Common{
     public partial class MessageHello{
         public override void Serialize(Serializer writer){
 			writer.PutString(GameHash);
+			writer.PutInt32(GameId);
 			writer.PutInt32(GameType);
-			writer.PutInt32(RoomId);
+			writer.PutBoolean(IsReconnect);
 			writer.Put(UserInfo);
         }
     
         public override void Deserialize(Deserializer reader){
 			GameHash = reader.GetString();
+			GameId = reader.GetInt32();
 			GameType = reader.GetInt32();
-			RoomId = reader.GetInt32();
+			IsReconnect = reader.GetBoolean();
 			UserInfo = reader.Get(ref this.UserInfo);
         }
     }
@@ -357,18 +359,18 @@ namespace NetMsg.Common{
 
     public partial class Msg_G2C_Hello{
         public override void Serialize(Serializer writer){
+			writer.PutInt32(GameId);
 			writer.PutByte(LocalId);
 			writer.PutInt32(MapId);
-			writer.PutInt32(RoomId);
 			writer.PutInt32(Seed);
 			writer.PutByte(UserCount);
 			writer.Put(UdpEnd);
         }
     
         public override void Deserialize(Deserializer reader){
+			GameId = reader.GetInt32();
 			LocalId = reader.GetByte();
 			MapId = reader.GetInt32();
-			RoomId = reader.GetInt32();
 			Seed = reader.GetInt32();
 			UserCount = reader.GetByte();
 			UdpEnd = reader.Get(ref this.UdpEnd);
@@ -389,10 +391,12 @@ namespace NetMsg.Common{
 
     public partial class Msg_G2L_OnGameFinished{
         public override void Serialize(Serializer writer){
+			writer.PutInt32(GameId);
 			writer.PutInt32(RoomId);
         }
     
         public override void Deserialize(Deserializer reader){
+			GameId = reader.GetInt32();
 			RoomId = reader.GetInt32();
         }
     }
@@ -529,6 +533,8 @@ namespace NetMsg.Common{
     public partial class Msg_L2C_StartGame{
         public override void Serialize(Serializer writer){
 			writer.PutString(GameHash);
+			writer.PutInt32(GameId);
+			writer.PutBoolean(IsReconnect);
 			writer.PutByte(Result);
 			writer.PutInt32(RoomId);
 			writer.Put(GameServerEnd);
@@ -536,6 +542,8 @@ namespace NetMsg.Common{
     
         public override void Deserialize(Deserializer reader){
 			GameHash = reader.GetString();
+			GameId = reader.GetInt32();
+			IsReconnect = reader.GetBoolean();
 			Result = reader.GetByte();
 			RoomId = reader.GetInt32();
 			GameServerEnd = reader.Get(ref this.GameServerEnd);
@@ -543,11 +551,12 @@ namespace NetMsg.Common{
     }
 
 
-    public partial class Msg_L2G_CreateRoom{
+    public partial class Msg_L2G_CreateGame{
         public override void Serialize(Serializer writer){
 			writer.PutString(GameHash);
 			writer.PutInt32(GameType);
 			writer.PutInt32(MapId);
+			writer.PutInt32(RoomId);
 			writer.PutArray(Players);
         }
     
@@ -555,6 +564,7 @@ namespace NetMsg.Common{
 			GameHash = reader.GetString();
 			GameType = reader.GetInt32();
 			MapId = reader.GetInt32();
+			RoomId = reader.GetInt32();
 			Players = reader.GetArray(this.Players);
         }
     }
@@ -562,13 +572,24 @@ namespace NetMsg.Common{
 
     public partial class Msg_L2G_UserLeave{
         public override void Serialize(Serializer writer){
-			writer.PutInt32(RoomId);
+			writer.PutInt32(GameId);
 			writer.PutInt64(UserId);
         }
     
         public override void Deserialize(Deserializer reader){
-			RoomId = reader.GetInt32();
+			GameId = reader.GetInt32();
 			UserId = reader.GetInt64();
+        }
+    }
+
+
+    public partial class Msg_L2G_UserReconnect{
+        public override void Serialize(Serializer writer){
+			writer.Put(PlayerInfo);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			PlayerInfo = reader.Get(ref this.PlayerInfo);
         }
     }
 

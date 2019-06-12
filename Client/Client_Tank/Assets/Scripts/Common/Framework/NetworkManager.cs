@@ -12,17 +12,17 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public class LoginHandler : BaseLoginHandler {
-
         public override void OnConnectedLoginServer(){
             Log("OnConnLogin ");
-        }     
+        }
+
         public override void OnLoginFailed(ELoginResult result){
             Log("Login failed reason " + result);
-            EventHelper.Trigger(EEvent.OnLoginFailed,result);
+            EventHelper.Trigger(EEvent.OnLoginFailed, result);
         }
 
         public override void OnConnLobby(RoomInfo[] roomInfos){
-            EventHelper.Trigger(EEvent.OnLoginResult,roomInfos);
+            EventHelper.Trigger(EEvent.OnLoginResult, roomInfos);
         }
 
         public override void OnRoomInfo(RoomInfo[] roomInfos){
@@ -46,9 +46,9 @@ namespace Lockstep.Game {
             }
         }
 
-        public override void OnGameStart(Msg_C2G_Hello msg, IPEndInfo tcpEnd){
+        public override void OnGameStart(Msg_C2G_Hello msg, IPEndInfo tcpEnd,bool isReconnect){
             Log("OnGameStart " + msg + " tcpEnd " + tcpEnd);
-            EventHelper.Trigger(EEvent.OnConnectToGameServer);
+            EventHelper.Trigger(EEvent.OnConnectToGameServer,isReconnect);
         }
 
         public override void OnPlayerJoinRoom(RoomPlayerInfo info){
@@ -72,14 +72,13 @@ namespace Lockstep.Game {
         }
 
         public override void OnTickPlayer(byte reason){
-            EventHelper.Trigger(EEvent.OnTickPlayer,reason);
+            EventHelper.Trigger(EEvent.OnTickPlayer, reason);
         }
+
         public override void OnRoomInfoUpdate(RoomInfo[] addInfo, int[] deleteInfos, RoomChangedInfo[] changedInfos){ }
     }
 
     public class GameMsgHandler : BaseRoomMsgHandler {
-
-
         public override void OnTcpHello(Msg_G2C_Hello msg){
             Log($"OnTcpHello msg:{msg} ");
             EventHelper.Trigger(EEvent.OnGameCreate, msg);
@@ -91,14 +90,15 @@ namespace Lockstep.Game {
         }
 
         public override void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }
-        
+
         public override void OnGameStartFailed(){
             Log($"OnGameStartFailed");
         }
-        
+
         public override void OnLoadingProgress(byte[] progresses){
             EventHelper.Trigger(EEvent.OnLoadingProgress, progresses);
         }
+
         public override void OnAllFinishedLoaded(short level){
             Log("OnAllFinishedLoaded " + level);
             EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, level);
@@ -107,8 +107,13 @@ namespace Lockstep.Game {
         public override void OnServerFrames(Msg_ServerFrames msg){
             EventHelper.Trigger(EEvent.OnServerFrame, msg);
         }
+
         public override void OnMissFrames(Msg_RepMissFrame msg){
-            EventHelper.Trigger(EEvent.OnServerMissFrame, msg); }
+            Log("OnMissFrames");
+            if (msg == null) return;
+            EventHelper.Trigger(EEvent.OnServerMissFrame, msg);
+        }
+
         public override void OnGameEvent(byte[] data){ }
     }
 
@@ -169,16 +174,38 @@ namespace Lockstep.Game {
             var _password = loginInfo.password;
             _loginMgr.Login(_account, _password);
         }
-
+        public void OnEvent_OnConnectToGameServer(object param){
+            var isReconnect = (bool) param;
+            _constStateService.IsReconnecting = isReconnect;
+        }
         public void OnEvent_LoadLevelProgress(object param){
-            var progress = (float) param;
-            _roomMsgMgr.OnLoadLevelProgress(progress);
+            _roomMsgMgr.OnLoadLevelProgress((float) param);
+            CheckLoadingProgress();
         }
 
-        public void OnEvent_LoadLevelDone(object param){
-            _roomMsgMgr.OnLoadLevelProgress(1);
+        public void OnEvent_PursueFrameProcess(object param){
+            _roomMsgMgr.FramePursueRate = (float) param;
+            CheckLoadingProgress();
         }
-        public override void DoDestroy(){ 
+
+        public void OnEvent_PursueFrameDone(object param){
+            _roomMsgMgr.FramePursueRate = 1;
+            CheckLoadingProgress();
+        }
+
+        void CheckLoadingProgress(){
+            if (_roomMsgMgr.IsReconnecting) {
+                var curProgress = _roomMsgMgr.CurProgress / 100.0f;
+                EventHelper.Trigger(EEvent.ReconnectLoadProgress, curProgress);
+                if (_roomMsgMgr.CurProgress >= 100) {
+                    _constStateService.IsReconnecting = false;
+                    _roomMsgMgr.IsReconnecting = false;
+                    EventHelper.Trigger(EEvent.ReconnectLoadDone);
+                }
+            }
+        }
+
+        public override void DoDestroy(){
             _loginMgr?.DoDestroy();
             _roomMsgMgr?.DoDestroy();
             _loginMgr = null;
@@ -189,17 +216,17 @@ namespace Lockstep.Game {
         private object reconnectedInfo;
 
 
-       // public void OnEvent_LoadLevelDone(object param){
-       //     var level = (int) param;
-       //     _constStateService.curLevel = level;
-       //     Debug.Log($"OnEvent_LoadLevelDone isReconnected {IsReconnected}  isPlaying:{Application.isPlaying} ");
-       //     if (IsReconnected || _constStateService.IsVideoMode) {
-       //         EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
-       //     }
-       //     else {
-       //         // SendMsgRoom(EMsgSC.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
-       //     }
-       // }
+        // public void OnEvent_LoadLevelDone(object param){
+        //     var level = (int) param;
+        //     _constStateService.curLevel = level;
+        //     Debug.Log($"OnEvent_LoadLevelDone isReconnected {IsReconnected}  isPlaying:{Application.isPlaying} ");
+        //     if (IsReconnected || _constStateService.IsVideoMode) {
+        //         EventHelper.Trigger(EEvent.OnAllPlayerFinishedLoad, null);
+        //     }
+        //     else {
+        //         // SendMsgRoom(EMsgSC.C2S_LoadingProgress, new Msg_LoadingProgress() {progress = 100});
+        //     }
+        // }
 
         #region Login Handler
 

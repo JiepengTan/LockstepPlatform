@@ -134,6 +134,7 @@ namespace Lockstep.Game {
                 Debug.Assert(_constStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
+            EventHelper.Trigger(EEvent.LoadLevelProgress,1f);
             EventHelper.Trigger(EEvent.LoadLevelDone, level);
         }
 

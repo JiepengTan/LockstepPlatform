@@ -101,15 +101,17 @@ namespace Lockstep.Server.Lobby {
 
             if (room != null) {
                 if (room.IsPlaying && !isForce) { //游戏中的玩家需要考虑断线重连
-                    _peerId2Player.Remove(user.Peer.Id);
-                    user.Peer.CleanExtension();
-                    user.Peer?.Disconnect("Remove");
-                    user.Peer = null;
+                    if (user.Peer != null) {
+                        _peerId2Player.Remove(user.Peer.Id);
+                        user.Peer.CleanExtension();
+                        user.Peer?.Disconnect("Remove");
+                        user.Peer = null;
+                    }
                     return;
                 }
 
                 room.ServerPeer?.SendMessage((short) EMsgLS.L2G_UserLeave, new Msg_L2G_UserLeave() {
-                    RoomId = room.RoomId,
+                    GameId = room.RoomId,
                     UserId = user.UserId
                 });
                 room.RemoveUser(user);
@@ -120,10 +122,12 @@ namespace Lockstep.Server.Lobby {
 
             user.Room = null;
             _uid2Player.Remove(user.UserId);
-            _peerId2Player.Remove(user.Peer.Id);
-            user.Peer.CleanExtension();
-            user.Peer?.Disconnect("Tick out");
-            user.Peer = null;
+            if (user.Peer != null) {
+                _peerId2Player.Remove(user.Peer.Id);
+                user.Peer.CleanExtension();
+                user.Peer?.Disconnect("Tick out");
+                user.Peer = null;
+            }
         }
 
 
@@ -221,7 +225,6 @@ namespace Lockstep.Server.Lobby {
             }
         }
 
-        private void OnPlayerReconnect(User user){ }
 
         private IEnumerator LoginAndTickPlayer(IIncommingMessage reader, User oldPlayer, Msg_I2L_UserLogin msg){
             Debug.Log("before WaitRemovePlayer " + Time.timeSinceLevelLoad);
@@ -231,12 +234,12 @@ namespace Lockstep.Server.Lobby {
             var room = oldPlayer.Room;
             if (room != null && room.IsPlaying && room.GameType == msg.GameType) {
                 //断线重连
-                Log("断线重连 " + oldPlayer);
+                Log("Reconnect " + oldPlayer);
                 oldPlayer.LoginHash = msg.LoginHash;
                 oldPlayer.GameType = msg.GameType;
             }
             else {
-                Log("顶号 " + oldPlayer);
+                Log("Someone is using the account: Tick" + oldPlayer);
                 AddPlayer(msg.UserId, msg.GameType, msg.Account, msg.Account, msg.LoginHash);
             }
 
@@ -262,7 +265,7 @@ namespace Lockstep.Server.Lobby {
                     //断线重连
                     if (isReconnected) {
                         Log("断线重连 " + user);
-                        room.ServerPeer.SendMessage((short) EMsgSC.L2G_UserReconnect, new Msg_L2G_UserReconnect() {
+                        room.ServerPeer.SendMessage((short) EMsgLS.L2G_UserReconnect, new Msg_L2G_UserReconnect() {
                             PlayerInfo = new GamePlayerInfo() {
                                 UserId = user.UserId,
                                 Account = user.Account,
@@ -284,6 +287,7 @@ namespace Lockstep.Server.Lobby {
                                         Port = roomIpInfo.Port
                                     },
                                     GameHash = room.GameHash,
+                                    GameId = room.GameId,
                                     RoomId = room.RoomId,
                                     IsReconnect = true
                                 });
@@ -457,10 +461,11 @@ namespace Lockstep.Server.Lobby {
 
             //TODO 使用平衡策略去获取服务器
             var server = _allGameServers[LRandom.Next(_allGameServers.Count)];
-            server?.SendMessage((short) EMsgLS.L2G_CreateRoom, new Msg_L2G_CreateRoom() {
+            server?.SendMessage((short) EMsgLS.L2G_CreateGame, new Msg_L2G_CreateGame() {
                     GameType = user.GameType,
                     Players = playerInfos,
                     MapId = room.MapId,
+                    RoomId = room.RoomId,
                     GameHash = gameHash
                 }, (status, response) => {
                     if (status != EResponseStatus.Failed) {
@@ -474,9 +479,11 @@ namespace Lockstep.Server.Lobby {
                                 Port = ipInfo.Port
                             },
                             GameHash = gameHash,
-                            RoomId = response.AsInt(),
+                            RoomId = room.RoomId,
+                            GameId = response.AsInt(),
                             IsReconnect = false
                         };
+                        Log(" Msg_L2C_StartGame" + retMsg);
                         foreach (var roomUser in room.Users) {
                             roomUser.Peer?.SendMessage((short) EMsgSC.L2C_StartGame, retMsg);
                         }
@@ -489,7 +496,7 @@ namespace Lockstep.Server.Lobby {
             var msg = reader.Parse<Msg_G2L_OnGameFinished>();
             var roomId = msg.RoomId;
             if (_roomId2Room.TryGetValue(roomId, out var room)) {
-                Debug.Log("OnGameFinished " + room.RoomId);
+                Debug.Log("OnGameFinished " + msg);
                 foreach (var user in room.Users.ToArray()) {
                     room.RemoveUser(user);
                     user.Room = null;

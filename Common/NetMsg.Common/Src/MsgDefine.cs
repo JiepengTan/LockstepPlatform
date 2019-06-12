@@ -168,6 +168,7 @@ namespace NetMsg.Common{
         public byte Result;
         public IPEndInfo GameServerEnd;
         public string GameHash;
+        public int GameId;
         public int RoomId;
         public bool IsReconnect;
     }
@@ -176,18 +177,20 @@ namespace NetMsg.Common{
     public partial class Msg_L2G_UserReconnect : BaseFormater {
         public GamePlayerInfo PlayerInfo;
     }   
-    public partial class Msg_L2G_CreateRoom : BaseFormater {
+    public partial class Msg_L2G_CreateGame : BaseFormater {
         public int GameType;
         public int MapId;
+        public int RoomId;
         public GamePlayerInfo[] Players;
         public string GameHash;
     }   
     public partial class Msg_L2G_UserLeave : BaseFormater {
         public long UserId;
-        public int RoomId;
+        public int GameId;
     }
     
     public partial class Msg_G2L_OnGameFinished : BaseFormater {
+        public int GameId;
         public int RoomId;
     }
 //GC
@@ -195,7 +198,7 @@ namespace NetMsg.Common{
         public GamePlayerInfo UserInfo;
         public int GameType;
         public string GameHash;
-        public int RoomId;
+        public int GameId;
         public bool IsReconnect;
     }
     public partial class Msg_C2G_Hello : BaseFormater {
@@ -206,7 +209,7 @@ namespace NetMsg.Common{
         public byte LocalId;
         public byte UserCount;
         public int MapId;
-        public int RoomId;
+        public int GameId;
         public int Seed;
         public IPEndInfo UdpEnd;
     }

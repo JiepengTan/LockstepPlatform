@@ -76,7 +76,7 @@ namespace NetMsg.Server {
         I2L_UserLogin,
         L2G_UserLeave,
         L2G_UserReconnect,
-        L2G_CreateRoom,
+        L2G_CreateGame,
         G2L_RegisterServer,
         G2L_OnStartGame,
         G2L_OnGameFinished,

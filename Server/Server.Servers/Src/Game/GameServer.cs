@@ -19,24 +19,24 @@ namespace Lockstep.Server.Game {
         private NetClient<EMsgDS> _netClientDS;
         protected NetClient<EMsgLS> _netClientLG; //其他类型的Master 用于提供服务
 
-        private Dictionary<int, BaseRoom> _roomId2Rooms = new Dictionary<int, BaseRoom>();
+        private Dictionary<int, BaseGame> _gameId2Games = new Dictionary<int, BaseGame>();
 
         private Dictionary<long, Player> _uid2Players = new Dictionary<long, Player>();
 
-        private int CurRoomId;
+        private int CurGameId;
 
-        private BaseRoom[] _cachedBaseRooms;
+        private BaseGame[] _cachedBaseGames;
 
         public IPEndInfo TcpEnd { get; set; }
         public IPEndInfo UdpEnd { get; set; }
 
-        private BaseRoom[] CachedBaseRooms {
+        private BaseGame[] CachedBaseGames {
             get {
-                if (_cachedBaseRooms == null) {
-                    _cachedBaseRooms = _roomId2Rooms.Values.ToArray();
+                if (_cachedBaseGames == null) {
+                    _cachedBaseGames = _gameId2Games.Values.ToArray();
                 }
 
-                return _cachedBaseRooms;
+                return _cachedBaseGames;
             }
         }
 
@@ -49,35 +49,37 @@ namespace Lockstep.Server.Game {
 
         public override void DoUpdate(int deltaTime){
             base.DoUpdate(deltaTime);
-            var rooms = CachedBaseRooms;
-            foreach (var room in rooms) {
-                room.DoUpdate(deltaTime);
+            var games = CachedBaseGames;
+            foreach (var game in games) {
+                game.DoUpdate(deltaTime);
             }
         }
 
         public void TickOut(Player player, int reason){ }
 
-        public void OnGameEmpty(IRoom game){
+        public void OnGameEmpty(IGame game){
             RemoveGame(game);
         }
 
-        public void OnGameFinished(IRoom game){
-            Log($" OnGameFinished " + game.RoomId);
+        public void OnGameFinished(IGame game){
+            Log($" OnGameFinished " + game.GameId);
             RemoveGame(game);
         }
 
-        void RemoveGame(IRoom game){
-            if (_roomId2Rooms.TryGetValue(game.RoomId, out var room)) {
+        void RemoveGame(IGame game){
+            if (_gameId2Games.TryGetValue(game.GameId, out var tGame)) {
                 _netClientLG.SendMessage(EMsgLS.G2L_OnGameFinished, new Msg_G2L_OnGameFinished() {
-                    RoomId = game.RoomId
+                    GameId = tGame.GameId,
+                    RoomId =tGame.RoomId
                 });
-                room.IsFinished = true;
-                foreach (var uid in game.UserIds) {
+                tGame.IsFinished = true;
+                foreach (var uid in tGame.UserIds) {
                     _uid2Players.Remove(uid);
                 }
 
-                _roomId2Rooms.Remove(game.RoomId);
-                _cachedBaseRooms = null;
+                _gameId2Games.Remove(tGame.GameId);
+                _cachedBaseGames = null;
+                tGame.DoDestroy();
             }
         }
 
@@ -90,7 +92,7 @@ namespace Lockstep.Server.Game {
             if (_peerId2Player.TryGetValue(peer.Id, out var player)) {
                 Log("OnPlayerDisconnected  " + player.Account);
                 _peerId2Player.Remove(peer.Id);
-                player.Room.OnPlayerDisconnect(player);
+                player.Game.OnPlayerDisconnect(player);
             }
         }
 
@@ -138,8 +140,8 @@ namespace Lockstep.Server.Game {
         protected void L2G_UserLeave(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2G_UserLeave>();
             Log("L2G_UserLeave " + msg);
-            if (_roomId2Rooms.TryGetValue(msg.RoomId, out var room)) {
-                room.OnPlayerLeave(msg.UserId);
+            if (_gameId2Games.TryGetValue(msg.GameId, out var game)) {
+                game.OnPlayerLeave(msg.UserId);
             }
         }
 
@@ -147,9 +149,9 @@ namespace Lockstep.Server.Game {
             var msg = reader.Parse<Msg_L2G_UserReconnect>();
             Log("L2G_UserReconnect " + msg);
             if (_uid2Players.TryGetValue(msg.PlayerInfo.UserId, out var player)) {
-                var room = player.Room;
-                if (room != null) {
-                    room.OnPlayerReconnect(msg.PlayerInfo);
+                var game = player.Game;
+                if (game != null) {
+                    game.OnPlayerReconnect(msg.PlayerInfo);
                     reader.Respond(1, EResponseStatus.Success);
                     return;
                 }
@@ -158,23 +160,24 @@ namespace Lockstep.Server.Game {
             reader.Respond(0, EResponseStatus.Failed);
         }
 
-        protected void L2G_CreateRoom(IIncommingMessage reader){
-            var msg = reader.Parse<Msg_L2G_CreateRoom>();
-            var room = CreateGame(msg.GameType) as BaseRoom;
-            if (room == null) {
+        protected void L2G_CreateGame(IIncommingMessage reader){
+            var msg = reader.Parse<Msg_L2G_CreateGame>();
+            var game = CreateGame(msg.GameType) as BaseGame;
+            if (game == null) {
                 reader.Respond(-1, EResponseStatus.Failed);
                 return;
             }
 
-            room.TcpEnd = TcpEnd;
-            room.UdpEnd = UdpEnd;
-            Debug.Log("L2G_CreateRoom" + msg);
-            var roomId = CurRoomId++;
-            _roomId2Rooms.Add(roomId, room);
-            _cachedBaseRooms = null;
+            game.TcpEnd = TcpEnd;
+            game.UdpEnd = UdpEnd;
+            game.RoomId = msg.RoomId;
+            Debug.Log("L2G_CreateGame" + msg);
+            var gameId = CurGameId++;
+            _gameId2Games.Add(gameId, game);
+            _cachedBaseGames = null;
 
-            room.DoStart(this, roomId, msg.GameType, msg.MapId, msg.Players, msg.GameHash);
-            var players = room.Players;
+            game.DoStart(this, gameId, msg.GameType, msg.MapId, msg.Players, msg.GameHash);
+            var players = game.Players;
             foreach (var player in players) {
                 _uid2Players[player.UserId] = player;
                 //get game data from database
@@ -185,8 +188,8 @@ namespace Lockstep.Server.Game {
                         Debug.Log("Msg_D2S_RepGameData" + rMsg);
                         if (_uid2Players.TryGetValue(player.UserId, out var user)) {
                             user.GameData = rMsg.data;
-                            if (user.Room != null && user.Room.RoomId == roomId) { //防止玩家重新进入房间
-                                user.Room.OnRecvPlayerGameData(user);
+                            if (user.Game != null && user.Game.GameId == gameId) { //防止玩家重新进入房间
+                                user.Game.OnRecvPlayerGameData(user);
                             }
                         }
                     }
@@ -195,7 +198,7 @@ namespace Lockstep.Server.Game {
 
 
             //Load dlls
-            reader.Respond(roomId, EResponseStatus.Success);
+            reader.Respond(gameId, EResponseStatus.Success);
         }
 
         private Dictionary<int, Player> _peerId2Player = new Dictionary<int, Player>();
@@ -206,30 +209,30 @@ namespace Lockstep.Server.Game {
             var userInfo = msg.UserInfo;
             if (userInfo == null)
                 return;
-            var room = _roomId2Rooms.GetRefVal(msg.RoomId);
-            if (room != null
-                && room.GameType == msg.GameType
-                && room.GameHash == msg.GameHash
+            var game = _gameId2Games.GetRefVal(msg.GameId);
+            if (game != null
+                && game.GameType == msg.GameType
+                && game.GameHash == msg.GameHash
             ) {
-                var localId = room.GetUserLocalId(userInfo.UserId);
+                var localId = game.GetUserLocalId(userInfo.UserId);
                 if (localId != -1) {
-                    var player = room.Players[localId];
+                    var player = game.Players[localId];
                     if (player.LoginHash == userInfo.LoginHash) {
                         player.PeerTcp = reader.Peer;
                         _peerId2Player[reader.Peer.Id] = player;
                         reader.Peer.AddExtension(player);
                         reader.Respond(EMsgSC.G2C_Hello, new Msg_G2C_Hello() {
                             LocalId = (byte) localId,
-                            UserCount = (byte) room.MaxPlayerCount,
-                            MapId = room.MapId,
-                            RoomId = room.RoomId,
-                            Seed = room.Seed,
+                            UserCount = (byte) game.MaxPlayerCount,
+                            MapId = game.MapId,
+                            GameId = game.GameId,
+                            Seed = game.Seed,
                             UdpEnd = new IPEndInfo() {
                                 Ip = this.Ip,
                                 Port = _serverConfig.udpPort
                             }
                         });
-                        room.OnPlayerConnect(player);
+                        game.OnPlayerConnect(player);
                         return;
                     }
                 }
@@ -245,19 +248,19 @@ namespace Lockstep.Server.Game {
             var userInfo = msg.UserInfo;
             if (userInfo == null)
                 return;
-            var room = _roomId2Rooms.GetRefVal(msg.RoomId);
-            if (room != null
-                && room.GameType == msg.GameType
-                && room.GameHash == msg.GameHash
+            var game = _gameId2Games.GetRefVal(msg.GameId);
+            if (game != null
+                && game.GameType == msg.GameType
+                && game.GameHash == msg.GameHash
             ) {
-                var localId = room.GetUserLocalId(userInfo.UserId);
+                var localId = game.GetUserLocalId(userInfo.UserId);
                 if (localId != -1) {
-                    var player = room.Players[localId];
+                    var player = game.Players[localId];
                     if (player.LoginHash == userInfo.LoginHash) {
                         player.PeerUdp = reader.Peer;
                         reader.Peer.AddExtension(player);
                         reader.Respond(EMsgSC.G2C_UdpHello, new Msg_G2C_Hello() {
-                            MapId = room.MapId,
+                            MapId = game.MapId,
                             LocalId = (byte) localId
                         });
                     }
@@ -275,7 +278,7 @@ namespace Lockstep.Server.Game {
 
             var deserializer = reader.GetData();
             if (deserializer == null) return;
-            player.Room.OnRecvMsg(player, deserializer);
+            player.Game.OnRecvMsg(player, deserializer);
         }
 
         protected void C2G_TcpMessage(IIncommingMessage reader){
@@ -288,25 +291,25 @@ namespace Lockstep.Server.Game {
 
             var deserializer = reader.GetData();
             if (deserializer == null) return;
-            player.Room.OnRecvMsg(player, deserializer);
+            player.Game.OnRecvMsg(player, deserializer);
         }
 
-        private delegate IRoom FuncCreateRoom();
+        private delegate IGame FuncCreateGame();
 
-        private Dictionary<int, FuncCreateRoom> _roomFactoryFuncs = new Dictionary<int, FuncCreateRoom>();
+        private Dictionary<int, FuncCreateGame> _gameFactoryFuncs = new Dictionary<int, FuncCreateGame>();
 
-        string RoomType2DllPath(int type){
+        string GameType2DllPath(int type){
             return "Game.Tank" + ".dll"; //TODO ReadFromConfig
         }
 
         /// Create From Dll by reflect 
-        private IRoom CreateGame(int type){
+        private IGame CreateGame(int type){
             //TODO Pool
-            if (_roomFactoryFuncs.TryGetValue(type, out FuncCreateRoom _func)) {
+            if (_gameFactoryFuncs.TryGetValue(type, out FuncCreateGame _func)) {
                 return _func?.Invoke();
             }
 
-            var path = RoomType2DllPath(type);
+            var path = GameType2DllPath(type);
             if (path == null) {
                 return null;
             }
@@ -315,29 +318,29 @@ namespace Lockstep.Server.Game {
             Debug.Log("Load dll " + dllPath);
             if (!File.Exists(dllPath)) {
                 Debug.LogError("Load dll failed  " + dllPath);
-                _roomFactoryFuncs[type] = null;
+                _gameFactoryFuncs[type] = null;
                 return null;
             }
 
             var assembly = Assembly.LoadFrom(dllPath);
             var types = assembly.GetTypes().Where(
-                t => t.IsSubclassOf(typeof(BaseRoom))
+                t => t.IsSubclassOf(typeof(BaseGame))
             ).ToArray();
             if (types.Length != 1) {
-                Debug.LogError("dll do not have type of IRoom :" + dllPath);
-                _roomFactoryFuncs[type] = null;
+                Debug.LogError("dll do not have type of IGame :" + dllPath);
+                _gameFactoryFuncs[type] = null;
                 return null;
             }
 
-            FuncCreateRoom factory = () => { return (IRoom) System.Activator.CreateInstance(types[0], true); };
-            _roomFactoryFuncs[type] = factory;
-            var room = factory();
-            if (room == null) {
+            FuncCreateGame factory = () => { return (IGame) System.Activator.CreateInstance(types[0], true); };
+            _gameFactoryFuncs[type] = factory;
+            var game = factory();
+            if (game == null) {
                 Debug.LogError($"Can not load Game Dll type = {type}");
                 return null;
             }
 
-            return room;
+            return game;
         }
     }
 }

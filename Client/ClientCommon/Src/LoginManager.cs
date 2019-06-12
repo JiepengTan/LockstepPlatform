@@ -22,6 +22,7 @@ namespace Lockstep.Client {
         protected int _curMapId;
         protected byte _localId;
         protected int _roomId;
+        protected int _gameId;
         public bool IsReconnect;
 
 
@@ -291,6 +292,9 @@ namespace Lockstep.Client {
         protected void L2C_JoinRoom(IIncommingMessage reader){
             var msg = reader.Parse<Msg_L2C_JoinRoom>();
             var userId = msg.PlayerInfo.UserId;
+            if (_playerInfos == null) {
+                _playerInfos = new List<RoomPlayerInfo>();
+            }
             var idx = _playerInfos.FindIndex((item) => { return item.UserId == userId; });
             if (idx == -1) {
                 _playerInfos.Add(msg.PlayerInfo);
@@ -313,11 +317,13 @@ namespace Lockstep.Client {
             _gameTcpEnd = msg.GameServerEnd;
             _gameHash = msg.GameHash;
             _roomId = msg.RoomId;
+            _gameId = msg.GameId;
             IsReconnect = msg.IsReconnect;
+            
             var rmsg = new Msg_C2G_Hello() {
                 Hello = new MessageHello() {
                     GameHash = _gameHash,
-                    RoomId = _roomId,
+                    GameId = _gameId,
                     GameType = _gameType,
                     IsReconnect = IsReconnect,
                     UserInfo = new GamePlayerInfo() {
@@ -327,7 +333,7 @@ namespace Lockstep.Client {
                     }
                 }
             };
-            _loginHandler.OnGameStart(rmsg, _gameTcpEnd);
+            _loginHandler.OnGameStart(rmsg, _gameTcpEnd,IsReconnect);
             _roomMsgMgr.ConnectToGameServer(rmsg, _gameTcpEnd, IsReconnect);
         }
     }

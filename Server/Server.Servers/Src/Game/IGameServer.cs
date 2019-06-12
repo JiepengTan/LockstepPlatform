@@ -4,7 +4,7 @@ namespace Lockstep.Server.Game {
     public interface IGameServer  {
        // Player GetPlayer(long playerId);
 
-       void OnGameEmpty(IRoom room);
+       void OnGameEmpty(IGame game);
 
         //players
        void TickOut(Player player, int reason);

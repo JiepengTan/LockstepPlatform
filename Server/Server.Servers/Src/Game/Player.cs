@@ -11,9 +11,10 @@ namespace Lockstep.Server.Game {
         public byte LocalId;
         public IPeer PeerTcp;
         public IPeer PeerUdp;
-        public BaseRoom Room;
+        public BaseGame Game;
         public GameData GameData;
-        public int RoomId => Room?.RoomId ?? -1;
+        public int GameId => Game?.GameId ?? -1;
+        public int RoomId => Game?.RoomId ?? -1;
 
         public void OnLeave(){
             PeerTcp = null;

@@ -22,6 +22,7 @@ namespace Lockstep.Game {
         [ShowNativeProperty] public int playerInitLifeCount { get; set; }
 
 
+        [ShowNativeProperty] public bool IsReconnecting { get; set; }
         [ShowNativeProperty] public   bool isPursueFrame { get;set; }
         //map info
         [ShowNativeProperty] public Vector2Int mapMin { get; set; }

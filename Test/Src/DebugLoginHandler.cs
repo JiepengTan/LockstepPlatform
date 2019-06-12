@@ -27,13 +27,17 @@ namespace Test {
             }
         }
 
+        public override void OnPlayerJoinRoom(RoomPlayerInfo info){
+            Log("OnPlayerJoinRoom  " + info);
+            Log("SomeOne joined so: StartGame  ");
+            _loginMgr.StartGame();
+        }
 
         public override void OnCreateRoom(RoomInfo roomInfo,RoomPlayerInfo[] playerInfos){
             if (roomInfo == null)
                 Log("CreateRoom failed reason ");
             else {
                 Log("CreateRoom " + roomInfo.ToString());
-                _loginMgr.StartGame();
             }
         }
 
@@ -43,8 +47,5 @@ namespace Test {
             }
         }
 
-        public override void OnGameStart(int mapId, byte localId){
-            Log("mapId" + mapId + " localId" + localId);
-        }
     }
 }

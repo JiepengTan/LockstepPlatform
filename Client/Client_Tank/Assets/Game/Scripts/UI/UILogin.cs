@@ -121,6 +121,10 @@ namespace Lockstep.Game.UI
                 OpenWindow(UIDefine.UIRoomList);
                 Close();
             }
+        }  
+        void OnEvent_OnConnectToGameServer(object param){
+            OpenWindow(UIDefine.UILoading);
+            Close();
         }
 
         public virtual void OnPasswordForgotClick()

@@ -26,10 +26,16 @@ namespace Lockstep.Core {
         OnGameCreate,//连接GameServer 成功
         SimulationInit,//初始化Simulation
         LoadLevelProgress,//开始加载地图 本地load progress
-        OnLoadingProgress,//Server notify load progress
         LoadLevelDone,//地图加载完成
+        OnLoadingProgress,//Server notify load progress
         OnAllPlayerFinishedLoad,//Server notify all user finished load
         SimulationStart,//client start game lifecycle
+        
+        PursueFrameProcess,//追帧进度
+        PursueFrameDone,//追帧进度
+        
+        ReconnectLoadProgress,//重连进度
+        ReconnectLoadDone,//重连完成
         
         OnServerMissFrame,
         OnServerFrame,

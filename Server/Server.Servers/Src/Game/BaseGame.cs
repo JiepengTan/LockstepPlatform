@@ -27,10 +27,10 @@ namespace Lockstep.Server.Game {
     }
 
 
-    public interface IRoom : IRecyclable {
+    public interface IGame : IRecyclable {
         Msg_G2C_GameStartInfo GameStartInfo { get; set; }
         int GameType { get; }
-        int RoomId { get; }
+        int GameId { get; }
         int CurPlayerCount { get; }
 
         int MaxPlayerCount { get; }
@@ -38,7 +38,7 @@ namespace Lockstep.Server.Game {
         long[] UserIds { get; }
 
         //room life cycle
-        void DoStart(IGameServer server, int roomId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
+        void DoStart(IGameServer server, int gameId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
             string gameHash);
 
         void DoUpdate(int deltaTime);
@@ -63,7 +63,7 @@ namespace Lockstep.Server.Game {
         void OnRecvMsg(Player player, Deserializer reader);
     }
 
-    public class BaseRoom : BaseLogger, IRoom, IRecyclable {
+    public class BaseGame : BaseLogger, IGame, IRecyclable {
         public int MapId { get; set; }
         public string GameHash { get; set; }
 
@@ -72,7 +72,10 @@ namespace Lockstep.Server.Game {
 
         public EGameState State = EGameState.Idle;
         public int GameType { get; set; }
+        public int GameId { get; set; }
         public int RoomId { get; set; }
+
+        public long[] UserIds => _userId2LocalId.Keys.ToArray();
 
         public int CurPlayerCount {
             get {
@@ -149,7 +152,7 @@ namespace Lockstep.Server.Game {
                 //all user data ready notify game start
                 SetStartInfo(new Msg_G2C_GameStartInfo() {
                     MapId = MapId,
-                    RoomId = RoomId,
+                    RoomId = GameId,
                     Seed = Seed,
                     UserCount = MaxPlayerCount,
                     TcpEnd = TcpEnd,
@@ -172,7 +175,7 @@ namespace Lockstep.Server.Game {
 
         #region  life cycle
 
-        public void DoStart(IGameServer server, int roomId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
+        public void DoStart(IGameServer server, int gameId, int gameType, int mapId, GamePlayerInfo[] playerInfos,
             string gameHash){
             State = EGameState.Loading;
             _gameServer = server;
@@ -181,13 +184,13 @@ namespace Lockstep.Server.Game {
             timeSinceLoaded = 0;
             firstFrameTimeStamp = 0;
             RegisterMsgHandlers();
-            Debug = new DebugInstance("Room" + RoomId + ": ");
+            Debug = new DebugInstance("Room" + GameId + ": ");
             var count = playerInfos.Length;
             GameType = gameType;
             GameHash = gameHash;
-            RoomId = roomId;
+            GameId = gameId;
             MaxPlayerCount = count;
-            Name = roomId.ToString();
+            Name = gameId.ToString();
             MapId = mapId;
             Players = new Player[count];
             for (byte i = 0; i < count; i++) {
@@ -210,7 +213,7 @@ namespace Lockstep.Server.Game {
         }
 
         public void DoDestroy(){
-            Log($"Room {RoomId} Destroy");
+            Log($"Room {GameId} Destroy");
             DumpGameFrames();
         }
 
@@ -220,7 +223,7 @@ namespace Lockstep.Server.Game {
             player.Account = playerInfo.Account;
             player.LoginHash = playerInfo.LoginHash;
             player.LocalId = localId;
-            player.Room = this;
+            player.Game = this;
             return player;
         }
 
@@ -247,7 +250,7 @@ namespace Lockstep.Server.Game {
                     for (int i = 0; i < inputs.Length; i++) {
                         if (inputs[i] == null) {
                             if (Players[i] != null) {
-                                Log($"Overtime wait remove localId = {i}");
+                                //Log($"Overtime wait remove localId = {i}");
                             }
 
                             allNeedWaitInputPlayerIds.Remove((byte) i);
@@ -305,7 +308,7 @@ namespace Lockstep.Server.Game {
             msg.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                "../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + GameType + "_" + RoomId +
+                "../Record/" + System.DateTime.Now.ToString("yyyyMMddHHmmss") + "_" + GameType + "_" + GameId +
                 ".record");
             var dir = Path.GetDirectoryName(path);
             if (!Directory.Exists(dir)) {
@@ -464,7 +467,7 @@ namespace Lockstep.Server.Game {
         }
 
         public void OnPlayerDisconnect(Player player){
-            Log($"Player{player.UserId} OnDisconnect room {RoomId}");
+            Log($"Player{player.UserId} OnDisconnect room {GameId}");
             RemovePlayer(player);
         }
 
@@ -480,17 +483,23 @@ namespace Lockstep.Server.Game {
         public void OnPlayerLeave(Player player){
             RemovePlayer(player);
             _userId2LocalId.Remove(player.UserId); //同时还需要彻底的移除记录 避免玩家重连
-            Log($"Player{player.UserId} OnPlayerLeave room {RoomId}");
+            Log($"Player{player.UserId} OnPlayerLeave room {GameId}");
         }
 
         void RemovePlayer(Player player){
             if (Players[player.LocalId] == null) return;
             Players[player.LocalId] = null;
-            player.PeerTcp.CleanExtension();
-            player.PeerTcp.Disconnect("");
+            var peer = player.PeerTcp;
+            if (peer != null) {
+                peer.CleanExtension();
+                peer.Disconnect("");
+            }
             player.PeerTcp = null;
-            player.PeerUdp.CleanExtension();
-            player.PeerUdp.Disconnect("");
+            peer = player.PeerUdp;
+            if (peer != null) {
+                peer.CleanExtension();
+                peer.Disconnect("");
+            }
             player.PeerUdp = null;
 
             var curCount = CurPlayerCount;
@@ -524,7 +533,7 @@ namespace Lockstep.Server.Game {
             _userId2LocalId.Clear();
             _hashCodes.Clear();
             Tick = 0;
-            RoomId = -1;
+            GameId = -1;
             if (Players == null) return;
             foreach (var player in Players) {
                 Pool.Return(player);
@@ -634,10 +643,10 @@ namespace Lockstep.Server.Game {
             var reqMsg = data as Msg_ReqMissFrame;
             var nextCheckTick = reqMsg.StartTick;
             Log($"OnNet_ReqMissFrame nextCheckTick id:{player.LocalId}:{nextCheckTick}");
-            var msg = new Msg_RepMissFrame();
             int count = Math.Min(Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
                 MaxRepMissFrameCountPerPack);
             if (count <= 0) return;
+            var msg = new Msg_RepMissFrame();
             var frames = new ServerFrame[count];
             for (int i = 0; i < count; i++) {
                 frames[i] = allHistoryFrames[nextCheckTick + i];

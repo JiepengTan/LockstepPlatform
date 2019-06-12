@@ -85,7 +85,7 @@ namespace NetMsg.Common {
         L2C_StartGame,
 
         //LG
-        L2G_CreateRoom,
+        L2G_CreateGame,
         L2G_UserReconnect,
 
         //GC Tcp

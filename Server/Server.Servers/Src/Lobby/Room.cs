@@ -60,6 +60,7 @@ namespace Server.Servers.Lobby {
             public User Owner;
             private RoomPlayerInfo[] _roomPlayerInfos;
 
+            public int GameId;
             public IPeer ServerPeer;
             public RoomPlayerInfo[] RoomPlayerInfos {
                 get {
@@ -96,17 +97,6 @@ namespace Server.Servers.Lobby {
             public void BorderMessage(IMessage msg){
                 foreach (var user in Users) {
                     user.SendMessage(msg);
-                }
-            }
-
-            public void GetReconnectInfo(){
-                ServerPeer?.SendMessage((short) EMsgLS.L2G_UserReconnect, new Msg_L2G_CreateRoom() {
-                    GameType = user.GameType,
-                    Players = playerInfos,
-                    MapId = room.MapId,
-                    GameHash = gameHash
-                }, (status, response) => {
-                    
                 }
             }
 

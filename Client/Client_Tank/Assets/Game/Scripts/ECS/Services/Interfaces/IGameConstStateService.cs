@@ -15,6 +15,8 @@ namespace Lockstep.Game {
         int playerInitLifeCount { get; }
 
 
+        /// 是否正在重连
+        bool IsReconnecting { get; set; }
         /// 是否正在追帧
         bool isPursueFrame { get; set; }
 

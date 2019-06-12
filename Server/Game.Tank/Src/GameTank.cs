@@ -9,7 +9,7 @@ using Lockstep.Server.Common;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Game.Tank {
-   public class RoomTank : BaseRoom {
+   public class GameTank : BaseGame {
       
    }
 }

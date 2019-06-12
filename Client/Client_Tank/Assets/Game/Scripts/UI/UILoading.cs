@@ -20,4 +20,14 @@ public class UILoading : UIBaseWindow {
         OpenWindow(UIDefine.UIGameStatus);
         Close();
     }
+    void OnEvent_ReconnectLoadProgress(object param){
+        var progress = (float)param ;
+        sliderProgress.value = progress;
+        textInfo.text = $"Loading {sliderProgress.value * 100}%";
+    }
+    void OnEvent_ReconnectLoadDone(object param){
+        sliderProgress.value = 1;
+        OpenWindow(UIDefine.UIGameStatus);
+        Close();
+    }
 }
