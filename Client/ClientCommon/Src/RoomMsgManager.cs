@@ -8,8 +8,7 @@ using NetMsg.Common;
 
 namespace Lockstep.Client {
     public interface IRoomMsgManager {
-        void Init(BaseRoomMsgHandler msgHandler);
-
+        void Init(IRoomMsgHandler msgHandler);
         void SendInput(Msg_PlayerInput msg);
         void SendMissFrameReq(int missFrameTick);
         void SendMissFrameRepAck(int missFrameTick);
@@ -44,7 +43,7 @@ namespace Lockstep.Client {
         }
 
         private float _nextSendLoadProgressTimer;
-        private BaseRoomMsgHandler _handler;
+        private IRoomMsgHandler _handler;
 
 
         protected string _gameHash;
@@ -61,13 +60,12 @@ namespace Lockstep.Client {
         protected bool HasRecvGameDta;
         protected bool HasFinishedLoadLevel;
 
-        public void Init(BaseRoomMsgHandler msgHandler){
+        public void Init(IRoomMsgHandler msgHandler){
             _maxMsgId = (byte) System.Math.Min((int) EMsgSC.EnumCount, (int) byte.MaxValue);
             _allMsgDealFuncs = new DealNetMsg[_maxMsgId];
             _allMsgParsers = new ParseNetMsg[_maxMsgId];
             Debug = new DebugInstance("Client " + ": ");
             RegisterMsgHandlers();
-            msgHandler.SetLogger(Debug);
             _handler = msgHandler;
         }
 

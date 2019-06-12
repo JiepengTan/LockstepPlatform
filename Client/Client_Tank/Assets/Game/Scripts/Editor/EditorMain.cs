@@ -1,46 +1,48 @@
 using System.IO;
-using Lockstep.Core;
 using Lockstep.Game;
-using Lockstep.Serialization;
-using NetMsg.Common;
 using UnityEngine;
 using UnityEditor;
 
-namespace Editor {
-    [CustomEditor(typeof(MainScript))]
-    public class EditorMain : UnityEditor.Editor {
-        private Main owner;
+[CustomEditor(typeof(Main))]
+public class EditorMain : UnityEditor.Editor {
+    private Main owner;
 
-        public override void OnInspectorGUI(){
-            base.OnInspectorGUI();
-            owner = (target as MainScript).main;
-            ShowLoadRecord();
-            ShowRecordInfo();
-            ShowJumpTo();
-        }
+    public override void OnInspectorGUI(){
+        base.OnInspectorGUI();
+        owner = (target as Main);
+        ShowLoadRecord();
+        ShowRecordInfo();
+        ShowJumpTo();
+    }
 
-        private void ShowLoadRecord(){
-            if (GUILayout.Button("LoadRecord")) {
-                var path = owner.RecordPath = EditorUtility.OpenFilePanel("SelectGameRecord",
-                    Path.Combine(Application.dataPath, "../../Record"), "record");
-                if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
-                    owner.OpenRecordFile(path);
-                }
+    private void ShowLoadRecord(){
+        if (GUILayout.Button("LoadRecord")) {
+            var path = owner.RecordPath = EditorUtility.OpenFilePanel("SelectGameRecord",
+                Path.Combine(Application.dataPath, "../../../Record"), "record");
+            if (!string.IsNullOrEmpty(path) && File.Exists(path)) {
+                owner.OpenRecordFile(path);
             }
         }
 
-        public void ShowRecordInfo(){
-            //if (GUILayout.Button("StopSimulate")) { }
+        if (GUILayout.Button("CleanRecord")) {
+            owner.GameStartInfo = null;
+            owner.FramesInfo = null;
+        }
+    }
 
-            if (Application.isPlaying) {
-                var tick = EditorGUILayout.IntSlider("Tick ", owner.CurTick, 0, owner.MaxRunTick);
-                if (tick != owner.CurTick) {
-                    SimulationManager.Instance.JumpTo(tick);
-                }
+    public void ShowRecordInfo(){
+        //if (GUILayout.Button("StopSimulate")) { }
+
+        if (Application.isPlaying) {
+            var tick = EditorGUILayout.IntSlider("Tick ", owner.CurTick, 0, owner.MaxRunTick);
+            if (tick != owner.CurTick) {
+                SimulationManager.Instance.JumpTo(tick);
             }
         }
+    }
 
-        private void ShowJumpTo(){
+    private void ShowJumpTo(){
+        if (Application.isPlaying) {
             if (GUILayout.Button("Jump")) {
                 if (GameManager.Instance.IsPlaying && owner.JumpToTick > 0 && owner.JumpToTick < owner.MaxRunTick) {
                     SimulationManager.Instance.JumpTo(owner.JumpToTick);

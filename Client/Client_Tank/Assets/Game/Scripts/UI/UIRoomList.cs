@@ -19,14 +19,14 @@ namespace Lockstep.Game.UI {
             BindEvent("Window/CreateLobby", OnBtn_CreateLobby);
             BindEvent("Window/Refresh", OnBtn_Refresh);
             _items = new GenericUIList<RoomInfo>(itemRoomPrefab.gameObject, LayoutGroup);
-            Setup(NetworkManager.Instance.RoomInfos);
+            Setup(GameMsgManager.Instance.RoomInfos);
         }
 
         void OnBtn_JoinRoom(){
             var selected = GetSelectedItem();
             if (selected == null)
                 return;
-            NetworkManager.Instance.JoinRoom(selected.RoomId);
+            GameMsgManager.Instance.JoinRoom(selected.RoomId);
         }
 
         void OnBtn_CreateGame(){
@@ -36,7 +36,7 @@ namespace Lockstep.Game.UI {
         void OnBtn_CreateLobby(){ }
 
         void OnBtn_Refresh(){
-            NetworkManager.Instance.ReqRoomList(0);
+            GameMsgManager.Instance.ReqRoomList(0);
         }
 
         protected void OnEvent_OnRoomInfoUpdate(object param){
@@ -59,8 +59,8 @@ namespace Lockstep.Game.UI {
         }
 
         private void OnEnable(){
-            Setup(NetworkManager.Instance.RoomInfos);
-            NetworkManager.Instance.ReqRoomList(0);
+            Setup(GameMsgManager.Instance.RoomInfos);
+            GameMsgManager.Instance.ReqRoomList(0);
         }
 
         public void Setup(IEnumerable<RoomInfo> data){

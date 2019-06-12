@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Lockstep.Core;
 using Lockstep.Serialization;
@@ -16,43 +17,31 @@ namespace Lockstep.Game {
 
         public string RecordPath;
         public int MaxRunTick = int.MaxValue;
-        public Msg_L2C_StartGame gameInfo;
-        public Msg_RepMissFrame framesInfo;
-
+        public Msg_G2C_GameStartInfo GameStartInfo;
+        public Msg_RepMissFrame FramesInfo;
         public float realtimeSinceStartup;
-        
-        
+
+
         public bool isRunVideo;
         public int JumpToTick = 10;
+
         public void OpenRecordFile(string path){
             var bytes = File.ReadAllBytes(path);
             var reader = new Deserializer(Compressor.Decompress(bytes));
-            var TypeId = reader.GetInt32();
-            var RoomId = reader.GetInt32();
-            var Seed = reader.GetInt32();
-            var AllActors = reader.GetBytes_255();
-            var msg = new Msg_RepMissFrame();
-            msg.startTick = 0;
-            msg.Deserialize(reader);
-            var msgStartGame = new Msg_L2C_StartGame();
-            //msgStartGame.RoomID = RoomId;
-            //msgStartGame.Seed = Seed;
-            //msgStartGame.AllActors = AllActors;
-            //msgStartGame.SimulationSpeed = 60;
-            //MaxRunTick = msg.frames.Length + 1;
+            GameStartInfo = reader.Parse<Msg_G2C_GameStartInfo>();
+            FramesInfo = reader.Parse<Msg_RepMissFrame>();
+            MaxRunTick = FramesInfo.frames.Length + 1;
             IsVideoMode = true;
-            framesInfo = msg;
-            gameInfo = msgStartGame;
         }
     }
 
     public partial class Main {
         public Camera gameCamera;
         public Vector2Int renderTextureSize;
-        public Camera mainCamera;
-        public RenderTexture rt;
+        [HideInInspector] public RenderTexture rt;
+
         private void DoAwake(){
-            rt  = new RenderTexture(renderTextureSize.x,renderTextureSize.y,1,RenderTextureFormat.ARGB32);
+            rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
             gameCamera.targetTexture = rt;
 #if !UNITY_EDITOR
             IsVideoMode = false;
@@ -71,8 +60,8 @@ namespace Lockstep.Game {
 
         private void AfterStart(){
             if (IsVideoMode) {
-                EventHelper.Trigger(EEvent.BorderVideoFrame, framesInfo);
-                EventHelper.Trigger(EEvent.OnGameCreate, gameInfo);
+                EventHelper.Trigger(EEvent.BorderVideoFrame, FramesInfo);
+                EventHelper.Trigger(EEvent.OnGameCreate, GameStartInfo);
             }
         }
 
@@ -87,6 +76,7 @@ namespace Lockstep.Game {
                 _simulationService.JumpTo(JumpToTick);
             }
         }
+
         private void DoFixedUpdate(){ }
         private void DoDestroy(){ }
 

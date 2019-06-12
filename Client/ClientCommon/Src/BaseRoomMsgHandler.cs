@@ -3,6 +3,7 @@ using NetMsg.Common;
 
 namespace Lockstep.Client {
     public interface IRoomMsgHandler {
+        void SetLogger(DebugInstance debug);
         void OnTcpHello(Msg_G2C_Hello msg);
         void OnUdpHello(int mapId, byte localId);
         void OnGameStartInfo(Msg_G2C_GameStartInfo data);
@@ -15,7 +16,6 @@ namespace Lockstep.Client {
     }
 
     public class BaseRoomMsgHandler : BaseLogger, IRoomMsgHandler {
-
         public virtual void OnTcpHello(Msg_G2C_Hello msg){ }
         public virtual void OnUdpHello(int mapId, byte localId){ }
         public virtual void OnGameStartInfo(Msg_G2C_GameStartInfo data){ }

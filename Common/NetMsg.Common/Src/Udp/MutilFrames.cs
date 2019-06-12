@@ -1,9 +1,11 @@
+using System;
 using System.Diagnostics;
 using Lockstep.Serialization;
 
 namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
+    [Serializable]
     public partial class MutilFrames : BaseFormater {
         public int startTick;
         public ServerFrame[] frames;

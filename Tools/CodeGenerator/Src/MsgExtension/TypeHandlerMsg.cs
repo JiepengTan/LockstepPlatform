@@ -44,6 +44,7 @@ namespace Lockstep.CodeGenerator {
 
         
         string clsCodeTemplate = @"
+    [System.Serializable]
     public partial class #ClsName{
         public override void Serialize(Serializer writer){
 //#SERIALIZER

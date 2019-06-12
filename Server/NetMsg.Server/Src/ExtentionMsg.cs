@@ -5,6 +5,7 @@ using Lockstep.Serialization;
 namespace NetMsg.Server{
 #if !DONT_USE_GENERATE_CODE
 
+    [System.Serializable]
     public partial class Msg_BorderMasterInfo{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -16,6 +17,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_I2L_UserLogin{
         public override void Serialize(Serializer writer){
 			writer.PutString(Account);
@@ -33,6 +35,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_RegisterDaemon{
         public override void Serialize(Serializer writer){
 			writer.PutByte(Type);
@@ -44,6 +47,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_RegisterServer{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -55,6 +59,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_RepMasterInfo{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -66,6 +71,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_RepOtherServerInfo{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -77,6 +83,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_ReqMasterInfo{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -88,6 +95,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_ReqOtherServerInfo{
         public override void Serialize(Serializer writer){
 			writer.PutByte(DetailType);
@@ -101,6 +109,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class Msg_ReqServerInfo{
         public override void Serialize(Serializer writer){
 			writer.Put(ServerInfo);
@@ -112,6 +121,7 @@ namespace NetMsg.Server{
     }
 
 
+    [System.Serializable]
     public partial class ServerIpInfo{
         public override void Serialize(Serializer writer){
 			writer.PutString(Ip);

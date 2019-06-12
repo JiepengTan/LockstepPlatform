@@ -62,12 +62,16 @@ namespace Lockstep.Game {
             Debug.Log($"OnEvent_OnServerMissFrame");
             var msg = param as Msg_RepMissFrame;
             cmdBuffer.PushServerFrames(msg.frames, false);
-            _networkService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
+            _gameMsgService.SendMissFrameRepAck(cmdBuffer.GetMissServerFrameTick());
         }
 
         void OnEvent_OnGameCreate(object param){
-            var msg = param as Msg_G2C_Hello;
-            OnGameCreate(msg.GameId, 60, msg.LocalId, msg.UserCount);
+            if (param is Msg_G2C_Hello msg) {
+                OnGameCreate(60, msg.LocalId, msg.UserCount);
+            }
+            if (param is Msg_G2C_GameStartInfo smsg) {
+                OnGameCreate(60, 0, smsg.UserCount);
+            }
             EventHelper.Trigger(EEvent.SimulationInit, null);
         }
 
@@ -151,12 +155,12 @@ namespace Lockstep.Game {
                 return;
             }
 
-            cmdBuffer.Ping = _networkService.Ping;
+            //cmdBuffer.Ping = _gameMsgService.Ping;
             cmdBuffer.UpdateFramesInfo();
             var missFrameTick = cmdBuffer.GetMissServerFrameTick();
             //客户端落后服务器太多帧 请求丢失帧
             if (cmdBuffer.IsNeedReqMissFrame()) {
-                _networkService.SendMissFrameReq(missFrameTick);
+                _gameMsgService.SendMissFrameReq(missFrameTick);
             }
 
             //if (!cmdBuffer.CanExecuteNextFrame()) { //因为网络问题 需要等待服务器发送确认包 才能继续往前
@@ -244,7 +248,7 @@ namespace Lockstep.Game {
 
         private void SendInput(Msg_PlayerInput input){
             //TODO 合批次 一起发送 且连同历史未确认包一起发送
-            _networkService.SendInput(input);
+            _gameMsgService.SendInput(input);
         }
 
         private bool isInitVideo = false;
@@ -328,7 +332,7 @@ namespace Lockstep.Game {
             Running = false;
         }
 
-        public void OnGameCreate(int gameId, int targetFps, byte localActorId, byte actorCount,
+        public void OnGameCreate(int targetFps, byte localActorId, byte actorCount,
             bool isNeedRender = true){
             FrameBuffer.DebugMainActorID = localActorId;
             var allActors = new byte[actorCount];
@@ -337,7 +341,6 @@ namespace Lockstep.Game {
             }
 
             //初始化全局配置
-            _constStateService.roomId = gameId;
             _constStateService.allActorIds = allActors;
             _constStateService.actorCount = allActors.Length;
 
@@ -345,7 +348,6 @@ namespace Lockstep.Game {
             _allActors = allActors;
 
             _localTick = 0;
-            _gameId = gameId;
             GameLog.LocalActorId = localActorId;
             GameLog.AllActorIds = allActors;
 
@@ -373,7 +375,7 @@ namespace Lockstep.Game {
                 var count = LMath.Min(allHashCodes.Count, (int) (cmdBuffer.nextTickToCheck - firstHashTick),
                     (480 / 8));
                 if (count > 0) {
-                    _networkService.SendHashCodes(firstHashTick, allHashCodes, 0, count);
+                    _gameMsgService.SendHashCodes(firstHashTick, allHashCodes, 0, count);
                     firstHashTick = firstHashTick + count;
                     allHashCodes.RemoveRange(0, count);
                 }

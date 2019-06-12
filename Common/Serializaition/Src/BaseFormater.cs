@@ -3,6 +3,11 @@ using LitJson;
 
 namespace Lockstep.Serialization {
 
+    /// <summary>
+    /// 不序列化到文件中
+    /// </summary>
+    [System.AttributeUsage(System.AttributeTargets.Field|System.AttributeTargets.Property, AllowMultiple = false)]
+    public class NoGenCodeAttribute : System.Attribute { }
 
     [System.Serializable]
     public partial class BaseFormater : ISerializable, ISerializablePacket {

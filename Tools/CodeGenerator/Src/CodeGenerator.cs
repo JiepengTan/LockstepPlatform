@@ -2,17 +2,13 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Lockstep.Serialization;
 
 #if UNITY_EDITOR
 using UnityEngine;
 
 #endif
 namespace Lockstep.CodeGenerator {
-    /// <summary>
-    /// 不序列化到文件中
-    /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Field, AllowMultiple = false)]
-    public class NoGenCodeAttribute : System.Attribute { }
 
     public class CodeGenerator {
         const BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetField;

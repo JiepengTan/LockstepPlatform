@@ -1,6 +1,7 @@
 using Lockstep.Serialization;
 
 namespace NetMsg.Common {
+
     [System.Serializable]
     [SelfImplement]
     [Udp]

@@ -29,15 +29,52 @@ namespace NetMsg.Common {
     }
 
     public partial class GameProperty : BaseFormater {
-        public string Name { get; set; }
-        public byte Type { get; set; }
-        public byte[] Data{ get; set; }
+        [NoGenCode]
+        public string Name {
+            get => _Name;
+            set => _Name = value;
+        }
+
+        [NoGenCode]
+        public short Type {
+            get => _Type;
+            set => _Type = value;
+        }
+
+        [NoGenCode]
+        public byte[] Data {
+            get => _Data;
+            set => _Data = value;
+        }
+
+        public string _Name;
+        public short _Type;
+        public byte[] _Data;
     }
 
     public partial class GameData : BaseFormater {
-        [BsonId] public string Username { get; set; }
-        public long UserId { get; set; }
-        public List<GameProperty> Datas { get; set; }
+        [BsonId]
+        [NoGenCode]
+        public string Username {
+            get => _Username;
+            set => _Username = value;
+        }
+
+        [NoGenCode]
+        public long UserId {
+            get => _UserId;
+            set => _UserId = value;
+        }
+
+        [NoGenCode]
+        public List<GameProperty> Datas {
+            get => _Datas;
+            set => _Datas = value;
+        }
+
+        public string _Username;
+        public long _UserId;
+        public List<GameProperty> _Datas;
     }
 
     public partial class AccountData : BaseFormater, IAccountData {
@@ -59,15 +96,19 @@ namespace NetMsg.Common {
     public partial class Msg_S2D_ReqGameData : BaseFormater {
         public string account;
     }
+
     public partial class Msg_D2S_RepGameData : BaseFormater {
         public GameData data;
     }
+
     public partial class Msg_S2D_SaveGameData : BaseFormater {
         public GameData data;
     }
+
     public partial class Msg_D2S_SaveGameData : BaseFormater {
         public byte result;
     }
+
     public partial class Msg_ReqAccountData : BaseFormater {
         public string account;
         public string password;

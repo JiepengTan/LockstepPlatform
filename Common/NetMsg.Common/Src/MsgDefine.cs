@@ -1,11 +1,15 @@
+using System;
 using Lockstep.Serialization;
 
-namespace NetMsg.Common{
+namespace NetMsg.Common {
     #region UDP
+
+    [Serializable]
     [SelfImplement]
     [Udp]
     public partial class Msg_RepMissFrame : MutilFrames { }
 
+    [Serializable]
     [SelfImplement]
     [Udp]
     public partial class Msg_ServerFrames : MutilFrames { }
@@ -29,7 +33,6 @@ namespace NetMsg.Common{
     #endregion
 
     #region TCP
-    
 
     public partial class IPEndInfo : BaseFormater {
         public string Ip;
@@ -46,13 +49,13 @@ namespace NetMsg.Common{
         public int MapId;
         public string Name;
         public byte MaxPlayerCount;
-        
+
         public int RoomId;
         public byte State;
         public string OwnerName;
         public byte CurPlayerCount;
     }
-    
+
     public partial class UserGameInfo : BaseFormater {
         public string Name;
         public byte[] Data;
@@ -69,6 +72,7 @@ namespace NetMsg.Common{
         public string Name;
         public byte Status;
     }
+
     public partial class RoomChatInfo : BaseFormater {
         public byte Channel;
         public long SrcUserId;
@@ -96,6 +100,7 @@ namespace NetMsg.Common{
     public partial class Msg_S2C_TickPlayer : BaseFormater {
         public byte Reason;
     }
+
     public partial class Msg_C2L_UserLogin : BaseFormater {
         public long UserId;
         public string LoginHash;
@@ -104,7 +109,8 @@ namespace NetMsg.Common{
 
     public partial class Msg_C2L_ReqRoomList : BaseFormater {
         public short StartIdx;
-    }  
+    }
+
     public partial class Msg_L2C_RoomList : BaseFormater {
         public int GameType;
         public RoomInfo[] Rooms;
@@ -120,41 +126,47 @@ namespace NetMsg.Common{
     public partial class Msg_C2L_JoinRoom : BaseFormater {
         public int RoomId;
     }
+
     public partial class Msg_L2C_JoinRoomResult : BaseFormater {
         public RoomPlayerInfo[] PlayerInfos;
     }
+
     public partial class Msg_C2L_ReadyInRoom : BaseFormater {
         public byte State;
     }
+
     public partial class Msg_L2C_ReadyInRoom : BaseFormater {
         public long UserId;
         public byte State;
     }
+
     public partial class Msg_L2C_JoinRoom : BaseFormater {
         public RoomPlayerInfo PlayerInfo;
     }
+
     public partial class Msg_C2L_LeaveRoom : BaseFormater {
         public byte Reason;
     }
-    
+
     public partial class Msg_L2C_LeaveRoom : BaseFormater {
         public long UserId;
     }
-    
+
     public partial class Msg_C2L_RoomChatInfo : BaseFormater {
         public RoomChatInfo ChatInfo;
     }
+
     public partial class Msg_L2C_RoomChatInfo : BaseFormater {
         public RoomChatInfo ChatInfo;
     }
-    
+
     public partial class Msg_C2L_CreateRoom : BaseFormater {
         public int GameType;
         public int MapId;
         public string Name;
         public byte MaxPlayerCount;
     }
-  
+
     public partial class Msg_L2C_CreateRoom : BaseFormater {
         public RoomInfo Info;
         public RoomPlayerInfo[] PlayerInfos;
@@ -176,23 +188,26 @@ namespace NetMsg.Common{
 //LG
     public partial class Msg_L2G_UserReconnect : BaseFormater {
         public GamePlayerInfo PlayerInfo;
-    }   
+    }
+
     public partial class Msg_L2G_CreateGame : BaseFormater {
         public int GameType;
         public int MapId;
         public int RoomId;
         public GamePlayerInfo[] Players;
         public string GameHash;
-    }   
+    }
+
     public partial class Msg_L2G_UserLeave : BaseFormater {
         public long UserId;
         public int GameId;
     }
-    
+
     public partial class Msg_G2L_OnGameFinished : BaseFormater {
         public int GameId;
         public int RoomId;
     }
+
 //GC
     public partial class MessageHello : BaseFormater {
         public GamePlayerInfo UserInfo;
@@ -201,6 +216,7 @@ namespace NetMsg.Common{
         public int GameId;
         public bool IsReconnect;
     }
+
     public partial class Msg_C2G_Hello : BaseFormater {
         public MessageHello Hello;
     }
@@ -215,10 +231,10 @@ namespace NetMsg.Common{
     }
 
     public partial class Msg_G2C_GameStartInfo : BaseFormater {
+        public byte UserCount;
         public int MapId;
         public int RoomId;
         public int Seed;
-        public int UserCount;
         public GameData[] UserInfos;
         public IPEndInfo UdpEnd;
         public IPEndInfo TcpEnd;
@@ -254,7 +270,6 @@ namespace NetMsg.Common{
     public partial class Msg_G2C_GameEvent : BaseFormater {
         public byte[] Data;
     }
-
 
     #endregion
 }

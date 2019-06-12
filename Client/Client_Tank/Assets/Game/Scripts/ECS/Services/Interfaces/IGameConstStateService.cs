@@ -10,7 +10,6 @@ namespace Lockstep.Game {
 
         //room info
         byte[] allActorIds { get; set; }
-        int roomId { get; set; }
         int actorCount { get; set; }
         int playerInitLifeCount { get; }
 

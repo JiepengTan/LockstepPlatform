@@ -35,7 +35,7 @@ namespace Lockstep.Client {
             get { return _roomInfos; }
         }
 
-        private BaseLoginHandler _loginHandler;
+        private ILoginHandler _loginHandler;
 
         private string _serverIp;
         private ushort _serverPort;
@@ -55,9 +55,9 @@ namespace Lockstep.Client {
             set => _gameType = value;
         }
 
-        public void Init(IRoomMsgManager roomMsgMgr, BaseLoginHandler loginHandler, string serverIp, ushort serverPort){
+        public void Init(IRoomMsgManager roomMsgMgr, ILoginHandler loginHandler, string serverIp, ushort serverPort){
             _roomMsgMgr = roomMsgMgr;
-            _loginHandler = loginHandler ?? new BaseLoginHandler();
+            _loginHandler = loginHandler;
             _loginHandler.SetLogger(this.Debug);
             _serverIp = serverIp;
             _serverPort = serverPort;
@@ -295,6 +295,7 @@ namespace Lockstep.Client {
             if (_playerInfos == null) {
                 _playerInfos = new List<RoomPlayerInfo>();
             }
+
             var idx = _playerInfos.FindIndex((item) => { return item.UserId == userId; });
             if (idx == -1) {
                 _playerInfos.Add(msg.PlayerInfo);
@@ -319,7 +320,7 @@ namespace Lockstep.Client {
             _roomId = msg.RoomId;
             _gameId = msg.GameId;
             IsReconnect = msg.IsReconnect;
-            
+
             var rmsg = new Msg_C2G_Hello() {
                 Hello = new MessageHello() {
                     GameHash = _gameHash,
@@ -333,7 +334,7 @@ namespace Lockstep.Client {
                     }
                 }
             };
-            _loginHandler.OnGameStart(rmsg, _gameTcpEnd,IsReconnect);
+            _loginHandler.OnGameStart(rmsg, _gameTcpEnd, IsReconnect);
             _roomMsgMgr.ConnectToGameServer(rmsg, _gameTcpEnd, IsReconnect);
         }
     }

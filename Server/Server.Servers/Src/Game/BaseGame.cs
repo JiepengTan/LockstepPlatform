@@ -33,7 +33,7 @@ namespace Lockstep.Server.Game {
         int GameId { get; }
         int CurPlayerCount { get; }
 
-        int MaxPlayerCount { get; }
+        byte MaxPlayerCount { get; }
 
         long[] UserIds { get; }
 
@@ -90,7 +90,7 @@ namespace Lockstep.Server.Game {
             }
         }
 
-        public int MaxPlayerCount { get; set; }
+        public byte MaxPlayerCount { get; set; }
 
         public bool IsRunning { get; private set; }
         public string Name;
@@ -189,7 +189,7 @@ namespace Lockstep.Server.Game {
             GameType = gameType;
             GameHash = gameHash;
             GameId = gameId;
-            MaxPlayerCount = count;
+            MaxPlayerCount = (byte) count;
             Name = gameId.ToString();
             MapId = mapId;
             Players = new Player[count];
@@ -227,7 +227,7 @@ namespace Lockstep.Server.Game {
             return player;
         }
 
-        
+
         private void BorderServerFrame(int deltaTime){
             waitTimer += deltaTime;
             if (State != EGameState.Playing) return;
@@ -494,12 +494,14 @@ namespace Lockstep.Server.Game {
                 peer.CleanExtension();
                 peer.Disconnect("");
             }
+
             player.PeerTcp = null;
             peer = player.PeerUdp;
             if (peer != null) {
                 peer.CleanExtension();
                 peer.Disconnect("");
             }
+
             player.PeerUdp = null;
 
             var curCount = CurPlayerCount;

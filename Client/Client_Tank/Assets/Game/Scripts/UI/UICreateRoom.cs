@@ -47,7 +47,7 @@ namespace Lockstep.Game.UI {
 
         void OnBtn_Create(){
             Debug.Log("hhe OnBtn_Create");
-            NetworkManager.Instance.CreateRoom(_curMapIdx,txtRoomName.text,_curMaxCount);
+            GameMsgManager.Instance.CreateRoom(_curMapIdx,txtRoomName.text,_curMaxCount);
         }
         void OnEvent_OnCreateRoom(object param){
             var info = param as RoomInfo;

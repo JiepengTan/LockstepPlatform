@@ -27,6 +27,8 @@ namespace Lockstep.Game {
         //common
         public static WindowCreateInfo UIDialogBox = new WindowCreateInfo("UIDialogBox", EWindowDepth.Forward);
         public static WindowCreateInfo UILoading = new WindowCreateInfo("UILoading", EWindowDepth.Notice);
+        //debug
+        public static WindowCreateInfo UIDebugInfo = new WindowCreateInfo("UIDebugInfo", EWindowDepth.Notice);
     }
 
     public static class UIExtension {

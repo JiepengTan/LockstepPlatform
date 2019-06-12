@@ -34,7 +34,7 @@ namespace Lockstep.Game {
         protected ITimeMachineService _timeMachineService;
         protected IConstGameStateService _constStateService;
         protected IGameStateService _gameStateService;
-        protected INetworkService _networkService;
+        protected IGameMsgService _gameMsgService;
         protected ISimulation _simulationService;
         protected IUIService _uiService;
         
@@ -51,7 +51,7 @@ namespace Lockstep.Game {
             _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
             _constStateService = serviceContainer.GetService<IConstGameStateService>();
             _gameStateService = serviceContainer.GetService<IGameStateService>();
-            _networkService = serviceContainer.GetService<INetworkService>();
+            _gameMsgService = serviceContainer.GetService<IGameMsgService>();
             _simulationService = serviceContainer.GetService<ISimulation>();
             _uiService = serviceContainer.GetService<IUIService>();
         }
@@ -81,7 +81,7 @@ namespace Lockstep.Game {
         protected ITimeMachineService _timeMachineService;
         protected IConstGameStateService _constStateService;
         protected IGameStateService _gameStateService;
-        protected INetworkService _networkService;
+        protected IGameMsgService _gameMsgService;
         protected ISimulation _simulationService;
         protected IUIService _uiService;
         
@@ -98,7 +98,7 @@ namespace Lockstep.Game {
             _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
             _constStateService = serviceContainer.GetService<IConstGameStateService>();
             _gameStateService = serviceContainer.GetService<IGameStateService>();
-            _networkService = serviceContainer.GetService<INetworkService>();
+            _gameMsgService = serviceContainer.GetService<IGameMsgService>();
             _simulationService = serviceContainer.GetService<ISimulation>();
             _uiService = serviceContainer.GetService<IUIService>();
         }
