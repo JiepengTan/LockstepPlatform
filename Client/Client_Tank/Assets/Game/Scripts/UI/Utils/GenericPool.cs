@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Barebones.Utils
+
+namespace Lockstep.Game.UI
 {
     public class GenericPool<T> where T : MonoBehaviour
     {

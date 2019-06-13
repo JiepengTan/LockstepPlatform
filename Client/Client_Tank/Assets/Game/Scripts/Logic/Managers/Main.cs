@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Lockstep.Core;
+using Lockstep.Math;
 using Lockstep.Serialization;
 using NetMsg.Common;
 using UnityEngine;
@@ -39,7 +40,6 @@ namespace Lockstep.Game {
         public Camera gameCamera;
         public Vector2Int renderTextureSize;
         [HideInInspector] public RenderTexture rt;
-
         private void DoAwake(){
             rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
             gameCamera.targetTexture = rt;

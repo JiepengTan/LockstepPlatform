@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Barebones
+namespace Lockstep.Game.UI
 {
     /// <summary>
     /// Holds one unity console message

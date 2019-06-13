@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Barebones.MasterServer
+namespace Lockstep.Game.UI
 {
     /// <summary>
     ///     Adding this script to UI elements makes them draggable

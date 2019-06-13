@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
-namespace Barebones.Utils
+namespace Lockstep.Game.UI
 {
     /// <summary>
     /// </summary>

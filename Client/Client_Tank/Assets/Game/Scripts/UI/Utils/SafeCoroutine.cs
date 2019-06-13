@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace Barebones.Utils
+namespace Lockstep.Game.UI
 {
     public static class MonoBehaviorExt
     {

@@ -3,7 +3,7 @@ using Barebones.MasterServer;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Barebones.Utils
+namespace Lockstep.Game.UI
 {
     public class BmHelper
     {
