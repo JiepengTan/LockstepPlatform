@@ -144,13 +144,15 @@ namespace Lockstep.Game {
             var ecsPrefab = prefabLst[type];
             var assetId = ecsPrefab.asset.assetId;
             var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(assetId));
-            var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
-                Quaternion.identity, parent);
-            go.AddComponent<PosListener>();
-            go.AddComponent<DirListener>();
-
             var entity = CreateGameEntity();
-            _viewService.BindView(entity, _gameContext, go);
+            if (!_constStateService.IsVideoLoading) {
+                var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
+                    Quaternion.identity, parent);
+                go.AddComponent<PosListener>();
+                go.AddComponent<DirListener>();
+                _viewService.BindView(entity, _gameContext, go);
+            }
+
             ecsPrefab.SetComponentsTo(entity);
             entity.dir.value = dir;
             entity.pos.value = createPos;
@@ -181,13 +183,16 @@ namespace Lockstep.Game {
             ecsPrefab.SetComponentsTo(entity);
             entity.pos.value = rawPos;
             entity.dir.value = rawDir;
-            _viewService.DeleteView(entity.localId.value);
-            var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
-            var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
-                Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
-            go.AddComponent<PosListener>();
-            go.AddComponent<DirListener>();
-            _viewService.BindView(entity, _gameContext, go);
+            if (!_constStateService.IsVideoLoading) {
+                _viewService.DeleteView(entity.localId.value);
+                var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
+                var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
+                    Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
+                go.AddComponent<PosListener>();
+                go.AddComponent<DirListener>();
+                _viewService.BindView(entity, _gameContext, go);
+            }
+
         }
         public void DelayCall(LFloat delay, Action callback){
             var delayEntity = CreateGameEntity();

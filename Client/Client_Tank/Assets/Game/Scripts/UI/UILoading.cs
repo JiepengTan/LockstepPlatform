@@ -33,7 +33,7 @@ public class UILoading : UIBaseWindow {
 
     void ShowProgress(float progress){
         sliderProgress.value = progress;
-        textInfo.text = $"Loading {sliderProgress.value * 100}%";
+        textInfo.text = $"Loading {((int)(sliderProgress.value * 10000))/100f}%";
     }
 
     void EndLoading(){

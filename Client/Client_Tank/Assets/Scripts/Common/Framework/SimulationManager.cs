@@ -258,6 +258,7 @@ namespace Lockstep.Game {
             tick = Mathf.Min(tick, _videoFrames.frames.Length - 1);
             var time = Time.realtimeSinceStartup + 0.05f;
             if (!isInitVideo) {
+                _constStateService.IsVideoLoading = true;
                 while (_world.Tick < _videoFrames.frames.Length) {
                     var sFrame = _videoFrames.frames[_world.Tick];
                     Simulate(sFrame, true);
@@ -266,6 +267,7 @@ namespace Lockstep.Game {
                         return;
                     }
                 }
+                _constStateService.IsVideoLoading = false;
                 EventHelper.Trigger(EEvent.VideoLoadDone);
                 isInitVideo = true;
             }

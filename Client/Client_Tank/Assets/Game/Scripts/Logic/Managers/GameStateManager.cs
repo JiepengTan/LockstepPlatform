@@ -8,7 +8,7 @@ namespace Lockstep.Game {
     public partial class GameStateManager : SingletonManager<GameStateManager>, IConstGameStateService {
         //room info
         [SerializeField] private byte[] _allActorIds;
-
+        [SerializeField]  public bool IsVideoLoading { get; set; }
         [SerializeField]  public bool IsVideoMode { get; set; }
         [SerializeField]  public bool IsRunVideo { get; set; }
         

@@ -6,29 +6,51 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public class RollbackableRes : UnityEngine.MonoBehaviour {
-        [HideInInspector] public RollbackableRes pre;
-        [HideInInspector] public RollbackableRes next;
+        [HideInInspector] public ResProxy __proxy;
 
-        [HideInInspector] public int createTick;
-        [HideInInspector] public int diedTick;
+        [HideInInspector] public int createTick => __proxy.createTick;
+        [HideInInspector] public int diedTick => __proxy.diedTick;
         public LFloat liveTime;
 
         public virtual void DoStart(int curTick){
+            
+        }
+        public virtual void DoUpdate(int tick){ }
+    }
+
+    public class ResProxy {
+        public RollbackableRes res;
+        public ResProxy pre;
+        public ResProxy next;
+
+        public int createTick;
+        public int diedTick;
+        public LFloat liveTime;
+
+        public virtual void DoStart(int curTick, RollbackableRes res, LFloat liveTime){
+            this.liveTime = liveTime;
             createTick = curTick;
             diedTick = curTick + (liveTime * NetworkDefine.FRAME_RATE).ToInt();
+            this.res = res;
+            if (res != null) {
+                res.__proxy = this;
+                res.DoStart(curTick);
+            }
         }
 
         public bool IsLive(int curTick){
             return curTick >= createTick && curTick <= diedTick;
         }
 
-        public virtual void DoUpdate(int tick){ }
+        public virtual void DoUpdate(int tick){
+            this.res?.DoUpdate(tick);
+        }
     }
 
     public partial class ResourceManager : IResourceService {
         private GameConfig _config;
-        private RollbackableRes head;
-        private RollbackableRes tail;
+        private ResProxy head;
+        private ResProxy tail;
 
 
         public void ShowDiedEffect(LVector2 pos){
@@ -40,9 +62,13 @@ namespace Lockstep.Game {
         }
 
         void CreateEffect(GameObject prefab, LVector2 pos){
-            var go = GameObject.Instantiate(prefab, transform.position + pos.ToVector3(),
-                Quaternion.identity);
-            var comp = go.GetComponent<RollbackableRes>();
+            var liveTime = prefab.GetComponent<RollbackableRes>().liveTime;
+            GameObject go = null;
+            if (!_constStateService.IsVideoLoading) {
+                go = GameObject.Instantiate(prefab, transform.position + pos.ToVector3(), Quaternion.identity);
+            }
+
+            var comp = new ResProxy();
             if (comp != null) {
                 if (tail == null) {
                     head = tail = comp;
@@ -53,7 +79,13 @@ namespace Lockstep.Game {
                     tail = comp;
                 }
 
-                comp.DoStart(CurTick);
+                comp.DoStart(CurTick, go?.GetComponent<RollbackableRes>(), liveTime);
+            }
+        }
+
+        void Destroy(ResProxy node){
+            if (node.res != null) {
+                GameObject.Destroy(node.res.gameObject);
             }
         }
 
@@ -86,10 +118,6 @@ namespace Lockstep.Game {
                     Destroy(temp);
                 }
             }
-        }
-
-        void Destroy(RollbackableRes node){
-            GameObject.Destroy(node.gameObject);
         }
     }
 }
