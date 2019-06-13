@@ -1,13 +1,14 @@
 //#define DONT_USE_GENERATE_CODE 
-//Auto Gen by code please do not modify it by hand
+//Auto Gen by code please do not modify it
+//https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
 namespace Lockstep.ECS.Input{public partial class ActorIdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ActorIdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class AIComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class AssetComponent : BaseComponent{}};
-namespace Lockstep.ECS.Actor{public partial class BackupComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class BackupComponent : BaseComponent{}};
+namespace Lockstep.ECS.Actor{public partial class BackupComponent : BaseComponent{}};
 namespace Lockstep.ECS.GameState{public partial class BackupCurFrameComponent : BaseComponent{}};
 namespace Lockstep.ECS.GameState{public partial class BeforeExecuteHashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class BornPointComponent : BaseComponent{}};
@@ -23,8 +24,8 @@ namespace Lockstep.ECS.Actor{public partial class EntityCountComponent : BaseCom
 namespace Lockstep.ECS.Input{public partial class FireComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class FireRequestComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class GameLocalIdComponent : BaseComponent{}};
-namespace Lockstep.ECS.GameState{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Snapshot{public partial class HashCodeComponent : BaseComponent{}};
+namespace Lockstep.ECS.GameState{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Debug{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class IdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ItemTypeComponent : BaseComponent{}};
@@ -41,10 +42,10 @@ namespace Lockstep.ECS.Game{public partial class TagBulletComponent : BaseCompon
 namespace Lockstep.ECS.Game{public partial class TagCampComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagEnemyComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagTankComponent : BaseComponent{}};
-namespace Lockstep.ECS.Snapshot{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.GameState{public partial class TickComponent : BaseComponent{}};
-namespace Lockstep.ECS.Debug{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Input{public partial class TickComponent : BaseComponent{}};
+namespace Lockstep.ECS.Debug{public partial class TickComponent : BaseComponent{}};
+namespace Lockstep.ECS.Snapshot{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class UnitComponent : BaseComponent{}};
 
 
@@ -196,44 +197,6 @@ namespace Lockstep.ECS.Game{
 }
 
 
-namespace Lockstep.ECS.Actor{
-    public partial class BackupComponent  {
-        public override void CopyTo(object comp){
-            var dst = (BackupComponent) comp;
-            if (dst == null) {
-                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
-            }
-			dst.actorId = actorId;
-			dst.tick = tick;
-        }
-        
-        public override object Clone(){
-            var dst = new BackupComponent();
-            CopyTo(dst);
-            return dst;
-        }
-        
-        public override bool Equals(object obj){
-            var dst = (BackupComponent) obj;
-                if (dst == null) {
-                return false;
-            }
-			if (actorId != dst.actorId) return false;
-			if (tick != dst.tick) return false;
-            return true;
-        }
-        
-        public override string ToString(){
-            return "Backup{" +
-			"actorId=" + actorId +
-			"tick=" + tick +
-            "}";
-            ;
-        }
-    }
-}
-
-
 namespace Lockstep.ECS.Game{
     public partial class BackupComponent  {
         public override void CopyTo(object comp){
@@ -264,6 +227,44 @@ namespace Lockstep.ECS.Game{
         public override string ToString(){
             return "Backup{" +
 			"localEntityId=" + localEntityId +
+			"tick=" + tick +
+            "}";
+            ;
+        }
+    }
+}
+
+
+namespace Lockstep.ECS.Actor{
+    public partial class BackupComponent  {
+        public override void CopyTo(object comp){
+            var dst = (BackupComponent) comp;
+            if (dst == null) {
+                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
+            }
+			dst.actorId = actorId;
+			dst.tick = tick;
+        }
+        
+        public override object Clone(){
+            var dst = new BackupComponent();
+            CopyTo(dst);
+            return dst;
+        }
+        
+        public override bool Equals(object obj){
+            var dst = (BackupComponent) obj;
+                if (dst == null) {
+                return false;
+            }
+			if (actorId != dst.actorId) return false;
+			if (tick != dst.tick) return false;
+            return true;
+        }
+        
+        public override string ToString(){
+            return "Backup{" +
+			"actorId=" + actorId +
 			"tick=" + tick +
             "}";
             ;
@@ -809,7 +810,7 @@ namespace Lockstep.ECS.Actor{
 }
 
 
-namespace Lockstep.ECS.Snapshot{
+namespace Lockstep.ECS.GameState{
     public partial class HashCodeComponent  {
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
@@ -879,7 +880,7 @@ namespace Lockstep.ECS.Debug{
 }
 
 
-namespace Lockstep.ECS.GameState{
+namespace Lockstep.ECS.Snapshot{
     public partial class HashCodeComponent  {
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
@@ -1492,41 +1493,6 @@ namespace Lockstep.ECS.Debug{
 }
 
 
-namespace Lockstep.ECS.Input{
-    public partial class TickComponent  {
-        public override void CopyTo(object comp){
-            var dst = (TickComponent) comp;
-            if (dst == null) {
-                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
-            }
-			dst.value = value;
-        }
-        
-        public override object Clone(){
-            var dst = new TickComponent();
-            CopyTo(dst);
-            return dst;
-        }
-        
-        public override bool Equals(object obj){
-            var dst = (TickComponent) obj;
-                if (dst == null) {
-                return false;
-            }
-			if (value != dst.value) return false;
-            return true;
-        }
-        
-        public override string ToString(){
-            return "Tick{" +
-			"value=" + value +
-            "}";
-            ;
-        }
-    }
-}
-
-
 namespace Lockstep.ECS.Snapshot{
     public partial class TickComponent  {
         public override void CopyTo(object comp){
@@ -1563,6 +1529,41 @@ namespace Lockstep.ECS.Snapshot{
 
 
 namespace Lockstep.ECS.GameState{
+    public partial class TickComponent  {
+        public override void CopyTo(object comp){
+            var dst = (TickComponent) comp;
+            if (dst == null) {
+                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
+            }
+			dst.value = value;
+        }
+        
+        public override object Clone(){
+            var dst = new TickComponent();
+            CopyTo(dst);
+            return dst;
+        }
+        
+        public override bool Equals(object obj){
+            var dst = (TickComponent) obj;
+                if (dst == null) {
+                return false;
+            }
+			if (value != dst.value) return false;
+            return true;
+        }
+        
+        public override string ToString(){
+            return "Tick{" +
+			"value=" + value +
+            "}";
+            ;
+        }
+    }
+}
+
+
+namespace Lockstep.ECS.Input{
     public partial class TickComponent  {
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;

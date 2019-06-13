@@ -26,7 +26,7 @@ namespace Lockstep.CodeGenerator {
 
     public partial class EditorCodeGeneratorExtensionEcs : EditorBaseCodeGenerator {
         protected override string GeneratePath {
-            get { return Path.Combine(Application.dataPath, "../Common/Lockstep.ECS.Common/Src/"); }
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/Lockstep.ECS.Common/Src/"); }
         }
 
         protected override string GenerateFilePath {
@@ -37,7 +37,8 @@ namespace Lockstep.CodeGenerator {
         }
 
         protected override void ReflectRegisterTypes(){
-            var types = ReflectionUtility.GetInterfaces(typeof(IComponent));
+            var types =  typeof(Lockstep.ECS.Actor.IdComponent).Assembly.GetTypes();
+            //var types = ReflectionUtility.GetInterfaces(typeof(IComponent));
             foreach (var t in types) {
                 //代码自动生成的Componennt 不处理
                 if (t.GetCustomAttributes(typeof(Entitas.CodeGeneration.Attributes.DontGenerateAttribute),
@@ -80,7 +81,6 @@ namespace Lockstep.CodeGenerator {
 //https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 //#DECLARE_BASE_TYPES
 
 #if !DONT_USE_GENERATE_CODE
