@@ -42,7 +42,14 @@ namespace Lockstep.Game {
             normalParent = uiRoot.normalParent;
             forwardParent = uiRoot.forwardParent;
             importParent = uiRoot.noticeParent;
-            OpenWindow(UIDefine.UILogin);
+            if (_constStateService.IsVideoMode) {
+                OpenWindow(UIDefine.UILoading);     
+            }
+            else {
+                OpenWindow(UIDefine.UILogin);    
+            }
+
+
         }
 
         private Transform GetParentFromDepth(EWindowDepth depth){

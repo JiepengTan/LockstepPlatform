@@ -80,9 +80,9 @@ namespace Lockstep.Game {
             StartSimulate();
         }
 
-        void OnEvent_LoadLevelDone(object param){
-            Debug.Log($"OnEvent_LoadLevelDone " + _constStateService.IsReconnecting);
-            if (_constStateService.IsReconnecting) {
+        void OnEvent_LevelLoadDone(object param){
+            Debug.Log($"OnEvent_LevelLoadDone " + _constStateService.IsReconnecting);
+            if (_constStateService.IsReconnecting || _constStateService.IsVideoMode) {
                 StartSimulate();
             }
         }
@@ -262,10 +262,11 @@ namespace Lockstep.Game {
                     var sFrame = _videoFrames.frames[_world.Tick];
                     Simulate(sFrame, true);
                     if (Time.realtimeSinceStartup > time) {
+                        EventHelper.Trigger(EEvent.VideoLoadProgress,_world.Tick*1.0f/_videoFrames.frames.Length);
                         return;
                     }
                 }
-
+                EventHelper.Trigger(EEvent.VideoLoadDone);
                 isInitVideo = true;
             }
 

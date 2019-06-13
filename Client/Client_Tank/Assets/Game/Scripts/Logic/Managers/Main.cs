@@ -70,6 +70,7 @@ namespace Lockstep.Game {
             _constStateService.IsRunVideo = isRunVideo;
             if (IsVideoMode && isRunVideo && CurTick < MaxRunTick) {
                 _simulationService.RunVideo();
+                return;
             }
 
             if (IsVideoMode && !isRunVideo) {

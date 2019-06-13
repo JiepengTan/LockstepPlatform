@@ -19,7 +19,7 @@ namespace Lockstep.Client {
 
 
         void ConnectToGameServer(Msg_C2G_Hello helloBody, IPEndInfo _gameTcpEnd, bool isReconnect);
-        void OnLoadLevelProgress(float progress);
+        void OnLevelLoadProgress(float progress);
     }
 
     public class RoomMsgManager : NetworkProxy, IRoomMsgManager {
@@ -110,7 +110,7 @@ namespace Lockstep.Client {
         }
 
 
-        public void OnLoadLevelProgress(float progress){
+        public void OnLevelLoadProgress(float progress){
             _curLoadProgress = progress;
             if (CurProgress >= 100) {
                 CurGameState = EGameState.PartLoaded;

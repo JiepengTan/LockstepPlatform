@@ -49,7 +49,7 @@ namespace Lockstep.Game {
             _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
         }
 
-        public void OnEvent_LoadLevelDone(object param){
+        public void OnEvent_LevelLoadDone(object param){
             var level = (int) param;
             IsGameOver = false;
             _constStateService.curLevel = level;

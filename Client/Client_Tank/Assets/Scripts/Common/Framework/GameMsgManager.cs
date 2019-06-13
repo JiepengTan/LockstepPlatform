@@ -89,9 +89,9 @@ namespace Lockstep.Game {
             _constStateService.IsReconnecting = isReconnect;
         }
 
-        private void OnEvent_LoadLevelProgress(object param){
+        private void OnEvent_LevelLoadProgress(object param){
             if (_isVideoMode) return;
-            _roomMsgMgr.OnLoadLevelProgress((float) param);
+            _roomMsgMgr.OnLevelLoadProgress((float) param);
             CheckLoadingProgress();
         }
 

@@ -27,7 +27,7 @@ namespace Test {
             int i = 0;
             while (i++ <= 20) {
                 yield return new WaitForSeconds(0.1f);
-                _roomMsgManager.OnLoadLevelProgress(i * 0.05f);
+                _roomMsgManager.OnLevelLoadProgress(i * 0.05f);
             }
         }
 

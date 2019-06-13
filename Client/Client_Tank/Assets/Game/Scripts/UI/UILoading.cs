@@ -10,22 +10,33 @@ public class UILoading : UIBaseWindow {
     public Slider sliderProgress;
 
     void OnEvent_OnLoadingProgress(object param){
-        var progress = param as byte[];
-        sliderProgress.value = (progress?[0] / 100f) ?? 0;
-        textInfo.text = $"Loading {sliderProgress.value * 100}%";
+        var iprogress = param as byte[];
+        var progress = (iprogress?[0] / 100f) ?? 0;
+        ShowProgress( progress);
     }
 
     void OnEvent_OnAllPlayerFinishedLoad(object param){
-        sliderProgress.value = 1;
-        OpenWindow(UIDefine.UIGameStatus);
-        Close();
+        EndLoading();
     }
     void OnEvent_ReconnectLoadProgress(object param){
-        var progress = (float)param ;
+        ShowProgress((float) param);
+    }
+    void OnEvent_ReconnectLoadDone(object param){
+        EndLoading();
+    }
+    void OnEvent_VideoLoadProgress(object param){
+        ShowProgress((float) param);
+    }
+    void OnEvent_VideoLoadDone(object param){
+        EndLoading();
+    }
+
+    void ShowProgress(float progress){
         sliderProgress.value = progress;
         textInfo.text = $"Loading {sliderProgress.value * 100}%";
     }
-    void OnEvent_ReconnectLoadDone(object param){
+
+    void EndLoading(){
         sliderProgress.value = 1;
         OpenWindow(UIDefine.UIGameStatus);
         Close();

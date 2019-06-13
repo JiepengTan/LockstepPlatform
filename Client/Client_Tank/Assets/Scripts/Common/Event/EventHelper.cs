@@ -22,11 +22,13 @@ namespace Lockstep.Core {
         OnRoomInfoUpdate,
         OnConnectToGameServer,
         
-
+        VideoLoadProgress,
+        VideoLoadDone,
+        
         OnGameCreate,//连接GameServer 成功
         SimulationInit,//初始化Simulation
-        LoadLevelProgress,//开始加载地图 本地load progress
-        LoadLevelDone,//地图加载完成
+        LevelLoadProgress,//开始加载地图 本地load progress
+        LevelLoadDone,//地图加载完成
         OnLoadingProgress,//Server notify load progress
         OnAllPlayerFinishedLoad,//Server notify all user finished load
         SimulationStart,//client start game lifecycle
