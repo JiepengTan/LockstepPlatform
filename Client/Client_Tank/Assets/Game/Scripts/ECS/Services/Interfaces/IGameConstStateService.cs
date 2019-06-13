@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public interface IConstGameStateService : IService {
+        bool IsVideoLoading { get; set; }
         bool IsVideoMode { get; set; }
 
         bool IsRunVideo { get; set; }

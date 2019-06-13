@@ -30,12 +30,17 @@ public class UIGameStatus : UIBaseWindow {
     }
 
     private void Start(){
+        UpdateStatus();
         #if UNITY_EDITOR
         //OpenWindow(UIDefine.UIDebugInfo);
         #endif
     }
 
     void Update(){
+        UpdateStatus();
+    }
+
+    void UpdateStatus(){
         if (!GameManager.Instance.IsPlaying) {
             return;
         }
