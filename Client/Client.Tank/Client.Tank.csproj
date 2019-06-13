@@ -11,13 +11,14 @@
     <AssemblyName>Client.Tank</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>../../Common/Libs/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,14 +27,29 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>../../Common/Libs/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DesperateDevs.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\DesperateDevs.Utils.dll</HintPath>
+    </Reference>
     <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Common\Libs\Entitas.dll</HintPath>
+    </Reference>
+    <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\Entitas.CodeGeneration.Attributes.dll</HintPath>
+    </Reference>
+    <Reference Include="Entitas.Unity, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Client_Tank\Assets\Scripts\Libs\Entitas\Entitas.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="Entitas.VisualDebugging.Unity, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Client_Tank\Assets\Scripts\Libs\Entitas\Entitas.VisualDebugging.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="LiteNetLib, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\bin\LiteNetLib.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,10 +58,129 @@
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\Common\Libs\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Config\AudioConfig.cs" />
+    <Compile Include="Src\Config\GameConfig.cs" />
+    <Compile Include="Src\Config\GameConfig_Const.cs" />
+    <Compile Include="Src\ECS\CompMonoWraps\BaseEntitySetter.cs" />
+    <Compile Include="Src\ECS\Listeners\DirListener.cs" />
+    <Compile Include="Src\ECS\Listeners\PosListener.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IAudioService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IGameConstStateService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IGameMsgService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IMapService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IRandomService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IResouceService.cs" />
+    <Compile Include="Src\ECS\Services\Interfaces\IUnitService.cs" />
+    <Compile Include="Src\ECS\Systems\Cleanup\SystemRemoveDestroyedEntitiesFromView.cs" />
+    <Compile Include="Src\ECS\Systems\Feature\CleanupFeature.cs" />
+    <Compile Include="Src\ECS\Systems\Feature\GameFeature.cs" />
+    <Compile Include="Src\ECS\Systems\Feature\GameInitStateFeature.cs" />
+    <Compile Include="Src\ECS\Systems\Feature\GameLogicSystems.cs" />
+    <Compile Include="Src\ECS\Systems\Feature\InputFeature.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\Actor\InitializeEntityCount.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\Debugging\VerifyNoDuplicateBackups.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\GameState\CalculateHashCode.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\GameState\CleanDestroyedGameEntities.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\GameState\IncrementTick.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\GameState\OnNewPredictionCreateSnapshot.cs" />
+    <Compile Include="Src\ECS\Systems\Framworks\Input\CleanDestroyedInputEntities.cs" />
+    <Compile Include="Src\ECS\Systems\GameState\SystemInitState.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemApplyCampDestroyEffect.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemApplyEnemyDestroyEffect.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemApplyItemDestroyEffect.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemApplyPlayerDestroyEffect.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemCollisionDetected.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemDelayCall.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemEnemyBorn.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemExecuteFire.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemExecuteMoveBullet.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemExecuteMovePlayer.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemExecuteMoveTank.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemSkillUpdate.cs" />
+    <Compile Include="Src\ECS\Systems\Game\SystemUpdateAI.cs" />
+    <Compile Include="Src\ECS\Systems\Input\SystemFireInput.cs" />
+    <Compile Include="Src\ECS\Systems\Input\SystemMoveInput.cs" />
+    <Compile Include="Src\Event\EventHelper.cs" />
+    <Compile Include="Src\Framework\BaseSystem.cs" />
+    <Compile Include="Src\Framework\CommandBuffer.cs" />
+    <Compile Include="Src\Framework\GameLog.cs" />
+    <Compile Include="Src\Framework\GameMsgManager.cs" />
+    <Compile Include="Src\Framework\Interfaces\IClone.cs" />
+    <Compile Include="Src\Framework\Interfaces\IComponentSetter.cs" />
+    <Compile Include="Src\Framework\Interfaces\IEventListener.cs" />
+    <Compile Include="Src\Framework\Interfaces\IInputService.cs" />
+    <Compile Include="Src\Framework\Interfaces\IManagerContainer.cs" />
+    <Compile Include="Src\Framework\Interfaces\IService.cs" />
+    <Compile Include="Src\Framework\Interfaces\IServiceContainer.cs" />
+    <Compile Include="Src\Framework\Interfaces\ITimeMachine.cs" />
+    <Compile Include="Src\Framework\Interfaces\IViewService.cs" />
+    <Compile Include="Src\Framework\Main.cs" />
+    <Compile Include="Src\Framework\ResourceManager.cs" />
+    <Compile Include="Src\Framework\SimulationManager.cs" />
+    <Compile Include="Src\Framework\SingletonManager.cs" />
+    <Compile Include="Src\Framework\World.cs" />
+    <Compile Include="Src\Framework\WorldSystems.cs" />
+    <Compile Include="Src\IMapManager.cs" />
+    <Compile Include="Src\IUIService.cs" />
+    <Compile Include="Src\Logic\Extensions.cs" />
+    <Compile Include="Src\Logic\Misc\DestroySelf.cs" />
+    <Compile Include="Src\Logic\Misc\SpriteEffect.cs" />
+    <Compile Include="Src\Logic\Utils\CollisionUtil.cs" />
+    <Compile Include="Src\Logic\Utils\DirUtil.cs" />
+    <Compile Include="Src\Logic\Utils\ItemUtil.cs" />
+    <Compile Include="Src\Logic\Utils\TankUtil.cs" />
+    <Compile Include="Src\Logic\Utils\TilemapUtil.cs" />
+    <Compile Include="Src\Logic\Utils\UnitUtil.cs" />
+    <Compile Include="Src\Network\BaseNetProxy.cs" />
+    <Compile Include="Src\Network\FrameBuffer.cs" />
+    <Compile Include="Src\Network\NetProxyLobby.cs" />
+    <Compile Include="Src\Network\NetProxyRoom.cs" />
+    <Compile Include="Src\ReferenceHolder.cs" />
+    <Compile Include="Src\RollbackableRes.cs" />
+    <Compile Include="Src\UIBaseWindow.cs" />
+    <Compile Include="Src\UIDefine.cs" />
+    <Compile Include="Src\Utils\BitUtil.cs" />
     <Compile Include="Testst.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Lockstep.ECS.Common\Lockstep.ECS.Common.csproj">
+      <Project>{dcbba796-f183-4211-a5f1-78ccdcbd00dc}</Project>
+      <Name>Lockstep.ECS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Lockstep.Math\Lockstep.Math.csproj">
+      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
+      <Name>Lockstep.Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
+      <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
+      <Name>NetMsg.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Networking\Networking.csproj">
+      <Project>{b5ac4ff4-5723-4c4a-944e-062220c2780b}</Project>
+      <Name>Networking</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Util\Util.csproj">
+      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
+      <Name>Util</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Client.Common\Client.Common.csproj">
+      <Project>{1ae6c358-53d2-4b7d-9451-7db18b00cfaf}</Project>
+      <Name>Client.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

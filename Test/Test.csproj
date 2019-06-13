@@ -41,15 +41,16 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\ClientUtil.cs" />
     <Compile Include="Src\DebugGameMsgHandler.cs" />
     <Compile Include="Src\DebugLoginHandler.cs" />
     <Compile Include="Src\FakeClient.cs" />
     <Compile Include="Src\TestNetwork.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Client\ClientCommon\ClientCommon.csproj">
+    <ProjectReference Include="..\Client\Client.Common\Client.Common.csproj">
       <Project>{1ae6c358-53d2-4b7d-9451-7db18b00cfaf}</Project>
-      <Name>ClientCommon</Name>
+      <Name>Client.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\Logging\Logging.csproj">
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>

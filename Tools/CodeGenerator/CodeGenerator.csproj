@@ -33,14 +33,28 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\Entitas.dll</HintPath>
+    </Reference>
+    <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\Entitas.CodeGeneration.Attributes.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\UnityEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\Common\Libs\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\CodeGenerator.cs" />
+    <Compile Include="Src\ECSExtension\Editor\EditorCodeGeneratorExtensionEcs.cs" />
+    <Compile Include="Src\ECSExtension\Editor\TypeHandlerECS.cs" />
     <Compile Include="Src\EditorBaseCodeGenerator.cs" />
     <Compile Include="Src\MsgExtension\EditorCodeGeneratorExtensionMsg.cs" />
     <Compile Include="Src\MsgExtension\TypeHandlerMsg.cs" />
@@ -49,6 +63,10 @@
     <Compile Include="Src\TypeHandler.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Client\Client.Tank\Client.Tank.csproj">
+      <Project>{c8350028-cd73-4bb7-af7a-eb3bc6f3e5d2}</Project>
+      <Name>Client.Tank</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
       <Name>Logging</Name>

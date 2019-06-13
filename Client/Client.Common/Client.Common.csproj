@@ -41,7 +41,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\BaseLoginHandler.cs" />
     <Compile Include="Src\BaseRoomMsgHandler.cs" />
-    <Compile Include="Src\ClientUtil.cs" />
     <Compile Include="Src\LoginManager.cs" />
     <Compile Include="Src\RoomMsgManager.cs" />
   </ItemGroup>
