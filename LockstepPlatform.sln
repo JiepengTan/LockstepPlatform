@@ -42,8 +42,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math.Editor", "Common\Math.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Common", "Common\ECS.Common\ECS.Common.csproj", "{DCBBA796-F183-4211-A5F1-78CCDCBD00DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Client\Client_Tank\Assembly-CSharp.csproj", "{32841AF2-D04D-2809-43A0-048B4F1DFAAA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Tank", "Common\ECS.Tank\ECS.Tank.csproj", "{50DAAD68-04E8-4DFA-9CBE-755491AC9D34}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tank.Editor", "Client\Client.Tank.Editor\Client.Tank.Editor.csproj", "{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}"

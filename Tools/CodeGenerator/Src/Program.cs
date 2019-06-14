@@ -16,6 +16,7 @@ namespace Lockstep.CodeGenerator {
             EditorCodeGeneratorExtensionEcs.GenerateCode();
             EditorCodeGenerator.GenerateCode();
             DeleteUselessFiles("../Client/Client.Tank");
+            DeleteUselessFiles("../Client/Client.Common");
             DeleteUselessFiles("../Common/Lockstep.ECS.Common");
         }
     }

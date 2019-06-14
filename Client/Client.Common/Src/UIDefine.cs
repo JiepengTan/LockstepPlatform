@@ -9,7 +9,7 @@ namespace Lockstep.Game {
         PartFinished,
     }
     
-    public class UIDefine {
+    public class UIDefine { 
         public static WindowCreateInfo UIRoot = new WindowCreateInfo("UIRoot", EWindowDepth.Normal);
         public static WindowCreateInfo UILogin = new WindowCreateInfo("UILogin", EWindowDepth.Normal);
         public static WindowCreateInfo UILobby = new WindowCreateInfo("UILobby", EWindowDepth.Normal);
