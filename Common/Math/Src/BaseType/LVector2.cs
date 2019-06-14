@@ -1,7 +1,4 @@
 ﻿using System;
-#if UNITY_5_3_OR_NEWER
-using UnityEngine;
-#endif
 using Lockstep.Math;
 
 namespace Lockstep.Math {
@@ -71,16 +68,6 @@ namespace Lockstep.Math {
         }
 
 
-        #if UNITY_EDITOR
-        /// <summary>
-        /// 直接使用浮点型 进行构造 警告!!! 仅应该在Editor模式下使用，不应该在正式代码中使用,避免出现引入浮点的不确定性
-        /// </summary>
-        public LVector2(bool shouldOnlyUseInEditor,float x, float y)
-        {
-            this._x = (int)(x * LFloat.Precision);
-            this._y = (int)(y * LFloat.Precision);
-        }
-        #endif
 
         /// <summary>
         /// clockwise 顺时针旋转  

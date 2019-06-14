@@ -8,6 +8,8 @@ cp -rf ../../Common/Libs/* Assets/Plugins/Libs
 mv Assets/Plugins/Libs/Editor/* Assets/Plugins/Libs/
 mv Assets/Plugins/Libs/*.Editor.* Assets/Plugins/Libs/Editor/
 rm -rf Assets/Plugins/Libs/UnityE*.dll
+rm -rf Assets/Plugins/Libs/UnityE*.mdb
+rm -rf Assets/Plugins/Libs/UnityE*.xml
 rm -rf Assets/Plugins/Libs/Entitas*.dll
 rm -rf Assets/Plugins/Libs/Desperate*.dll
 

@@ -36,9 +36,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\Libs\UnityEditor.dll</HintPath>
-    </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\Libs\UnityEngine.dll</HintPath>
     </Reference>
@@ -56,6 +53,7 @@
     <Compile Include="Src\BaseType\LVector3Int.cs" />
     <Compile Include="Src\LMath.cs" />
     <Compile Include="Src\LMathExtension.cs" />
+    <Compile Include="Src\LMathExtension2.cs" />
     <Compile Include="Src\LMath_Vector.cs" />
     <Compile Include="Src\LRandom.cs" />
     <Compile Include="Src\LUT\LUTAcos.cs" />
