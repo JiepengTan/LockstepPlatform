@@ -6,7 +6,7 @@ namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
     [Serializable]
-    public partial class MutilFrames : BaseFormater {
+    public partial class MutilFrames : BaseMsg {
         public int startTick;
         public ServerFrame[] frames;
 

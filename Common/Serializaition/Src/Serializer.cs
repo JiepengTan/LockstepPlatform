@@ -37,7 +37,7 @@ namespace Lockstep.Serialization {
         void Deserialize(Deserializer reader);
     }
 
-    public class Serializer {
+    public partial class Serializer {
         protected byte[] _data;
         protected int _position;
         private const int InitialSize = 64;
@@ -448,4 +448,5 @@ namespace Lockstep.Serialization {
             _position += bytesCount;
         }
     }
+    
 }

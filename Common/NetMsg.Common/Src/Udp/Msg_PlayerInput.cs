@@ -6,7 +6,7 @@ namespace NetMsg.Common {
     [System.Serializable]
     [SelfImplement]
     [Udp]
-    public partial class Msg_PlayerInput : BaseFormater {
+    public partial class Msg_PlayerInput : BaseMsg {
         public byte[] InputDatas; //real data
         public byte ActorId;
         public int Tick;

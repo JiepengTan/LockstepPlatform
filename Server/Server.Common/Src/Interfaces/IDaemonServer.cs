@@ -1,4 +1,5 @@
 using Lockstep.Serialization;
+using NetMsg.Common;
 
 namespace Lockstep.Server.Common {
     public interface IDaemonServer  {
@@ -7,7 +8,7 @@ namespace Lockstep.Server.Common {
         void ReportState(DaemonState state);
     }
 
-    public class DaemonState : BaseFormater {
+    public class DaemonState : BaseMsg {
         public byte[] localServers;
         public float cpu;
         public float memory;

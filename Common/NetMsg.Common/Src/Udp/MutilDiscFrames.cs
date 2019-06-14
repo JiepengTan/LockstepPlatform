@@ -3,7 +3,7 @@ using Lockstep.Serialization;
 namespace NetMsg.Common {
     [SelfImplement]
     [Udp]
-    public partial class MutilDiscFrames : BaseFormater {
+    public partial class MutilDiscFrames : BaseMsg {
         public int startTick;
         public ServerFrame[] frames;
 

@@ -81,6 +81,7 @@ namespace Lockstep.CodeGenerator {
 //https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
+using Lockstep.Serialization;
 //#DECLARE_BASE_TYPES
 
 #if !DONT_USE_GENERATE_CODE

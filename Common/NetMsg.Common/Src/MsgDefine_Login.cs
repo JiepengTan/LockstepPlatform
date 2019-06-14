@@ -28,7 +28,7 @@ namespace NetMsg.Common {
         void MarkAsDirty();
     }
 
-    public partial class GameProperty : BaseFormater {
+    public partial class GameProperty : BaseMsg {
         [NoGenCode]
         public string Name {
             get => _Name;
@@ -52,7 +52,7 @@ namespace NetMsg.Common {
         public byte[] _Data;
     }
 
-    public partial class GameData : BaseFormater {
+    public partial class GameData : BaseMsg {
         [BsonId]
         [NoGenCode]
         public string Username {
@@ -77,7 +77,7 @@ namespace NetMsg.Common {
         public List<GameProperty> _Datas;
     }
 
-    public partial class AccountData : BaseFormater, IAccountData {
+    public partial class AccountData : BaseMsg, IAccountData {
         [BsonId] public string Username { get; set; }
         public long UserId { get; set; }
         public string Password { get; set; }
@@ -93,37 +93,37 @@ namespace NetMsg.Common {
         public void MarkAsDirty(){ }
     }
 
-    public partial class Msg_S2D_ReqGameData : BaseFormater {
+    public partial class Msg_S2D_ReqGameData : BaseMsg {
         public string account;
     }
 
-    public partial class Msg_D2S_RepGameData : BaseFormater {
+    public partial class Msg_D2S_RepGameData : BaseMsg {
         public GameData data;
     }
 
-    public partial class Msg_S2D_SaveGameData : BaseFormater {
+    public partial class Msg_S2D_SaveGameData : BaseMsg {
         public GameData data;
     }
 
-    public partial class Msg_D2S_SaveGameData : BaseFormater {
+    public partial class Msg_D2S_SaveGameData : BaseMsg {
         public byte result;
     }
 
-    public partial class Msg_ReqAccountData : BaseFormater {
+    public partial class Msg_ReqAccountData : BaseMsg {
         public string account;
         public string password;
     }
 
-    public partial class Msg_CreateAccount : BaseFormater {
+    public partial class Msg_CreateAccount : BaseMsg {
         public string account;
         public string password;
     }
 
-    public partial class Msg_RepAccountData : BaseFormater {
+    public partial class Msg_RepAccountData : BaseMsg {
         public AccountData accountData;
     }
 
-    public partial class Msg_RepCreateResult : BaseFormater {
+    public partial class Msg_RepCreateResult : BaseMsg {
         public byte result;
         public long userId;
     }

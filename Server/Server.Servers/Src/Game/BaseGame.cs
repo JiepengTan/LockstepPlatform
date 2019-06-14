@@ -58,7 +58,7 @@ namespace Lockstep.Server.Game {
         //net msg
         void SendUdp(Player player, byte[] data);
         void BorderUdp(byte[] data);
-        void BorderTcp(EMsgSC type, BaseFormater info);
+        void BorderTcp(EMsgSC type, BaseMsg info);
         void SetStartInfo(Msg_G2C_GameStartInfo info);
         void OnRecvMsg(Player player, Deserializer reader);
     }
@@ -115,9 +115,9 @@ namespace Lockstep.Server.Game {
         private DealNetMsg[] allMsgDealFuncs = new DealNetMsg[MaxMsgIdx];
         private ParseNetMsg[] allMsgParsers = new ParseNetMsg[MaxMsgIdx];
 
-        private delegate void DealNetMsg(Player player, BaseFormater data);
+        private delegate void DealNetMsg(Player player, BaseMsg data);
 
-        private delegate BaseFormater ParseNetMsg(Deserializer reader);
+        private delegate BaseMsg ParseNetMsg(Deserializer reader);
 
         public long timeSinceLoaded;
         private long firstFrameTimeStamp = 0;
@@ -388,7 +388,7 @@ namespace Lockstep.Server.Game {
             allMsgParsers[(int) type] = parseFunc;
         }
 
-        T ParseData<T>(Deserializer reader) where T : BaseFormater, new(){
+        T ParseData<T>(Deserializer reader) where T : BaseMsg, new(){
             T data = null;
             try {
                 data = reader.Parse<T>();
@@ -404,7 +404,7 @@ namespace Lockstep.Server.Game {
             return data;
         }
 
-        public void BorderTcp(EMsgSC type, BaseFormater data){
+        public void BorderTcp(EMsgSC type, BaseMsg data){
             var msg = MessageHelper.Create((short) type, data);
             foreach (var player in Players) {
                 player?.SendTcp(msg);
@@ -548,7 +548,7 @@ namespace Lockstep.Server.Game {
 
         #region Net msg handler
 
-        void OnNet_PlayerInput(Player player, BaseFormater data){
+        void OnNet_PlayerInput(Player player, BaseMsg data){
             if (State != EGameState.PartLoaded && State != EGameState.Playing) return;
             if (State == EGameState.PartLoaded) {
                 Log("First input: game start playing");
@@ -593,7 +593,7 @@ namespace Lockstep.Server.Game {
         }
 
 
-        void OnNet_HashCode(Player player, BaseFormater data){
+        void OnNet_HashCode(Player player, BaseMsg data){
             var hashInfo = data as Msg_HashCode;
             var id = player.LocalId;
             for (int i = 0; i < hashInfo.HashCodes.Length; i++) {
@@ -641,7 +641,7 @@ namespace Lockstep.Server.Game {
 
         public const int MaxRepMissFrameCountPerPack = 600;
 
-        void OnNet_ReqMissFrame(Player player, BaseFormater data){
+        void OnNet_ReqMissFrame(Player player, BaseMsg data){
             var reqMsg = data as Msg_ReqMissFrame;
             var nextCheckTick = reqMsg.StartTick;
             Log($"OnNet_ReqMissFrame nextCheckTick id:{player.LocalId}:{nextCheckTick}");
@@ -660,13 +660,13 @@ namespace Lockstep.Server.Game {
             SendUdp(player, EMsgSC.G2C_RepMissFrame, msg, true);
         }
 
-        void OnNet_RepMissFrameAck(Player player, BaseFormater data){
+        void OnNet_RepMissFrameAck(Player player, BaseMsg data){
             var msg = data as Msg_RepMissFrameAck;
             Log($"OnNet_RepMissFrameAck missFrameTick:{msg.MissFrameTick}");
         }
 
 
-        void OnNet_LoadingProgress(Player player, BaseFormater data){
+        void OnNet_LoadingProgress(Player player, BaseMsg data){
             if (State != EGameState.Loading) return;
             var msg = data as Msg_C2G_LoadingProgress;
             if (playerLoadingProgress == null) {

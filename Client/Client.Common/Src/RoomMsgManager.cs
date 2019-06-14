@@ -23,9 +23,9 @@ namespace Lockstep.Client {
     }
 
     public class RoomMsgManager : NetworkProxy, IRoomMsgManager {
-        private delegate void DealNetMsg(BaseFormater data);
+        private delegate void DealNetMsg(BaseMsg data);
 
-        private delegate BaseFormater ParseNetMsg(Deserializer reader);
+        private delegate BaseMsg ParseNetMsg(Deserializer reader);
 
         public EGameState CurGameState = EGameState.Idle;
 
@@ -222,7 +222,7 @@ namespace Lockstep.Client {
             _allMsgParsers[(int) type] = parseFunc;
         }
 
-        private T ParseData<T>(Deserializer reader) where T : BaseFormater, new(){
+        private T ParseData<T>(Deserializer reader) where T : BaseMsg, new(){
             return reader.Parse<T>();
         }
 
@@ -257,7 +257,7 @@ namespace Lockstep.Client {
             _netUdp?.SendMessage(EMsgSC.C2G_UdpMessage, writer.CopyData(), EDeliveryMethod.Unreliable);
         }
 
-        public void SendTcp(EMsgSC msgId, BaseFormater body){
+        public void SendTcp(EMsgSC msgId, BaseMsg body){
             var writer = new Serializer();
             writer.PutInt16((short) msgId);
             body.Serialize(writer);
@@ -292,12 +292,12 @@ namespace Lockstep.Client {
             }
         }
 
-        protected void OnMsg_G2C_FrameData(BaseFormater reader){
+        protected void OnMsg_G2C_FrameData(BaseMsg reader){
             var msg = reader as Msg_ServerFrames;
             _handler.OnServerFrames(msg);
         }
 
-        protected void OnMsg_G2C_RepMissFrame(BaseFormater reader){
+        protected void OnMsg_G2C_RepMissFrame(BaseMsg reader){
             var msg = reader as Msg_RepMissFrame;
             _handler.OnMissFrames(msg);
         }

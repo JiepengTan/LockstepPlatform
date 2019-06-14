@@ -5,7 +5,7 @@ namespace NetMsg.Common {
     [System.Serializable]
     [SelfImplement]
     [Udp]
-    public partial class ServerFrame : BaseFormater {
+    public partial class ServerFrame : BaseMsg {
         public byte[] inputDatas; //包含玩家的输入& 游戏输入
         public int tick;
         public Msg_PlayerInput[] _inputs;

@@ -145,7 +145,7 @@ namespace Lockstep.Game {
                     Quaternion.identity, parent);
                 go.AddComponent<PosListener>();
                 go.AddComponent<DirListener>();
-                _viewService.BindView(entity, _gameContext, go);
+                _viewService.BindView(entity, go);
             }
 
             ecsPrefab.SetComponentsTo(entity);
@@ -191,7 +191,7 @@ namespace Lockstep.Game {
         }
         public void DelayCall(LFloat delay, Action callback){
             var delayEntity = CreateGameEntity();
-            delayEntity.AddDelayCall(delay, callback);
+            delayEntity.AddDelayCall(delay, FuncUtil.RegisterFunc(callback));
         }
 
         #endregion

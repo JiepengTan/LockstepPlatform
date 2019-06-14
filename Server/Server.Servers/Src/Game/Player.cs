@@ -20,7 +20,7 @@ namespace Lockstep.Server.Game {
             PeerTcp = null;
             PeerUdp = null;
         }
-        public void SendTcp(EMsgSC type, BaseFormater msg){
+        public void SendTcp(EMsgSC type, BaseMsg msg){
             PeerTcp?.SendMessage((short) type, msg);
         }
 

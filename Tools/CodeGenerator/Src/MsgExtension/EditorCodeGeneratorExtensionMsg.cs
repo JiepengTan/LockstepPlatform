@@ -75,7 +75,7 @@ namespace Lockstep.CodeGenerator {
             types = GetTypes();
             foreach (var t in types) {
                 if (!allTypes.Add(t)) continue;
-                if (t.IsSubclassOf(typeof(BaseFormater)) 
+                if (t.IsSubclassOf(typeof(BaseMsg)) 
                     &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
                     ) {
                     RegisterType(t);

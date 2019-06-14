@@ -136,7 +136,7 @@
     <Compile Include="Src\Logic\Utils\ItemUtil.cs" />
     <Compile Include="Src\Logic\Utils\TankUtil.cs" />
     <Compile Include="Src\Logic\Utils\TilemapUtil.cs" />
-    <Compile Include="Src\Logic\Utils\UnitUtil.cs" />
+    <Compile Include="Src\Logic\Utils\FuncUtil.cs" />
     <Compile Include="Src\Network\BaseNetProxy.cs" />
     <Compile Include="Src\Network\FrameBuffer.cs" />
     <Compile Include="Src\Network\NetProxyLobby.cs" />

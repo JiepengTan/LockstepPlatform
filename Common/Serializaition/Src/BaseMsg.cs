@@ -9,6 +9,7 @@ namespace Lockstep.Serialization {
     [System.AttributeUsage(System.AttributeTargets.Field|System.AttributeTargets.Property, AllowMultiple = false)]
     public class NoGenCodeAttribute : System.Attribute { }
 
+
     [System.Serializable]
     public partial class BaseFormater : ISerializable, ISerializablePacket {
         public virtual void Serialize(Serializer writer){ }
@@ -38,4 +39,5 @@ namespace Lockstep.Serialization {
             return ret;
         }
     }
+
 }

@@ -92,7 +92,7 @@
     <Compile Include="Src\Components\Game\UnitComponent.cs" />
     <Compile Include="Src\Components\Input\FireComponent.cs" />
     <Compile Include="Src\Components\Input\MoveDirComponent.cs" />
-    <Compile Include="Src\ECSExtension.cs" />
+    <Compile Include="Src\ExtensionUtil.cs" />
     <Compile Include="Src\EnumDefines.cs" />
     <Compile Include="Src\ExtentionECS.cs" />
     <Compile Include="Src\Generated\Actor\ActorAttribute.cs" />
@@ -199,6 +199,10 @@
     <ProjectReference Include="..\Lockstep.Math\Lockstep.Math.csproj">
       <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
       <Name>Lockstep.Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

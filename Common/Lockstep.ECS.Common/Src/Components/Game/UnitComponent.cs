@@ -7,7 +7,6 @@ using Lockstep.Game;
 namespace Lockstep.ECS.Game
 {
     [Game]
-    [System.Serializable]
     public partial class UnitComponent : IComponent {
         public string name;
         public ECampType camp;

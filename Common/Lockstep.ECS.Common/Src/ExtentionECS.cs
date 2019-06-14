@@ -3,6 +3,8 @@
 //https://github.com/JiepengTan/LockstepPlatform
 using System;
 using System.Collections.Generic;
+using Lockstep.Serialization;
+
 namespace Lockstep.ECS.Input{public partial class ActorIdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ActorIdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class AIComponent : BaseComponent{}};
@@ -52,7 +54,16 @@ namespace Lockstep.ECS.Game{public partial class UnitComponent : BaseComponent{}
 #if !DONT_USE_GENERATE_CODE
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class ActorIdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutByte(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetByte();
+        }
+
         public override void CopyTo(object comp){
             var dst = (ActorIdComponent) comp;
             if (dst == null) {
@@ -67,27 +78,28 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (ActorIdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "ActorId{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class ActorIdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutByte(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetByte();
+        }
+
         public override void CopyTo(object comp){
             var dst = (ActorIdComponent) comp;
             if (dst == null) {
@@ -102,27 +114,32 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (ActorIdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "ActorId{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class AIComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLFloat(fireRate);
+			writer.PutLFloat(timer);
+			writer.PutLFloat(updateInterval);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			fireRate = reader.GetLFloat();
+			timer = reader.GetLFloat();
+			updateInterval = reader.GetLFloat();
+        }
+
         public override void CopyTo(object comp){
             var dst = (AIComponent) comp;
             if (dst == null) {
@@ -139,31 +156,30 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (AIComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (fireRate != dst.fireRate) return false;
 			if (timer != dst.timer) return false;
 			if (updateInterval != dst.updateInterval) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "AI{" +
-			"fireRate=" + fireRate +
-			"timer=" + timer +
-			"updateInterval=" + updateInterval +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class AssetComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32((int)(assetId));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			assetId = (Lockstep.Game.EAssetID)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (AssetComponent) comp;
             if (dst == null) {
@@ -178,27 +194,30 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (AssetComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (assetId != dst.assetId) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Asset{" +
-			"assetId=" + assetId +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class BackupComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(localEntityId);
+			writer.PutInt32(tick);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			localEntityId = reader.GetUInt32();
+			tick = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (BackupComponent) comp;
             if (dst == null) {
@@ -214,29 +233,31 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BackupComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (localEntityId != dst.localEntityId) return false;
 			if (tick != dst.tick) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Backup{" +
-			"localEntityId=" + localEntityId +
-			"tick=" + tick +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Actor{
+    [System.Serializable]
     public partial class BackupComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutByte(actorId);
+			writer.PutInt32(tick);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			actorId = reader.GetByte();
+			tick = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (BackupComponent) comp;
             if (dst == null) {
@@ -252,29 +273,29 @@ namespace Lockstep.ECS.Actor{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BackupComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (actorId != dst.actorId) return false;
 			if (tick != dst.tick) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Backup{" +
-			"actorId=" + actorId +
-			"tick=" + tick +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.GameState{
+    [System.Serializable]
     public partial class BackupCurFrameComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (BackupCurFrameComponent) comp;
             if (dst == null) {
@@ -289,27 +310,28 @@ namespace Lockstep.ECS.GameState{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BackupCurFrameComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "BackupCurFrame{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.GameState{
+    [System.Serializable]
     public partial class BeforeExecuteHashCodeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt64();
+        }
+
         public override void CopyTo(object comp){
             var dst = (BeforeExecuteHashCodeComponent) comp;
             if (dst == null) {
@@ -324,27 +346,28 @@ namespace Lockstep.ECS.GameState{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BeforeExecuteHashCodeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "BeforeExecuteHashCode{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class BornPointComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLVector2(coord);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			coord = reader.GetLVector2();
+        }
+
         public override void CopyTo(object comp){
             var dst = (BornPointComponent) comp;
             if (dst == null) {
@@ -359,27 +382,32 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BornPointComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (coord != dst.coord) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "BornPoint{" +
-			"coord=" + coord +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class BulletComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutBoolean(canDestoryGrass);
+			writer.PutBoolean(canDestoryIron);
+			writer.PutUInt32(ownerLocalId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			canDestoryGrass = reader.GetBoolean();
+			canDestoryIron = reader.GetBoolean();
+			ownerLocalId = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (BulletComponent) comp;
             if (dst == null) {
@@ -396,31 +424,32 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (BulletComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (canDestoryGrass != dst.canDestoryGrass) return false;
 			if (canDestoryIron != dst.canDestoryIron) return false;
 			if (ownerLocalId != dst.ownerLocalId) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Bullet{" +
-			"canDestoryGrass=" + canDestoryGrass +
-			"canDestoryIron=" + canDestoryIron +
-			"ownerLocalId=" + ownerLocalId +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class ColliderComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLFloat(radius);
+			writer.PutLVector2(size);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			radius = reader.GetLFloat();
+			size = reader.GetLVector2();
+        }
+
         public override void CopyTo(object comp){
             var dst = (ColliderComponent) comp;
             if (dst == null) {
@@ -436,29 +465,31 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (ColliderComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (radius != dst.radius) return false;
 			if (size != dst.size) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Collider{" +
-			"radius=" + radius +
-			"size=" + size +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class DelayCallComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLFloat(delayTimer);
+			//writer.Put(callBack);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			delayTimer = reader.GetLFloat();
+			//callBack = reader.Get(ref this.callBack);
+        }
+
         public override void CopyTo(object comp){
             var dst = (DelayCallComponent) comp;
             if (dst == null) {
@@ -474,29 +505,29 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (DelayCallComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (delayTimer != dst.delayTimer) return false;
 			if (callBack != dst.callBack) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "DelayCall{" +
-			"delayTimer=" + delayTimer +
-			"callBack=" + callBack +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class DestroyedComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (DestroyedComponent) comp;
             if (dst == null) {
@@ -511,27 +542,28 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (DestroyedComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "Destroyed{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class DestroyedComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (DestroyedComponent) comp;
             if (dst == null) {
@@ -546,27 +578,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (DestroyedComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "Destroyed{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class DirComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32((int)(value));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = (Lockstep.Game.EDir)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (DirComponent) comp;
             if (dst == null) {
@@ -581,27 +614,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (DirComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Dir{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class DropRateComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLFloat(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetLFloat();
+        }
+
         public override void CopyTo(object comp){
             var dst = (DropRateComponent) comp;
             if (dst == null) {
@@ -616,27 +650,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (DropRateComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "DropRate{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class EntityConfigIdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (EntityConfigIdComponent) comp;
             if (dst == null) {
@@ -651,27 +686,28 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (EntityConfigIdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "EntityConfigId{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Actor{
+    [System.Serializable]
     public partial class EntityCountComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (EntityCountComponent) comp;
             if (dst == null) {
@@ -686,27 +722,28 @@ namespace Lockstep.ECS.Actor{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (EntityCountComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "EntityCount{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class FireComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (FireComponent) comp;
             if (dst == null) {
@@ -721,27 +758,28 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (FireComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "Fire{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class FireRequestComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (FireRequestComponent) comp;
             if (dst == null) {
@@ -756,27 +794,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (FireRequestComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "FireRequest{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Actor{
+    [System.Serializable]
     public partial class GameLocalIdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (GameLocalIdComponent) comp;
             if (dst == null) {
@@ -791,27 +830,28 @@ namespace Lockstep.ECS.Actor{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (GameLocalIdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "GameLocalId{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.GameState{
+    [System.Serializable]
     public partial class HashCodeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt64();
+        }
+
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
             if (dst == null) {
@@ -826,27 +866,28 @@ namespace Lockstep.ECS.GameState{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (HashCodeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "HashCode{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Debug{
+    [System.Serializable]
     public partial class HashCodeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt64();
+        }
+
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
             if (dst == null) {
@@ -861,27 +902,28 @@ namespace Lockstep.ECS.Debug{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (HashCodeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "HashCode{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Snapshot{
+    [System.Serializable]
     public partial class HashCodeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt64();
+        }
+
         public override void CopyTo(object comp){
             var dst = (HashCodeComponent) comp;
             if (dst == null) {
@@ -896,27 +938,28 @@ namespace Lockstep.ECS.Snapshot{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (HashCodeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "HashCode{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Actor{
+    [System.Serializable]
     public partial class IdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutByte(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetByte();
+        }
+
         public override void CopyTo(object comp){
             var dst = (IdComponent) comp;
             if (dst == null) {
@@ -931,27 +974,30 @@ namespace Lockstep.ECS.Actor{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (IdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Id{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class ItemTypeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutByte(killerActorId);
+			writer.PutInt32((int)(type));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			killerActorId = reader.GetByte();
+			type = (Lockstep.ECS.Game.EItemType)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (ItemTypeComponent) comp;
             if (dst == null) {
@@ -967,29 +1013,29 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (ItemTypeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (killerActorId != dst.killerActorId) return false;
 			if (type != dst.type) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "ItemType{" +
-			"killerActorId=" + killerActorId +
-			"type=" + type +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class LifeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (LifeComponent) comp;
             if (dst == null) {
@@ -1004,27 +1050,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (LifeComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Life{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class LocalIdComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (LocalIdComponent) comp;
             if (dst == null) {
@@ -1039,27 +1086,32 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (LocalIdComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "LocalId{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class MoveComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutBoolean(isChangedDir);
+			writer.PutLFloat(maxMoveSpd);
+			writer.PutLFloat(moveSpd);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			isChangedDir = reader.GetBoolean();
+			maxMoveSpd = reader.GetLFloat();
+			moveSpd = reader.GetLFloat();
+        }
+
         public override void CopyTo(object comp){
             var dst = (MoveComponent) comp;
             if (dst == null) {
@@ -1076,31 +1128,30 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (MoveComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (isChangedDir != dst.isChangedDir) return false;
 			if (maxMoveSpd != dst.maxMoveSpd) return false;
 			if (moveSpd != dst.moveSpd) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Move{" +
-			"isChangedDir=" + isChangedDir +
-			"maxMoveSpd=" + maxMoveSpd +
-			"moveSpd=" + moveSpd +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class MoveDirComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32((int)(value));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = (Lockstep.Game.EDir)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (MoveDirComponent) comp;
             if (dst == null) {
@@ -1115,27 +1166,28 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (MoveDirComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "MoveDir{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class MoveRequestComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32((int)(value));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = (Lockstep.Game.EDir)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (MoveRequestComponent) comp;
             if (dst == null) {
@@ -1150,27 +1202,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (MoveRequestComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "MoveRequest{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class OwnerComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(localId);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			localId = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (OwnerComponent) comp;
             if (dst == null) {
@@ -1185,27 +1238,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (OwnerComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (localId != dst.localId) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Owner{" +
-			"localId=" + localId +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class PosComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutLVector2(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetLVector2();
+        }
+
         public override void CopyTo(object comp){
             var dst = (PosComponent) comp;
             if (dst == null) {
@@ -1220,27 +1274,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (PosComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Pos{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class ScoreComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (ScoreComponent) comp;
             if (dst == null) {
@@ -1255,27 +1310,34 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (ScoreComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Score{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class SkillComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(bulletId);
+			writer.PutLFloat(cd);
+			writer.PutLFloat(cdTimer);
+			writer.PutBoolean(isNeedFire);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			bulletId = reader.GetInt32();
+			cd = reader.GetLFloat();
+			cdTimer = reader.GetLFloat();
+			isNeedFire = reader.GetBoolean();
+        }
+
         public override void CopyTo(object comp){
             var dst = (SkillComponent) comp;
             if (dst == null) {
@@ -1293,33 +1355,31 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (SkillComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (bulletId != dst.bulletId) return false;
 			if (cd != dst.cd) return false;
 			if (cdTimer != dst.cdTimer) return false;
 			if (isNeedFire != dst.isNeedFire) return false;
             return true;
         }
-        
-        public override string ToString(){
-            return "Skill{" +
-			"bulletId=" + bulletId +
-			"cd=" + cd +
-			"cdTimer=" + cdTimer +
-			"isNeedFire=" + isNeedFire +
-            "}";
-            ;
-        }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class TagBulletComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (TagBulletComponent) comp;
             if (dst == null) {
@@ -1334,27 +1394,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TagBulletComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "TagBullet{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class TagCampComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (TagCampComponent) comp;
             if (dst == null) {
@@ -1369,27 +1430,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TagCampComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "TagCamp{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class TagEnemyComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (TagEnemyComponent) comp;
             if (dst == null) {
@@ -1404,27 +1466,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TagEnemyComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "TagEnemy{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class TagTankComponent  {
+        public override void Serialize(Serializer writer){
+
+        }
+    
+        public override void Deserialize(Deserializer reader){
+
+        }
+
         public override void CopyTo(object comp){
             var dst = (TagTankComponent) comp;
             if (dst == null) {
@@ -1439,27 +1502,28 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TagTankComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 
             return true;
-        }
-        
-        public override string ToString(){
-            return "TagTank{" +
-
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Debug{
+    [System.Serializable]
     public partial class TickComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetUInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;
             if (dst == null) {
@@ -1474,27 +1538,28 @@ namespace Lockstep.ECS.Debug{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TickComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Tick{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Snapshot{
+    [System.Serializable]
     public partial class TickComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;
             if (dst == null) {
@@ -1509,27 +1574,28 @@ namespace Lockstep.ECS.Snapshot{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TickComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Tick{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.GameState{
+    [System.Serializable]
     public partial class TickComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;
             if (dst == null) {
@@ -1544,27 +1610,28 @@ namespace Lockstep.ECS.GameState{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TickComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Tick{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Input{
+    [System.Serializable]
     public partial class TickComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (TickComponent) comp;
             if (dst == null) {
@@ -1579,27 +1646,38 @@ namespace Lockstep.ECS.Input{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (TickComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (value != dst.value) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Tick{" +
-			"value=" + value +
-            "}";
-            ;
         }
     }
 }
 
 
 namespace Lockstep.ECS.Game{
+    [System.Serializable]
     public partial class UnitComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt32(damage);
+			writer.PutInt32(detailType);
+			writer.PutInt32(health);
+			writer.PutUInt32(killerLocalId);
+			writer.PutString(name);
+			writer.PutInt32((int)(camp));
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			damage = reader.GetInt32();
+			detailType = reader.GetInt32();
+			health = reader.GetInt32();
+			killerLocalId = reader.GetUInt32();
+			name = reader.GetString();
+			camp = (Lockstep.Game.ECampType)reader.GetInt32();
+        }
+
         public override void CopyTo(object comp){
             var dst = (UnitComponent) comp;
             if (dst == null) {
@@ -1619,11 +1697,10 @@ namespace Lockstep.ECS.Game{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (UnitComponent) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 			if (damage != dst.damage) return false;
 			if (detailType != dst.detailType) return false;
 			if (health != dst.health) return false;
@@ -1631,18 +1708,6 @@ namespace Lockstep.ECS.Game{
 			if (name != dst.name) return false;
 			if (camp != dst.camp) return false;
             return true;
-        }
-        
-        public override string ToString(){
-            return "Unit{" +
-			"damage=" + damage +
-			"detailType=" + detailType +
-			"health=" + health +
-			"killerLocalId=" + killerLocalId +
-			"name=" + name +
-			"camp=" + camp +
-            "}";
-            ;
         }
     }
 }

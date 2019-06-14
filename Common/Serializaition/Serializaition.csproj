@@ -41,7 +41,7 @@
     <Content Include="Src\LitJson\.DS_Store" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\BaseFormater.cs" />
+    <Compile Include="Src\BaseMsg.cs" />
     <Compile Include="Src\ByteHelper.cs" />
     <Compile Include="Src\Compressor.cs" />
     <Compile Include="Src\Deserializer.cs" />

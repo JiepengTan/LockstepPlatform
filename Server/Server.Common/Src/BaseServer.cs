@@ -8,6 +8,7 @@ using Lockstep.Serialization;
 using NetMsg.Server;
 using Lockstep.Server.Common;
 using Lockstep.Util;
+using NetMsg.Common;
 
 namespace Lockstep.Server.Common {
 
@@ -41,7 +42,7 @@ namespace Lockstep.Server.Common {
         public virtual void OnBecomeMaster(){ }
         public virtual void OnBecomeCandidateMaster(){ }
 
-        public virtual void SendToMaster(EMsgMS type, BaseFormater data){ }
+        public virtual void SendToMaster(EMsgMS type, BaseMsg data){ }
         public virtual void OnRecvMsg(byte[] data){ }
     }
 }

@@ -7,7 +7,7 @@ namespace NetMsg.Common {
     [System.Serializable]
     [SelfImplement]
     [Udp]
-    public partial class InputCmd : BaseFormater {
+    public partial class InputCmd : BaseMsg {
         public byte type {
             get { return content[0]; }
         }

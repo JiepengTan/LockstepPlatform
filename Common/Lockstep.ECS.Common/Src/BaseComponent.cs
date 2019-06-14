@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using LitJson;
+using Lockstep.Serialization;
 
 namespace Lockstep.ECS {
     public interface ICloneable {
@@ -7,7 +9,7 @@ namespace Lockstep.ECS {
         object Clone();
     }
 
-    public class BaseComponent : ICloneable {
+    public class BaseComponent :BaseFormater, ICloneable {
         public virtual void CopyTo(object comp){ }
 
         public virtual object Clone(){

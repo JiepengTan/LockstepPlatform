@@ -10,7 +10,7 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
-    public partial class Main {
+    public partial class MainManager :ReferenceHolder{
         /// <summary>
         /// 回放模式
         /// </summary>
@@ -22,9 +22,13 @@ namespace Lockstep.Game {
         public Msg_RepMissFrame FramesInfo;
         public float realtimeSinceStartup;
 
-
         public bool isRunVideo;
         public int JumpToTick = 10;
+        public Camera gameCamera;
+        public Vector2Int renderTextureSize;
+        [HideInInspector] public RenderTexture rt;
+        public int CurTick;
+        
 
         public void OpenRecordFile(string path){
             var bytes = File.ReadAllBytes(path);
@@ -34,12 +38,7 @@ namespace Lockstep.Game {
             MaxRunTick = FramesInfo.frames.Length + 1;
             IsVideoMode = true;
         }
-    }
-
-    public partial class Main {
-        public Camera gameCamera;
-        public Vector2Int renderTextureSize;
-        [HideInInspector] public RenderTexture rt;
+        
         private void DoAwake(){
             rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
             gameCamera.targetTexture = rt;
@@ -81,8 +80,5 @@ namespace Lockstep.Game {
         private void DoFixedUpdate(){ }
         private void DoDestroy(){ }
 
-        public bool IsGameOver(){
-            return false;
-        }
     }
 }

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using Lockstep.Serialization;
+using NetMsg.Common;
 
 namespace Lockstep.CodeGenerator {
     
-    
     public class TypeHandlerMsg: ITypeHandler {
-        public class HandlerReader : FiledHandler {
-            public HandlerReader(ICodeHelper helper):base(helper){
+        public class HandlerDeserialize : FiledHandler {
+            public HandlerDeserialize(ICodeHelper helper):base(helper){
                 _defaultCodeTemplete = @"{0}{1} = reader.Get{2}();";
                 _enumCodeTemplete = @"{0}{1} = ({2})reader.GetInt32();";
                 _clsCodeTemplete = @"{0}{1} = reader.Get(ref this.{1});";
@@ -17,8 +17,8 @@ namespace Lockstep.CodeGenerator {
             }
         }
 
-        public class HandlerWriter : FiledHandler {
-            public HandlerWriter(ICodeHelper helper):base(helper){
+        public class HandlerSerialize : FiledHandler {
+            public HandlerSerialize(ICodeHelper helper):base(helper){
                 _defaultCodeTemplete = @"{0}writer.Put{2}({1});";
                 _enumCodeTemplete = @"{0}writer.PutInt32((int)({1}));";
                 _clsCodeTemplete = @"{0}writer.Put({1});";
@@ -28,20 +28,18 @@ namespace Lockstep.CodeGenerator {
             }
         }
 
-        IFiledHandler[] filedHandlers;
-        private ICodeHelper helper;
-        public TypeHandlerMsg(ICodeHelper helper){
-            this.helper = helper;
-            filedHandlers = new IFiledHandler[] {
-                new HandlerWriter(helper),
-                new HandlerReader(helper),
-            };
-        }
+        protected List<IFiledHandler> filedHandlers = new List<IFiledHandler>() ;
+        protected ICodeHelper helper;
 
         public IFiledHandler[] GetFiledHandlers(){
-            return filedHandlers;
+            return filedHandlers.ToArray();
         }
 
+        public TypeHandlerMsg(ICodeHelper helper){
+            this.helper = helper;
+            filedHandlers.Add(new HandlerSerialize(helper));
+            filedHandlers.Add(new HandlerDeserialize(helper));
+        }
         
         string clsCodeTemplate = @"
     [System.Serializable]
@@ -55,11 +53,11 @@ namespace Lockstep.CodeGenerator {
         }
     }
 ";
-        public bool CanAddType(Type t){
-            return typeof(BaseFormater).IsAssignableFrom(t);
+        public virtual bool CanAddType(Type t){
+            return typeof(BaseMsg).IsAssignableFrom(t);
         }
 
-        public string DealType(Type t, List<string> filedsStrs){
+        public virtual string DealType(Type t, List<string> filedsStrs){
             var nameSpace = helper.GetNameSpace(t);
             var clsTypeName = helper.GetTypeName(t);
             var codeTemplate = clsCodeTemplate;

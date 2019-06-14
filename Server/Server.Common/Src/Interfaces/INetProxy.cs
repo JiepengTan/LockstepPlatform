@@ -2,10 +2,11 @@ using System.Net;
 using LiteNetLib;
 using Lockstep.Networking;
 using Lockstep.Serialization;
+using NetMsg.Common;
 
 namespace Lockstep.Server.Common {
     public interface INetProxy {
-        void SendMsg(object type, BaseFormater msg);
+        void SendMsg(object type, BaseMsg msg);
     }
 
     public class NetProxy : INetProxy {
@@ -14,7 +15,7 @@ namespace Lockstep.Server.Common {
             _peer = peer;
         }
 
-        public void SendMsg(object type, BaseFormater data){
+        public void SendMsg(object type, BaseMsg data){
             _peer?.SendMessage((short)type, data);
         }
     }

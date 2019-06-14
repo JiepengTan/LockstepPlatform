@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using Entitas;
 
 namespace Lockstep.CodeGenerator {
-    
-
-    
-    public class TypeHandlerECS : ITypeHandler {
+    public class TypeHandlerECS : TypeHandlerMsg, ITypeHandler {
         public class HandlerCopyTo : FiledHandler {
-            public HandlerCopyTo(ICodeHelper helper):base(helper){
+            public HandlerCopyTo(ICodeHelper helper) : base(helper){
                 _defaultCodeTemplete = @"{0}dst.{1} = {1};";
                 _enumCodeTemplete = @"{0}dst.{1} = {1};";
                 _clsCodeTemplete = @"{0}dst.{1} = {1};"; //for error
@@ -18,7 +15,7 @@ namespace Lockstep.CodeGenerator {
         }
 
         public class HandlerEquals : FiledHandler {
-            public HandlerEquals(ICodeHelper helper):base(helper){
+            public HandlerEquals(ICodeHelper helper) : base(helper){
                 _defaultCodeTemplete = @"{0}if ({1} != dst.{1}) return false;";
                 _enumCodeTemplete = @"{0}if ({1} != dst.{1}) return false;";
                 _clsCodeTemplete = @"{0}if ({1} != dst.{1}) return false;";
@@ -26,31 +23,34 @@ namespace Lockstep.CodeGenerator {
         }
 
         public class HandlerToString : FiledHandler {
-            public HandlerToString(ICodeHelper helper):base(helper){
+            public HandlerToString(ICodeHelper helper) : base(helper){
                 _defaultCodeTemplete = @"{0}""{1}="" + {1} +";
                 _enumCodeTemplete = @"{0}""{1}="" + {1} +";
                 _clsCodeTemplete = @"{0}""{1}="" + {1} +";
             }
         }
 
-        IFiledHandler[] filedHandlers;
-        private ICodeHelper helper;
-        public TypeHandlerECS(ICodeHelper helper){
-            this.helper = helper;
-            filedHandlers = new IFiledHandler[] {
-                new HandlerCopyTo(helper),
-                new HandlerEquals(helper),
-                new HandlerToString(helper)
-            };
+
+        public TypeHandlerECS(ICodeHelper helper)
+            : base(helper){
+            filedHandlers.Add(new HandlerCopyTo(helper));
+            filedHandlers.Add(new HandlerEquals(helper));
+            filedHandlers.Add(new HandlerToString(helper));
         }
 
-        public IFiledHandler[] GetFiledHandlers(){
-            return filedHandlers;
-        }
-        
+
         string clsCodeTemplate = @"
 namespace #NameSpace{
+    [System.Serializable]
     public partial class #ClsName  {
+        public override void Serialize(Serializer writer){
+//#SERIALIZER
+        }
+    
+        public override void Deserialize(Deserializer reader){
+//#DESERIALIZER
+        }
+
         public override void CopyTo(object comp){
             var dst = (#ClsName) comp;
             if (dst == null) {
@@ -65,29 +65,22 @@ namespace #NameSpace{
             return dst;
         }
         
+        public override int GetHashCode(){return base.GetHashCode();}
         public override bool Equals(object obj){
             var dst = (#ClsName) obj;
-                if (dst == null) {
-                return false;
-            }
+            if (dst == null) return false;
 //#EUQALS
             return true;
-        }
-        
-        public override string ToString(){
-            return ""#CompName{"" +
-//#TOSTRING
-            ""}"";
-            ;
         }
     }
 }
 ";
-        public bool CanAddType(Type t){
+
+        public override bool CanAddType(Type t){
             return typeof(IComponent).IsAssignableFrom(t);
         }
 
-        public string DealType(Type t, List<string> filedsStrs){
+        public override string DealType(Type t, List<string> filedsStrs){
             var nameSpace = helper.GetNameSpace(t);
             var clsTypeName = helper.GetTypeName(t);
             var compName = clsTypeName.Replace("Component", "");
@@ -99,11 +92,14 @@ namespace #NameSpace{
                     .Replace("#ClsName", clsTypeName)
                     .Replace("#CompName", compName)
                     .Replace("#ClsFuncName", clsFuncName)
+                    .Replace("//#SERIALIZER", filedsStrs[idx++])
+                    .Replace("//#DESERIALIZER", filedsStrs[idx++])
                     .Replace("//#COPYTO", filedsStrs[idx++])
                     .Replace("//#EUQALS", filedsStrs[idx++])
                     .Replace("//#TOSTRING", filedsStrs[idx++])
                 ;
             return str;
         }
+        
     }
 }
