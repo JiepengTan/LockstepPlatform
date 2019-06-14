@@ -14,6 +14,7 @@ namespace Lockstep.Game {
 
         public virtual void DoStart(int curTick){ }
         public virtual void DoUpdate(int tick){ }
+        
     }
 
     public class ResProxy {

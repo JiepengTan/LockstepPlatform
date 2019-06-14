@@ -22,9 +22,6 @@ namespace Lockstep.Game {
             where TEnum : struct;
     }
 
-    public interface ITimeMachineService : ITimeMachine, IService {
-        void RegisterTimeMachine(ITimeMachine roll);
-    }
 
 
 

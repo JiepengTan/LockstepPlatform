@@ -1,12 +1,12 @@
 ﻿using System;
 using System.IO;
-using Lockstep.Game;
+using Lockstep.Util;
 
 namespace Lockstep.CodeGenerator {
     internal class Program {
         static void DeleteUselessFiles(string relPath){
             var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relPath);
-            DirUtil.Walk(dllPath,"*.meta|*.DS_Store", (path) => {
+            PathUtil.Walk(dllPath,"*.meta|*.DS_Store", (path) => {
                 Console.WriteLine(path);
                 File.Delete(path);
             });

@@ -8,10 +8,10 @@ namespace Lockstep.Game {
     public partial class GameStateManager : SingletonManager<GameStateManager>, IConstGameStateService {
         //room info
         [SerializeField] private byte[] _allActorIds;
-        [SerializeField]  public bool IsVideoLoading { get; set; }
-        [SerializeField]  public bool IsVideoMode { get; set; }
-        [SerializeField]  public bool IsRunVideo { get; set; }
-        
+        [SerializeField] public bool IsVideoLoading { get; set; }
+        [SerializeField] public bool IsVideoMode { get; set; }
+        [SerializeField] public bool IsRunVideo { get; set; }
+
         public byte[] allActorIds {
             get { return _allActorIds; }
             set { _allActorIds = value; }
@@ -23,7 +23,9 @@ namespace Lockstep.Game {
 
 
         [ShowNativeProperty] public bool IsReconnecting { get; set; }
-        [ShowNativeProperty] public   bool isPursueFrame { get;set; }
+
+        [ShowNativeProperty] public bool isPursueFrame { get; set; }
+
         //map info
         [ShowNativeProperty] public Vector2Int mapMin { get; set; }
         [ShowNativeProperty] public Vector2Int mapMax { get; set; }
@@ -50,13 +52,12 @@ namespace Lockstep.Game {
         public int MaxEnemyCountInScene { get; set; }
         public int TotalEnemyCountToBorn { get; set; }
 
-
         public override void DoStart(){
             base.DoStart();
             playerInitLifeCount = 3;
         }
     }
-        
+
     public partial class GameStateManager : IGameStateService {
         private GameState curGameState = new GameState();
 
@@ -80,14 +81,14 @@ namespace Lockstep.Game {
             CommandBuffer<GameStateManager>.CommandNode, GameStateManager> GetRollbackFunc(){
             return (minTickNode, maxTickNode, param) => { minTickNode.cmd.Undo(param); };
         }
-        
+
         public struct GameState {
             public int CurEnemyCountInScene;
             public int RemainCountToBorn;
             public LFloat bornTimer;
             public LFloat bornInterval;
         }
-        
+
         public int curEnemyCountInScene {
             get => curGameState.CurEnemyCountInScene;
             set => curGameState.CurEnemyCountInScene = value;
@@ -106,6 +107,13 @@ namespace Lockstep.Game {
         public LFloat bornInterval {
             get => curGameState.bornInterval;
             set => curGameState.bornInterval = value;
+        }
+
+        public LFloat _deltaTime = new LFloat(true, 16);
+
+        public LFloat DeltaTime {
+            get => _deltaTime;
+            set => _deltaTime = value;
         }
     }
 }

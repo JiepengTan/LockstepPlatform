@@ -96,7 +96,8 @@ namespace Lockstep.Game {
 
         public override void DoStart(){
             base.DoStart();
-            if (grid == null) {
+            CollisionUtil.MapService = this;
+            if (grid == null) {  
                 grid = GameObject.FindObjectOfType<Grid>();
             }
         }

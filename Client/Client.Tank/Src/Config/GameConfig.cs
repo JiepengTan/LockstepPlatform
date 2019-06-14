@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Entitas;
+using Lockstep.ECS;
 using Lockstep.ECS.Game;
 using UnityEngine;
 using Debug = UnityEngine.Debug;

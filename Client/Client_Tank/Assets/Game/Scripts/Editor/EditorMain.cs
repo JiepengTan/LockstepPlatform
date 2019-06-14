@@ -3,13 +3,13 @@ using Lockstep.Game;
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(Main))]
+[CustomEditor(typeof(MainScript))]
 public class EditorMain : UnityEditor.Editor {
-    private Main owner;
+    private MainManager owner;
 
     public override void OnInspectorGUI(){
         base.OnInspectorGUI();
-        owner = (target as Main);
+        owner = (target as MainScript).main;
         ShowLoadRecord();
         ShowRecordInfo();
         ShowJumpTo();

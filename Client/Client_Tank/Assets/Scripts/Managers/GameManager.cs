@@ -185,7 +185,7 @@ namespace Lockstep.Game {
                     Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
                 go.AddComponent<PosListener>();
                 go.AddComponent<DirListener>();
-                _viewService.BindView(entity, _gameContext, go);
+                _viewService.BindView(entity, go);
             }
 
         }

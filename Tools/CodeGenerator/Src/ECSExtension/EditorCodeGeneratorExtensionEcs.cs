@@ -26,7 +26,7 @@ namespace Lockstep.CodeGenerator {
 
     public partial class EditorCodeGeneratorExtensionEcs : EditorBaseCodeGenerator {
         protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/Lockstep.ECS.Common/Src/"); }
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Common/Src/"); }
         }
 
         protected override string GenerateFilePath {

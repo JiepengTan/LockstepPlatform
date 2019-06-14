@@ -45,7 +45,7 @@ public class UIGameStatus : UIBaseWindow {
             return;
         }
 
-        rawImage.texture = Main.Instance.rt;
+        //rawImage.texture = Main.Instance.rt;
         var actor = Contexts.sharedInstance.actor;
         var player1 = actor.GetEntityWithId(0);
         var player2 = actor.GetEntityWithId(1);

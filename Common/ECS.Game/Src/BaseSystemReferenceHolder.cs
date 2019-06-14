@@ -1,10 +1,5 @@
-using UnityEngine;
-
 namespace Lockstep.Game {
 
-    public interface ITimeMachineService : ITimeMachine, IService {
-        void RegisterTimeMachine(ITimeMachine roll);
-    }
     public partial class BaseSystemReferenceHolder {
         protected InputContext _inputContext;
         protected ActorContext _actorContext;
@@ -37,43 +32,6 @@ namespace Lockstep.Game {
             _gameContext = contexts.game;
             _gameStateContext = contexts.gameState;
         }
-        
-    }
-
-    public partial class ReferenceHolder :BaseSystemReferenceHolder{
-        
-        protected IGameMsgService _gameMsgService;
-        protected ISimulation _simulationService;
-        protected IUIService _uiService;
-        
-        protected IEventRegisterService _eventRegisterService;
-        protected IViewService _viewService;
-        protected IInputService _inputService;
-        
-        public override void InitReference(IServiceContainer serviceContainer){
-            base.InitReference(serviceContainer);
-            _inputService = serviceContainer.GetService<IInputService>();
-            _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
-            _viewService = serviceContainer.GetService<IViewService>();
-            
-            _gameMsgService = serviceContainer.GetService<IGameMsgService>();
-            _simulationService = serviceContainer.GetService<ISimulation>();
-            _uiService = serviceContainer.GetService<IUIService>();
-        }
-    }
-    
-    
-    public partial class ManagerReferenceHolder:ReferenceHolder {
-        public void AssignReference(Contexts contexts, IServiceContainer serviceContainer,
-            IManagerContainer mgrContainer
-        ){
-            //_contexts = contexts;
-            //_serviceContainer = serviceContainer;
-            //InitReference(mgrContainer);
-            InitReference(contexts);
-            InitReference(serviceContainer);
-        }
-        
         
     }
 }

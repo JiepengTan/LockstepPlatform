@@ -4,5 +4,5 @@ using Lockstep.Game;
 using UnityEngine;
 
 public class MainScript : MonoBehaviour {
-    public Main main;
+    public MainManager main;
 }
