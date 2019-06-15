@@ -10,7 +10,6 @@ using Random = UnityEngine.Random;
 
 
 namespace Lockstep.Game {
-
     [System.Serializable]
     public partial class GameUnitManager : BaseGameManager, IGameUnitService {
         [Header("Transforms")] [HideInInspector]
@@ -27,6 +26,9 @@ namespace Lockstep.Game {
 
         //大本营
 
+        public short GetAssetId(int unitType, int detailType){
+            return 0;
+        }
         //const variables
 
         #region LifeCycle
@@ -52,7 +54,6 @@ namespace Lockstep.Game {
         }
 
 
-
         #region IUnitService
 
         public void TakeDamage(GameEntity bullet, GameEntity suffer){
@@ -74,6 +75,7 @@ namespace Lockstep.Game {
             if (_randomService.value >= rate) {
                 return;
             }
+
             var min = _gameConstStateService.mapMin;
             var max = _gameConstStateService.mapMax;
             var x = _randomService.Range(min.x + 4, max.x - 4);
@@ -91,7 +93,7 @@ namespace Lockstep.Game {
 
         public void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner){
             var createPos = pos + DirUtil.GetDirLVec(dir) * TankUtil.TANK_HALF_LEN;
-            
+
             var entity = CreateUnit(createPos, _config.bulletPrefabs, type, dir, transParentBullet);
             entity.bullet.ownerLocalId = owner.localId.value;
             entity.unit.camp = owner.unit.camp;
@@ -108,13 +110,11 @@ namespace Lockstep.Game {
             _gameAudioService.PlayClipBorn();
             EDir dir = EDir.Down;
             DelayCall(GameConfig.TankBornDelay,
-                () => {
-                    CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy);
-                });
+                () => { CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy); });
         }
 
         public void CreatePlayer(byte actorId, int type){
-            var bornPos = _gameConstStateService.playerBornPoss[actorId%_gameConstStateService.playerBornPoss.Count];
+            var bornPos = _gameConstStateService.playerBornPoss[actorId % _gameConstStateService.playerBornPoss.Count];
             var createPos = bornPos + GameConfig.TankBornOffset;
             _gameEffectService.ShowBornEffect(createPos);
             _gameAudioService.PlayClipBorn();
@@ -143,8 +143,14 @@ namespace Lockstep.Game {
             entity.dir.value = dir;
             entity.pos.value = createPos;
             if (!_constStateService.IsVideoLoading) {
+                var prefab = Resources.Load<GameObject>(_resService.GetAssetPath((short) (ushort) assetId));
+                var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
+                    Quaternion.identity, parent);
+                go.AddComponent<PosListener>();
+                go.AddComponent<DirListener>();
                 _viewService.BindView(entity, go);
             }
+
             return entity;
         }
 
@@ -160,7 +166,7 @@ namespace Lockstep.Game {
 
         public void Upgrade(GameEntity entity){
             var playerCount = _config.playerPrefabs.Count;
-            var targetType = entity.unit.detailType +1;
+            var targetType = entity.unit.detailType + 1;
             if (targetType >= playerCount) {
                 UnityEngine.Debug.Log($"hehe already max level can not upgrade");
                 return;
@@ -176,13 +182,13 @@ namespace Lockstep.Game {
                 _viewService.DeleteView(entity.localId.value);
                 var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
                 var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
-                    Quaternion.Euler(0,0,DirUtil.GetDirDeg(rawDir)), transParentPlayer);
+                    Quaternion.Euler(0, 0, DirUtil.GetDirDeg(rawDir)), transParentPlayer);
                 go.AddComponent<PosListener>();
                 go.AddComponent<DirListener>();
                 _viewService.BindView(entity, go);
             }
-
         }
+
         public void DelayCall(LFloat delay, Action callback){
             var delayEntity = CreateGameEntity();
             delayEntity.AddDelayCall(delay, FuncUtil.RegisterFunc(callback));
@@ -200,6 +206,7 @@ namespace Lockstep.Game {
         public void OnEvent_SimulationStart(object param){
             IsPlaying = true;
         }
+
         #endregion
 
         #region GameStatus

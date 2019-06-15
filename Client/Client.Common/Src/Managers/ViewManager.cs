@@ -22,14 +22,11 @@ namespace Lockstep.Game {
                 GameMatcher.Pos,
                 GameMatcher.Dir));
         }
-        public void BindView(IEntity entity,short assetId){
-            var prefab = Resources.Load<GameObject>(_resService.GetAssetPath(assetId));
-            var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
-                Quaternion.identity, parent);
-            go.AddComponent<PosListener>();
-            go.AddComponent<DirListener>();
-            BindView(entity as GameEntity,go);
+
+        public void BindView(IEntity entity, object viewObj){
+            BindView(entity as GameEntity, viewObj);
         }
+
         public void BindView(GameEntity entity,object viewObj){
             var viewGo = viewObj as GameObject;
             if (viewGo != null) {

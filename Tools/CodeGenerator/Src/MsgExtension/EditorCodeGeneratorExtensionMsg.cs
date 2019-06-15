@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Lockstep.Game;
 using Lockstep.Serialization;
 using NetMsg.Common;
 using NetMsg.Server;
@@ -17,6 +18,7 @@ namespace Lockstep.CodeGenerator {
         public static void HideCompileError(){
             new EditorCodeGeneratorExtensionMsgCommon().HideGenerateCodes(false);
             new EditorCodeGeneratorExtensionMsgServer().HideGenerateCodes(false);
+            new EditorCodeGeneratorExtensionEntityConfig().HideGenerateCodes(false);
         }
 #if UNITY_EDITOR
         [MenuItem("Tools/MsgExtension/1.Generate Code")]
@@ -24,9 +26,24 @@ namespace Lockstep.CodeGenerator {
         public static void GenerateCode(){
             new EditorCodeGeneratorExtensionMsgCommon().GenerateCodeNodeData(true);
             new EditorCodeGeneratorExtensionMsgServer().GenerateCodeNodeData(true);
+            new EditorCodeGeneratorExtensionEntityConfig().GenerateCodeNodeData(true);
         }
     }
+    public partial class EditorCodeGeneratorExtensionEntityConfig : EditorCodeGeneratorExtensionMsg {
+        public override Type[] GetTypes(){
+            return typeof(EntityConfig).Assembly.GetTypes();
+        }
 
+        public override string GetNameSpace(){
+            return typeof(EntityConfig).Namespace;
+        }
+        protected override string GeneratePath {
+            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Tank/Src/"); }
+        }
+        protected override string GenerateFilePath {
+            get { return Path.Combine(GeneratePath, "ExtentionConfig.cs"); }
+        }
+    }
     public partial class EditorCodeGeneratorExtensionMsgCommon : EditorCodeGeneratorExtensionMsg {
         public override Type[] GetTypes(){
             return typeof(EMsgSC).Assembly.GetTypes();

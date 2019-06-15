@@ -83,10 +83,14 @@ namespace Lockstep.Game {
 
         public void DoStart(){
             foreach (var mgr in _mgrContainer.AllMgrs) {
-                mgr.AssignReference(Contexts, _serviceContainer, _mgrContainer);
+                if (mgr is BaseGameManager gameMgr) {
+                    gameMgr.AssignReference(Contexts, _serviceContainer, _mgrContainer);
+                }
+                else {
+                    mgr.InitReference(_serviceContainer);
+                }
             }
 
-            _mainManager.AssignReference(Contexts, _serviceContainer, _mgrContainer);
             //bind events
             foreach (var mgr in _mgrContainer.AllMgrs) {
                 _registerService.RegisterEvent<EEvent, GlobalEventHandler>("OnEvent_", "OnEvent_".Length,

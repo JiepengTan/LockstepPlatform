@@ -44,7 +44,7 @@ public class EditorMain : UnityEditor.Editor {
     private void ShowJumpTo(){
         if (Application.isPlaying) {
             if (GUILayout.Button("Jump")) {
-                if (GameUnitManager.Instance.IsPlaying && owner.JumpToTick > 0 && owner.JumpToTick < owner.MaxRunTick) {
+                if (GameConstStateManager.Instance.IsPlaying && owner.JumpToTick > 0 && owner.JumpToTick < owner.MaxRunTick) {
                     SimulationManager.Instance.JumpTo(owner.JumpToTick);
                 }
             }

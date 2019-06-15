@@ -105,6 +105,7 @@
     <Compile Include="Src\Components\Input\FireComponent.cs" />
     <Compile Include="Src\Components\Input\MoveDirComponent.cs" />
     <Compile Include="Src\EnumDefines.cs" />
+    <Compile Include="Src\ExtentionConfig.cs" />
     <Compile Include="Src\ExtentionECS.cs" />
     <Compile Include="Src\Generated\Actor\ActorAttribute.cs" />
     <Compile Include="Src\Generated\Actor\ActorComponentsLookup.cs" />

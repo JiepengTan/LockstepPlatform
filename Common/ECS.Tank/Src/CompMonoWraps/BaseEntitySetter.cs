@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using DesperateDevs.Utils;
 using Entitas;
+using Lockstep.Serialization;
+using NetMsg.Common;
 
 
 namespace Lockstep.ECS {

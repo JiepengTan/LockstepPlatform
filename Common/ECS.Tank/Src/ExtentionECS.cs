@@ -16,8 +16,8 @@ namespace Lockstep.ECS.Game{public partial class BornPointComponent : BaseCompon
 namespace Lockstep.ECS.Game{public partial class BulletComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ColliderComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class DelayCallComponent : BaseComponent{}};
-namespace Lockstep.ECS.Game{public partial class DestroyedComponent : BaseComponent{}};
 namespace Lockstep.ECS.Input{public partial class DestroyedComponent : BaseComponent{}};
+namespace Lockstep.ECS.Game{public partial class DestroyedComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class DirComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class DropRateComponent : BaseComponent{}};
 namespace Lockstep.ECS.Input{public partial class EntityConfigIdComponent : BaseComponent{}};
@@ -25,9 +25,9 @@ namespace Lockstep.ECS.Actor{public partial class EntityCountComponent : BaseCom
 namespace Lockstep.ECS.Input{public partial class FireComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class FireRequestComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class GameLocalIdComponent : BaseComponent{}};
-namespace Lockstep.ECS.GameState{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Snapshot{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Debug{public partial class HashCodeComponent : BaseComponent{}};
+namespace Lockstep.ECS.GameState{public partial class HashCodeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Actor{public partial class IdComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class ItemTypeComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class LifeComponent : BaseComponent{}};
@@ -43,10 +43,10 @@ namespace Lockstep.ECS.Game{public partial class TagBulletComponent : BaseCompon
 namespace Lockstep.ECS.Game{public partial class TagCampComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagEnemyComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class TagTankComponent : BaseComponent{}};
+namespace Lockstep.ECS.Input{public partial class TickComponent : BaseComponent{}};
+namespace Lockstep.ECS.Snapshot{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Debug{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.GameState{public partial class TickComponent : BaseComponent{}};
-namespace Lockstep.ECS.Snapshot{public partial class TickComponent : BaseComponent{}};
-namespace Lockstep.ECS.Input{public partial class TickComponent : BaseComponent{}};
 namespace Lockstep.ECS.Game{public partial class UnitComponent : BaseComponent{}};
 
 
@@ -516,7 +516,7 @@ namespace Lockstep.ECS.Game{
 }
 
 
-namespace Lockstep.ECS.Game{
+namespace Lockstep.ECS.Input{
     [System.Serializable]
     public partial class DestroyedComponent  {
         public override void Serialize(Serializer writer){
@@ -552,7 +552,7 @@ namespace Lockstep.ECS.Game{
 }
 
 
-namespace Lockstep.ECS.Input{
+namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class DestroyedComponent  {
         public override void Serialize(Serializer writer){
@@ -840,42 +840,6 @@ namespace Lockstep.ECS.Actor{
 }
 
 
-namespace Lockstep.ECS.Snapshot{
-    [System.Serializable]
-    public partial class HashCodeComponent  {
-        public override void Serialize(Serializer writer){
-			writer.PutInt64(value);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			value = reader.GetInt64();
-        }
-
-        public override void CopyTo(object comp){
-            var dst = (HashCodeComponent) comp;
-            if (dst == null) {
-                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
-            }
-			dst.value = value;
-        }
-        
-        public override object Clone(){
-            var dst = new HashCodeComponent();
-            CopyTo(dst);
-            return dst;
-        }
-        
-        public override int GetHashCode(){return base.GetHashCode();}
-        public override bool Equals(object obj){
-            var dst = (HashCodeComponent) obj;
-            if (dst == null) return false;
-			if (value != dst.value) return false;
-            return true;
-        }
-    }
-}
-
-
 namespace Lockstep.ECS.Debug{
     [System.Serializable]
     public partial class HashCodeComponent  {
@@ -913,6 +877,42 @@ namespace Lockstep.ECS.Debug{
 
 
 namespace Lockstep.ECS.GameState{
+    [System.Serializable]
+    public partial class HashCodeComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutInt64(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetInt64();
+        }
+
+        public override void CopyTo(object comp){
+            var dst = (HashCodeComponent) comp;
+            if (dst == null) {
+                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
+            }
+			dst.value = value;
+        }
+        
+        public override object Clone(){
+            var dst = new HashCodeComponent();
+            CopyTo(dst);
+            return dst;
+        }
+        
+        public override int GetHashCode(){return base.GetHashCode();}
+        public override bool Equals(object obj){
+            var dst = (HashCodeComponent) obj;
+            if (dst == null) return false;
+			if (value != dst.value) return false;
+            return true;
+        }
+    }
+}
+
+
+namespace Lockstep.ECS.Snapshot{
     [System.Serializable]
     public partial class HashCodeComponent  {
         public override void Serialize(Serializer writer){
@@ -1512,7 +1512,43 @@ namespace Lockstep.ECS.Game{
 }
 
 
-namespace Lockstep.ECS.Snapshot{
+namespace Lockstep.ECS.Debug{
+    [System.Serializable]
+    public partial class TickComponent  {
+        public override void Serialize(Serializer writer){
+			writer.PutUInt32(value);
+        }
+    
+        public override void Deserialize(Deserializer reader){
+			value = reader.GetUInt32();
+        }
+
+        public override void CopyTo(object comp){
+            var dst = (TickComponent) comp;
+            if (dst == null) {
+                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
+            }
+			dst.value = value;
+        }
+        
+        public override object Clone(){
+            var dst = new TickComponent();
+            CopyTo(dst);
+            return dst;
+        }
+        
+        public override int GetHashCode(){return base.GetHashCode();}
+        public override bool Equals(object obj){
+            var dst = (TickComponent) obj;
+            if (dst == null) return false;
+			if (value != dst.value) return false;
+            return true;
+        }
+    }
+}
+
+
+namespace Lockstep.ECS.GameState{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
@@ -1584,43 +1620,7 @@ namespace Lockstep.ECS.Input{
 }
 
 
-namespace Lockstep.ECS.Debug{
-    [System.Serializable]
-    public partial class TickComponent  {
-        public override void Serialize(Serializer writer){
-			writer.PutUInt32(value);
-        }
-    
-        public override void Deserialize(Deserializer reader){
-			value = reader.GetUInt32();
-        }
-
-        public override void CopyTo(object comp){
-            var dst = (TickComponent) comp;
-            if (dst == null) {
-                throw new CopyToUnExceptTypeException(comp == null ? "null" : comp.GetType().ToString());
-            }
-			dst.value = value;
-        }
-        
-        public override object Clone(){
-            var dst = new TickComponent();
-            CopyTo(dst);
-            return dst;
-        }
-        
-        public override int GetHashCode(){return base.GetHashCode();}
-        public override bool Equals(object obj){
-            var dst = (TickComponent) obj;
-            if (dst == null) return false;
-			if (value != dst.value) return false;
-            return true;
-        }
-    }
-}
-
-
-namespace Lockstep.ECS.GameState{
+namespace Lockstep.ECS.Snapshot{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
