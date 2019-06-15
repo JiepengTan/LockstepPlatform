@@ -8,7 +8,7 @@ namespace Lockstep.Game {
 
         public override void DoStart(){
             base.DoStart();
-            _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
+            _config = Resources.Load<GameConfig>(ConstGameConfig.ConfigPath);
             _effectMgr = _effectService as EffectManager;
         }
 

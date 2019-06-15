@@ -26,16 +26,16 @@ namespace Lockstep.CodeGenerator {
         public static void GenerateCode(){
             new EditorCodeGeneratorExtensionMsgCommon().GenerateCodeNodeData(true);
             new EditorCodeGeneratorExtensionMsgServer().GenerateCodeNodeData(true);
-            new EditorCodeGeneratorExtensionEntityConfig().GenerateCodeNodeData(true);
+            //new EditorCodeGeneratorExtensionEntityConfig().GenerateCodeNodeData(true);
         }
     }
     public partial class EditorCodeGeneratorExtensionEntityConfig : EditorCodeGeneratorExtensionMsg {
         public override Type[] GetTypes(){
-            return typeof(EntityConfig).Assembly.GetTypes();
+            return typeof(GameConfig).Assembly.GetTypes();
         }
 
         public override string GetNameSpace(){
-            return typeof(EntityConfig).Namespace;
+            return typeof(GameConfig).Namespace;
         }
         protected override string GeneratePath {
             get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Tank/Src/"); }

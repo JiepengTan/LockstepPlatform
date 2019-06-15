@@ -1,35 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using Entitas;
 using Lockstep.ECS;
 using Lockstep.ECS.Game;
 using Lockstep.Serialization;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
 
-    [CreateAssetMenu]
-    public partial class GameConfig : UnityEngine.ScriptableObject {
-        public partial class Unit : BaseEntitySetter {
+#region ss
+      public partial class ConfigUnit : BaseEntitySetter {
             public AssetComponent asset = new AssetComponent();
             public DirComponent dir = new DirComponent();
             public PosComponent pos = new PosComponent();
             public ColliderComponent collider = new ColliderComponent();
         }
 
-        public partial class Item : Unit {
+        public partial class ConfigItem : ConfigUnit {
             public ItemTypeComponent type = new ItemTypeComponent();
         }
 
-        public partial class Camp : Unit {
+        public partial class ConfigCamp : ConfigUnit {
             public UnitComponent unit = new UnitComponent();
             public TagCampComponent tagCamp = new TagCampComponent();
         }
 
-        public partial class Mover : Unit {
+        public partial class ConfigMover : ConfigUnit {
             public UnitComponent unit = new UnitComponent();
 
             //public ColliderComponent collider = new ColliderComponent();
@@ -37,31 +33,31 @@ namespace Lockstep.Game {
             //public PositionComponent position = new PositionComponent();
         }
 
-        public partial class Tank : Mover {
+        public partial class ConfigTank : ConfigMover {
             public SkillComponent skill = new SkillComponent();
             public TagTankComponent tagTank = new TagTankComponent();
         }
 
-        public partial class Player : Tank {
+        public partial class ConfigPlayer : ConfigTank {
             ActorIdComponent actorId = new ActorIdComponent();
         }
 
-        public partial class Enemy : Tank {
+        public partial class ConfigEnemy : ConfigTank {
             public AIComponent ai = new AIComponent();
             public TagEnemyComponent tagEnemy = new TagEnemyComponent();
             public MoveRequestComponent moveReq = new MoveRequestComponent();
             public DropRateComponent dropRate = new DropRateComponent();
         }
 
-        public partial class Bullet : Mover {
+        public partial class ConfigBullet : ConfigMover {
             public OwnerComponent owner = new OwnerComponent();
             public BulletComponent bullet = new BulletComponent();
             public TagBulletComponent tagBullet = new TagBulletComponent();
         }
 
         [System.Serializable]
-        public partial class Bullet {
-            public void Serialize(Serializer writer){
+        public partial class ConfigBullet {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(bullet);
                 writer.Put(collider);
@@ -73,7 +69,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 bullet = reader.Get(ref this.bullet);
                 collider = reader.Get(ref this.collider);
@@ -88,8 +84,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Camp {
-            public void Serialize(Serializer writer){
+        public partial class ConfigCamp {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
@@ -98,7 +94,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -110,8 +106,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Enemy {
-            public void Serialize(Serializer writer){
+        public partial class ConfigEnemy {
+            public override void Serialize(Serializer writer){
                 writer.Put(ai);
                 writer.Put(asset);
                 writer.Put(collider);
@@ -126,7 +122,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 ai = reader.Get(ref this.ai);
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
@@ -144,8 +140,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Item {
-            public void Serialize(Serializer writer){
+        public partial class ConfigItem {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
@@ -153,7 +149,7 @@ namespace Lockstep.Game {
                 writer.Put(type);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -164,8 +160,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Mover {
-            public void Serialize(Serializer writer){
+        public partial class ConfigMover {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
@@ -174,7 +170,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -186,8 +182,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Player {
-            public void Serialize(Serializer writer){
+        public partial class ConfigPlayer {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
@@ -198,7 +194,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -212,8 +208,8 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Tank {
-            public void Serialize(Serializer writer){
+        public partial class ConfigTank {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
@@ -224,7 +220,7 @@ namespace Lockstep.Game {
                 writer.Put(unit);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -238,15 +234,15 @@ namespace Lockstep.Game {
 
 
         [System.Serializable]
-        public partial class Unit {
-            public void Serialize(Serializer writer){
+        public partial class ConfigUnit {
+            public override void Serialize(Serializer writer){
                 writer.Put(asset);
                 writer.Put(collider);
                 writer.Put(dir);
                 writer.Put(pos);
             }
 
-            public void Deserialize(Deserializer reader){
+            public override void Deserialize(Deserializer reader){
                 asset = reader.Get(ref this.asset);
                 collider = reader.Get(ref this.collider);
                 dir = reader.Get(ref this.dir);
@@ -254,12 +250,15 @@ namespace Lockstep.Game {
             }
         }
 
-
-        public List<Enemy> enemyPrefabs = new List<Enemy>();
-        public List<Player> playerPrefabs = new List<Player>();
-        public List<Bullet> bulletPrefabs = new List<Bullet>();
-        public List<Item> itemPrefabs = new List<Item>();
-        public List<Camp> CampPrefabs = new List<Camp>();
+    #endregion
+    [CreateAssetMenu]
+    public partial class GameConfig : UnityEngine.ScriptableObject {
+      
+        public List<ConfigEnemy> enemyPrefabs = new List<ConfigEnemy>();
+        public List<ConfigPlayer> playerPrefabs = new List<ConfigPlayer>();
+        public List<ConfigBullet> bulletPrefabs = new List<ConfigBullet>();
+        public List<ConfigItem> itemPrefabs = new List<ConfigItem>();
+        public List<ConfigCamp> CampPrefabs = new List<ConfigCamp>();
         public GameObject BornPrefab;
         public GameObject DiedPrefab;
 
@@ -273,12 +272,13 @@ namespace Lockstep.Game {
             var obj = new GameConfig();
             var bytes = File.ReadAllBytes(path);
             var reader = new Deserializer(bytes);
-            //obj.Deserialize(reader);
+            obj.Deserialize(reader);
+            var sss = obj;
         }
 
         public void Write(string path){
             var writer = new Serializer();
-            //Serialize(writer);
+            Serialize(writer);
             var data = writer.CopyData();
             if (!Directory.Exists(Path.GetDirectoryName(path))) {
                 Directory.CreateDirectory(Path.GetDirectoryName(path));
@@ -287,20 +287,20 @@ namespace Lockstep.Game {
             File.WriteAllBytes(path, data);
         }
 
-        //public void Serialize(Serializer writer){
-        //    writer.PutList(enemyPrefabs);
-        //    writer.PutList(playerPrefabs);
-        //    writer.PutList(bulletPrefabs);
-        //    writer.PutList(itemPrefabs);
-        //    writer.PutList(CampPrefabs);
-        //}
-//
-        //public void Deserialize(Deserializer reader){
-        //    enemyPrefabs = reader.GetList(this.enemyPrefabs);
-        //    playerPrefabs = reader.GetList(this.playerPrefabs);
-        //    bulletPrefabs = reader.GetList(this.bulletPrefabs);
-        //    itemPrefabs = reader.GetList(this.itemPrefabs);
-        //    CampPrefabs = reader.GetList(this.CampPrefabs);
-        //}
+        public void Serialize(Serializer writer){
+            writer.PutList(enemyPrefabs);
+            writer.PutList(playerPrefabs);
+            writer.PutList(bulletPrefabs);
+            writer.PutList(itemPrefabs);
+            writer.PutList(CampPrefabs);
+        }
+
+       public void Deserialize(Deserializer reader){
+            enemyPrefabs = reader.GetList(this.enemyPrefabs);
+            playerPrefabs = reader.GetList(this.playerPrefabs);
+            bulletPrefabs = reader.GetList(this.bulletPrefabs);
+            itemPrefabs = reader.GetList(this.itemPrefabs);
+            CampPrefabs = reader.GetList(this.CampPrefabs);
+        }
     }
 }

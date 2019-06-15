@@ -9,7 +9,7 @@ using NetMsg.Common;
 
 namespace Lockstep.ECS {
     [System.Serializable]
-    public class BaseEntitySetter {
+    public class BaseEntitySetter : BaseFormater {
         public static Dictionary<Type, int> type2Idx = new Dictionary<Type, int>();
         public static Dictionary<string, int> name2Idx;
 
@@ -37,7 +37,7 @@ namespace Lockstep.ECS {
                         type2Idx.Add(memType, nidx);
                     }
                     else {
-                       Lockstep.Logging.Debug.LogError("Do not have type" + memType.Name.ToString());
+                        Lockstep.Logging.Debug.LogError("Do not have type" + memType.Name.ToString());
                         return;
                     }
                 }

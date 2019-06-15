@@ -5,7 +5,7 @@ namespace Lockstep.Game {
 
 
     [System.Serializable]
-    public partial class GameConfig {
+    public  class ConstGameConfig {
         private static Dictionary<ushort, string> _id2Path = new Dictionary<ushort, string>() {
             {(ushort) EAssetID.PlayerTank0, "Prefabs/Player/Player0"},
             {(ushort) EAssetID.PlayerTank1, "Prefabs/Player/Player1"},

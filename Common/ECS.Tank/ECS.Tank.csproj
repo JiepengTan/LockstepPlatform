@@ -249,10 +249,6 @@
     <Folder Include="Src\Common\Systems" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client\Tank.Common\Tank.Common.csproj">
-      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
-      <Name>Tank.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ECS.Common\ECS.Common.csproj">
       <Project>{dcbba796-f183-4211-a5f1-78ccdcbd00dc}</Project>
       <Name>ECS.Common</Name>
@@ -272,6 +268,10 @@
     <ProjectReference Include="..\Serializaition\Serializaition.csproj">
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tank.Common\Tank.Common.csproj">
+      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
+      <Name>Tank.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

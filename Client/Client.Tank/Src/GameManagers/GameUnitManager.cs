@@ -44,7 +44,7 @@ namespace Lockstep.Game {
             transParentEnemy = FuncCreateTrans("Enemies");
             transParentItem = FuncCreateTrans("Items");
             transParentBullet = FuncCreateTrans("Bullets");
-            _config = Resources.Load<GameConfig>(GameConfig.ConfigPath);
+            _config = Resources.Load<GameConfig>(ConstGameConfig.ConfigPath);
         }
 
         public void OnEvent_LevelLoadDone(object param){
@@ -88,7 +88,7 @@ namespace Lockstep.Game {
         }
 
         public void CreateCamp(LVector2 createPos, int type = 0){
-            CreateUnit(createPos + GameConfig.TankBornOffset, _config.CampPrefabs, 0, EDir.Up, transParentItem);
+            CreateUnit(createPos + ConstGameConfig.TankBornOffset, _config.CampPrefabs, 0, EDir.Up, transParentItem);
         }
 
         public void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner){
@@ -109,17 +109,17 @@ namespace Lockstep.Game {
             _gameEffectService.ShowBornEffect(createPos);
             _gameAudioService.PlayClipBorn();
             EDir dir = EDir.Down;
-            DelayCall(GameConfig.TankBornDelay,
+            DelayCall(ConstGameConfig.TankBornDelay,
                 () => { CreateUnit(createPos, _config.enemyPrefabs, type, dir, transParentEnemy); });
         }
 
         public void CreatePlayer(byte actorId, int type){
             var bornPos = _gameConstStateService.playerBornPoss[actorId % _gameConstStateService.playerBornPoss.Count];
-            var createPos = bornPos + GameConfig.TankBornOffset;
+            var createPos = bornPos + ConstGameConfig.TankBornOffset;
             _gameEffectService.ShowBornEffect(createPos);
             _gameAudioService.PlayClipBorn();
             EDir dir = EDir.Up;
-            DelayCall(GameConfig.TankBornDelay, () => {
+            DelayCall(ConstGameConfig.TankBornDelay, () => {
                 var entity = CreateUnit(createPos, _config.playerPrefabs, type, dir, transParentPlayer);
                 var actor = _actorContext.GetEntityWithId(actorId);
                 if (actor != null) {
@@ -135,7 +135,7 @@ namespace Lockstep.Game {
 
 
         private GameEntity CreateUnit<T>(LVector2 createPos, List<T> prefabLst, int type, EDir dir, Transform parent)
-            where T : GameConfig.Unit{
+            where T : ConfigUnit{
             var ecsPrefab = prefabLst[type];
             var assetId = ecsPrefab.asset.assetId;
             var entity = CreateGameEntity();
@@ -180,7 +180,7 @@ namespace Lockstep.Game {
             entity.dir.value = rawDir;
             if (!_constStateService.IsVideoLoading) {
                 _viewService.DeleteView(entity.localId.value);
-                var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(ecsPrefab.asset.assetId));
+                var prefab = Resources.Load<GameObject>(ConstGameConfig.GetAssetPath(ecsPrefab.asset.assetId));
                 var go = GameObject.Instantiate(prefab, transform.position + rawPos.ToVector3(),
                     Quaternion.Euler(0, 0, DirUtil.GetDirDeg(rawDir)), transParentPlayer);
                 go.AddComponent<PosListener>();

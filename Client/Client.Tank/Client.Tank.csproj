@@ -83,8 +83,6 @@
     <Compile Include="Src\GameManagers\GameUnitManager.cs" />
     <Compile Include="Src\GameManagers\GameInputManager.cs" />
     <Compile Include="Src\GameManagers\Interfaces\IMap2DManager.cs" />
-    <Compile Include="Src\UI\UIECSDebugInfo.cs" />
-    <Compile Include="Src\UI\UIGameStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj">
@@ -115,6 +113,10 @@
       <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
       <Name>Serializaition</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Common\Tank.Common\Tank.Common.csproj">
+      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
+      <Name>Tank.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Util\Util.csproj">
       <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
       <Name>Util</Name>
@@ -122,10 +124,6 @@
     <ProjectReference Include="..\Client.Common\Client.Common.csproj">
       <Project>{1ae6c358-53d2-4b7d-9451-7db18b00cfaf}</Project>
       <Name>Client.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Tank.Common\Tank.Common.csproj">
-      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
-      <Name>Tank.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

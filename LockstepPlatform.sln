@@ -46,7 +46,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Tank", "Common\ECS.Tank
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tank.Editor", "Client\Client.Tank.Editor\Client.Tank.Editor.csproj", "{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tank.Common", "Client\Tank.Common\Tank.Common.csproj", "{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tank.Common", "Common\Tank.Common\Tank.Common.csproj", "{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
