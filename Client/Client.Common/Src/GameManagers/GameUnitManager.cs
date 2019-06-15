@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 namespace Lockstep.Game {
 
     [System.Serializable]
-    public partial class GameManager : SingletonManager<GameManager>, IUnitService {
+    public partial class GameUnitManager : SingletonManager<GameUnitManager>, IGameUnitService {
         [Header("Transforms")] [HideInInspector]
         public Transform transParentPlayer;
 
@@ -74,8 +74,8 @@ namespace Lockstep.Game {
             if (_randomService.value >= rate) {
                 return;
             }
-            var min = _constGameStateService.mapMin;
-            var max = _constGameStateService.mapMax;
+            var min = _gameConstStateService.mapMin;
+            var max = _gameConstStateService.mapMax;
             var x = _randomService.Range(min.x + 4, max.x - 4);
             var y = _randomService.Range(min.y + 4, max.y - 4);
             CreateItem(new LVector2(x, y), _randomService.Range(0, _config.itemPrefabs.Count));
@@ -104,8 +104,8 @@ namespace Lockstep.Game {
 
         public void CreateEnemy(LVector2 bornPos, int type){
             var createPos = bornPos + LVector2.right;
-            _resourceService.ShowBornEffect(createPos);
-            _audioService.PlayClipBorn();
+            _gameEffectService.ShowBornEffect(createPos);
+            _gameAudioService.PlayClipBorn();
             EDir dir = EDir.Down;
             DelayCall(GameConfig.TankBornDelay,
                 () => {
@@ -114,10 +114,10 @@ namespace Lockstep.Game {
         }
 
         public void CreatePlayer(byte actorId, int type){
-            var bornPos = _constGameStateService.playerBornPoss[actorId%_constGameStateService.playerBornPoss.Count];
+            var bornPos = _gameConstStateService.playerBornPoss[actorId%_gameConstStateService.playerBornPoss.Count];
             var createPos = bornPos + GameConfig.TankBornOffset;
-            _resourceService.ShowBornEffect(createPos);
-            _audioService.PlayClipBorn();
+            _gameEffectService.ShowBornEffect(createPos);
+            _gameAudioService.PlayClipBorn();
             EDir dir = EDir.Up;
             DelayCall(GameConfig.TankBornDelay, () => {
                 var entity = CreateUnit(createPos, _config.playerPrefabs, type, dir, transParentPlayer);
@@ -199,7 +199,7 @@ namespace Lockstep.Game {
         public bool IsPlaying = false;
         public bool IsGameOver;
 
-        public override void DoUpdate(float deltaTime){
+        public override void DoUpdate(int deltaTimeMs){
             if (IsGameOver) return;
         }
 
@@ -207,7 +207,6 @@ namespace Lockstep.Game {
             IsPlaying = true;
         }
         #endregion
-
 
         #region GameStatus
 
@@ -224,7 +223,7 @@ namespace Lockstep.Game {
             }
             else {
                 Clear();
-                MapManager.Instance.LoadLevel(CurLevel + 1);
+                Map2DManager.Instance.LoadLevel(CurLevel + 1);
             }
         }
 

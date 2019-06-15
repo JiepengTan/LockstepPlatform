@@ -98,7 +98,7 @@ namespace Lockstep.Game {
 
         public override void DoAwake(IServiceContainer services){
             _services = services;
-            _context = Main.Instance.contexts;
+            _context = Launcher.Instance.Contexts;
             _inputService = _services.GetService<IInputService>();
         }
 
@@ -146,7 +146,7 @@ namespace Lockstep.Game {
         }
 
         public bool IsFinishPursue = false;
-        public override void DoUpdate(float deltaTime){
+        public override void DoUpdate(int deltaTimeMs){
             if (!Running) {
                 return;
             }
@@ -344,8 +344,8 @@ namespace Lockstep.Game {
             }
 
             //初始化全局配置
-            _constGameStateService.allActorIds = allActors;
-            _constGameStateService.actorCount = allActors.Length;
+            _gameConstStateService.allActorIds = allActors;
+            _gameConstStateService.actorCount = allActors.Length;
 
             _localActorId = localActorId;
             _allActors = allActors;

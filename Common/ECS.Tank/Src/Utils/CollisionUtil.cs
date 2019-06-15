@@ -12,7 +12,7 @@ public static class LVector2Extension {
 }
 
 public static class CollisionUtil {
-    public static IMapService MapService;
+    public static IMap2DService Map2DService;
     public static LFloat TANK_BORDER_SIZE = new LFloat(true, 900);
 
 
@@ -73,7 +73,7 @@ public static class CollisionUtil {
 
     public static bool HasCollider(LVector2 pos){
         var iPos = pos.Floor();
-        var id = MapService.Pos2TileId(iPos, true);
+        var id = Map2DService.Pos2TileId(iPos, true);
         return id != 0;
     }
 

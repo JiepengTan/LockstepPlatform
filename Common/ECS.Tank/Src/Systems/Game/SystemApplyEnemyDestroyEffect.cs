@@ -17,11 +17,11 @@ namespace Lockstep.Game.Systems.Game {
         public void Execute(){
             foreach (var entity in _destroyedGroup.GetEntities()) {
                 var tank = entity.unit;
-                _resourceService.ShowDiedEffect(entity.pos.value);
-                _audioService.PlayClipDied();
+                _gameEffectService.ShowDiedEffect(entity.pos.value);
+                _gameAudioService.PlayClipDied();
                 var killerGameEntity = _gameContext.GetEntityWithLocalId(tank.killerLocalId);
                 if (entity.hasDropRate) {
-                    _unitService.DropItem(entity.dropRate.value);
+                    _gameUnitService.DropItem(entity.dropRate.value);
                 }
                 _gameStateService.curEnemyCountInScene--;
 

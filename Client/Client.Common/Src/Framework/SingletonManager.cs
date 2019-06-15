@@ -4,15 +4,22 @@ using System;
 using UnityEngine;
 
 namespace Lockstep.Game {
+    public interface ILifeCycle {
+        void DoAwake(IServiceContainer services);
+        void DoStart();
+        void DoUpdate(int deltaTimeMs);
+        void DoFixedUpdate();
+        void DoDestroy();
+        void OnApplicationQuit();
+    }
 
-
-    public partial class BaseManager : ManagerReferenceHolder, IService {
-        
+    public partial class BaseManager : ManagerReferenceHolder, IService ,ILifeCycle{
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
-        public virtual void DoUpdate(float deltaTime){ }
+        public virtual void DoUpdate(int deltaTimeMs){ }
         public virtual void DoFixedUpdate(){ }
         public virtual void DoDestroy(){ }
+        public virtual void OnApplicationQuit(){ }
     }
 
     public abstract class SingletonManager<T> : BaseManager, ITimeMachine where T : SingletonManager<T>, new() {
@@ -64,11 +71,11 @@ namespace Lockstep.Game {
 
         public virtual void Backup(int tick){ }
 
-        public void RollbackTo(int tick){
+        public virtual void RollbackTo(int tick){
             cmdBuffer?.Jump(CurTick, tick);
         }
 
-        public void Clean(int maxVerifiedTick){
+        public virtual void Clean(int maxVerifiedTick){
             cmdBuffer?.Clean(maxVerifiedTick);
         }
     }

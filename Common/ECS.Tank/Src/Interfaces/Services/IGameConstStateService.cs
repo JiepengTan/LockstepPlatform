@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Lockstep.Math;
 
 namespace Lockstep.Game {
-    public interface IConstGameStateService : IService {
+    public interface IGameConstStateService : IService {
 
         //room info
         byte[] allActorIds { get; set; }

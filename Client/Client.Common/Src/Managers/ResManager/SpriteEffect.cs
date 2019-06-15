@@ -7,7 +7,7 @@ using NetMsg.Common;
 using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
-public class SpriteEffect : RollbackableRes {
+public class SpriteEffect : RollbackEffect {
     public List<Sprite> sprites = new List<Sprite>();
     private SpriteRenderer render;
     public LFloat interval = new LFloat(1);

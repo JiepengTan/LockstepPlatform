@@ -10,15 +10,8 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
-    public interface IMapManager {
-        TileInfos GetMapInfo(string name);
-        void LoadLevel(int level);
-        Vector2Int mapMin { get; }
-        Vector2Int mapMax { get; }
-    }
-
-    public partial class MapManager :  IMapService ,ITimeMachine{
-        public class CmdSetTile : BaseCommand<MapManager> {
+    public partial class Map2DManager :  IMap2DService ,ITimeMachine{
+        public class CmdSetTile : BaseCommand<Map2DManager> {
             public TileInfos tilemap;
             public Vector2Int pos;
             public ushort srcId;
@@ -30,11 +23,11 @@ namespace Lockstep.Game {
                 this.dstId = dstId;
             }
             
-            public override void Do(MapManager param){
+            public override void Do(Map2DManager param){
                 tilemap.SetTileID(pos, dstId);
             }
 
-            public override void Undo(MapManager param){
+            public override void Undo(Map2DManager param){
                 tilemap.SetTileID(pos, srcId);
             }
 
@@ -72,7 +65,7 @@ namespace Lockstep.Game {
     }
 
     [System.Serializable]
-    public partial class MapManager : SingletonManager<MapManager>, IMapManager {
+    public partial class Map2DManager : SingletonManager<Map2DManager>, IMapManager {
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -102,14 +95,14 @@ namespace Lockstep.Game {
 
         public override void DoStart(){
             base.DoStart();
-            CollisionUtil.MapService = this;
+            CollisionUtil.Map2DService = this;
             if (grid == null) {  
                 grid = GameObject.FindObjectOfType<Grid>();
             }
         }
 
         public void LoadLevel(int level){
-            gridInfo = MapManager.LoadMap(grid, level);
+            gridInfo = Map2DManager.LoadMap(grid, level);
             var min = new Vector2Int(int.MaxValue, int.MaxValue);
             var max = new Vector2Int(int.MinValue, int.MinValue);
             foreach (var tempInfo in gridInfo.tileMaps) {
@@ -126,19 +119,19 @@ namespace Lockstep.Game {
             mapMax = max;
 
             var tileInfo = GetMapInfo(TilemapUtil.TileMapName_BornPos);
-            var campPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_Camp));
+            var campPoss = tileInfo.GetAllTiles(Map2DManager.ID2Tile(TilemapUtil.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
             campPos = campPoss[0];
-            enemyBornPoints = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
-            playerBornPoss = tileInfo.GetAllTiles(MapManager.ID2Tile(TilemapUtil.TileID_BornPosHero));
+            enemyBornPoints = tileInfo.GetAllTiles(Map2DManager.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
+            playerBornPoss = tileInfo.GetAllTiles(Map2DManager.ID2Tile(TilemapUtil.TileID_BornPosHero));
 
             if (_constStateService != null) {
-                _constGameStateService.mapMin = mapMin.ToLVector2Int();
-                _constGameStateService.mapMax = mapMax.ToLVector2Int();
-                _constGameStateService.enemyBornPoints = enemyBornPoints;
-                _constGameStateService.playerBornPoss = playerBornPoss;
-                _constGameStateService.campPos = campPos;
-                Debug.Assert(_constGameStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
+                _gameConstStateService.mapMin = mapMin.ToLVector2Int();
+                _gameConstStateService.mapMax = mapMax.ToLVector2Int();
+                _gameConstStateService.enemyBornPoints = enemyBornPoints;
+                _gameConstStateService.playerBornPoss = playerBornPoss;
+                _gameConstStateService.campPos = campPos;
+                Debug.Assert(_gameConstStateService.playerBornPoss.Count == GameConfig.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
             EventHelper.Trigger(EEvent.LevelLoadProgress,1f);
@@ -151,7 +144,7 @@ namespace Lockstep.Game {
 
         public static GridInfo LoadMap(Grid grid, int level){
             CheckLoadTileIDMap();
-            var path = MapManager.GetMapPathFull(level);
+            var path = Map2DManager.GetMapPathFull(level);
             //if (!File.Exists(path)) {
             //    Debug.LogError("Have no map file" + level + " path:" + path);
             //    return null;
@@ -194,9 +187,9 @@ namespace Lockstep.Game {
 
         public static void SaveLevel(Grid grid, int level){
             if (grid == null) return;
-            var bytes = TileMapSerializer.SerializeGrid(grid, MapManager.Tile2ID);
+            var bytes = TileMapSerializer.SerializeGrid(grid, Map2DManager.Tile2ID);
             if (bytes != null) {
-                File.WriteAllBytes(MapManager.GetMapPathFull(level), bytes);
+                File.WriteAllBytes(Map2DManager.GetMapPathFull(level), bytes);
             }
 #if UNITY_EDITOR
             if (!Application.isPlaying) {

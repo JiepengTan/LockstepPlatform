@@ -205,11 +205,15 @@
     <Compile Include="Src\Generated\Snapshot\SnapshotContext.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotEntity.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotMatcher.cs" />
+    <Compile Include="Src\Interfaces\Services\IEffectService.cs" />
     <Compile Include="Src\Interfaces\Services\IGameAudioService.cs" />
     <Compile Include="Src\Interfaces\Services\IGameConstStateService.cs" />
-    <Compile Include="Src\Interfaces\Services\IMapService.cs" />
+    <Compile Include="Src\Interfaces\Services\IMap2DService.cs" />
     <Compile Include="Src\Interfaces\Services\IResouceService.cs" />
-    <Compile Include="Src\Interfaces\Services\IUnitService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameUnitService.cs" />
+    <Compile Include="Src\Interfaces\Services\IResService.cs" />
+    <Compile Include="Src\Interfaces\Services\IRollbackEffect.cs" />
+    <Compile Include="Src\Interfaces\Services\EffectProxy.cs" />
     <Compile Include="Src\Systems\Cleanup\SystemRemoveDestroyedEntitiesFromView.cs" />
     <Compile Include="Src\Systems\Feature\CleanupFeature.cs" />
     <Compile Include="Src\Systems\Feature\GameFeature.cs" />

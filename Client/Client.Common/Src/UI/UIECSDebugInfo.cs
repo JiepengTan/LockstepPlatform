@@ -12,11 +12,11 @@ public class UIECSDebugInfo : MonoBehaviour {
 
     bool IsConnected => GameMsgManager.Instance?.IsConnected ?? false;
     int CurTick => SimulationManager.Instance?.World?.Tick ?? 0;
-    long HashCode => Main.Instance.contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
-    int AgentCount => Main.Instance.contexts.game.count;
+    long HashCode => Launcher.Instance.Contexts.gameState.hashCodeEntity?.hashCode?.value ?? 0;
+    int AgentCount => Launcher.Instance.Contexts.game.count;
 
     void Update(){
-        if (!GameManager.Instance.IsPlaying) return;
+        if (!GameUnitManager.Instance.IsPlaying) return;
         ConnectedText.text = $"IsConn: {IsConnected}";
         if ( IsConnected) {
             HashCodeText.text = "HashCode: " + HashCode;

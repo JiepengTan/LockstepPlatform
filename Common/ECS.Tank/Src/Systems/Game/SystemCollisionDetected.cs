@@ -40,16 +40,16 @@ namespace Lockstep.Game.Systems.Game {
                  foreach (var tank in allPlayer) {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
-                        _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(bullet,tank );
+                        _gameAudioService.PlayClipHitTank();
+                        _gameUnitService.TakeDamage(bullet,tank );
                     }
                 }
 
                 foreach (var tank in allEnmey) {
                     if (tank.isDestroyed) continue;
                     if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
-                        _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(bullet,tank );
+                        _gameAudioService.PlayClipHitTank();
+                        _gameUnitService.TakeDamage(bullet,tank );
                     }
                 }
             }
@@ -60,8 +60,8 @@ namespace Lockstep.Game.Systems.Game {
                     if (bullet.isDestroyed) continue;
                     if (camp.isDestroyed) continue;
                     if (CollisionUtil.CheckCollision(bullet, camp)) {
-                        _audioService.PlayClipHitTank();
-                        _unitService.TakeDamage(bullet,camp);
+                        _gameAudioService.PlayClipHitTank();
+                        _gameUnitService.TakeDamage(bullet,camp);
                     }
                 }
             }
@@ -78,7 +78,7 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Add(borderPos1.Floor());
                 tempPoss.Add(borderPos2.Floor());
                 foreach (var iPos in tempPoss) {
-                    TilemapUtil.CheckBulletWithMap(iPos, bullet, _audioService,_mapService);
+                    TilemapUtil.CheckBulletWithMap(iPos, bullet, _gameAudioService,_map2DService);
                 }
 
                 if (bullet.unit.health == 0) {
@@ -88,8 +88,8 @@ namespace Lockstep.Game.Systems.Game {
                 tempPoss.Clear();
             }
 
-            var min = _constGameStateService.mapMin;
-            var max = _constGameStateService.mapMax;
+            var min = _gameConstStateService.mapMin;
+            var max = _gameConstStateService.mapMax;
             // bullet bound detected 
             foreach (var bullet in allBullet) {
                 if (CollisionUtil.IsOutOfBound(bullet.pos.value, min, max)) {
@@ -104,7 +104,7 @@ namespace Lockstep.Game.Systems.Game {
                 foreach (var item in allItem) {
                     if (item.isDestroyed) continue;
                     if (CollisionUtil.CheckCollision(player, item)) {
-                        _audioService.PlayMusicGetItem();
+                        _gameAudioService.PlayMusicGetItem();
                         item.itemType.killerActorId = player.actorId.value;
                         item.isDestroyed = true;
                     }

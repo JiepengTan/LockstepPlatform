@@ -24,7 +24,7 @@ namespace Lockstep.Game {
             }
 
             var id = tileIDs[diff.y * size.x + diff.x];
-            return MapManager.ID2Tile(id);
+            return Map2DManager.ID2Tile(id);
         }
 
         public ushort GetTileID(Vector2Int pos){
@@ -46,7 +46,7 @@ namespace Lockstep.Game {
 
             var idx = diff.y * size.x + diff.x;
             tileIDs[idx] = id;
-            var tile = MapManager.ID2Tile(id);
+            var tile = Map2DManager.ID2Tile(id);
             if (allTiles != null) {
                 allTiles[idx] = tile;
             }
@@ -74,7 +74,7 @@ namespace Lockstep.Game {
             var count = tileIDs.Length;
             var tiles = new TileBase[count];
             for (int i = 0; i < count; i++) {
-                tiles[i] = MapManager.ID2Tile(tileIDs[i]);
+                tiles[i] = Map2DManager.ID2Tile(tileIDs[i]);
             }
 
             allTiles = tiles;

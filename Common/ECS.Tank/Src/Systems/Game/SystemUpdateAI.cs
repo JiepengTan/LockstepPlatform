@@ -50,7 +50,7 @@ namespace Lockstep.Game.Systems.Game {
                     if (entity.skill.cdTimer <= LFloat.zero) {
                         entity.skill.cdTimer = entity.skill.cd;
                         //Fire
-                        _unitService.CreateBullet(entity.pos.value, entity.dir.value, (int) entity.skill.bulletId,
+                        _gameUnitService.CreateBullet(entity.pos.value, entity.dir.value, (int) entity.skill.bulletId,
                             entity);
                     }
                 }

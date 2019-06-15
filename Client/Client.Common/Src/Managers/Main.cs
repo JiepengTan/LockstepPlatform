@@ -10,7 +10,7 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
-    public partial class MainManager :ReferenceHolder{
+    public partial class MainManager : ManagerReferenceHolder {
         /// <summary>
         /// 回放模式
         /// </summary>
@@ -39,7 +39,7 @@ namespace Lockstep.Game {
             IsVideoMode = true;
         }
         
-        private void DoAwake(){
+        public void DoAwake(){
             rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
             gameCamera.targetTexture = rt;
 #if !UNITY_EDITOR
@@ -55,16 +55,16 @@ namespace Lockstep.Game {
             Screen.SetResolution(1024, 768, false);
         }
 
-        private void DoStart(){ }
+        public void DoStart(){ }
 
-        private void AfterStart(){
+        public  void AfterStart(){
             if (IsVideoMode) {
                 EventHelper.Trigger(EEvent.BorderVideoFrame, FramesInfo);
                 EventHelper.Trigger(EEvent.OnGameCreate, GameStartInfo);
             }
         }
 
-        private void DoUpdate(float deltaTime){
+        public void DoUpdate(int deltaTimeMs){
             realtimeSinceStartup = Time.realtimeSinceStartup;
             _constStateService.IsRunVideo = isRunVideo;
             if (IsVideoMode && isRunVideo && CurTick < MaxRunTick) {
@@ -77,8 +77,8 @@ namespace Lockstep.Game {
             }
         }
 
-        private void DoFixedUpdate(){ }
-        private void DoDestroy(){ }
+        public void DoFixedUpdate(){ }
+        public void DoDestroy(){ }
 
     }
 }

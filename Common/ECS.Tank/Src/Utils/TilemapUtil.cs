@@ -18,10 +18,10 @@ namespace Lockstep.Game {
         public const int PlayerCamp = 2;
         
 
-        public static void CheckBulletWithMap(LVector2Int iPos, GameEntity entity,IGameAudioService audioService,IMapService mapService){
+        public static void CheckBulletWithMap(LVector2Int iPos, GameEntity entity,IGameAudioService audioService,IMap2DService map2DService){
             var unit = entity.unit;
             var bullet = entity.bullet;
-            var id = mapService.Pos2TileId(iPos, false);
+            var id = map2DService.Pos2TileId(iPos, false);
             if (id != 0 && unit.health > 0) {
                 //collide bullet with world
                 if (id == TilemapUtil.TileID_Brick) {
@@ -29,7 +29,7 @@ namespace Lockstep.Game {
                         audioService.PlayClipHitBrick();
                     }
 
-                    mapService.ReplaceTile(iPos, id, 0);
+                    map2DService.ReplaceTile(iPos, id, 0);
                     unit.health--;
                 }
                 else if (id == TilemapUtil.TileID_Iron) {
@@ -46,7 +46,7 @@ namespace Lockstep.Game {
                         }
 
                         unit.health = LMath.Max(unit.health - 2, 0);
-                        mapService.ReplaceTile(iPos, id, 0);
+                        map2DService.ReplaceTile(iPos, id, 0);
                     }
                 }
                 else if (id == TilemapUtil.TileID_Grass) {
@@ -56,7 +56,7 @@ namespace Lockstep.Game {
                         }
 
                         unit.health -= 0;
-                        mapService.ReplaceTile(iPos, id, 0);
+                        map2DService.ReplaceTile(iPos, id, 0);
                     }
                 }
                 else if (id == TilemapUtil.TileID_Wall) {

@@ -56,12 +56,11 @@ namespace Lockstep.Game {
             _loginMgr.DoStart();
         }
 
-        public override void DoUpdate(float elapsedMilliseconds){
+        public override void DoUpdate(int deltaTimeMs){
             if (_isVideoMode) return;
             Utils.UpdateServices();
-            var deltaTime = (int) elapsedMilliseconds;
-            _roomMsgMgr?.DoUpdate(deltaTime);
-            _loginMgr?.DoUpdate(deltaTime);
+            _roomMsgMgr?.DoUpdate(deltaTimeMs);
+            _loginMgr?.DoUpdate(deltaTimeMs);
         }
 
 

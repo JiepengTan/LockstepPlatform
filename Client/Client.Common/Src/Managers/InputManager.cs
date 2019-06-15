@@ -16,7 +16,6 @@ namespace Lockstep.Game {
             Fire
         }
 
-
         public List<InputCmd> GetInputCmds(){
             var cmds = new List<InputCmd>();
             var isFire = UnityEngine.Input.GetKey(KeyCode.Space);

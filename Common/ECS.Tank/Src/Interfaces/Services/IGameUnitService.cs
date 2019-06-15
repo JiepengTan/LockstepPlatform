@@ -2,7 +2,7 @@ using System;
 using Lockstep.Math;
 
 namespace Lockstep.Game {
-    public interface IUnitService : IService {
+    public interface IGameUnitService : IService {
         void CreateBullet(LVector2 pos, EDir dir, int type, GameEntity owner);
         void CreateEnemy(LVector2 pos, int type);
         void CreateEnemy(LVector2 pos);

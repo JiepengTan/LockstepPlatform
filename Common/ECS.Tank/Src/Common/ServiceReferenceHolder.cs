@@ -2,24 +2,39 @@ namespace Lockstep.Game {
     public partial class ServiceReferenceHolder {
         protected IRandomService _randomService;
         protected ITimeMachineService _timeMachineService;
+        protected IConstStateService _constStateService;
+        protected IViewService _viewService;
+        protected IAudioService _audioService;
+        protected IInputService _inputService;
+        protected IMap2DService _map2DService;
+        protected IResService _resService;
+        protected IEffectService _effectService;
         
-        protected IResourceService _resourceService;
-        protected IGameAudioService _audioService;
-        protected IUnitService _unitService;
-        protected IConstGameStateService _constGameStateService;
+        
+        protected IGameConstStateService _gameConstStateService;
         protected IGameStateService _gameStateService;
-        protected IMapService _mapService;
-
+        protected IGameEffectService _gameEffectService;
+        protected IGameAudioService _gameAudioService;
+        protected IGameUnitService _gameUnitService;
+        
         public virtual void InitReference(IServiceContainer serviceContainer){
+            //通用Service
             _randomService = serviceContainer.GetService<IRandomService>();
             _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
+            _constStateService = serviceContainer.GetService<IConstStateService>();
+            _inputService = serviceContainer.GetService<IInputService>();
+            _viewService = serviceContainer.GetService<IViewService>();
+            _audioService = serviceContainer.GetService<IAudioService>();
+            _map2DService = serviceContainer.GetService<IMap2DService>();
+            _resService = serviceContainer.GetService<IResService>();
+            _effectService = serviceContainer.GetService<IEffectService>();
             
-            _resourceService = serviceContainer.GetService<IResourceService>();
-            _audioService = serviceContainer.GetService<IGameAudioService>();
-            _unitService = serviceContainer.GetService<IUnitService>();
-            _constGameStateService = serviceContainer.GetService<IConstGameStateService>();
+            //游戏相关的Survice
+            _gameEffectService = serviceContainer.GetService<IGameEffectService>();
+            _gameAudioService = serviceContainer.GetService<IGameAudioService>();
+            _gameUnitService = serviceContainer.GetService<IGameUnitService>();
+            _gameConstStateService = serviceContainer.GetService<IGameConstStateService>();
             _gameStateService = serviceContainer.GetService<IGameStateService>();
-            _mapService = serviceContainer.GetService<IMapService>();
         }
     }
    

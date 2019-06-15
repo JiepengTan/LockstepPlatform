@@ -117,6 +117,10 @@
     <Content Include="Src\Editor\NaughtyAttributes\Editor\CodeGeneration\Templates\PropertyValidatorDatabaseTemplate.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\ECS.Tank\ECS.Tank.csproj">
+      <Project>{50daad68-04e8-4dfa-9cbe-755491ac9d34}</Project>
+      <Name>ECS.Tank</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
       <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
       <Name>NetMsg.Common</Name>

@@ -9,27 +9,27 @@ namespace Lockstep.Game.Systems.GameState {
 
         public void Initialize(){
             //create camps 
-            var campPos = _constGameStateService.campPos;
-            _unitService.CreateCamp(campPos,0);
+            var campPos = _gameConstStateService.campPos;
+            _gameUnitService.CreateCamp(campPos,0);
             //create actors
-            Debug.Assert(_constGameStateService.actorCount <= _constGameStateService.playerBornPoss.Count,"");
-            var allActorIds = _constGameStateService.allActorIds;
-            for (int i = 0; i < _constGameStateService.actorCount; i++) {
+            Debug.Assert(_gameConstStateService.actorCount <= _gameConstStateService.playerBornPoss.Count,"");
+            var allActorIds = _gameConstStateService.allActorIds;
+            for (int i = 0; i < _gameConstStateService.actorCount; i++) {
                 var entity = _actorContext.CreateEntity();
-                entity.AddId(_constGameStateService.allActorIds[i]);
+                entity.AddId(_gameConstStateService.allActorIds[i]);
                 entity.AddScore(0);
-                entity.AddLife(_constGameStateService.playerInitLifeCount);
+                entity.AddLife(_gameConstStateService.playerInitLifeCount);
             }
             //born Player
-            for (int i = 0; i < _constGameStateService.actorCount; i++) {
-                var actorId = _constGameStateService.allActorIds[i];
-                _unitService.CreatePlayer(actorId,0);
+            for (int i = 0; i < _gameConstStateService.actorCount; i++) {
+                var actorId = _gameConstStateService.allActorIds[i];
+                _gameUnitService.CreatePlayer(actorId,0);
             }
 
             //reset status
-            _constGameStateService.MaxEnemyCountInScene = 6;
-            _constGameStateService.TotalEnemyCountToBorn = 20;
-            _gameStateService.remainCountToBorn = _constGameStateService.TotalEnemyCountToBorn;
+            _gameConstStateService.MaxEnemyCountInScene = 6;
+            _gameConstStateService.TotalEnemyCountToBorn = 20;
+            _gameStateService.remainCountToBorn = _gameConstStateService.TotalEnemyCountToBorn;
             _gameStateService.curEnemyCountInScene = 0;
             _gameStateService.bornTimer = LFloat.zero;
             _gameStateService.bornInterval = new LFloat(3);

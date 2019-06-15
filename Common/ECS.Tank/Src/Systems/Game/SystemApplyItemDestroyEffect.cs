@@ -22,7 +22,7 @@ namespace Lockstep.Game.Systems.Game {
 
         public void Execute(){
             foreach (var entity in _destroyedGroup.GetEntities()) {
-                _audioService.PlayMusicGetItem();
+                _gameAudioService.PlayMusicGetItem();
                 var actor = _actorContext.GetEntityWithId(entity.itemType.killerActorId);
                 var player = _gameContext.GetEntityWithLocalId(actor.gameLocalId.value);
                 Debug.Assert(actor != null, " player's tank have no owner");
@@ -55,7 +55,7 @@ namespace Lockstep.Game.Systems.Game {
         }
 
         void OnTriggerUpgrade(ActorEntity actor, GameEntity player, IGroup<GameEntity> _allEnemy){
-            _unitService.Upgrade(player);
+            _gameUnitService.Upgrade(player);
         }
 
         void OnTriggerAddLife(ActorEntity actor, GameEntity player, IGroup<GameEntity> _allEnemy){

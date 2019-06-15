@@ -9,7 +9,7 @@ public class EditorMain : UnityEditor.Editor {
 
     public override void OnInspectorGUI(){
         base.OnInspectorGUI();
-        owner = (target as MainScript).main;
+        owner = (target as MainScript)?.main;
         ShowLoadRecord();
         ShowRecordInfo();
         ShowJumpTo();
@@ -44,7 +44,7 @@ public class EditorMain : UnityEditor.Editor {
     private void ShowJumpTo(){
         if (Application.isPlaying) {
             if (GUILayout.Button("Jump")) {
-                if (GameManager.Instance.IsPlaying && owner.JumpToTick > 0 && owner.JumpToTick < owner.MaxRunTick) {
+                if (GameUnitManager.Instance.IsPlaying && owner.JumpToTick > 0 && owner.JumpToTick < owner.MaxRunTick) {
                     SimulationManager.Instance.JumpTo(owner.JumpToTick);
                 }
             }

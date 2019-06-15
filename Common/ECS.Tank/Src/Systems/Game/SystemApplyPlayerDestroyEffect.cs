@@ -17,12 +17,12 @@ namespace Lockstep.Game.Systems.Game {
 
         public void Execute(){
             foreach (var entity in _destroyedGroup.GetEntities()) {
-                _resourceService.ShowDiedEffect(entity.pos.value);
-                _audioService.PlayClipDied();
+                _gameEffectService.ShowDiedEffect(entity.pos.value);
+                _gameAudioService.PlayClipDied();
                 var actor = _actorContext.GetEntityWithId(entity.actorId.value);
                 Debug.Assert(actor != null, " player's tank have no owner");
                 if (actor.life.value > 0) {
-                    _unitService.CreatePlayer(entity.actorId.value, 0);
+                    _gameUnitService.CreatePlayer(entity.actorId.value, 0);
                 }
             }
         }
