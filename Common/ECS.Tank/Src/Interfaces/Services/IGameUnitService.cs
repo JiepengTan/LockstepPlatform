@@ -12,6 +12,8 @@ namespace Lockstep.Game {
         void TakeDamage(GameEntity bullet, GameEntity suffer);
         void DelayCall(LFloat delay, Action callback);
         void Upgrade(GameEntity entity);
+
+        short GetAssetId(int unitType, int detailType);
     }
 
 }

@@ -64,6 +64,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Config\AudioConfig.cs" />
+    <Compile Include="Src\Config\GameConfig.cs" />
+    <Compile Include="Src\Config\GameConfig_Const.cs" />
     <Compile Include="Src\Debugging\Tools\Example\ExampleVariableDrawer.cs" />
     <Compile Include="Src\Debugging\Tools\Scripts\Components\DebugSettings.cs" />
     <Compile Include="Src\Debugging\Tools\Scripts\Components\DrawManager.cs" />
@@ -72,6 +75,16 @@
     <Compile Include="Src\Debugging\Tools\Scripts\Components\Tracker.cs" />
     <Compile Include="Src\Debugging\Tools\Scripts\Interfaces\IVariableDrawer.cs" />
     <Compile Include="Src\Debugging\Tools\Scripts\Interfaces\MonoDrawer.cs" />
+    <Compile Include="Src\GameManagers\GameAudioManager.cs" />
+    <Compile Include="Src\GameManagers\GameCollisionManager.cs" />
+    <Compile Include="Src\GameManagers\GameConstStateManager.cs" />
+    <Compile Include="Src\GameManagers\GameEffectManager.cs" />
+    <Compile Include="Src\GameManagers\GameStateManager.cs" />
+    <Compile Include="Src\GameManagers\GameUnitManager.cs" />
+    <Compile Include="Src\GameManagers\GameInputManager.cs" />
+    <Compile Include="Src\GameManagers\Interfaces\IMap2DManager.cs" />
+    <Compile Include="Src\UI\UIECSDebugInfo.cs" />
+    <Compile Include="Src\UI\UIGameStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj">
@@ -109,6 +122,10 @@
     <ProjectReference Include="..\Client.Common\Client.Common.csproj">
       <Project>{1ae6c358-53d2-4b7d-9451-7db18b00cfaf}</Project>
       <Name>Client.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Tank.Common\Tank.Common.csproj">
+      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
+      <Name>Tank.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

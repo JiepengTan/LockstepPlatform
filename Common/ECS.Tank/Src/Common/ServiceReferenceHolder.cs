@@ -1,5 +1,6 @@
 namespace Lockstep.Game {
-    public partial class ServiceReferenceHolder {
+
+    public class ServiceReferenceHolder {
         protected IRandomService _randomService;
         protected ITimeMachineService _timeMachineService;
         protected IConstStateService _constStateService;
@@ -10,12 +11,6 @@ namespace Lockstep.Game {
         protected IResService _resService;
         protected IEffectService _effectService;
         
-        
-        protected IGameConstStateService _gameConstStateService;
-        protected IGameStateService _gameStateService;
-        protected IGameEffectService _gameEffectService;
-        protected IGameAudioService _gameAudioService;
-        protected IGameUnitService _gameUnitService;
         
         public virtual void InitReference(IServiceContainer serviceContainer){
             //通用Service
@@ -29,12 +24,6 @@ namespace Lockstep.Game {
             _resService = serviceContainer.GetService<IResService>();
             _effectService = serviceContainer.GetService<IEffectService>();
             
-            //游戏相关的Survice
-            _gameEffectService = serviceContainer.GetService<IGameEffectService>();
-            _gameAudioService = serviceContainer.GetService<IGameAudioService>();
-            _gameUnitService = serviceContainer.GetService<IGameUnitService>();
-            _gameConstStateService = serviceContainer.GetService<IGameConstStateService>();
-            _gameStateService = serviceContainer.GetService<IGameStateService>();
         }
     }
    

@@ -23,10 +23,10 @@ namespace Lockstep.Game.Systems.Game {
                     var idir = (int) (entity.dir.value);
                     var isUD = idir % 2 == 0;
                     if (isUD) {
-                        pos.x = CollisionUtil.RoundIfNear(pos.x, TankUtil.SNAP_DIST);
+                        pos.x = GameCollisionUtil.RoundIfNear(pos.x, TankUtil.SNAP_DIST);
                     }
                     else {
-                        pos.y = CollisionUtil.RoundIfNear(pos.y, TankUtil.SNAP_DIST);
+                        pos.y = GameCollisionUtil.RoundIfNear(pos.y, TankUtil.SNAP_DIST);
                     }
                 }
 

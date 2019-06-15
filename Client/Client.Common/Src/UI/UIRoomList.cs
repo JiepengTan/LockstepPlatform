@@ -18,7 +18,7 @@ namespace Lockstep.Game.UI {
             BindEvent("Window/CreateLobby", OnBtn_CreateLobby);
             BindEvent("Window/Refresh", OnBtn_Refresh);
             _items = new GenericUIList<RoomInfo>(itemRoomPrefab.gameObject, LayoutGroup);
-            Setup(GameMsgManager.Instance.RoomInfos);
+            Setup(GetService<GameMsgManager>().RoomInfos);
         }
 
         void OnBtn_JoinRoom(){

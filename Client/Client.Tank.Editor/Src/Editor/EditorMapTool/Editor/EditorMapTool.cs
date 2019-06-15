@@ -21,9 +21,7 @@ namespace Editor {
         public int EnumIdx;
         public void ShowEnum(){
             EnumIdx = EditorGUILayout.IntField("EnumIdx ", EnumIdx);
-            if (GUILayout.Button("ShowEnum")) {
-                Debug.LogError($"idx {EnumIdx}EMsgSC {((EMsgSC)EnumIdx)}" );
-            }
+            EditorGUILayout.LabelField("enum: " + ((EMsgSC) EnumIdx).ToString());
         }
 
 
@@ -32,7 +30,7 @@ namespace Editor {
                 var grid = GameObject.FindObjectOfType<Grid>();
                 if (grid == null)
                     return;
-                Map2DManager.SaveLevel(grid, owner.curLevel);
+                Map2DService.SaveLevel(grid, owner.curLevel);
                 EditorUtility.DisplayDialog("提示", "Finish Save", "OK");
             }
 
@@ -44,7 +42,7 @@ namespace Editor {
                 var grid = GameObject.FindObjectOfType<Grid>();
                 if (grid == null)
                     return;
-                Map2DManager.LoadMap(grid, owner.curLevel);
+                Map2DService.LoadMap(grid, owner.curLevel);
             }
         }
 

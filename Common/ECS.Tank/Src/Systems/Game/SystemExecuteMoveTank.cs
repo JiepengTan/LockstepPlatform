@@ -30,8 +30,8 @@ namespace Lockstep.Game.Systems.Game   {
 
                 LFloat maxMoveDist = moveSpd * deltaTime;
                 var headPos = pos + (TankUtil.TANK_HALF_LEN) * dirVec;
-                var dist = CollisionUtil.GetMaxMoveDist(dir, headPos, fTargetHead);
-                var dist2 = CollisionUtil.GetMaxMoveDist(dir, headPos, fPreviewHead);
+                var dist = _gameCollisionService.GetMaxMoveDist(dir, headPos, fTargetHead);
+                var dist2 = _gameCollisionService.GetMaxMoveDist(dir, headPos, fPreviewHead);
                 maxMoveDist =LMath.Max(LFloat.zero,LMath.Min(maxMoveDist, dist, dist2)) ;
 
                 var diffPos = maxMoveDist * dirVec;

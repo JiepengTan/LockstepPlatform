@@ -11,6 +11,7 @@
     <AssemblyName>Lockstep.ECS.Common</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -53,15 +54,18 @@
     <Compile Include="Src\Interfaces\IClone.cs" />
     <Compile Include="Src\Interfaces\IComponentSetter.cs" />
     <Compile Include="Src\Interfaces\IEventListener.cs" />
+    <Compile Include="Src\Interfaces\ILifeCycle.cs" />
     <Compile Include="Src\Interfaces\IServiceContainer.cs" />
-    <Compile Include="Src\Interfaces\ITimeMachine.cs" />
     <Compile Include="Src\Services\IAudioService.cs" />
     <Compile Include="Src\Services\IConstStateService.cs" />
+    <Compile Include="Src\Services\IEventRegisterService.cs" />
     <Compile Include="Src\Services\IGameMsgService.cs" />
     <Compile Include="Src\Services\IInputService.cs" />
     <Compile Include="Src\Services\IRandomService.cs" />
     <Compile Include="Src\Services\IService.cs" />
+    <Compile Include="Src\Services\ITimeMachine.cs" />
     <Compile Include="Src\Services\ITimeMachineService.cs" />
+    <Compile Include="Src\Services\IUIService.cs" />
     <Compile Include="Src\Services\IViewService.cs" />
   </ItemGroup>
   <ItemGroup>

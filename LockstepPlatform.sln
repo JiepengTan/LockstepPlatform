@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECS.Tank", "Common\ECS.Tank
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client.Tank.Editor", "Client\Client.Tank.Editor\Client.Tank.Editor.csproj", "{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tank.Common", "Client\Tank.Common\Tank.Common.csproj", "{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,7 @@ Global
 		{DCBBA796-F183-4211-A5F1-78CCDCBD00DC} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
 		{50DAAD68-04E8-4DFA-9CBE-755491AC9D34} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
 		{6D9BF3F8-8E4A-4462-94AC-F8BFED435167} = {CCDE635A-969A-428A-99AB-8B1C32919A01}
+		{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1AE6C358-53D2-4B7D-9451-7DB18B00CFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -144,5 +147,9 @@ Global
 		{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6D9BF3F8-8E4A-4462-94AC-F8BFED435167}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6FB42A80-CD90-4EC1-867D-81FF75AEB0D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

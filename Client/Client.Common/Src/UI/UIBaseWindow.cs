@@ -28,5 +28,9 @@ namespace Lockstep.Game {
         }
 
         protected void SendMessage(EMsgSC type, object body){ }
+        
+        protected T GetService<T>() where T : IService{
+            return uiService.GetService<T>();
+        }
     }
 }

@@ -6,10 +6,11 @@ using Entitas.VisualDebugging.Unity;
 using UnityEngine;
 using Lockstep.Math;
 using Debug = Lockstep.Logging.Debug;
+using Object = UnityEngine.Object;
 
 namespace Lockstep.Game {
     
-    public partial class ViewManager : SingletonManager<ViewManager>, IViewService {
+    public partial class ViewManager : BaseGameManager, IViewService {
         private Dictionary<uint, GameObject> _linkedEntities = new Dictionary<uint, GameObject>();
         private IGroup<GameEntity> _assetBindGroup;
         
@@ -21,8 +22,13 @@ namespace Lockstep.Game {
                 GameMatcher.Pos,
                 GameMatcher.Dir));
         }
-        public void BindView(IEntity entity,object viewObj){
-            BindView(entity as GameEntity,viewObj);
+        public void BindView(IEntity entity,short assetId){
+            var prefab = Resources.Load<GameObject>(_resService.GetAssetPath(assetId));
+            var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
+                Quaternion.identity, parent);
+            go.AddComponent<PosListener>();
+            go.AddComponent<DirListener>();
+            BindView(entity as GameEntity,go);
         }
         public void BindView(GameEntity entity,object viewObj){
             var viewGo = viewObj as GameObject;
@@ -35,7 +41,7 @@ namespace Lockstep.Game {
                 var componentSetters = viewGo.GetComponents<IComponentSetter>();
                 foreach (var componentSetter in componentSetters) {
                     componentSetter.SetComponent(entity);
-                    UnityEngine.Object.Destroy((MonoBehaviour) componentSetter);
+                    Object.Destroy((MonoBehaviour) componentSetter);
                 }
 
                 var eventListeners = viewGo.GetComponents<IEventListener>();
@@ -49,8 +55,8 @@ namespace Lockstep.Game {
 
         public void RebindAllEntities(){
             var entities = _assetBindGroup.GetEntities();
-            foreach (var enttiy in entities) {
-                RebindView(enttiy);
+            foreach (var entity in entities) {
+                RebindView(entity);
             }
         }
 
@@ -65,8 +71,8 @@ namespace Lockstep.Game {
             }
 
             var assetId = entity.asset.assetId;
-            var prefab = Resources.Load<GameObject>(GameConfig.GetAssetPath(assetId));
-            var go = GameObject.Instantiate(prefab,
+            var prefab = Resources.Load<GameObject>(_resService.GetAssetPath((short)assetId));
+            var go = Object.Instantiate(prefab,
                 transform.position + entity.pos.value.ToVector3(),
                 Quaternion.Euler(0,0,DirUtil.GetDirDeg(entity.dir.value)), transform);
             go.AddComponent<PosListener>();

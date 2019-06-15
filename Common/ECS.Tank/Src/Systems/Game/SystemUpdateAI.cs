@@ -26,13 +26,13 @@ namespace Lockstep.Game.Systems.Game {
                 LVector2Int dir = LVector2Int.zero;
                 var curPos = entity.pos.value;
                 var headPos = TankUtil.GetHeadPos(entity.pos.value, entity.dir.value);
-                var isReachTheEnd = CollisionUtil.HasColliderWithBorder(entity.dir.value, headPos);
+                var isReachTheEnd = _gameCollisionService.HasColliderWithBorder(entity.dir.value, headPos);
                 if (isReachTheEnd) {
                     List<int> allWalkableDir = new List<int>();
                     for (int i = 0; i < (int) (EDir.EnumCount); i++) {
                         var vec = DirUtil.GetDirLVec((EDir) i) * TankUtil.TANK_HALF_LEN;
                         var pos = curPos + vec;
-                        if (!CollisionUtil.HasCollider(pos)) {
+                        if (!_gameCollisionService.HasCollider(pos)) {
                             allWalkableDir.Add(i);
                         }
                     }

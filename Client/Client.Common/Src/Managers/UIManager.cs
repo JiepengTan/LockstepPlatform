@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Lockstep.Game {
     [System.Serializable]
-    public class UIManager : SingletonManager<UIManager>, IUIService {
+    public class UIManager : BaseGameManager, IUIService {
         private const string _prefabDir = "UI/";
         [SerializeField] private Transform _uiRoot;
         private Dictionary<string, UIBaseWindow> _windowPool = new Dictionary<string, UIBaseWindow>();
@@ -15,6 +15,10 @@ namespace Lockstep.Game {
         private Transform normalParent;
         private Transform forwardParent;
         private Transform importParent;
+
+        public  T GetService<T>() where T : IService{
+            return serviceContainer.GetService<T>();
+        }
 
         public override void DoStart(){
             var canvas = GameObject.Find("Canvas");

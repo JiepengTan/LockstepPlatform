@@ -46,7 +46,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Editor\DebugToolsSettingsEditor.cs" />
-    <Compile Include="Src\Editor\EditorMain.cs" />
     <Compile Include="Src\Editor\EditorMapTool\Editor\EditorMapTool.cs" />
     <Compile Include="Src\Editor\NaughtyAttributes\Editor\Attributes\BaseAttribute.cs" />
     <Compile Include="Src\Editor\NaughtyAttributes\Editor\Attributes\FieldDrawerAttribute.cs" />

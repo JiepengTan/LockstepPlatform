@@ -39,7 +39,7 @@ namespace Lockstep.Game.Systems.Game {
                 var bulletCamp = bullet.unit.camp;
                  foreach (var tank in allPlayer) {
                     if (tank.isDestroyed) continue;
-                    if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
+                    if (tank.unit.camp != bulletCamp && GameCollisionUtil.CheckCollision(bullet, tank)) {
                         _gameAudioService.PlayClipHitTank();
                         _gameUnitService.TakeDamage(bullet,tank );
                     }
@@ -47,7 +47,7 @@ namespace Lockstep.Game.Systems.Game {
 
                 foreach (var tank in allEnmey) {
                     if (tank.isDestroyed) continue;
-                    if (tank.unit.camp != bulletCamp && CollisionUtil.CheckCollision(bullet, tank)) {
+                    if (tank.unit.camp != bulletCamp && GameCollisionUtil.CheckCollision(bullet, tank)) {
                         _gameAudioService.PlayClipHitTank();
                         _gameUnitService.TakeDamage(bullet,tank );
                     }
@@ -59,7 +59,7 @@ namespace Lockstep.Game.Systems.Game {
                 foreach (var bullet in allBullet) {
                     if (bullet.isDestroyed) continue;
                     if (camp.isDestroyed) continue;
-                    if (CollisionUtil.CheckCollision(bullet, camp)) {
+                    if (GameCollisionUtil.CheckCollision(bullet, camp)) {
                         _gameAudioService.PlayClipHitTank();
                         _gameUnitService.TakeDamage(bullet,camp);
                     }
@@ -92,7 +92,7 @@ namespace Lockstep.Game.Systems.Game {
             var max = _gameConstStateService.mapMax;
             // bullet bound detected 
             foreach (var bullet in allBullet) {
-                if (CollisionUtil.IsOutOfBound(bullet.pos.value, min, max)) {
+                if (_gameCollisionService.IsOutOfBound(bullet.pos.value, min, max)) {
                     bullet.isDestroyed = true;
                 }
             }
@@ -103,7 +103,7 @@ namespace Lockstep.Game.Systems.Game {
                 if (player.isDestroyed) continue;
                 foreach (var item in allItem) {
                     if (item.isDestroyed) continue;
-                    if (CollisionUtil.CheckCollision(player, item)) {
+                    if (GameCollisionUtil.CheckCollision(player, item)) {
                         _gameAudioService.PlayMusicGetItem();
                         item.itemType.killerActorId = player.actorId.value;
                         item.isDestroyed = true;

@@ -9,19 +9,6 @@ public class MapTool : UnityEngine.MonoBehaviour {
     public int curLevel;
 
     public int maxTick = 100;
-
-
-    [HideInInspector] public Launcher launcherMgr;
-
-
-    public void EditorUpdate(){
-        launcherMgr?.DoUpdate((int)(Time.deltaTime * 1000));
-        launcherMgr?.DoFixedUpdate();
-    }
-
-    public void StopEditorSimulate(){
-        //if (mainMgr != null) GameObject.DestroyImmediate(mainMgr.gameObject);
-    }
 #if false
     [Button("LoadLevel")]
     void LoadLevel(){

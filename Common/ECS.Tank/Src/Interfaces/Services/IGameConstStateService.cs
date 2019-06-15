@@ -4,6 +4,9 @@ using Lockstep.Math;
 namespace Lockstep.Game {
     public interface IGameConstStateService : IService {
 
+        int MaxPlayerCount { get; }
+        bool IsPlaying { get; set; }
+
         //room info
         byte[] allActorIds { get; set; }
         int actorCount { get; set; }
@@ -21,15 +24,5 @@ namespace Lockstep.Game {
 
         int MaxEnemyCountInScene { get; set; }
         int TotalEnemyCountToBorn { get; set; }
-    }
-
-
-    public interface IGameStateService : IService {
-        //changed in the game
-        int curEnemyCountInScene { get; set; }
-        int remainCountToBorn { get; set; }
-        LFloat bornTimer { get; set; }
-        LFloat bornInterval { get; set; }
-        LFloat DeltaTime { get; set; }
     }
 }
