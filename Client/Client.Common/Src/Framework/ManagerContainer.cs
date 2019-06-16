@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     public class ManagerContainer : IManagerContainer {
-        private Dictionary<string, BaseManager> _name2Mgr = new Dictionary<string, BaseManager>();
-        public List<BaseManager> AllMgrs = new List<BaseManager>();
+        private Dictionary<string, BaseService> _name2Mgr = new Dictionary<string, BaseService>();
+        public List<BaseService> AllMgrs = new List<BaseService>();
 
-        public void RegisterManager(BaseManager manager){
-            var name = manager.GetType().Name;
+        public void RegisterManager(BaseService service){
+            var name = service.GetType().Name;
             if (_name2Mgr.ContainsKey(name)) {
                 Debug.LogError(
-                    $"Duplicate Register manager {name} type:{manager?.GetType().ToString() ?? ""} goName:{manager?.gameObject.name ?? ""}");
+                    $"Duplicate Register manager {name} type:{service?.GetType().ToString() ?? ""}");
                 return;
             }
 
-            _name2Mgr.Add(name, manager);
-            AllMgrs.Add(manager);
+            _name2Mgr.Add(name, service);
+            AllMgrs.Add(service);
         }
 
-        public T GetManager<T>() where T : BaseManager{
+        public T GetManager<T>() where T : BaseService{
             if (_name2Mgr.TryGetValue(typeof(T).Name, out var val)) {
                 return val as T;
             }
@@ -27,7 +27,7 @@ namespace Lockstep.Game {
             return null;
         }
 
-        public void Foreach(Action<BaseManager> func){
+        public void Foreach(Action<BaseService> func){
             foreach (var mgr in AllMgrs) {
                 func(mgr);
             }

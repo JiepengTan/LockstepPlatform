@@ -32,17 +32,41 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\Common\Libs\Entitas.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\Common\Libs\UnityEngine.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\BaseGameService.cs" />
     <Compile Include="Src\BitUtil.cs" />
     <Compile Include="Src\EInputCmdType.cs" />
     <Compile Include="Src\EnumDefines.cs" />
     <Compile Include="Src\GameConfig_Const.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameAudioService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameCollisionService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameConfigService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameConstStateService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameEffectService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameStateService.cs" />
+    <Compile Include="Src\Interfaces\Services\IGameUnitService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\ECS.Common\ECS.Common.csproj">
+      <Project>{dcbba796-f183-4211-a5f1-78ccdcbd00dc}</Project>
+      <Name>ECS.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common\Math\Math.csproj">
+      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

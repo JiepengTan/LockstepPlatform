@@ -58,38 +58,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Example\ExampleVariableDrawer.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Components\DebugSettings.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Components\DrawManager.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Components\Grapher.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Components\Setup.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Components\Tracker.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Interfaces\IVariableDrawer.cs" />
+    <Compile Include="Src\Common\Debugging\Tools\Scripts\Interfaces\MonoDrawer.cs" />
+    <Compile Include="Src\Common\ECS\Listeners\DirListener.cs" />
+    <Compile Include="Src\Common\ECS\Listeners\PosListener.cs" />
+    <Compile Include="Src\Common\ECS\World.cs" />
+    <Compile Include="Src\Common\ECS\WorldSystems.cs" />
+    <Compile Include="Src\Common\Framework\IMap2DManager.cs" />
+    <Compile Include="Src\Common\Framework\Map2DService.cs" />
+    <Compile Include="Src\Common\Framework\SimulationService.cs" />
+    <Compile Include="Src\Common\Framework\UnityBaseGameService.cs" />
+    <Compile Include="Src\Common\Manager\ViewService.cs" />
     <Compile Include="Src\Config\AudioConfig.cs" />
     <Compile Include="Src\Config\GameConfig.cs" />
-    <Compile Include="Src\Debugging\Tools\Example\ExampleVariableDrawer.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Components\DebugSettings.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Components\DrawManager.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Components\Grapher.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Components\Setup.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Components\Tracker.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Interfaces\IVariableDrawer.cs" />
-    <Compile Include="Src\Debugging\Tools\Scripts\Interfaces\MonoDrawer.cs" />
-    <Compile Include="Src\ECS\BaseGameManager.cs" />
-    <Compile Include="Src\ECS\Listeners\DirListener.cs" />
-    <Compile Include="Src\ECS\Listeners\PosListener.cs" />
-    <Compile Include="Src\ECS\World.cs" />
-    <Compile Include="Src\ECS\WorldSystems.cs" />
-    <Compile Include="Src\Framework\Launcher.cs" />
-    <Compile Include="Src\Framework\Map2DService.cs" />
-    <Compile Include="Src\Framework\SimulationManager.cs" />
-    <Compile Include="Src\GameManagers\GameAudioManager.cs" />
-    <Compile Include="Src\GameManagers\GameCollisionManager.cs" />
-    <Compile Include="Src\GameManagers\GameConstStateManager.cs" />
-    <Compile Include="Src\GameManagers\GameEffectManager.cs" />
-    <Compile Include="Src\GameManagers\GameStateManager.cs" />
-    <Compile Include="Src\GameManagers\GameUnitManager.cs" />
-    <Compile Include="Src\GameManagers\GameInputManager.cs" />
-    <Compile Include="Src\GameManagers\Interfaces\IMap2DManager.cs" />
-    <Compile Include="Src\GameManagers\ViewManager.cs" />
+    <Compile Include="Src\GameManagers\GameAudioService.cs" />
+    <Compile Include="Src\GameManagers\GameCollisionService.cs" />
+    <Compile Include="Src\GameManagers\GameConstStateService.cs" />
+    <Compile Include="Src\GameManagers\GameEffectService.cs" />
+    <Compile Include="Src\GameManagers\GameStateService.cs" />
+    <Compile Include="Src\GameManagers\GameInputService.cs" />
     <Compile Include="Src\UI\UIECSDebugInfo.cs" />
     <Compile Include="Src\UI\UIGameStatus.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Src\Debugging\Tools\Prefabs\[ Debug ].prefab" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Client\Client.Common\Client.Common.csproj">
@@ -124,6 +119,12 @@
       <Project>{50daad68-04e8-4dfa-9cbe-755491ac9d34}</Project>
       <Name>ECS.Tank</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\GameManagers\Interfaces" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Src\Common\Debugging\Tools\Prefabs\[ Debug ].prefab" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

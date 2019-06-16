@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Entitas;
 using Lockstep.Math;
 
 namespace Lockstep.Game {
@@ -15,5 +16,6 @@ namespace Lockstep.Game {
         bool IsPursueFrame { get; set; }
 
         int CurLevel { get; set; }
+        IContexts Contexts { get; set; }
     }
 }

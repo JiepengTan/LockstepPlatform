@@ -77,7 +77,6 @@
     <Compile Include="Src\Common\Systems\GameState\IncrementTick.cs" />
     <Compile Include="Src\Common\Systems\GameState\OnNewPredictionCreateSnapshot.cs" />
     <Compile Include="Src\Common\Systems\Input\CleanDestroyedInputEntities.cs" />
-    <Compile Include="Src\CompMonoWraps\BaseEntitySetter.cs" />
     <Compile Include="Src\Components\Actor\GameLocalIdComponent.cs" />
     <Compile Include="Src\Components\Actor\LifeComponent.cs" />
     <Compile Include="Src\Components\Actor\ScoreComponent.cs" />
@@ -104,8 +103,10 @@
     <Compile Include="Src\Components\Input\FireComponent.cs" />
     <Compile Include="Src\Components\Input\MoveDirComponent.cs" />
     <Compile Include="Src\Config\ConfigEntity.cs" />
+    <Compile Include="Src\EcsFacade.cs" />
     <Compile Include="Src\ExtentionConfig.cs" />
     <Compile Include="Src\ExtentionECS.cs" />
+    <Compile Include="Src\GameUnitService.cs" />
     <Compile Include="Src\Generated\Actor\ActorAttribute.cs" />
     <Compile Include="Src\Generated\Actor\ActorComponentsLookup.cs" />
     <Compile Include="Src\Generated\Actor\ActorContext.cs" />
@@ -205,13 +206,6 @@
     <Compile Include="Src\Generated\Snapshot\SnapshotContext.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotEntity.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotMatcher.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameAudioService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameCollisionService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameConfigService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameConstStateService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameEffectService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameStateService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameUnitService.cs" />
     <Compile Include="Src\Systems\Cleanup\SystemRemoveDestroyedEntitiesFromView.cs" />
     <Compile Include="Src\Systems\Feature\CleanupFeature.cs" />
     <Compile Include="Src\Systems\Feature\GameFeature.cs" />

@@ -41,7 +41,7 @@ public class UIGameStatus : UIBaseWindow {
     }
 
     void UpdateStatus(){
-        if (!GameConstStateManager.Instance.IsPlaying) {
+        if (!GameConstStateService.Instance.IsPlaying) {
             return;
         }
 
@@ -53,7 +53,7 @@ public class UIGameStatus : UIBaseWindow {
         ShowPlayerInfo(player2, tranScore2, tranLife2);
         var gameState = Contexts.sharedInstance.gameState;
         var game = Contexts.sharedInstance.game;
-        ShowText(tranEnemy, (GameStateManager.Instance.remainCountToBorn).ToString());
-        ShowText(tranLevel, (ConstStateManager.Instance.CurLevel).ToString());
+        ShowText(tranEnemy, (GameStateService.Instance.remainCountToBorn).ToString());
+        ShowText(tranLevel, (ConstStateService.Instance.CurLevel).ToString());
     }
 }

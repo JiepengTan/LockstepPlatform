@@ -10,39 +10,39 @@ using UnityEngine;
 namespace Lockstep.Game {
     [CreateAssetMenu]
     public partial class GameConfig : UnityEngine.ScriptableObject, IGameConfigService {
-        public List<ConfigEnemy> _enemyPrefabs = new List<ConfigEnemy>();
-        public List<ConfigPlayer> _playerPrefabs = new List<ConfigPlayer>();
-        public List<ConfigBullet> _bulletPrefabs = new List<ConfigBullet>();
-        public List<ConfigItem> _itemPrefabs = new List<ConfigItem>();
-        public List<ConfigCamp> _CampPrefabs = new List<ConfigCamp>();
+        public List<BaseEntitySetter> _enemyPrefabs = new List<BaseEntitySetter>();
+        public List<BaseEntitySetter> _playerPrefabs = new List<BaseEntitySetter>();
+        public List<BaseEntitySetter> _bulletPrefabs = new List<BaseEntitySetter>();
+        public List<BaseEntitySetter> _itemPrefabs = new List<BaseEntitySetter>();
+        public List<BaseEntitySetter> _CampPrefabs = new List<BaseEntitySetter>();
 
         public int MaxPlayerCount { get; } = 2;
         public LVector2 TankBornOffset { get; } = LVector2.one;
         public LFloat TankBornDelay { get; } = LFloat.one;
         public LFloat DeltaTime { get; } = new LFloat(true, 16);
+        public string ConfigPath => "GameConfig";
 
-
-        public List<ConfigEnemy> enemyPrefabs {
+        public List<BaseEntitySetter> enemyPrefabs {
             get => _enemyPrefabs;
             set => _enemyPrefabs = value;
         }
 
-        public List<ConfigPlayer> playerPrefabs {
+        public List<BaseEntitySetter> playerPrefabs {
             get => _playerPrefabs;
             set => _playerPrefabs = value;
         }
 
-        public List<ConfigBullet> bulletPrefabs {
+        public List<BaseEntitySetter> bulletPrefabs {
             get => _bulletPrefabs;
             set => _bulletPrefabs = value;
         }
 
-        public List<ConfigItem> itemPrefabs {
+        public List<BaseEntitySetter> itemPrefabs {
             get => _itemPrefabs;
             set => _itemPrefabs = value;
         }
 
-        public List<ConfigCamp> CampPrefabs {
+        public List<BaseEntitySetter> CampPrefabs {
             get => _CampPrefabs;
             set => _CampPrefabs = value;
         }

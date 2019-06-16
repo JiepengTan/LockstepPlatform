@@ -2,6 +2,8 @@ namespace Lockstep.Game {
 
     public class ServiceReferenceHolder {
         protected IServiceContainer _serviceContainer;
+        protected IECSFacadeService _ecsFacadeService;
+        
         
         protected IRandomService _randomService;
         protected ITimeMachineService _timeMachineService;
@@ -17,6 +19,7 @@ namespace Lockstep.Game {
         public virtual void InitReference(IServiceContainer serviceContainer){
             _serviceContainer = serviceContainer;
             //通用Service
+            _ecsFacadeService = serviceContainer.GetService<IECSFacadeService>();
             _randomService = serviceContainer.GetService<IRandomService>();
             _timeMachineService = serviceContainer.GetService<ITimeMachineService>();
             _constStateService = serviceContainer.GetService<IConstStateService>();
