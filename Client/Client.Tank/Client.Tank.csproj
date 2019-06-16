@@ -83,6 +83,8 @@
     <Compile Include="Src\GameManagers\GameUnitManager.cs" />
     <Compile Include="Src\GameManagers\GameInputManager.cs" />
     <Compile Include="Src\GameManagers\Interfaces\IMap2DManager.cs" />
+    <Compile Include="Src\UI\UIECSDebugInfo.cs" />
+    <Compile Include="Src\UI\UIGameStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj">

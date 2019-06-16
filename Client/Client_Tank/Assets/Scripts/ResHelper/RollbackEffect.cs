@@ -10,7 +10,11 @@ namespace Lockstep.Game {
 
         [HideInInspector] public int createTick => __proxy.createTick;
         [HideInInspector] public int diedTick => __proxy.diedTick;
-        public LFloat liveTime;
+        public LFloat _liveTime;
+        public LFloat LiveTime {
+            get => _liveTime;
+            set => _liveTime = value;
+        }
 
         public virtual void DoStart(int curTick){ }
         public virtual void DoUpdate(int tick){ }

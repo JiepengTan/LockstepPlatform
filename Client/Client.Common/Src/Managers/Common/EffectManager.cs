@@ -9,25 +9,23 @@ namespace Lockstep.Game {
         public void CreateEffect(int assetId, LVector2 pos){ }
 
         public void CreateEffect(GameObject prefab, LVector2 pos){
-            var liveTime = prefab.GetComponent<RollbackEffect>().liveTime;
+            var liveTime = prefab.GetComponent<IRollbackEffect>().LiveTime;
+            var comp = new EffectProxy();
             GameObject go = null;
             if (!_constStateService.IsVideoLoading) {
                 go = GameObject.Instantiate(prefab, transform.position + pos.ToVector3(), Quaternion.identity);
             }
 
-            var comp = new EffectProxy();
-            if (comp != null) {
-                if (tail == null) {
-                    head = tail = comp;
-                }
-                else {
-                    comp.pre = tail;
-                    tail.next = comp;
-                    tail = comp;
-                }
-
-                comp.DoStart(CurTick, go?.GetComponent<RollbackEffect>(), liveTime);
+            if (tail == null) {
+                head = tail = comp;
             }
+            else {
+                comp.pre = tail;
+                tail.next = comp;
+                tail = comp;
+            }
+
+            comp.DoStart(CurTick, go?.GetComponent<IRollbackEffect>(), liveTime);
         }
 
         public void DestroyEffect(object obj){
