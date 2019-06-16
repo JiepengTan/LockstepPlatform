@@ -63,17 +63,9 @@
     <Compile Include="Src\TypeHandler.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Client\Client.Tank\Client.Tank.csproj">
-      <Project>{c8350028-cd73-4bb7-af7a-eb3bc6f3e5d2}</Project>
-      <Name>Client.Tank</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj">
       <Project>{dcbba796-f183-4211-a5f1-78ccdcbd00dc}</Project>
       <Name>ECS.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\ECS.Tank\ECS.Tank.csproj">
-      <Project>{50daad68-04e8-4dfa-9cbe-755491ac9d34}</Project>
-      <Name>ECS.Tank</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
@@ -90,6 +82,18 @@
     <ProjectReference Include="..\..\Common\Util\Util.csproj">
       <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
       <Name>Util</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Games\Tank\Client\Client.Tank\Client.Tank.csproj">
+      <Project>{c8350028-cd73-4bb7-af7a-eb3bc6f3e5d2}</Project>
+      <Name>Client.Tank</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Games\Tank\Common\Common.Tank\Common.Tank.csproj">
+      <Project>{6fb42a80-cd90-4ec1-867d-81ff75aeb0d6}</Project>
+      <Name>Common.Tank</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Games\Tank\Common\ECS.Tank\ECS.Tank.csproj">
+      <Project>{50daad68-04e8-4dfa-9cbe-755491ac9d34}</Project>
+      <Name>ECS.Tank</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Server\NetMsg.Server\NetMsg.Server.csproj">
       <Project>{1df87870-36f9-46d4-acf0-4193dd302da7}</Project>

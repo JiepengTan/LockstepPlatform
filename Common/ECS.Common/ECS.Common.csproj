@@ -56,12 +56,16 @@
     <Compile Include="Src\Interfaces\IEventListener.cs" />
     <Compile Include="Src\Interfaces\ILifeCycle.cs" />
     <Compile Include="Src\Interfaces\IServiceContainer.cs" />
+    <Compile Include="Src\ServiceReferenceHolder.cs" />
     <Compile Include="Src\Services\IAudioService.cs" />
     <Compile Include="Src\Services\IConstStateService.cs" />
+    <Compile Include="Src\Services\IEffectService.cs" />
     <Compile Include="Src\Services\IEventRegisterService.cs" />
-    <Compile Include="Src\Services\IGameMsgService.cs" />
+    <Compile Include="Src\Services\IMap2DService.cs" />
+    <Compile Include="Src\Services\INetworkService.cs" />
     <Compile Include="Src\Services\IInputService.cs" />
     <Compile Include="Src\Services\IRandomService.cs" />
+    <Compile Include="Src\Services\IResService.cs" />
     <Compile Include="Src\Services\IService.cs" />
     <Compile Include="Src\Services\ITimeMachine.cs" />
     <Compile Include="Src\Services\ITimeMachineService.cs" />

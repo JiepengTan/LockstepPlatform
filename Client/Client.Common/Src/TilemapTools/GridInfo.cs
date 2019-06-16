@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
@@ -17,6 +18,8 @@ namespace Lockstep.Game {
 
         public Tilemap tilemap;
 
+        public static Func<ushort, TileBase> FuncID2Tile;
+
         public TileBase GetTile(Vector2Int pos){
             var diff = pos - min;
             if (diff.x < 0 || diff.y < 0 || diff.x >= size.x || diff.y >= size.y) {
@@ -24,7 +27,7 @@ namespace Lockstep.Game {
             }
 
             var id = tileIDs[diff.y * size.x + diff.x];
-            return Map2DService.ID2Tile(id);
+            return FuncID2Tile(id);
         }
 
         public ushort GetTileID(Vector2Int pos){
@@ -46,7 +49,7 @@ namespace Lockstep.Game {
 
             var idx = diff.y * size.x + diff.x;
             tileIDs[idx] = id;
-            var tile = Map2DService.ID2Tile(id);
+            var tile = FuncID2Tile(id);
             if (allTiles != null) {
                 allTiles[idx] = tile;
             }
@@ -74,7 +77,7 @@ namespace Lockstep.Game {
             var count = tileIDs.Length;
             var tiles = new TileBase[count];
             for (int i = 0; i < count; i++) {
-                tiles[i] = Map2DService.ID2Tile(tileIDs[i]);
+                tiles[i] = FuncID2Tile(tileIDs[i]);
             }
 
             allTiles = tiles;

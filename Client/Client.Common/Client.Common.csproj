@@ -57,34 +57,26 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\Event\EEvent.cs" />
     <Compile Include="Src\Event\EventHelper.cs" />
-    <Compile Include="Src\Framework\BaseGameManager.cs" />
     <Compile Include="Src\Framework\BaseManager.cs" />
     <Compile Include="Src\Framework\ECS\CommandBuffer.cs" />
     <Compile Include="Src\Framework\ECS\FrameBuffer.cs" />
     <Compile Include="Src\Framework\ECS\GameLog.cs" />
-    <Compile Include="Src\Framework\ECS\SimulationManager.cs" />
-    <Compile Include="Src\Framework\ECS\World.cs" />
-    <Compile Include="Src\Framework\ECS\WorldSystems.cs" />
+    <Compile Include="Src\Framework\ECS\ISimulation.cs" />
     <Compile Include="Src\Framework\EventRegisterService.cs" />
     <Compile Include="Src\Framework\IManagerContainer.cs" />
-    <Compile Include="Src\Framework\Launcher.cs" />
     <Compile Include="Src\Framework\ManagerContainer.cs" />
     <Compile Include="Src\Framework\ServiceContainer.cs" />
     <Compile Include="Src\Framework\TimeMachineContainer.cs" />
     <Compile Include="Src\Framework\UnityLogHandler.cs" />
-    <Compile Include="Src\Listeners\DirListener.cs" />
-    <Compile Include="Src\Listeners\PosListener.cs" />
     <Compile Include="Src\Managers\Common\AudioManager.cs" />
     <Compile Include="Src\Managers\Common\ConstStateManager.cs" />
     <Compile Include="Src\Managers\Common\EffectManager.cs" />
     <Compile Include="Src\Managers\Common\RandomManager.cs" />
     <Compile Include="Src\Managers\Common\ResManager.cs" />
-    <Compile Include="Src\Managers\GameMsgManager.cs" />
+    <Compile Include="Src\Managers\NetworkManager.cs" />
     <Compile Include="Src\Managers\MainManager.cs" />
-    <Compile Include="Src\Managers\Map2DService.cs" />
     <Compile Include="Src\Managers\UIDefine.cs" />
     <Compile Include="Src\Managers\UIManager.cs" />
-    <Compile Include="Src\Managers\ViewManager.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\ConditionOperator.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\DrawConditionAttributes\DrawConditionAttribute.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\DrawConditionAttributes\HideIfAttribute.cs" />
@@ -120,14 +112,13 @@
     <Compile Include="Src\Network\LoginParam.cs" />
     <Compile Include="Src\Network\RoomMsgManager.cs" />
     <Compile Include="Src\ResManager\EffectProxy.cs" />
+    <Compile Include="Src\ResManager\IReferenceHolder.cs" />
     <Compile Include="Src\ResManager\IRollbackEffect.cs" />
-    <Compile Include="Src\ResManager\ReferenceHolder.cs" />
     <Compile Include="Src\TilemapTools\BinaryWriterExtension.cs" />
     <Compile Include="Src\TilemapTools\GridInfo.cs" />
     <Compile Include="Src\TilemapTools\MapTool.cs" />
     <Compile Include="Src\TilemapTools\TileMapHelper.cs" />
     <Compile Include="Src\TilemapTools\TileMapSerializer.cs" />
-    <Compile Include="Src\UI\IReferenceHolder.cs" />
     <Compile Include="Src\UI\UIBaseWindow.cs" />
     <Compile Include="Src\UI\UICreateRoom.cs" />
     <Compile Include="Src\UI\UIDialogBox.cs" />
@@ -153,10 +144,6 @@
     <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj">
       <Project>{dcbba796-f183-4211-a5f1-78ccdcbd00dc}</Project>
       <Name>ECS.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\ECS.Tank\ECS.Tank.csproj">
-      <Project>{50daad68-04e8-4dfa-9cbe-755491ac9d34}</Project>
-      <Name>ECS.Tank</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
       <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
@@ -184,7 +171,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Src\.DS_Store" />
     <Content Include="Src\NaughtyAttributes\README.html" />
+    <Content Include="Src\ResManager\.DS_Store" />
+    <Content Include="Src\UI\.DS_Store" />
+    <Content Include="Src\UI\Utils\.DS_Store" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -19,11 +19,11 @@ namespace Lockstep.Game.UI {
             BindEvent("Inner/BtnLeave", OnBtn_Leave);
             //chatFiled = transform.Find("Inner/Left/Chat/Bottom/InputFiled").GetComponent<InputField>();
             _items = new GenericUIList<RoomPlayerInfo>(itemRoomPrefab.gameObject, LayoutGroup);
-            Setup(GameMsgManager.Instance.PlayerInfos);
+            Setup(NetworkManager.Instance.PlayerInfos);
         }        
         
         private void OnEnable(){
-            Setup(GameMsgManager.Instance.PlayerInfos);
+            Setup(NetworkManager.Instance.PlayerInfos);
         }
 
 
@@ -33,30 +33,30 @@ namespace Lockstep.Game.UI {
             Debug.Log("OnBtn_Ready");
             isReady = !isReady;
             BtnReady.transform.Find("Tick").gameObject.SetActive(isReady);
-            GameMsgManager.Instance.ReadyInRoom(isReady);
+            NetworkManager.Instance.ReadyInRoom(isReady);
         }
 
         void OnBtn_StartGame(){
             Debug.Log("OnBtn_StartGame");
-            GameMsgManager.Instance.StartGame();
+            NetworkManager.Instance.StartGame();
         }
 
         void OnBtn_Leave(){
             Debug.Log("OnBtn_Leave");
-            GameMsgManager.Instance.LeaveRoom();
+            NetworkManager.Instance.LeaveRoom();
         }
         
         void OnEvent_OnPlayerJoinRoom(object param){
             Debug.Log("OnEvent_OnPlayerJoinRoom");
-            Setup(GameMsgManager.Instance.PlayerInfos);
+            Setup(NetworkManager.Instance.PlayerInfos);
         }      
         void OnEvent_OnPlayerLeaveRoom(object param){
             Debug.Log("OnEvent_OnPlayerLeaveRoom");
-            Setup(GameMsgManager.Instance.PlayerInfos);
+            Setup(NetworkManager.Instance.PlayerInfos);
         }  
         void OnEvent_OnPlayerReadyInRoom(object param){
             Debug.Log("OnEvent_OnPlayerReadyInRoom");
-            Setup(GameMsgManager.Instance.PlayerInfos);
+            Setup(NetworkManager.Instance.PlayerInfos);
         }       
         void OnEvent_OnLeaveRoom(object param){
             OpenWindow(UIDefine.UIRoomList);
