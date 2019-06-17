@@ -12,10 +12,10 @@ namespace Lockstep.Game {
         public List<BaseEntitySetter> _bulletPrefabs = new List<BaseEntitySetter>();
         public List<BaseEntitySetter> _itemPrefabs = new List<BaseEntitySetter>();
         public List<BaseEntitySetter> _CampPrefabs = new List<BaseEntitySetter>();
-        public int MaxPlayerCount { get; } = 2;
-        public LVector2 TankBornOffset { get; } = LVector2.one;
-        public LFloat TankBornDelay { get; } = LFloat.one;
-        public LFloat DeltaTime { get; } = new LFloat(true, 16);
+        public int MaxPlayerCount { get; set; } = 2;
+        public LVector2 TankBornOffset { get;set;  } = LVector2.one;
+        public LFloat TankBornDelay { get; set; } = LFloat.one;
+        public LFloat DeltaTime { get; set; } = new LFloat(true, 16);
         public string ConfigPath => "GameConfig";
         public List<BaseEntitySetter> enemyPrefabs {
             get => _enemyPrefabs;
@@ -52,11 +52,9 @@ namespace Lockstep.Game {
         public void Write(){ }
 
         public void Read(string path){
-            var obj = new GameConfigService();
             var bytes = File.ReadAllBytes(path);
             var reader = new Deserializer(bytes);
-            obj.Deserialize(reader);
-            var sss = obj;
+            Deserialize(reader);
         }
 
         public void Write(string path){

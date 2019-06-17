@@ -2,7 +2,7 @@ using Lockstep.Math;
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public partial class EffectService : UnityBaseService, IEffectService {
+    public partial class UnityEffectService : UnityBaseService, IEffectService {
         private EffectProxy head;
         private EffectProxy tail;
 

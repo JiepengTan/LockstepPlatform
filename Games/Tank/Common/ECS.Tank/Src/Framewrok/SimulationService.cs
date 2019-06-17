@@ -11,7 +11,7 @@ using NetMsg.Common;
 using Logger = Lockstep.Logging.Logger;
 
 namespace Lockstep.Game {
-    public class SimulationService : UnityBaseGameService, ISimulation {
+    public class SimulationService : BaseGameService, ISimulation {
         public static SimulationService Instance { get; private set; }
         public SimulationService(){
             Instance = this;

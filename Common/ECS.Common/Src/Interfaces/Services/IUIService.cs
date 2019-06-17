@@ -1,4 +1,3 @@
-
 using System;
 
 namespace Lockstep.Game {
@@ -6,7 +5,8 @@ namespace Lockstep.Game {
         Normal,
         Notice,
         Forward,
-    }   
+    }
+
     public struct WindowCreateInfo {
         public string resDir;
         public EWindowDepth depth;
@@ -18,8 +18,9 @@ namespace Lockstep.Game {
     }
 
     public delegate void UICallback(object windowObj);
-    public interface IUIService : IService ,IServiceContainer{
-        
+
+    public interface IUIService : IService {
+        T GetIService<T>() where T : IService;
         void OpenWindow(string dir, EWindowDepth dep, UICallback callback = null);
         void CloseWindow(string dir);
         void CloseWindow(object window = null);

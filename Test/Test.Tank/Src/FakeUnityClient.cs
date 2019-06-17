@@ -1,14 +1,17 @@
+using Lockstep;
 using Lockstep.Game;
 using Lockstep.Networking;
 
 namespace Test {
     public class FakeUnityClient : NetworkEntity {
-        private GameConfig __Game;
-        private EcsFacade __ECS;
-        
-        public Launcher launcher = new Launcher();
+        private GameConfig __Game;//Client.Tank
+        private EcsFacade __ECS;//ECS.Tank
+        private BaseService _service;//ECS.Common
+        private BaseGameService _baseGameService;//Common.Tank
+        public Launcher launcher = new Launcher();//Client.Common
         public override void DoAwake(){
             base.DoAwake();
+            launcher.RunMode = EPureModeType.Pure;
             launcher.DoAwake(null);
         }
 

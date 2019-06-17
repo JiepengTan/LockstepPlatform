@@ -1,36 +1,40 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using LitJson;
-using Lockstep.Game;
+﻿using Lockstep.Game;
 using UnityEngine;
-using Time = Lockstep.Util.Time;
 
 public class MainScript : MonoBehaviour {
-    public Launcher launcher = new Launcher();
-    private void Awake(){
-        launcher.DoAwake(null);
+    public Camera gameCamera;
+    public Vector2Int renderTextureSize;
+    [HideInInspector] public RenderTexture rt;
+    
+    public Launcher _launcher = new Launcher();
+    private void Awake(){         
+        _launcher.DoAwake(null);
+        rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
+        gameCamera.targetTexture = rt;
+        Screen.SetResolution(1024, 768, false);
+        var service = (UnityUIService) (_launcher.GetService<IUIService>());
+        service.rt = rt;
     }
 
     private void Start(){
-        launcher.DoStart();
+        _launcher.DoStart();
     }
 
     private void Update(){
         var deltaTimeMs =(int)( Time.deltaTime * 1000);
-        launcher.DoUpdate(deltaTimeMs);
+        _launcher.DoUpdate(deltaTimeMs);
         
     }
 
     private void FixedUpdate(){
-        launcher.DoFixedUpdate();
+        _launcher.DoFixedUpdate();
     }
 
     private void OnDestroy(){
-        launcher.DoDestroy();
+        _launcher.DoDestroy();
         
     }
     private void OnApplicationQuit(){
-        launcher.OnApplicationQuit();
+        _launcher.OnApplicationQuit();
     }
 }

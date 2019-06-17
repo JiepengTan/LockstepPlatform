@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     [System.Serializable]
-    public class AudioService : UnityBaseService, IAudioService {
+    public class UnityAudioService : UnityBaseService, IAudioService {
         private AudioSource _source;
         private Dictionary<AudioClip, int> _curFramePlayeredCount = new Dictionary<AudioClip, int>();
 

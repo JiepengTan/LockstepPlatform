@@ -4,7 +4,7 @@ using Entitas;
 using Lockstep.ECS;
 
 namespace Lockstep.Game {
-    public class EcsFacade : IECSFacadeService {
+    public class EcsFacade :IECSFacadeService {
         private IContexts lastInstance;
 
         public IContexts CreateContexts(){

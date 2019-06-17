@@ -64,12 +64,12 @@
     <Compile Include="Src\Framework\TimeMachineContainer.cs" />
     <Compile Include="Src\Framework\UnityBaseService.cs" />
     <Compile Include="Src\Framework\UnityLogHandler.cs" />
-    <Compile Include="Src\Managers\Common\AudioService.cs" />
-    <Compile Include="Src\Managers\Common\EffectService.cs" />
+    <Compile Include="Src\Managers\Common\UnityAudioService.cs" />
+    <Compile Include="Src\Managers\Common\UnityEffectService.cs" />
     <Compile Include="Src\Managers\NetworkService.cs" />
     <Compile Include="Src\Managers\MainManager.cs" />
     <Compile Include="Src\Managers\UIDefine.cs" />
-    <Compile Include="Src\Managers\UiService.cs" />
+    <Compile Include="Src\Managers\UnityUIService.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\ConditionOperator.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\DrawConditionAttributes\DrawConditionAttribute.cs" />
     <Compile Include="Src\NaughtyAttributes\Scripts\Core\DrawConditionAttributes\HideIfAttribute.cs" />
@@ -109,7 +109,6 @@
     <Compile Include="Src\ResManager\IRollbackEffect.cs" />
     <Compile Include="Src\TilemapTools\BinaryWriterExtension.cs" />
     <Compile Include="Src\TilemapTools\GridInfo.cs" />
-    <Compile Include="Src\TilemapTools\MapTool.cs" />
     <Compile Include="Src\TilemapTools\TileMapHelper.cs" />
     <Compile Include="Src\TilemapTools\TileMapSerializer.cs" />
     <Compile Include="Src\UI\UIBaseWindow.cs" />

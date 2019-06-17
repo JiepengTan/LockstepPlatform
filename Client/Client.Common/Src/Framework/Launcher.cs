@@ -2,15 +2,12 @@ using System;
 using System.Linq;
 using System.Reflection;
 using Entitas;
-
 using Lockstep.Util;
 using NaughtyAttributes;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 namespace Lockstep.Game {
-
-
     [Serializable]
     public class Launcher : ILifeCycle {
         private int _curTick;
@@ -32,7 +29,7 @@ namespace Lockstep.Game {
         private IEventRegisterService _registerService;
         public MainManager _mainManager = new MainManager();
 
-        public bool IsPureMode = false;//纯净模式  不含Unity 相关的代码
+        public EPureModeType RunMode = EPureModeType.Unity; //纯净模式  不含Unity 相关的代码
         public object transform;
 
         [ShowNativeProperty]
@@ -61,33 +58,40 @@ namespace Lockstep.Game {
             //AutoCreateManagers;
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Type[] types = null;
-            //{
-            //    assemblies.SelectMany((Assembly assembly) => assembly.GetTypes())
-            //        .Where((Type tt) => tt.IsSubclassOf(typeof(BaseService)) && !tt.IsAbstract).ToArray();
-            //}
-            //{
-            //    if (IsPureMode) {
-            //        types = types.Where((Type tt) => tt.GetCustomAttributes(hasAttribute, inherit)).ToArray();
-            //    }
-            //    else {
-            //        types = types.Where((Type tt) => tt.IsSubclassOf(typeof(BaseService)) && !tt.IsAbstract).ToArray();
-            //    }
-            //}
+            {
+                types = assemblies.SelectMany((Assembly assembly) => assembly.GetTypes())
+                    .Where((Type tt) => tt.GetInterfaces().Contains(typeof(IService)) && !tt.IsAbstract).ToArray();
+            }
+            {
+                var pureMode = RunMode;
+                var typeLst = types.Where((Type tt) => {
+                        var attris = tt.GetCustomAttributes(typeof(PureModeAttribute), true);
+                        if (attris.Length > 0) {
+                            var attri = attris[0] as PureModeAttribute;
+                            if (attri.Type != pureMode) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+                ).ToList();
+                typeLst.Sort((a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal));
+                types = typeLst.ToArray();
+            }
 
             //var types = ReflectionUtility.GetTypes();
             foreach (var ty in types) {
-                var service = Activator.CreateInstance(ty) as BaseService;
-                //call Awake method
-                if (service != null) {
-                    var method = ty.GetMethod("DoInit",
-                        BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
-                    if (method != null) {
-                        method.Invoke(service, new object[] {transform});
-                    }
-
-                    _mgrContainer.RegisterManager(service);
-                    _serviceContainer.RegisterService(service);
-                    _timeMachineContainer.RegisterTimeMachine(service as ITimeMachine);
+                var service = (IService) Activator.CreateInstance(ty);
+                var method = ty.GetMethod("DoInit",
+                    BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
+                if (method != null) {
+                    method.Invoke(service, new object[] {transform});
+                }
+                _serviceContainer.RegisterService(service);
+                _timeMachineContainer.RegisterTimeMachine(service as ITimeMachine);
+                if (service is BaseService baseService) {
+                    _mgrContainer.RegisterManager(baseService);
                 }
             }
 

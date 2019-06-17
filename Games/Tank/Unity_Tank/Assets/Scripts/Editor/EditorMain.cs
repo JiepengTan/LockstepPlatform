@@ -10,7 +10,7 @@ public class EditorMain : UnityEditor.Editor {
 
     public override void OnInspectorGUI(){
         base.OnInspectorGUI();
-        _Launcher = (target as MainScript)?.launcher;
+        _Launcher = (target as MainScript)?._launcher;
         owner = _Launcher?.MainManager;
         ShowLoadRecord();
         ShowRecordInfo();

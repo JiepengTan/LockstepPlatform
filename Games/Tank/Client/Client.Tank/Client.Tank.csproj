@@ -69,13 +69,13 @@
     <Compile Include="Src\Common\ECS\Listeners\DirListener.cs" />
     <Compile Include="Src\Common\ECS\Listeners\PosListener.cs" />
     <Compile Include="Src\Common\Framework\IMap2DManager.cs" />
-    <Compile Include="Src\Common\Framework\Map2DService.cs" />
-    <Compile Include="Src\Common\Manager\ViewService.cs" />
+    <Compile Include="Src\Common\Framework\UnityMap2DService.cs" />
+    <Compile Include="Src\Common\Manager\UnityViewService.cs" />
     <Compile Include="Src\Config\AudioConfig.cs" />
     <Compile Include="Src\Config\GameConfig.cs" />
-    <Compile Include="Src\GameManagers\GameAudioService.cs" />
-    <Compile Include="Src\GameManagers\GameEffectService.cs" />
-    <Compile Include="Src\GameManagers\GameInputService.cs" />
+    <Compile Include="Src\GameManagers\UnityGameAudioService.cs" />
+    <Compile Include="Src\GameManagers\UnityGameEffectService.cs" />
+    <Compile Include="Src\GameManagers\UnityInputService.cs" />
     <Compile Include="Src\UI\UIECSDebugInfo.cs" />
     <Compile Include="Src\UI\UIGameStatus.cs" />
   </ItemGroup>

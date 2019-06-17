@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Lockstep.Game {
     [System.Serializable]
-    public class GameInputService : UnityBaseService, IInputService {
+    public class UnityInputService : UnityBaseService, IInputService {
         public List<InputCmd> GetInputCmds(){
             var cmds = new List<InputCmd>();
             var isFire = UnityEngine.Input.GetKey(KeyCode.Space);

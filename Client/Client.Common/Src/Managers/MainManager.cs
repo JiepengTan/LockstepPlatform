@@ -3,13 +3,9 @@ using System.IO;
 
 using Lockstep.Math;
 using Lockstep.Serialization;
+using Lockstep.Util;
 using NetMsg.Common;
-using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-
-#endif
 namespace Lockstep.Game {
     [Serializable]
     public class MainManager : ILifeCycle {
@@ -26,9 +22,6 @@ namespace Lockstep.Game {
 
         public bool isRunVideo;
         public int JumpToTick = 10;
-        public Camera gameCamera;
-        public Vector2Int renderTextureSize;
-        [HideInInspector] public RenderTexture rt;
         public int CurTick;
 
         private ISimulation _simulationService;
@@ -46,8 +39,7 @@ namespace Lockstep.Game {
         public void DoAwake(IServiceContainer serviceContainer){
             _simulationService = serviceContainer.GetService<ISimulation>();
             _constStateService = serviceContainer.GetService<IConstStateService>();
-            rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
-            gameCamera.targetTexture = rt;
+
 #if !UNITY_EDITOR
             IsVideoMode = false;
 #endif
@@ -57,8 +49,6 @@ namespace Lockstep.Game {
                 _constStateService.IsVideoMode = true;
             }
 
-            //set resolution for debug
-            Screen.SetResolution(1024, 768, false);
         }
 
         public void DoStart(){
@@ -69,7 +59,7 @@ namespace Lockstep.Game {
         }
 
         public void DoUpdate(int deltaTimeMs){
-            realtimeSinceStartup = Time.realtimeSinceStartup;
+            realtimeSinceStartup = LTime.realtimeSinceStartup;
             _constStateService.IsRunVideo = isRunVideo;
             if (IsVideoMode && isRunVideo && CurTick < MaxRunTick) {
                 _simulationService.RunVideo();

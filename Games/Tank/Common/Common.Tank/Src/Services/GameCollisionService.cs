@@ -3,7 +3,7 @@ using Lockstep.Game;
 using Lockstep.Math;
 
 namespace Lockstep.Game {
-    public class GameCollisionService : BaseService, IGameCollisionService, IService {
+    public class GameCollisionService : BaseService, IGameCollisionService {
         LFloat _TANK_BORDER_SIZE = new LFloat(true, 900);
         public LFloat TANK_BORDER_SIZE => _TANK_BORDER_SIZE;
         private IMap2DService _map2DService;

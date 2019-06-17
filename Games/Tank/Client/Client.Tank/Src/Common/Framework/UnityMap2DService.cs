@@ -10,7 +10,7 @@ using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
-    public partial class Map2DService :  IMap2DService {
+    public partial class UnityMap2DService :  IMap2DService {
         public class CmdSetTile : BaseCommand {
             public TileInfos tilemap;
             public Vector2Int pos;
@@ -65,7 +65,7 @@ namespace Lockstep.Game {
     }
 
     [System.Serializable]
-    public partial class Map2DService : UnityBaseGameService {
+    public partial class UnityMap2DService : UnityBaseGameService {
         private static bool hasLoadIDMapConfig = false; // 是否已经加载了配置
         private static string idMapPath = "TileIDMap";
         private static TileBase[] id2Tiles = new TileBase[65536]; //64KB
@@ -103,7 +103,7 @@ namespace Lockstep.Game {
 
         public void LoadLevel(int level){
             TileInfos.FuncID2Tile = ID2Tile;
-            gridInfo = Map2DService.LoadMap(grid, level);
+            gridInfo = UnityMap2DService.LoadMap(grid, level);
             var min = new Vector2Int(int.MaxValue, int.MaxValue);
             var max = new Vector2Int(int.MinValue, int.MinValue);
             foreach (var tempInfo in gridInfo.tileMaps) {
@@ -120,11 +120,11 @@ namespace Lockstep.Game {
             mapMax = max;
 
             var tileInfo = GetMapInfo(TilemapUtil.TileMapName_BornPos);
-            var campPoss = tileInfo.GetAllTiles(Map2DService.ID2Tile(TilemapUtil.TileID_Camp));
+            var campPoss = tileInfo.GetAllTiles(UnityMap2DService.ID2Tile(TilemapUtil.TileID_Camp));
             Debug.Assert(campPoss != null && campPoss.Count == 1, "campPoss!= null&& campPoss.Count == 1");
             campPos = campPoss[0];
-            enemyBornPoints = tileInfo.GetAllTiles(Map2DService.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
-            playerBornPoss = tileInfo.GetAllTiles(Map2DService.ID2Tile(TilemapUtil.TileID_BornPosHero));
+            enemyBornPoints = tileInfo.GetAllTiles(UnityMap2DService.ID2Tile(TilemapUtil.TileID_BornPosEnemy));
+            playerBornPoss = tileInfo.GetAllTiles(UnityMap2DService.ID2Tile(TilemapUtil.TileID_BornPosHero));
 
             if (_constStateService != null) {
                 _gameConstStateService.mapMin = mapMin.ToLVector2Int();
@@ -145,7 +145,7 @@ namespace Lockstep.Game {
 
         public static GridInfo LoadMap(Grid grid, int level){
             CheckLoadTileIDMap();
-            var path = Map2DService.GetMapPathFull(level);
+            var path = UnityMap2DService.GetMapPathFull(level);
             //if (!File.Exists(path)) {
             //    Debug.LogError("Have no map file" + level + " path:" + path);
             //    return null;
@@ -188,9 +188,9 @@ namespace Lockstep.Game {
 
         public static void SaveLevel(Grid grid, int level){
             if (grid == null) return;
-            var bytes = TileMapSerializer.SerializeGrid(grid, Map2DService.Tile2ID);
+            var bytes = TileMapSerializer.SerializeGrid(grid, UnityMap2DService.Tile2ID);
             if (bytes != null) {
-                File.WriteAllBytes(Map2DService.GetMapPathFull(level), bytes);
+                File.WriteAllBytes(UnityMap2DService.GetMapPathFull(level), bytes);
             }
 #if UNITY_EDITOR
             if (!Application.isPlaying) {

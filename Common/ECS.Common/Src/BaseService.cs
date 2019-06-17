@@ -1,7 +1,7 @@
 using System;
 
 namespace Lockstep.Game {
-    public partial class BaseService : ServiceReferenceHolder, IService, ILifeCycle, ITimeMachine {
+    public abstract partial class BaseService : ServiceReferenceHolder, IService, ILifeCycle, ITimeMachine {
         public virtual void DoInit(object objParent){}
         public virtual void DoAwake(IServiceContainer services){ }
         public virtual void DoStart(){ }
@@ -10,7 +10,7 @@ namespace Lockstep.Game {
         public virtual void DoDestroy(){ }
         public virtual void OnApplicationQuit(){ }
 
-        public BaseService(){
+        protected BaseService(){
             cmdBuffer = new CommandBuffer();
             cmdBuffer.Init(this, GetRollbackFunc());
         }

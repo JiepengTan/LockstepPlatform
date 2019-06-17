@@ -9,7 +9,7 @@ using Debug = Lockstep.Logging.Debug;
 using Object = UnityEngine.Object;
 
 namespace Lockstep.Game {
-    public partial class ViewService : UnityBaseGameService, IViewService {
+    public partial class UnityViewService : UnityBaseGameService, IViewService {
         private Dictionary<uint, GameObject> _linkedEntities = new Dictionary<uint, GameObject>();
         private IGroup<GameEntity> _assetBindGroup;
 
