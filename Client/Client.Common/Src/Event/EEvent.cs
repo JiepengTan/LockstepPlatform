@@ -1,4 +1,4 @@
-namespace Lockstep.Core {
+namespace Lockstep {
     public enum EEvent {
         TryLogin,
         OnTickPlayer,

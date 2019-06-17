@@ -78,9 +78,9 @@ namespace Lockstep.Server.Daemon {
             }
         }
 
-        public override void DoUpdate(int deltaTime){
-            base.DoUpdate(deltaTime);
-            _reportTimer -= deltaTime;
+        public override void DoUpdate(int deltaTimeMs){
+            base.DoUpdate(deltaTimeMs);
+            _reportTimer -= deltaTimeMs;
             if (_reportTimer <= 0) {
                 _reportTimer = _reportInterval;
                 ReportState();

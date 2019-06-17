@@ -1,6 +1,6 @@
 using System;
 using System.IO;
-using Lockstep.Core;
+
 using Lockstep.Math;
 using Lockstep.Serialization;
 using NetMsg.Common;
@@ -52,7 +52,7 @@ namespace Lockstep.Game {
             IsVideoMode = false;
 #endif
             if (IsVideoMode) {
-                FrameBuffer.SnapshotFrameInterval = 20;
+                _constStateService.SnapshotFrameInterval = 20;
                 OpenRecordFile(RecordPath);
                 _constStateService.IsVideoMode = true;
             }

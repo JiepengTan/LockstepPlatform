@@ -40,8 +40,8 @@ namespace Lockstep.Util {
         public override bool keepWaiting {
             get {
                 if ((double) this.m_WaitUntilTime < 0.0)
-                    this.m_WaitUntilTime = Time.realtimeSinceStartup + this.waitTime;
-                bool flag = (double) Time.realtimeSinceStartup < (double) this.m_WaitUntilTime;
+                    this.m_WaitUntilTime = LTime.realtimeSinceStartup + this.waitTime;
+                bool flag = (double) LTime.realtimeSinceStartup < (double) this.m_WaitUntilTime;
                 if (!flag)
                     this.m_WaitUntilTime = -1f;
                 return flag;
@@ -89,7 +89,7 @@ namespace Lockstep.Util {
         public void SetRoutineInfo(ref RoutineInfo objRoutineInfo){
             if (objRoutineInfo.routine.Current is YieldInstruction) {
                 objRoutineInfo.objYield = objRoutineInfo.routine.Current as YieldInstruction;
-                objRoutineInfo.objYieldInfo = new WaitForSecondsInfo(Time.timeSinceLevelLoad);
+                objRoutineInfo.objYieldInfo = new WaitForSecondsInfo(LTime.timeSinceLevelLoad);
             }
         }
 
@@ -126,7 +126,7 @@ namespace Lockstep.Util {
 
         public bool DealWithYieldInstruction(RoutineInfo objRoutineInfo){
             if (objRoutineInfo.objYield is WaitForSeconds waitForSec) {
-                float objSpan = Time.timeSinceLevelLoad - ((WaitForSecondsInfo) objRoutineInfo.objYieldInfo).BeginTime;
+                float objSpan = LTime.timeSinceLevelLoad - ((WaitForSecondsInfo) objRoutineInfo.objYieldInfo).BeginTime;
                 return objSpan > waitForSec.Seconds;
             }
 

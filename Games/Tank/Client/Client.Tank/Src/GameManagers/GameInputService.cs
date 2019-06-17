@@ -1,13 +1,11 @@
-using System;
 using System.Collections.Generic;
 using Entitas;
-using Lockstep.Math;
 using NetMsg.Common;
 using UnityEngine;
 
 namespace Lockstep.Game {
     [System.Serializable]
-    public class GameInputService : UnityBaseGameService, IInputService {
+    public class GameInputService : UnityBaseService, IInputService {
         public List<InputCmd> GetInputCmds(){
             var cmds = new List<InputCmd>();
             var isFire = UnityEngine.Input.GetKey(KeyCode.Space);

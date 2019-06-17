@@ -4,10 +4,9 @@
 #endif
 
 using System.Collections.Generic;
-using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
-namespace Lockstep.Core {
+namespace Lockstep {
     public delegate void GlobalEventHandler(object param);
 
     public delegate void NetMsgHandler(object param);

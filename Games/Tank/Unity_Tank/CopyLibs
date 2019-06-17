@@ -2,7 +2,7 @@
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
 cd $dir
 pwd
-cp -rf ../../Common/Libs/* Assets/Plugins/Libs
+cp -rf ../../../Common/Libs/* Assets/Plugins/Libs
 #rm -rf Assets/Plugins/Libs/LiteDB*
 
 mv Assets/Plugins/Libs/Editor/* Assets/Plugins/Libs/

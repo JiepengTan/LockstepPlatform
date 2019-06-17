@@ -47,11 +47,11 @@ namespace Lockstep.Server.Game {
             UdpEnd = new IPEndInfo() {Ip = Ip, Port = _serverConfig.udpPort};
         }
 
-        public override void DoUpdate(int deltaTime){
-            base.DoUpdate(deltaTime);
+        public override void DoUpdate(int deltaTimeMs){
+            base.DoUpdate(deltaTimeMs);
             var games = CachedBaseGames;
             foreach (var game in games) {
-                game.DoUpdate(deltaTime);
+                game.DoUpdate(deltaTimeMs);
             }
         }
 

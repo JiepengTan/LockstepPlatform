@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Lockstep.Game {
   
     public static partial class BitUtil {

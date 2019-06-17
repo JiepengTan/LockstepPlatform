@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using LitJson;
-using Lockstep.Core;
+
 using Lockstep.Serialization;
 using NetMsg.Common;
 using Lockstep.Client;

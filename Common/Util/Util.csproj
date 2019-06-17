@@ -44,7 +44,8 @@
     <Compile Include="Src\NetworkHelper.cs" />
     <Compile Include="Src\PathUtil.cs" />
     <Compile Include="Src\Pool.cs" />
-    <Compile Include="Src\Time.cs" />
+    <Compile Include="Src\ReflectionUtility.cs" />
+    <Compile Include="Src\LTime.cs" />
     <Compile Include="Src\Util.cs" />
   </ItemGroup>
   <ItemGroup>

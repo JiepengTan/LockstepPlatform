@@ -200,7 +200,7 @@ namespace Lockstep.Server.Game {
             }
 
             _userId2LocalId.Clear();
-            TimeSinceCreate = Time.timeSinceLevelLoad;
+            TimeSinceCreate = LTime.timeSinceLevelLoad;
             for (byte i = 0; i < count; i++) {
                 var player = Players[i];
                 _userId2LocalId.Add(player.UserId, player.LocalId);

@@ -1,12 +1,13 @@
 using UnityEngine;
 
 namespace Lockstep.Game {
-    public class UnityBaseService : BaseService {
+    [PureMode(EPureModeType.Unity)]
+    public abstract class UnityBaseService : BaseService {
         public Transform transform { get; protected set; }
         public GameObject gameObject { get; protected set; }
-        public override void DoUnityAwake(object objParent){
+        public override void DoInit(object objParent){
             var parent = objParent as Transform;
-            base.DoUnityAwake(parent);
+            base.DoInit(parent);
             InitGameObject(parent);
         }
         

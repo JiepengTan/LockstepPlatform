@@ -46,17 +46,28 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Src\BaseGameService.cs" />
-    <Compile Include="Src\BitUtil.cs" />
     <Compile Include="Src\EInputCmdType.cs" />
     <Compile Include="Src\EnumDefines.cs" />
     <Compile Include="Src\GameConfig_Const.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameAudioService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameCollisionService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameConfigService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameConstStateService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameEffectService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameStateService.cs" />
-    <Compile Include="Src\Interfaces\Services\IGameUnitService.cs" />
+    <Compile Include="Src\Interfaces\IGameAudioService.cs" />
+    <Compile Include="Src\Interfaces\IGameCollisionService.cs" />
+    <Compile Include="Src\Interfaces\IGameConfigService.cs" />
+    <Compile Include="Src\Interfaces\IGameConstStateService.cs" />
+    <Compile Include="Src\Interfaces\IGameEffectService.cs" />
+    <Compile Include="Src\Interfaces\IGameStateService.cs" />
+    <Compile Include="Src\Interfaces\IGameUnitService.cs" />
+    <Compile Include="Src\PureBaseGameService.cs" />
+    <Compile Include="Src\PureServices\PureGameAudioService.cs" />
+    <Compile Include="Src\PureServices\PureGameEffectService.cs" />
+    <Compile Include="Src\Services\GameCollisionService.cs" />
+    <Compile Include="Src\Services\GameConfigService.cs" />
+    <Compile Include="Src\Services\GameConstStateService.cs" />
+    <Compile Include="Src\Services\GameStateService.cs" />
+    <Compile Include="Src\UnityBaseGameService.cs" />
+    <Compile Include="Src\Utils\BitUtil.cs" />
+    <Compile Include="Src\Utils\DirUtil.cs" />
+    <Compile Include="Src\Utils\FuncUtil.cs" />
+    <Compile Include="Src\Utils\TankUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Common\ECS.Common\ECS.Common.csproj">
@@ -66,6 +77,10 @@
     <ProjectReference Include="..\..\..\..\Common\Math\Math.csproj">
       <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
       <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

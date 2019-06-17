@@ -59,7 +59,6 @@
     <Compile Include="Src\MsgExtension\EditorCodeGeneratorExtensionMsg.cs" />
     <Compile Include="Src\MsgExtension\TypeHandlerMsg.cs" />
     <Compile Include="Src\Program.cs" />
-    <Compile Include="Src\ReflectionUtility.cs" />
     <Compile Include="Src\TypeHandler.cs" />
   </ItemGroup>
   <ItemGroup>

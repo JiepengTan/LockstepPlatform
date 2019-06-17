@@ -69,10 +69,10 @@ namespace Lockstep.Client {
             _handler = msgHandler;
         }
 
-        public override void DoUpdate(int deltaTime){
-            base.DoUpdate(deltaTime);
+        public override void DoUpdate(int deltaTimeMs){
+            base.DoUpdate(deltaTimeMs);
             if (CurGameState == EGameState.Loading) {
-                if (_nextSendLoadProgressTimer < Time.timeSinceLevelLoad) {
+                if (_nextSendLoadProgressTimer < LTime.timeSinceLevelLoad) {
                     SendLoadingProgress(CurProgress);
                 }
             }
@@ -114,7 +114,7 @@ namespace Lockstep.Client {
             _curLoadProgress = progress;
             if (CurProgress >= 100) {
                 CurGameState = EGameState.PartLoaded;
-                _nextSendLoadProgressTimer += Time.timeSinceLevelLoad + 0.5f;
+                _nextSendLoadProgressTimer += LTime.timeSinceLevelLoad + 0.5f;
                 SendLoadingProgress(CurProgress);
             }
         }

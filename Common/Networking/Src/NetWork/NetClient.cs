@@ -58,7 +58,7 @@ namespace Lockstep.Networking {
 
             _client.Connected += OnConnected;
             _client.Connect(ip, port, key);
-            nextCheckConnectTimeStamp = Time.timeSinceLevelLoad + ReconnectInterval;
+            nextCheckConnectTimeStamp = LTime.timeSinceLevelLoad + ReconnectInterval;
         }
 
 
@@ -75,8 +75,8 @@ namespace Lockstep.Networking {
             if (!_isInit) return;
             if (_client != null) {
                 //Reconnect
-                if (nextCheckConnectTimeStamp < Time.timeSinceLevelLoad) {
-                    nextCheckConnectTimeStamp = Time.timeSinceLevelLoad + ReconnectInterval;
+                if (nextCheckConnectTimeStamp < LTime.timeSinceLevelLoad) {
+                    nextCheckConnectTimeStamp = LTime.timeSinceLevelLoad + ReconnectInterval;
                     if (!_client.IsConnected) {
                         _client.Reconnect();
                     }

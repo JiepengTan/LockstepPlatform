@@ -1,37 +1,34 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Lockstep.Game {
     public class ServiceContainer : IServiceContainer {
-        private Dictionary<string, IService> _allServices = new Dictionary<string, IService>();
+        private Dictionary<Type, IService> _allServices = new Dictionary<Type, IService>();
 
         public void RegisterService(IService service, bool overwriteExisting = true){
-            var interfaceNames = service.GetType().FindInterfaces((type, criteria) =>
-                    type.GetInterfaces()
-                        .Any(t => t.FullName == typeof(IService).FullName), service)
-                .Select(type => type.FullName).ToArray();
+            var interfaceTypes = service.GetType().FindInterfaces((type, criteria) =>
+                    type.GetInterfaces().Any(t => t == typeof(IService)), service)
+                .ToArray();
 
-            foreach (var name in interfaceNames) {
-                if (!_allServices.ContainsKey(name))
-                    _allServices.Add(name, service);
+            foreach (var type in interfaceTypes) {
+                if (!_allServices.ContainsKey(type))
+                    _allServices.Add(type, service);
                 else if (overwriteExisting) {
-                    _allServices[name] = service;
+                    _allServices[type] = service;
                 }
             }
         }
 
 
         public T GetService<T>() where T : IService{
-            var key = typeof(T).FullName;
-            if (key == null) {
-                return default(T);
-            }
-
+            var key = typeof(T);
             if (!_allServices.ContainsKey(key)) {
                 return default(T);
             }
-
-            return (T) _allServices[key];
+            else {
+                return (T) _allServices[key];
+            }
         }
     }
 }

@@ -31,9 +31,9 @@ namespace Lockstep.Networking {
             }
         }
 
-        public override void DoUpdate(int deltaTime){
+        public override void DoUpdate(int deltaTimeMs){
             foreach (var comp in Comps) {
-                comp.DoUpdate(deltaTime);
+                comp.DoUpdate(deltaTimeMs);
             }
         }
 

@@ -227,9 +227,9 @@ namespace Lockstep.Server.Lobby {
 
 
         private IEnumerator LoginAndTickPlayer(IIncommingMessage reader, User oldPlayer, Msg_I2L_UserLogin msg){
-            Debug.Log("before WaitRemovePlayer " + Time.timeSinceLevelLoad);
+            Debug.Log("before WaitRemovePlayer " + LTime.timeSinceLevelLoad);
             yield return new WaitForSeconds(0.5f);
-            Debug.Log("after WaitRemovePlayer " + Time.timeSinceLevelLoad);
+            Debug.Log("after WaitRemovePlayer " + LTime.timeSinceLevelLoad);
             RemovePlayer(oldPlayer);
             var room = oldPlayer.Room;
             if (room != null && room.IsPlaying && room.GameType == msg.GameType) {

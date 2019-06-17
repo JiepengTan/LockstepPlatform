@@ -22,7 +22,7 @@ namespace Lockstep.Networking {
             _allNets.Clear();
         }
 
-        public virtual void DoUpdate(int deltaTime){
+        public virtual void DoUpdate(int deltaTimeMs){
             if (_cachedAllClientNet == null) {
                 _cachedAllClientNet = _allClientNet.ToArray();
             }

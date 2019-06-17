@@ -1,12 +1,12 @@
 namespace Lockstep.Util {
     public class Utils {
         public static void StartServices(){
-            Time.DoStart();
+            LTime.DoStart();
             CoroutineHelper.DoStart();
         }
 
         public static void UpdateServices(){
-            Time.DoUpdate();
+            LTime.DoUpdate();
             CoroutineHelper.DoUpdate();
         }
     }

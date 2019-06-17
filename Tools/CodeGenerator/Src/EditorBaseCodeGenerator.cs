@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Lockstep.Logging;
+using Lockstep.Util;
 
 #if UNITY_EDITOR
 using UnityEditor;

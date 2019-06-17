@@ -117,7 +117,7 @@ namespace Lockstep.Server.Login {
                     new Msg_I2C_LoginResult() {LoginResult = (byte) ELoginResult.PasswordMissMatch});
             }
             else {
-                var loginHash = "LSHash" + Time.timeSinceLevelLoad;
+                var loginHash = "LSHash" + LTime.timeSinceLevelLoad;
                 _netClientLI.SendMessage(EMsgLS.I2L_UserLogin, new Msg_I2L_UserLogin() {
                         Account = cInfo.Account,
                         GameType = cInfo.GameType,
