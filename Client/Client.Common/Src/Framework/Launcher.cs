@@ -97,6 +97,8 @@ namespace Lockstep.Game {
 
             Contexts = _serviceContainer.GetService<IECSFacadeService>().CreateContexts();
             _serviceContainer.GetService<IConstStateService>().Contexts = Contexts;
+            _serviceContainer.GetService<IConstStateService>().RunMode = RunMode;
+            
             _serviceContainer.RegisterService(_timeMachineContainer);
             _serviceContainer.RegisterService(_registerService);
         }

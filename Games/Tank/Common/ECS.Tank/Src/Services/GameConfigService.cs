@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.IO;
+using LitJson;
 using Lockstep.ECS;
 using Lockstep.Math;
 using Lockstep.Serialization;
-using UnityEngine;
 
 namespace Lockstep.Game {
     public partial class GameConfigService : BaseService, IGameConfigService {
@@ -13,10 +13,15 @@ namespace Lockstep.Game {
         public List<BaseEntitySetter> _itemPrefabs = new List<BaseEntitySetter>();
         public List<BaseEntitySetter> _CampPrefabs = new List<BaseEntitySetter>();
         public int MaxPlayerCount { get; set; } = 2;
-        public LVector2 TankBornOffset { get;set;  } = LVector2.one;
+        public LVector2 TankBornOffset { get; set; } = LVector2.one;
         public LFloat TankBornDelay { get; set; } = LFloat.one;
         public LFloat DeltaTime { get; set; } = new LFloat(true, 16);
-        public string ConfigPath => "GameConfig";
+        private string relPathBin = "../Data/Client/GameConfig.bytes";
+        private string relPathJson = "../Data/Client/GameConfig.json";
+        public string ConfigPath => RelPath + relPathBin;
+        public string JsonPath => RelPath + relPathJson;
+        public string RelPath { get; set; } = "";
+
         public List<BaseEntitySetter> enemyPrefabs {
             get => _enemyPrefabs;
             set => _enemyPrefabs = value;
@@ -49,6 +54,14 @@ namespace Lockstep.Game {
         public int MAX_ENEMY_COUNT => 6;
         public int initEnemyCount => 20;
 
+        public override void DoAwake(IServiceContainer services){
+            this.Read(ConfigPath);
+            //if (_constStateService.RunMode == EPureModeType.Pure) {
+            //    var txt = JsonMapper.ToJson(this);
+            //    File.WriteAllText(JsonPath, txt);
+            //}
+        }
+
         public void Write(){ }
 
         public void Read(string path){
@@ -77,11 +90,23 @@ namespace Lockstep.Game {
         }
 
         public void Deserialize(Deserializer reader){
-            enemyPrefabs = reader.GetList(this.enemyPrefabs);
-            playerPrefabs = reader.GetList(this.playerPrefabs);
-            bulletPrefabs = reader.GetList(this.bulletPrefabs);
-            itemPrefabs = reader.GetList(this.itemPrefabs);
-            CampPrefabs = reader.GetList(this.CampPrefabs);
+            enemyPrefabs = GetList<BaseEntitySetter, ConfigEnemy>(reader);
+            playerPrefabs = GetList<BaseEntitySetter, ConfigPlayer>(reader);
+            bulletPrefabs = GetList<BaseEntitySetter, ConfigBullet>(reader);
+            itemPrefabs = GetList<BaseEntitySetter, ConfigItem>(reader);
+            CampPrefabs = GetList<BaseEntitySetter, ConfigCamp>(reader);
+        }
+
+        List<TRet> GetList<TRet, TParam>(Deserializer reader) where TParam : BaseEntitySetter, new()
+            where TRet : BaseEntitySetter{
+            var lst = new List<TParam>();
+            lst = reader.GetList(lst);
+            var lst2 = new List<TRet>(lst.Count);
+            foreach (var item in lst) {
+                lst2.Add((TRet) (object) item);
+            }
+
+            return lst2;
         }
     }
 }

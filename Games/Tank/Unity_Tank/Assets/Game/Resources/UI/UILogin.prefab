@@ -597,7 +597,7 @@ GameObject:
   - component: {fileID: 4002359360731007971}
   - component: {fileID: 2851024108630229847}
   - component: {fileID: 2772678904974984249}
-  - component: {fileID: 3930485565810896433}
+  - component: {fileID: 208505441}
   m_Layer: 5
   m_Name: UILogin
   m_TagString: Untagged
@@ -612,7 +612,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4755072136285552433}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -718,7 +718,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &3930485565810896433
+--- !u!114 &208505441
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -727,15 +727,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 4755072136285552433}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 842603c6b17c38d46b94b0679b6b91a2, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ErrorText: {fileID: 7066214594951749617}
-  LoginButton: {fileID: 417281857269039624}
-  Password: {fileID: 2679691841280808171}
-  Remember: {fileID: 2372072080270001698}
-  Username: {fileID: 229286443922898597}
-  PasswordResetWindow: {fileID: 0}
+  Datas:
+  - name: Error
+    bindObj: {fileID: 7066214594951749617}
+    typeName: Text
+    hasVal: 0
+  - name: Testss
+    bindObj: {fileID: 2958135059969753492}
+    typeName: Button
+    hasVal: 0
 --- !u!1 &4832862718867834223
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,7 +1080,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3930485565810896433}
+      - m_Target: {fileID: 0}
         m_MethodName: OnPasswordForgotClick
         m_Mode: 1
         m_Arguments:
@@ -1539,7 +1542,7 @@ GameObject:
   - component: {fileID: 417281857269039624}
   - component: {fileID: 3393853691830692507}
   m_Layer: 5
-  m_Name: Login
+  m_Name: BtnLogin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1642,7 +1645,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3930485565810896433}
+      - m_Target: {fileID: 0}
         m_MethodName: OnLoginClick
         m_Mode: 1
         m_Arguments:
@@ -1766,7 +1769,7 @@ GameObject:
   - component: {fileID: 7281785895827199682}
   - component: {fileID: 7066214594951749617}
   m_Layer: 5
-  m_Name: Error
+  m_Name: ErrorText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

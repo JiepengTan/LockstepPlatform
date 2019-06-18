@@ -111,7 +111,6 @@
     <Compile Include="Src\Framewrok\SimulationService.cs" />
     <Compile Include="Src\Framewrok\World.cs" />
     <Compile Include="Src\Framewrok\WorldSystems.cs" />
-    <Compile Include="Src\GameUnitService.cs" />
     <Compile Include="Src\Generated\Actor\ActorAttribute.cs" />
     <Compile Include="Src\Generated\Actor\ActorComponentsLookup.cs" />
     <Compile Include="Src\Generated\Actor\ActorContext.cs" />
@@ -211,6 +210,8 @@
     <Compile Include="Src\Generated\Snapshot\SnapshotContext.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotEntity.cs" />
     <Compile Include="Src\Generated\Snapshot\SnapshotMatcher.cs" />
+    <Compile Include="Src\Services\GameConfigService.cs" />
+    <Compile Include="Src\Services\GameUnitService.cs" />
     <Compile Include="Src\Systems\Cleanup\SystemRemoveDestroyedEntitiesFromView.cs" />
     <Compile Include="Src\Systems\Feature\CleanupFeature.cs" />
     <Compile Include="Src\Systems\Feature\GameFeature.cs" />

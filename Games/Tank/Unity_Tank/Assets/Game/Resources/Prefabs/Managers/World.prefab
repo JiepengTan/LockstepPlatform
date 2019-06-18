@@ -52,19 +52,19 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
+    width: 2
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 60
+  field of view: 71.3
   orthographic: 1
-  orthographic size: 13
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 279
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: 144f9b747e05e403eb56abaa33dad70e, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -4251,8 +4251,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8028312661449727472}
-  - component: {fileID: 8028312661449727473}
-  - component: {fileID: 8028312661449727475}
+  - component: {fileID: 1864137047}
   m_Layer: 0
   m_Name: Main
   m_TagString: Untagged
@@ -4274,7 +4273,7 @@ Transform:
   m_Father: {fileID: 8028312660100317761}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8028312661449727473
+--- !u!114 &1864137047
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4283,22 +4282,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 8028312661449727486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 742d2f73b69e24caa9635504d9124f83, type: 3}
+  m_Script: {fileID: 11500000, guid: f45f77c878a904373a7d7110f181ae63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8028312661449727475
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8028312661449727486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5069b6a81bac0427cbfdcb0f3f2eb046, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  curLevel: 1
+  gameCamera: {fileID: 0}
+  renderTextureSize: {x: 0, y: 0}
+  rt: {fileID: 0}
+  _launcher:
+    _mainManager:
+      IsVideoMode: 0
+      RecordPath: 
+      MaxRunTick: 2147483647
+      GameStartInfo:
+        UserCount: 0
+        MapId: 0
+        RoomId: 0
+        Seed: 0
+        UserInfos: []
+        UdpEnd:
+          Ip: 
+          Port: 0
+        TcpEnd:
+          Ip: 
+          Port: 0
+        SimulationSpeed: 0
+      FramesInfo:
+        startTick: 0
+        frames: []
+      realtimeSinceStartup: 0
+      isRunVideo: 0
+      JumpToTick: 10
+      CurTick: 0
+    RunMode: 1
 --- !u!1 &8028312661515268656
 GameObject:
   m_ObjectHideFlags: 0

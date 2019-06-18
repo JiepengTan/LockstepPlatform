@@ -12,7 +12,7 @@ namespace Lockstep.Game.UI
     public class UILogin : UIBaseWindow
     {
         public Text ErrorText;
-        public Button LoginButton;
+        public Button BtnLogin;
         public InputField Password;
         public Toggle Remember;
         public InputField Username;
@@ -23,11 +23,11 @@ namespace Lockstep.Game.UI
         protected virtual void Awake()
         {
             ErrorText = ErrorText ?? transform.Find("Error").GetComponent<Text>();
-            LoginButton = LoginButton ?? transform.Find("Button").GetComponent<Button>();
+            BtnLogin = BtnLogin ?? transform.Find("Button").GetComponent<Button>();
             Password = Password ?? transform.Find("Password").GetComponent<InputField>();
             Remember = Remember ?? transform.Find("Remember").GetComponent<Toggle>();
             Username = Username ?? transform.Find("Username").GetComponent<InputField>();
-            LoginButton.onClick.AddListener(OnLoginClick);
+            BtnLogin.onClick.AddListener(OnLoginClick);
             ErrorText.gameObject.SetActive(false);
         }
 

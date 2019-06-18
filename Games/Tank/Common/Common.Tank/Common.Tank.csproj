@@ -60,7 +60,6 @@
     <Compile Include="Src\PureServices\PureGameAudioService.cs" />
     <Compile Include="Src\PureServices\PureGameEffectService.cs" />
     <Compile Include="Src\Services\GameCollisionService.cs" />
-    <Compile Include="Src\Services\GameConfigService.cs" />
     <Compile Include="Src\Services\GameConstStateService.cs" />
     <Compile Include="Src\Services\GameStateService.cs" />
     <Compile Include="Src\UnityBaseGameService.cs" />

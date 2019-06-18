@@ -1,28 +1,29 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-
 using Lockstep.Math;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+
 #if UNITY_EDITOR
 using UnityEditor;
 
 #endif
 namespace Lockstep.Game {
-    public partial class UnityMap2DService :  IMap2DService {
+    public partial class UnityMap2DService : IMap2DService {
         public class CmdSetTile : BaseCommand {
             public TileInfos tilemap;
             public Vector2Int pos;
             public ushort srcId;
             public ushort dstId;
+
             public CmdSetTile(TileInfos tilemap, Vector2Int pos, ushort srcId, ushort dstId){
                 this.tilemap = tilemap;
                 this.pos = pos;
                 this.srcId = srcId;
                 this.dstId = dstId;
             }
-            
+
             public override void Do(object param){
                 tilemap.SetTileID(pos, dstId);
             }
@@ -30,18 +31,56 @@ namespace Lockstep.Game {
             public override void Undo(object param){
                 tilemap.SetTileID(pos, srcId);
             }
-
         }
 
+        public void LoadMap(int mapId){ }
+
         public ushort Pos2TileId(LVector2Int pos, bool isCollider){
-            return Pos2TileId(pos.ToVector2Int(), isCollider);
+            if (pos.x > mapDataMax.x || pos.x < mapDataMin.x
+                                     || pos.y > mapDataMax.y || pos.y < mapDataMin.y)
+                return 0;
+            var diff = pos - mapDataMin;
+            return mapDataIds[diff.x, diff.y];
         }
 
         public void ReplaceTile(LVector2Int pos, ushort srcId, ushort dstId){
-            ReplaceTile(pos.ToVector2Int(), srcId,dstId);
+            if (pos.x > mapDataMax.x || pos.x < mapDataMin.x
+                                     || pos.y > mapDataMax.y || pos.y < mapDataMin.y)
+                return;
+            var diff = pos - mapDataMin;
+            mapDataIds[diff.x, diff.y] = dstId;
+            OnReplaceTile(pos, srcId, dstId);
         }
 
-        public ushort Pos2TileId(Vector2Int pos, bool isCollider){
+
+        public LVector2Int mapDataMin;
+        public LVector2Int mapDataMax;
+        public LVector2Int mapDataSize;
+        public ushort[,] mapDataIds;
+
+        public void DoAfterInit(){
+            for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
+                var tilemap = gridInfo.tileMaps[i];
+                if (tilemap.isTagMap) continue;
+                var tilemapMin = tilemap.min;
+                var tilemapSize = tilemap.size;
+                mapDataMin.x = LMath.Min(mapDataMin.x, tilemapMin.x);
+                mapDataMin.y = LMath.Min(mapDataMin.y, tilemapMin.y);
+                mapDataMax.x = LMath.Min(mapDataMax.y, tilemapMin.x + tilemapSize.x);
+                mapDataMax.y = LMath.Min(mapDataMax.y, tilemapMin.y + tilemapSize.y);
+            }
+
+            mapDataSize = (mapDataMax - mapDataMin) + LVector2Int.one;
+            mapDataIds = new ushort[mapDataSize.x, mapDataSize.y];
+            for (int x = 0; x < mapDataSize.x; x++) {
+                for (int y = 0; y < mapDataSize.y; y++) {
+                    var pos = new Vector2Int(mapDataMin.x + x, mapDataMin.y + y);
+                    mapDataIds[x, y] = RawPos2TileId(pos, true);
+                }
+            }
+        }
+
+        public ushort RawPos2TileId(Vector2Int pos, bool isCollider){
             for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
                 var tilemap = gridInfo.tileMaps[i];
                 if (tilemap.isTagMap) continue;
@@ -53,12 +92,14 @@ namespace Lockstep.Game {
 
             return 0;
         }
-        public void ReplaceTile(Vector2Int pos, ushort srcId, ushort dstId){
+
+        private void OnReplaceTile(LVector2Int pos, ushort srcId, ushort dstId){
+            var uPos = pos.ToVector2Int();
             for (int i = 0; i < gridInfo.tileMaps.Length; i++) {
                 var tilemap = gridInfo.tileMaps[i];
-                var tile = tilemap.GetTileID(pos);
+                var tile = tilemap.GetTileID(uPos);
                 if (tile == srcId) {
-                    cmdBuffer.Execute(CurTick,new CmdSetTile(tilemap,pos,srcId,dstId));
+                    cmdBuffer.Execute(CurTick, new CmdSetTile(tilemap, uPos, srcId, dstId));
                 }
             }
         }
@@ -76,7 +117,7 @@ namespace Lockstep.Game {
 
         public static string GetMapPathFull(int level){
             //return Path.Combine(Application.dataPath, "Game/Resources/Maps/" + level + ".bytes");
-            return "Maps/" + level ;
+            return "Maps/" + level;
         }
 
 
@@ -96,7 +137,7 @@ namespace Lockstep.Game {
         public override void DoStart(){
             base.DoStart();
             TileInfos.FuncID2Tile = ID2Tile;
-            if (grid == null) {  
+            if (grid == null) {
                 grid = GameObject.FindObjectOfType<Grid>();
             }
         }
@@ -104,18 +145,20 @@ namespace Lockstep.Game {
         public void LoadLevel(int level){
             TileInfos.FuncID2Tile = ID2Tile;
             gridInfo = UnityMap2DService.LoadMap(grid, level);
+            DoAfterInit();
             var min = new Vector2Int(int.MaxValue, int.MaxValue);
             var max = new Vector2Int(int.MinValue, int.MinValue);
             foreach (var tempInfo in gridInfo.tileMaps) {
                 var tileMap = tempInfo.tilemap;
                 var mapMin = tileMap.cellBounds.min;
+                var mapMax = tileMap.cellBounds.max;
                 if (mapMin.x < min.x) min.x = mapMin.x;
                 if (mapMin.y < min.y) min.y = mapMin.y;
-                var mapMax = tileMap.cellBounds.max;
                 if (mapMax.x > max.x) max.x = mapMax.x;
                 if (mapMax.y > max.y) max.y = mapMax.y;
             }
-            EventHelper.Trigger(EEvent.LevelLoadProgress,0.5f);
+
+            EventHelper.Trigger(EEvent.LevelLoadProgress, 0.5f);
             mapMin = min;
             mapMax = max;
 
@@ -135,7 +178,8 @@ namespace Lockstep.Game {
                 Debug.Assert(_gameConstStateService.playerBornPoss.Count == _gameConstStateService.MaxPlayerCount,
                     "Map should has 2 player born pos");
             }
-            EventHelper.Trigger(EEvent.LevelLoadProgress,1f);
+
+            EventHelper.Trigger(EEvent.LevelLoadProgress, 1f);
             EventHelper.Trigger(EEvent.LevelLoadDone, level);
         }
 

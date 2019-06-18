@@ -3,7 +3,7 @@ using Lockstep.ECS;
 using Lockstep.Math;
 
 namespace Lockstep.Game {
-    public interface IGameConfigService:IService {
+    public interface IGameConfigService : IService {
         List<BaseEntitySetter> enemyPrefabs { get; }
         List<BaseEntitySetter> playerPrefabs { get; }
         List<BaseEntitySetter> bulletPrefabs { get; }
@@ -14,12 +14,13 @@ namespace Lockstep.Game {
         float bornEnemyInterval { get; }
         int MAX_ENEMY_COUNT { get; }
         int initEnemyCount { get; }
-        
-        int MaxPlayerCount { get; } 
-        LVector2 TankBornOffset { get; } 
-        LFloat TankBornDelay { get; } 
+
+        int MaxPlayerCount { get; }
+        LVector2 TankBornOffset { get; }
+        LFloat TankBornDelay { get; }
         LFloat DeltaTime { get; }
         string ConfigPath { get; }
+        string JsonPath { get; }
+        string RelPath { set; }
     }
-    
 }

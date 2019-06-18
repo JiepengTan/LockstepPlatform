@@ -278,7 +278,6 @@ public class TileMapSerializer {
                 }
             }
         }
-
         return retVal;
     }
 }

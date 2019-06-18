@@ -11,12 +11,12 @@ namespace Lockstep.Client {
         private static List<NetworkProxy> clients = new List<NetworkProxy>();
 
         private static void StartServices(){
-            LTime.DoStart();
+            Lockstep.Util.LTime.DoStart();
             CoroutineHelper.DoStart();
         }
 
         private static void UpdateServices(){
-            LTime.DoUpdate();
+            Lockstep.Util.LTime.DoUpdate();
             CoroutineHelper.DoUpdate();
         }
 

@@ -10,6 +10,7 @@ using NetMsg.Common;
 namespace Lockstep.ECS {
     [System.Serializable]
     public class BaseEntitySetter : BaseFormater {
+
         private static Dictionary<Type, int> type2Idx = new Dictionary<Type, int>();
         private static Dictionary<string, int> _name2Idx;
 

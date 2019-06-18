@@ -122,5 +122,8 @@ namespace Lockstep.Game {
 
             return null;
         }
+        public bool[,] ColliderMasks;
+
+       
     }
 }

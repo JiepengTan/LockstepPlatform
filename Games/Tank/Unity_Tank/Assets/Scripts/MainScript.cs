@@ -1,4 +1,5 @@
-﻿using Lockstep.Game;
+﻿using System.IO;
+using Lockstep.Game;
 using UnityEngine;
 
 public class MainScript : MonoBehaviour {
@@ -12,11 +13,16 @@ public class MainScript : MonoBehaviour {
         rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
         gameCamera.targetTexture = rt;
         Screen.SetResolution(1024, 768, false);
-        var service = (UnityUIService) (_launcher.GetService<IUIService>());
+        var service = (UnityUIService) (GetService<IUIService>());
         service.rt = rt;
     }
 
+   
     private void Start(){
+        var iConfig = GetService<IGameConfigService>();
+        var path = Application.dataPath +"/../../../" ;
+        Debug.LogError(path);
+        iConfig.RelPath = path;
         _launcher.DoStart();
     }
 
@@ -36,5 +42,8 @@ public class MainScript : MonoBehaviour {
     }
     private void OnApplicationQuit(){
         _launcher.OnApplicationQuit();
+    } 
+    private T GetService<T>() where T : IService{
+        return _launcher.GetService<T>();
     }
 }

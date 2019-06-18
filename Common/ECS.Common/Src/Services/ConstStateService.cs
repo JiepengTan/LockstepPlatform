@@ -19,5 +19,6 @@ namespace Lockstep.Game {
         public int CurLevel { get; set; }
         public IContexts Contexts { get; set; }
         public int SnapshotFrameInterval { get; set; }
+        public EPureModeType RunMode{ get; set; }
     }
 }

@@ -19,5 +19,6 @@ namespace Lockstep.Game {
         IContexts Contexts { get; set; }
         
         int SnapshotFrameInterval{ get; set; }
+        EPureModeType RunMode{ get; set; }
     }
 }

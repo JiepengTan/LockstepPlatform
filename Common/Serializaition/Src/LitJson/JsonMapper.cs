@@ -250,19 +250,21 @@ namespace LitJson
             if (type_properties.ContainsKey (type))
                 return;
 
-            IList<PropertyMetadata> props = new List<PropertyMetadata> ();
 
-            foreach (PropertyInfo p_info in type.GetProperties ()) {
+            IList<PropertyMetadata> props = new List<PropertyMetadata> ();
+            var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public );
+            foreach (PropertyInfo p_info in properties) {
                 if (p_info.Name == "Item")
                     continue;
-
+                if (!p_info.CanWrite)
+                    continue;
                 PropertyMetadata p_data = new PropertyMetadata ();
                 p_data.Info = p_info;
                 p_data.IsField = false;
                 props.Add (p_data);
             }
-
-            foreach (FieldInfo f_info in type.GetFields ()) {
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            foreach (FieldInfo f_info in fields) {
                 PropertyMetadata p_data = new PropertyMetadata ();
                 p_data.Info = f_info;
                 p_data.IsField = true;
@@ -807,14 +809,18 @@ namespace LitJson
             // Last option, let's see if it's an enum
             if (obj is Enum) {
                 Type e_type = Enum.GetUnderlyingType (obj_type);
-
                 if (e_type == typeof (long)
                     || e_type == typeof (uint)
                     || e_type == typeof (ulong))
                     writer.Write ((ulong) obj);
-                else
+                else if(e_type == typeof(int))
                     writer.Write ((int) obj);
-
+                else if(e_type == typeof (ushort))
+                    writer.Write ((int)(ushort) obj);
+                else if(e_type == typeof (short))
+                    writer.Write ((int)(short) obj);
+                else if(e_type == typeof (byte))
+                    writer.Write ((int)(byte) obj);
                 return;
             }
 
