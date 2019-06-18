@@ -21,7 +21,7 @@ public class MainScript : MonoBehaviour {
     private void Start(){
         var iConfig = GetService<IGameConfigService>();
         var path = Application.dataPath +"/../../../" ;
-        Debug.LogError(path);
+        Debug.Log(path);
         iConfig.RelPath = path;
         _launcher.DoStart();
     }

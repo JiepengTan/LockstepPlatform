@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Game {
-    public abstract class UIBaseWindow : MonoBehaviour {
+    public class UIBaseWindow : MonoBehaviour {
         public IUIService uiService;
         public string ResPath { get; set; }
         protected IReferenceHolder _referenceHolder;

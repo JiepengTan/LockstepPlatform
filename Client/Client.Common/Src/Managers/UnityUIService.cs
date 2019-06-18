@@ -31,7 +31,7 @@ namespace Lockstep.Game {
             }
 
             var uiGo = GameObject.Instantiate(prefab, canvas.transform);
-            uiRoot = uiGo.GetComponent<UIRoot>();
+            uiRoot = uiGo.GetOrAddComponent<UIRoot>();
             normalParent = uiRoot.TransNormal;
             forwardParent = uiRoot.TransForward;
             importParent = uiRoot.TransNotice;
