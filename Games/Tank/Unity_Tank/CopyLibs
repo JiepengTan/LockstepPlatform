@@ -12,4 +12,8 @@ rm -rf Assets/Plugins/Libs/UnityE*.mdb
 rm -rf Assets/Plugins/Libs/UnityE*.xml
 rm -rf Assets/Plugins/Libs/Entitas*.dll
 rm -rf Assets/Plugins/Libs/Desperate*.dll
+rm -rf Assets/Plugins/Libs/*Tank*
+rm -rf Assets/Plugins/Libs/*Client*
+rm -rf Assets/Plugins/Libs/*ECS*
 
+mono ../../../bin/CopySourceFiles.exe ../Tools/Config/CopySourceFiles/Common2Tank.json
