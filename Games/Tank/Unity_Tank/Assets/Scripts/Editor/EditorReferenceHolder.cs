@@ -28,11 +28,6 @@ public class EditorReferenceHolder : Editor {
         m_ReorderLst.onAddCallback = AddButton;
         m_ReorderLst.drawHeaderCallback = DrawHeader;
         m_ReorderLst.onRemoveCallback = RemoveButton;
-        for (int i = 0; i < m_RefHolder.Datas.Count; i++) {
-            if (m_RefHolder.Datas[i].bindObj != null) {
-                m_RefHolder.Datas[i].TypeName = m_RefHolder.Datas[i].bindObj.GetType().Name;
-            }
-        }
     }
 
     public Rect[] GetRects(Rect r){
@@ -78,7 +73,7 @@ public class EditorReferenceHolder : Editor {
         if (data.hasVal) {
             GUI.color = Color.red;
         }
-        else if (MatchedDatas.Contains(data)) {
+        else if (m_SearchMatchedData.Contains(data)) {
             GUI.color = Color.yellow;
         }
 
@@ -180,24 +175,23 @@ public class EditorReferenceHolder : Editor {
         serializedObject.ApplyModifiedProperties();
     }
 
-    public void SearchDatas(string searchName){
-        MatchedDatas.Clear();
-        if (string.IsNullOrEmpty(searchName)) {
-            return;
-        }
-
-        for (int i = 0; i < m_RefHolder.Datas.Count; i++) {
-            if (m_RefHolder.Datas[i].name.Contains(searchName)) {
-                MatchedDatas.Add(m_RefHolder.Datas[i]);
-            }
-        }
-    }
-
-    private HashSet<RefData> MatchedDatas = new HashSet<RefData>();
-
 
     public override void OnInspectorGUI(){
         EditorGUILayout.BeginHorizontal();
+        ShowSearchTool();
+        EditorGUILayout.EndHorizontal();
+        m_ReorderLst.DoLayoutList();
+        GUI.color = Color.white;
+        ShowAutoImport();
+        EditorGUILayout.BeginHorizontal();
+        ShowAutoRename();
+        ShowClearAll();
+        ShowAutoDetect();
+        ShowAutoBinding();
+        EditorGUILayout.EndHorizontal();
+    }
+
+    private void ShowSearchTool(){
         GUILayout.Label("Search", GUILayout.Width(50f));
         searchName = EditorGUILayout.TextField(searchName);
         if (GUILayout.Button("×", GUILayout.Width(50))) {
@@ -205,19 +199,35 @@ public class EditorReferenceHolder : Editor {
         }
 
         SearchDatas(searchName);
-        EditorGUILayout.EndHorizontal();
-        m_ReorderLst.DoLayoutList();
-        GUI.color = Color.white;
+    }
+
+    private HashSet<RefData> m_SearchMatchedData = new HashSet<RefData>();
+
+    public void SearchDatas(string searchName){
+        m_SearchMatchedData.Clear();
+        if (string.IsNullOrEmpty(searchName)) {
+            return;
+        }
+
+        for (int i = 0; i < m_RefHolder.Datas.Count; i++) {
+            if (m_RefHolder.Datas[i].name.Contains(searchName)) {
+                m_SearchMatchedData.Add(m_RefHolder.Datas[i]);
+            }
+        }
+    }
+
+
+    private void ShowAutoImport(){
         GameObject temp =
             EditorGUILayout.ObjectField(null, typeof(GameObject), true, GUILayout.Height(50)) as GameObject;
         if (temp != null) {
             if (temp.transform.childCount > 0) {
                 if (EditorUtility.DisplayDialog("Warning:",
-                    "Should reimport children nodes\r\n\r\ncurrent node:" + temp.name, "Yes", "No")) {
-                    Transform[] traList = temp.GetComponentsInChildren<Transform>(true);
-                    for (int i = 0; i < traList.Length; i++) {
-                        if (traList[i] != temp.transform) {
-                            AddGo(traList[i].gameObject);
+                    "Should import children nodes\r\n\r\ncurrent node:" + temp.name, "Yes", "No")) {
+                    var traList = temp.GetComponentsInChildren<Transform>(true);
+                    foreach (var t in traList) {
+                        if (t != temp.transform) {
+                            AddGo(t.gameObject);
                         }
                     }
                 }
@@ -225,8 +235,9 @@ public class EditorReferenceHolder : Editor {
 
             AddGo(temp);
         }
+    }
 
-        EditorGUILayout.BeginHorizontal();
+    private void ShowAutoRename(){
         if (GUILayout.Button("Auto rename")) {
             RectTransform[] array = m_RefHolder.gameObject.GetComponentsInChildren<RectTransform>(true);
             int BG = 0;
@@ -237,12 +248,16 @@ public class EditorReferenceHolder : Editor {
                 }
             }
         }
+    }
 
+    private void ShowClearAll(){
         if (GUILayout.Button("ClearAll")) {
             m_ReorderLst.serializedProperty.ClearArray();
             serializedObject.ApplyModifiedProperties();
         }
+    }
 
+    private void ShowAutoDetect(){
         if (GUILayout.Button("Auto Detect")) {
             for (int i = 0; i < m_RefHolder.Datas.Count; i++) {
                 for (int j = 0; j < m_RefHolder.Datas.Count; j++) {
@@ -254,7 +269,9 @@ public class EditorReferenceHolder : Editor {
 
             m_RefHolder.Datas.Sort(ListSort);
         }
+    }
 
+    private void ShowAutoBinding(){
         string errorMsg = "";
         if (GUILayout.Button("AutoBind")) {
             var owner = m_RefHolder.transform;
@@ -262,7 +279,9 @@ public class EditorReferenceHolder : Editor {
             Type[] types = null;
             {
                 types = assemblies.SelectMany((Assembly assembly) => assembly.GetTypes())
-                    .Where((Type tt) => typeof(UIBaseWindow).IsAssignableFrom(tt) && !tt.IsAbstract).ToArray();
+                    .Where((Type tt) =>
+                        typeof(UIBaseWindow).IsAssignableFrom(tt) ||
+                        typeof(UIBaseItem).IsAssignableFrom(tt) && !tt.IsAbstract).ToArray();
             }
             Type targetType = null;
             foreach (var type in types) {
@@ -282,23 +301,28 @@ public class EditorReferenceHolder : Editor {
                     typeof(Text),
                     typeof(Image),
                     typeof(Toggle),
+                    typeof(Slider),
                     typeof(InputField),
+                    typeof(LayoutGroup),
+                    typeof(Dropdown),
+                    typeof(GameObject),
+                    typeof(Transform),
                 };
-                var fields = targetType.GetFields(BindingFlags.Instance | BindingFlags.Public)
-                    .Where((tt) => targetTypes.Contains(tt.FieldType)).ToArray();
+                var fields = targetType
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                    .Where((tt) => targetTypes.Contains(tt.PropertyType)).ToArray();
                 foreach (var field in fields) {
                     var name = field.Name;
-                    var child = RecursiveFindChild(name, owner, field.FieldType);
+                    var child = RecursiveFindChild(name, owner, field.PropertyType);
                     if (child != null) {
-                        AddGo(child.gameObject, field.FieldType);
+                        AddGo(child.gameObject, field.PropertyType);
                     }
                 }
+
                 m_ReorderLst.serializedProperty.ClearArray();
                 serializedObject.ApplyModifiedProperties();
             }
         }
-
-        EditorGUILayout.EndHorizontal();
     }
 
     Transform RecursiveFindChild(string name, Transform parent, Type targetType){
@@ -307,6 +331,9 @@ public class EditorReferenceHolder : Editor {
         while (queue.Count > 0) {
             var trans = queue.Dequeue();
             if (trans.name == name) {
+                if (targetType == typeof(GameObject)
+                    || targetType == typeof(Transform))
+                    return trans;
                 if (trans.gameObject.GetComponent(targetType) != null)
                     return trans;
             }
@@ -382,6 +409,16 @@ public class EditorReferenceHolder : Editor {
     private void AddGo(GameObject go, Type type){
         var data = GetData(go);
         if (data != null) {
+            if (type == typeof(GameObject)) {
+                data.bindObj = go;
+            }
+            else if (type == typeof(Transform)) {
+                data.bindObj = go.transform;
+            }
+            else {
+                data.bindObj = go.GetComponent(type);
+            }
+
             data.TypeName = type.Name;
             m_RefHolder.Datas.Add(data);
         }

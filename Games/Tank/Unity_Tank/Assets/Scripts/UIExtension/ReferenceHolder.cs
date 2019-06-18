@@ -16,6 +16,7 @@ namespace Lockstep.Game.UI {
         Toggle,
         Dropdown,
         InputField,
+        LayoutGroup,
         RawImage,
         Camera,
         CanvasGroup,

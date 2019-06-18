@@ -388,7 +388,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2554962102183696156}
+      - m_Target: {fileID: 0}
         m_MethodName: OnSendClick
         m_Mode: 1
         m_Arguments:
@@ -794,7 +794,6 @@ GameObject:
   - component: {fileID: 2685826112388659533}
   - component: {fileID: 2989747095961531448}
   - component: {fileID: 4431941499239088931}
-  - component: {fileID: 2554962102183696156}
   m_Layer: 5
   m_Name: Chat
   m_TagString: Untagged
@@ -851,25 +850,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 1
   m_LayoutPriority: 1
---- !u!114 &2554962102183696156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1038999770000347036}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a05d7809bc618344faa3d735049bf525, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  FocusOnEnterClick: 1
-  MaxMessages: 20
-  NormalColor: {r: 1, g: 1, b: 1, a: 1}
-  ErrorColor: {r: 1, g: 0, b: 0, a: 1}
-  MessagePrefab: {fileID: 4463633717388146641}
-  MessagesList: {fileID: 409519116672629772}
-  InputField: {fileID: 5552151041818616624}
 --- !u!1 &1288737060173229897
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,9 +937,9 @@ GameObject:
   - component: {fileID: 1945236795941087066}
   - component: {fileID: 5657331111591943215}
   - component: {fileID: 9174591518685472359}
-  - component: {fileID: 2638192588201981567}
+  - component: {fileID: 2715518361867557900}
   m_Layer: 5
-  m_Name: User
+  m_Name: ListItemPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1043,7 +1023,7 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: -1
   m_LayoutPriority: 1
---- !u!114 &2638192588201981567
+--- !u!114 &2715518361867557900
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1052,13 +1032,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1307118221515561488}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 05c0660b29a9945d79aa3a07400f3115, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BgImage: {fileID: 1246166121850263332}
-  ListView: {fileID: 0}
-  TextName: {fileID: 1638316341647015157}
-  SelectedBgColor: {r: 0.17790571, g: 0.8490566, b: 0.052064814, a: 1}
+  Datas:
+  - name: TextName
+    bindObj: {fileID: 1638316341647015157}
+    typeName: Text
+    hasVal: 0
 --- !u!1 &1333788182562703383
 GameObject:
   m_ObjectHideFlags: 0
@@ -1144,7 +1125,7 @@ GameObject:
   - component: {fileID: 6366800481584053191}
   - component: {fileID: 6906557206570356042}
   - component: {fileID: 6127232842926342379}
-  - component: {fileID: 2276499169067954154}
+  - component: {fileID: 7036565254465375292}
   m_Layer: 5
   m_Name: UILobby
   m_TagString: Untagged
@@ -1209,7 +1190,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &2276499169067954154
+--- !u!114 &7036565254465375292
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1218,11 +1199,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 1435815649054470551}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac23a5de263794b158339d931f079d4a, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemRoomPrefab: {fileID: 2638192588201981567}
-  LayoutGroup: {fileID: 3987012837955701432}
+  Datas:
+  - name: BtnLeave
+    bindObj: {fileID: 8601251895755944484}
+    typeName: Button
+    hasVal: 0
+  - name: BtnStartGame
+    bindObj: {fileID: 6808411148387023683}
+    typeName: Button
+    hasVal: 0
+  - name: BtnReady
+    bindObj: {fileID: 5388648496208403861}
+    typeName: Button
+    hasVal: 0
+  - name: LayoutGroup
+    bindObj: {fileID: 3987012837955701432}
+    typeName: LayoutGroup
+    hasVal: 0
+  - name: ListItemPlayer
+    bindObj: {fileID: 1307118221515561488}
+    typeName: GameObject
+    hasVal: 0
+  - name: ReadyTick
+    bindObj: {fileID: 4997788265061541815}
+    typeName: GameObject
+    hasVal: 0
 --- !u!1 &1436639435412418547
 GameObject:
   m_ObjectHideFlags: 0
@@ -3366,7 +3370,7 @@ GameObject:
   - component: {fileID: 7231368202712387186}
   - component: {fileID: 4078393146873508371}
   m_Layer: 5
-  m_Name: Tick
+  m_Name: ReadyTick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4253,7 +4257,7 @@ GameObject:
   - component: {fileID: 2872291084647187462}
   - component: {fileID: 1638316341647015157}
   m_Layer: 5
-  m_Name: Username
+  m_Name: TextName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4672,7 +4676,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2289879959941779488}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.87308085
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4945,7 +4949,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.11845025}
+  m_AnchoredPosition: {x: 0, y: 0.0000010851179}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &2090922791581292594
@@ -5258,7 +5262,7 @@ GameObject:
   - component: {fileID: 6695630562229706195}
   - component: {fileID: 3987012837955701432}
   m_Layer: 5
-  m_Name: Team A
+  m_Name: LayoutGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6288,7 +6292,6 @@ GameObject:
   - component: {fileID: 4050629227947992286}
   - component: {fileID: 3212497298420655829}
   - component: {fileID: 4014431743834776346}
-  - component: {fileID: 6226784110975244926}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -6352,20 +6355,6 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &6226784110975244926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8926667671419815460}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d7e5cef685e46043931507f69ca17b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RotatingImage: {fileID: 4014431743834776346}
-  Speed: 2
 --- !u!1 &8944475652791144606
 GameObject:
   m_ObjectHideFlags: 0

@@ -111,6 +111,7 @@
     <Compile Include="Src\TilemapTools\GridInfo.cs" />
     <Compile Include="Src\TilemapTools\TileMapHelper.cs" />
     <Compile Include="Src\TilemapTools\TileMapSerializer.cs" />
+    <Compile Include="Src\UI\UIBaseItem.cs" />
     <Compile Include="Src\UI\UIBaseWindow.cs" />
     <Compile Include="Src\UI\UICreateRoom.cs" />
     <Compile Include="Src\UI\UIDialogBox.cs" />

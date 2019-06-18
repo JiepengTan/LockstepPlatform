@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 2372072080270001698}
   - component: {fileID: 1354617930642251987}
   m_Layer: 5
-  m_Name: Remember
+  m_Name: TglRemember
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 2679691841280808171}
   - component: {fileID: 23209600189473355}
   m_Layer: 5
-  m_Name: Password
+  m_Name: InputPassword
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -731,13 +731,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Datas:
-  - name: Error
+  - name: TextError
     bindObj: {fileID: 7066214594951749617}
     typeName: Text
     hasVal: 0
-  - name: Testss
-    bindObj: {fileID: 2958135059969753492}
+  - name: BtnLogin
+    bindObj: {fileID: 417281857269039624}
     typeName: Button
+    hasVal: 0
+  - name: TglRemember
+    bindObj: {fileID: 2372072080270001698}
+    typeName: Toggle
+    hasVal: 0
+  - name: InputPassword
+    bindObj: {fileID: 2679691841280808171}
+    typeName: InputField
+    hasVal: 0
+  - name: InputUsername
+    bindObj: {fileID: 229286443922898597}
+    typeName: InputField
     hasVal: 0
 --- !u!1 &4832862718867834223
 GameObject:
@@ -1380,7 +1392,7 @@ GameObject:
   - component: {fileID: 229286443922898597}
   - component: {fileID: 5335051784373894108}
   m_Layer: 5
-  m_Name: Username
+  m_Name: InputUsername
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1769,7 +1781,7 @@ GameObject:
   - component: {fileID: 7281785895827199682}
   - component: {fileID: 7066214594951749617}
   m_Layer: 5
-  m_Name: ErrorText
+  m_Name: TextError
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

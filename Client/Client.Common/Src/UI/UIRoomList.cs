@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NetMsg.Common;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Lockstep.Game.UI {
@@ -7,34 +8,35 @@ namespace Lockstep.Game.UI {
     ///     Represents a basic view for login form
     /// </summary>
     public class UIRoomList : UIBaseWindow {
-        private Button BtnJoinRoom;
-        public ListItemRoom itemRoomPrefab;
-        public LayoutGroup LayoutGroup;
+        private Button BtnJoinRoom=> GetRef<Button>("BtnJoinRoom");
+        private Button BtnCreateGame=> GetRef<Button>("BtnCreateGame");
+        private Button BtnCreateLobby=> GetRef<Button>("BtnCreateLobby");
+        private Button BtnRefresh=> GetRef<Button>("BtnRefresh");
+        private LayoutGroup LayoutGroup => GetRef<LayoutGroup>("LayoutGroup");
+        private GameObject ListItemRoom=> GetRef<GameObject>("ListItemRoom");
+        
         private GenericUIList<RoomInfo> _items;
 
-        protected virtual void Awake(){
-            BtnJoinRoom = BindEvent("Window/JoinRoom", OnBtn_JoinRoom);
-            BindEvent("Window/CreateGame", OnBtn_CreateGame);
-            BindEvent("Window/CreateLobby", OnBtn_CreateLobby);
-            BindEvent("Window/Refresh", OnBtn_Refresh);
-            _items = new GenericUIList<RoomInfo>(itemRoomPrefab.gameObject, LayoutGroup);
+        protected override void Awake(){
+            base.Awake();
+            _items = new GenericUIList<RoomInfo>(ListItemRoom, LayoutGroup);
             Setup(GetService<NetworkService>().RoomInfos);
         }
 
-        void OnBtn_JoinRoom(){
+        void OnClick_BtnJoinRoom(){
             var selected = GetSelectedItem();
             if (selected == null)
                 return;
             NetworkService.Instance.JoinRoom(selected.RoomId);
         }
 
-        void OnBtn_CreateGame(){
+        void OnClick_BtnCreateGame(){
             OpenWindow(UIDefine.UICreateRoom);
         }
 
-        void OnBtn_CreateLobby(){ }
+        void OnClick_BtnCreateLobby(){ }
 
-        void OnBtn_Refresh(){
+        void OnClick_BtnRefresh(){
             NetworkService.Instance.ReqRoomList(0);
         }
 

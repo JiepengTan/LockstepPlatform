@@ -11,24 +11,18 @@ namespace Lockstep.Game.UI
     /// </summary>
     public class UILogin : UIBaseWindow
     {
-        public Text ErrorText;
-        public Button BtnLogin;
-        public InputField Password;
-        public Toggle Remember;
-        public InputField Username;
+        private Text TextError => GetRef<Text>("TextError");
+        private Button BtnLogin => GetRef<Button>("BtnLogin");
+        private Toggle TglRemember => GetRef<Toggle>("TglRemember");
+        private InputField InputPassword => GetRef<InputField>("InputPassword");
+        private InputField InputUsername => GetRef<InputField>("Username");
 
         protected string RememberPrefKey = "lp.auth.remember";
         protected string UsernamePrefKey = "lp.auth.username";
 
         protected virtual void Awake()
         {
-            ErrorText = ErrorText ?? transform.Find("Error").GetComponent<Text>();
-            BtnLogin = BtnLogin ?? transform.Find("Button").GetComponent<Button>();
-            Password = Password ?? transform.Find("Password").GetComponent<InputField>();
-            Remember = Remember ?? transform.Find("Remember").GetComponent<Toggle>();
-            Username = Username ?? transform.Find("Username").GetComponent<InputField>();
-            BtnLogin.onClick.AddListener(OnLoginClick);
-            ErrorText.gameObject.SetActive(false);
+            TextError.gameObject.SetActive(false);
         }
 
         // Use this for initialization
@@ -52,8 +46,8 @@ namespace Lockstep.Game.UI
         /// </summary>
         protected virtual void RestoreRememberedValues()
         {
-            Username.text = PlayerPrefs.GetString(UsernamePrefKey, Username.text);
-            Remember.isOn = PlayerPrefs.GetInt(RememberPrefKey, -1) > 0;
+            InputUsername.text = PlayerPrefs.GetString(UsernamePrefKey, InputUsername.text);
+            TglRemember.isOn = PlayerPrefs.GetInt(RememberPrefKey, -1) > 0;
         }
 
         /// <summary>
@@ -64,11 +58,11 @@ namespace Lockstep.Game.UI
         {
             var error = "";
 
-            if (Username.text.Length < 3)
+            if (InputUsername.text.Length < 3)
                 error += "Username is too short \n";
 
-            if (Password.text.Length < 3)
-                error += "Password is too short \n";
+            if (InputPassword.text.Length < 3)
+                error += "InputPassword is too short \n";
 
             if (error.Length > 0)
             {
@@ -83,8 +77,8 @@ namespace Lockstep.Game.UI
 
         protected void ShowError(string message)
         {
-            ErrorText.gameObject.SetActive(true);
-            ErrorText.text = message;
+            TextError.gameObject.SetActive(true);
+            TextError.text = message;
         }
 
         /// <summary>
@@ -92,7 +86,7 @@ namespace Lockstep.Game.UI
         /// </summary>
         protected virtual void HandleRemembering()
         {
-            if (!Remember.isOn)
+            if (!TglRemember.isOn)
             {
                 // Remember functionality is off. Delete all values
                 PlayerPrefs.DeleteKey(UsernamePrefKey);
@@ -101,17 +95,17 @@ namespace Lockstep.Game.UI
             }
 
             // Remember is on
-            PlayerPrefs.SetString(UsernamePrefKey, Username.text);
+            PlayerPrefs.SetString(UsernamePrefKey, InputUsername.text);
             PlayerPrefs.SetInt(RememberPrefKey, 1);
         }
 
-        public virtual void OnLoginClick()
+        public virtual void OnClick_BtnLogin()
         {
             //SendMessage(EMsgSC.C2L_ReqLogin,new Msg_RoomInitMsg() {name = Username.text});
             HandleRemembering();
             EventHelper.Trigger(EEvent.TryLogin,new LoginParam() {
-                account = Username.text,
-                password =  Password.text
+                account = InputUsername.text,
+                password =  InputPassword.text
             });
 
         }
@@ -122,12 +116,12 @@ namespace Lockstep.Game.UI
                 Close();
             }
         }  
-        void OnEvent_OnConnectToGameServer(object param){
+        public  void OnEvent_OnConnectToGameServer(object param){
             OpenWindow(UIDefine.UILoading);
             Close();
         }
 
-        public virtual void OnPasswordForgotClick()
+        public virtual void OnInputPasswordForgotClick()
         {
         }
     }

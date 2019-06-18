@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 355492310652943322}
   - component: {fileID: 355492310652943317}
   m_Layer: 5
-  m_Name: Button 2
+  m_Name: BtnYes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 355492311298098783}
   - component: {fileID: 355492311298098782}
   m_Layer: 5
-  m_Name: Button 3
+  m_Name: BtnNo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -596,7 +596,7 @@ GameObject:
   - component: {fileID: 355492311939858335}
   - component: {fileID: 355492311939858402}
   - component: {fileID: 355492311939858333}
-  - component: {fileID: 2083974560748400039}
+  - component: {fileID: 1654150223889942354}
   m_Layer: 5
   m_Name: UIDialogBox
   m_TagString: Untagged
@@ -661,7 +661,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &2083974560748400039
+--- !u!114 &1654150223889942354
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -670,13 +670,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 355492311939858334}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 009ce19034c84924b56198900960871c, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TextTitle: {fileID: 355492311231717641}
-  TextContent: {fileID: 355492311596610035}
-  BtnYes: {fileID: 355492310652943317}
-  BtnNo: {fileID: 355492311298098783}
+  Datas: []
 --- !u!1 &355492312225374156
 GameObject:
   m_ObjectHideFlags: 0

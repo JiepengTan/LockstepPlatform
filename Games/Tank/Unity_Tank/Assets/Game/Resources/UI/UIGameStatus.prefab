@@ -1032,7 +1032,7 @@ GameObject:
   - component: {fileID: 3212562389080633285}
   - component: {fileID: 3212562389080633283}
   - component: {fileID: 3212562389080633282}
-  - component: {fileID: 3863524496960260021}
+  - component: {fileID: 6369991140449002777}
   m_Layer: 5
   m_Name: UIGameStatus
   m_TagString: Untagged
@@ -1104,7 +1104,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &3863524496960260021
+--- !u!114 &6369991140449002777
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1113,12 +1113,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3212562389080633284}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a390187443ab4ce5930aadfa6b7f35b2, type: 3}
+  m_Script: {fileID: 1823042277, guid: 07139721a496c4e30a23dfeba2432a38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tranLevel: {fileID: 2035943668}
   tranEnemy: {fileID: 2025237495}
-  tranMsg: {fileID: 647379924}
+  tranMsg: {fileID: 2068926665}
   tranScore1: {fileID: 2068926665}
   tranLife1: {fileID: 17054425}
   tranScore2: {fileID: 502433994}

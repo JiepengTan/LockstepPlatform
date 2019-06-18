@@ -5,21 +5,19 @@ using UnityEngine.UI;
 
 
 namespace Lockstep.Game.UI {
-    public class ListItemPlayer : MonoBehaviour {
+    public class ListItemPlayer : UIBaseItem {
+        private Text TextName=> GetRef<Text>("TextName");
         public RoomPlayerInfo RawData { get; protected set; }
         public Image BgImage;
-        public UILobby ListView;
-        public Text TextName;
         private Color DefaultBgColor;
         public Color SelectedBgColor;
         public int GameId { get; private set; }
         public bool IsSelected { get; private set; }
         public bool IsReady { get; set; }
 
-        private void Awake(){
+        protected override void Awake(){
             BgImage = GetComponent<Image>();
             DefaultBgColor = BgImage.color;
-            //GetComponent<Button>().onClick.AddListener(OnClick);
             SetIsSelected(false);
         }
 
@@ -38,8 +36,5 @@ namespace Lockstep.Game.UI {
             BgImage.color = isReady ? SelectedBgColor : DefaultBgColor;
         }
 
-        private void OnClick(){
-            ListView.Select(this);
-        }
     }
 }

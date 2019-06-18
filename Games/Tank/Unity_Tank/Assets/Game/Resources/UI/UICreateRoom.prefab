@@ -1348,8 +1348,7 @@ GameObject:
   - component: {fileID: 382876534105872952}
   - component: {fileID: 2353686679299209912}
   - component: {fileID: 568812254466108965}
-  - component: {fileID: 4349765470169064175}
-  - component: {fileID: 8625417510048814804}
+  - component: {fileID: 9187838049156938654}
   m_Layer: 5
   m_Name: UICreateRoom
   m_TagString: Untagged
@@ -1422,7 +1421,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &4349765470169064175
+--- !u!114 &9187838049156938654
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1431,27 +1430,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1935229037506556993}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e090253b736dfc845aed0a107cb7eb87, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChangeOpacity: 1
-  DraggedOpacity: 0.7
---- !u!114 &8625417510048814804
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1935229037506556993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 001d47f39b1bd45448db057e3b1664de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MapSelect: {fileID: 6884346346070826170}
-  MaxCountSelect: {fileID: 6133551994602853151}
-  btnCreate: {fileID: 5083930896878973469}
-  txtRoomName: {fileID: 8547627025042108996}
+  Datas:
+  - name: DropMapId
+    bindObj: {fileID: 6884346346070826170}
+    typeName: Dropdown
+    hasVal: 0
+  - name: DropMaxCount
+    bindObj: {fileID: 6133551994602853151}
+    typeName: Dropdown
+    hasVal: 0
+  - name: InputRoomName
+    bindObj: {fileID: 666549309984016284}
+    typeName: InputField
+    hasVal: 0
 --- !u!1 &2047842662698193818
 GameObject:
   m_ObjectHideFlags: 0
@@ -1618,7 +1612,7 @@ GameObject:
   - component: {fileID: 222545531147475900}
   - component: {fileID: 6884346346070826170}
   m_Layer: 5
-  m_Name: MapSelect
+  m_Name: DropMapId
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1983,7 +1977,7 @@ GameObject:
   - component: {fileID: 6486197708164390269}
   - component: {fileID: 666549309984016284}
   m_Layer: 5
-  m_Name: RoomName
+  m_Name: InputRoomName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3217,7 +3211,7 @@ GameObject:
   - component: {fileID: 3554929401373517991}
   - component: {fileID: 6133551994602853151}
   m_Layer: 5
-  m_Name: MaxCountSelect
+  m_Name: DropMaxCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

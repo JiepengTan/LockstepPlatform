@@ -6,21 +6,18 @@ using UnityEngine.UI;
 
 namespace Lockstep.Game.UI {
     public class UICreateRoom : UIBaseWindow {
-        public Dropdown MapSelect;
-        public Dropdown MaxCountSelect;
-        public Button btnCreate;
-        public Text txtRoomName;
+        private Dropdown DropMapId=> GetRef<Dropdown>("DropMapId");
+        private Dropdown DropMaxCount=> GetRef<Dropdown>("DropMaxCount");
+        private InputField InputRoomName=> GetRef<InputField>("InputRoomName");
 
-        protected virtual void Awake(){
-            BindEvent("BtnCreate", OnBtn_Create);
-            MapSelect = transform.Find("MapSelect").GetComponent<Dropdown>();
-            MaxCountSelect = transform.Find("MaxCountSelect").GetComponent<Dropdown>();
-            MapSelect.ClearOptions();
-            MapSelect.AddOptions(MapNames);
-            MaxCountSelect.ClearOptions();
-            MaxCountSelect.AddOptions(MaxCounts);
-            MapSelect.onValueChanged.AddListener(OnChangedMapId);
-            MaxCountSelect.onValueChanged.AddListener(OnChangedMaxCount);
+        private int _curMaxCount = 1;
+        private int _curMapIdx = 0;
+
+        protected override void Awake(){
+            DropMapId.ClearOptions();
+            DropMapId.AddOptions(MapNames);
+            DropMaxCount.ClearOptions();
+            DropMaxCount.AddOptions(MaxCounts);
         }
 
         private List<string> MaxCounts {
@@ -45,9 +42,9 @@ namespace Lockstep.Game.UI {
             }
         }
 
-        void OnBtn_Create(){
-            Debug.Log("hhe OnBtn_Create");
-            NetworkService.Instance.CreateRoom(_curMapIdx,txtRoomName.text,_curMaxCount);
+        void OnClick_BtnCreate(){
+            Debug.Log("hhe OnClick_BtnCreate");
+            NetworkService.Instance.CreateRoom(_curMapIdx,InputRoomName.text,_curMaxCount);
         }
         void OnEvent_OnCreateRoom(object param){
             var info = param as RoomInfo;
@@ -56,15 +53,12 @@ namespace Lockstep.Game.UI {
                 Close();
             }
         }
-        private string _curMapName = "";
-        private int _curMaxCount = 1;
-        private int _curMapIdx = 0;
 
-        void OnChangedMapId(int idx){
+        void OnSelect_DropMapId(int idx){
             _curMapIdx = idx;
         }
 
-        void OnChangedMaxCount(int idx){
+        void OnSelect_DropMaxCount(int idx){
             _curMaxCount = int.Parse(MaxCounts[idx]);
         }
     }

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Lockstep.Game.UI;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Lockstep.Game {
@@ -17,7 +19,7 @@ namespace Lockstep.Game {
         private Transform forwardParent;
         private Transform importParent;
 
-        public  T GetIService<T>() where T : IService{
+        public T GetIService<T>() where T : IService{
             return GetService<T>();
         }
 
@@ -30,9 +32,9 @@ namespace Lockstep.Game {
 
             var uiGo = GameObject.Instantiate(prefab, canvas.transform);
             uiRoot = uiGo.GetComponent<UIRoot>();
-            normalParent = uiRoot.normalParent;
-            forwardParent = uiRoot.forwardParent;
-            importParent = uiRoot.noticeParent;
+            normalParent = uiRoot.TransNormal;
+            forwardParent = uiRoot.TransForward;
+            importParent = uiRoot.TransNotice;
             if (_constStateService.IsVideoMode) {
                 OpenWindow(UIDefine.UILoading);
             }
@@ -136,7 +138,70 @@ namespace Lockstep.Game {
             window.DoStart();
             window.uiService = this;
             _eventRegisterService.RegisterEvent(window);
+            RegisterUiEvent(window);
             callback?.Invoke(window);
+        }
+
+        public void RegisterUiEvent(object obj){
+            RegisterUiEvent<UnityAction>("OnClick_", "OnClick_".Length, RegisterEventButton, obj);
+            RegisterUiEvent<UnityAction<bool>>("OnToggle_", "OnToggle_".Length, RegisterEventToggle, obj);
+            RegisterUiEvent<UnityAction<int>>("OnSelect_", "OnSelect_".Length, RegisterEventDropdown, obj);
+        }
+
+        public void RegisterUiEvent<TDelegate>(string prefix, int ignorePrefixLen,
+            Action<object, string, TDelegate> callBack, object obj)
+            where TDelegate : Delegate{
+            if (callBack == null) return;
+            var methods = obj.GetType().GetMethods(BindingFlags.Public | BindingFlags.NonPublic |
+                                                   BindingFlags.Instance | BindingFlags.DeclaredOnly);
+            foreach (var method in methods) {
+                var methodName = method.Name;
+                if (methodName.StartsWith(prefix)) {
+                    var eventTypeStr = methodName.Substring(ignorePrefixLen);
+                    try {
+                        var handler = Delegate.CreateDelegate(typeof(TDelegate), obj, method) as TDelegate;
+                        callBack(obj, eventTypeStr, handler);
+                    }
+                    catch (Exception e) {
+                        Debug.LogError("methodName " + methodName);
+                        throw;
+                    }
+                }
+            }
+        }
+        void RegisterEventDropdown(object objWin, string compName, UnityAction<int> action){
+            var window = (UIBaseWindow) objWin;
+            var comp = window.GetRef<Dropdown>(compName);
+            if (comp != null) {
+                comp.onValueChanged.RemoveListener(action);
+                comp.onValueChanged.AddListener(action);
+            }
+            else {
+                Logging.Debug.Log(window.GetType() + " miss ref " + compName);
+            }
+        }
+        void RegisterEventToggle(object objWin, string compName, UnityAction<bool> action){
+            var window = (UIBaseWindow) objWin;
+            var comp = window.GetRef<Toggle>(compName);
+            if (comp != null) {
+                comp.onValueChanged.RemoveListener(action);
+                comp.onValueChanged.AddListener(action);
+            }
+            else {
+                Logging.Debug.Log(window.GetType() + " miss ref " + compName);
+            }
+        }
+
+        void RegisterEventButton(object objWin, string compName, UnityAction action){
+            var window = (UIBaseWindow) objWin;
+            var comp = window.GetRef<Button>(compName);
+            if (comp != null) {
+                comp.onClick.RemoveListener(action);
+                comp.onClick.AddListener(action);
+            }
+            else {
+                Logging.Debug.Log(window.GetType() + " miss ref " + compName);
+            }
         }
     }
 }

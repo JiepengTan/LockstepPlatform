@@ -5,9 +5,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UILoading : UIBaseWindow {
-    public Text textInfo;
-
-    public Slider sliderProgress;
+    private Text TextInfo => GetRef<Text>("TextInfo");
+    private Slider SliderProgress => GetRef<Slider>("SliderProgress");
 
     void OnEvent_OnLoadingProgress(object param){
         var iprogress = param as byte[];
@@ -32,12 +31,12 @@ public class UILoading : UIBaseWindow {
     }
 
     void ShowProgress(float progress){
-        sliderProgress.value = progress;
-        textInfo.text = $"Loading {((int)(sliderProgress.value * 10000))/100f}%";
+        SliderProgress.value = progress;
+        TextInfo.text = $"Loading {((int)(SliderProgress.value * 10000))/100f}%";
     }
 
     void EndLoading(){
-        sliderProgress.value = 1;
+        SliderProgress.value = 1;
         OpenWindow(UIDefine.UIGameStatus);
         Close();
     }

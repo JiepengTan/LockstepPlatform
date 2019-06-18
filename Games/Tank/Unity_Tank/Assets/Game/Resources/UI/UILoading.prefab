@@ -47,7 +47,6 @@ GameObject:
   - component: {fileID: 880758553353237705}
   - component: {fileID: 3150913218624323879}
   - component: {fileID: 1043706653350831953}
-  - component: {fileID: 1955860405795688535}
   m_Layer: 5
   m_Name: TextInfo
   m_TagString: Untagged
@@ -116,20 +115,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Loading player profile
---- !u!114 &1955860405795688535
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2624969157013207706}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2052764a02be9a048bf80a1b112e9859, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Id: 0
-  Message: {fileID: 1043706653350831953}
 --- !u!1 &4506439852557706708
 GameObject:
   m_ObjectHideFlags: 0
@@ -413,7 +398,7 @@ GameObject:
   - component: {fileID: 2056983637480057263}
   - component: {fileID: 4231679135980322175}
   - component: {fileID: 3836374366969879152}
-  - component: {fileID: 8813954287089399096}
+  - component: {fileID: 3304869342015548424}
   m_Layer: 5
   m_Name: UILoading
   m_TagString: Untagged
@@ -479,7 +464,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &8813954287089399096
+--- !u!114 &3304869342015548424
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -488,11 +473,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 8403792367345800846}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d74af2e24e7604a3484eb024cd08f332, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  textInfo: {fileID: 1043706653350831953}
-  sliderProgress: {fileID: 2619697297976410737}
+  Datas: []
 --- !u!1 &9122018967419666279
 GameObject:
   m_ObjectHideFlags: 0

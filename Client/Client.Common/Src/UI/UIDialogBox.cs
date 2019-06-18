@@ -3,20 +3,13 @@ using UnityEngine.UI;
 
 namespace Lockstep.Game.UI {
     public class UIDialogBox : UIBaseWindow {
-        public Text TextTitle;
-        public Text TextContent;
-        public Button BtnYes;
-        public Button BtnNo;
+        private Text TextTitle=> GetRef<Text>("TextTitle");
+        private Text TextContent=> GetRef<Text>("TextContent");
+        private Button BtnYes=> GetRef<Button>("BtnYes");
+        private Button BtnNo=> GetRef<Button>("BtnNo");
 
         public Action<bool> callbackYesNo;
-
         public Action callbackYes;
-
-        public void Start(){
-            BtnYes.onClick.AddListener(OnBtn_Yes);
-            BtnNo.onClick.AddListener(OnBtn_No);
-        }
-
         public void Init(string title, string content, Action callback){
             TextContent.text = content;
             TextTitle.text = title;
@@ -33,11 +26,11 @@ namespace Lockstep.Game.UI {
             BtnYes.gameObject.SetActive(true);
         }
 
-        public void OnBtn_Yes(){
+        public void OnClick_BtnYes(){
             CallBack(false);
         }
 
-        public void OnBtn_No(){
+        public void OnClick_BtnNo(){
             CallBack(false);
         }
 

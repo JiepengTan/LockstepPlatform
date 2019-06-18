@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2281380615629031352}
   - component: {fileID: 3207187631150459853}
   m_Layer: 5
-  m_Name: PlayerCount
+  m_Name: TextPlayerCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 6480435255255556738}
   - component: {fileID: 6367722505885846433}
   m_Layer: 5
-  m_Name: Lock
+  m_Name: LockImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -541,9 +541,9 @@ GameObject:
   - component: {fileID: 1813397645545700288}
   - component: {fileID: 766324202174588292}
   - component: {fileID: 8636294083712592758}
-  - component: {fileID: 6160169182869554325}
+  - component: {fileID: 2180965988848157746}
   m_Layer: 5
-  m_Name: Item
+  m_Name: ListItemRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -674,7 +674,7 @@ MonoBehaviour:
   m_ChildForceExpandHeight: 1
   m_ChildControlWidth: 1
   m_ChildControlHeight: 1
---- !u!114 &6160169182869554325
+--- !u!114 &2180965988848157746
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -683,19 +683,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 2520500689879647971}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 793382f0d5879c5469a845d15f1c2d31, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BgImage: {fileID: 1813397645545700288}
-  DefaultBgColor: {r: 0.2392157, g: 0.25490198, b: 0.25882354, a: 1}
-  ListView: {fileID: 6181600539266553780}
-  LockImage: {fileID: 2275116216004765977}
-  MapName: {fileID: 6491087112147931744}
-  RoomName: {fileID: 2594243840329022606}
-  Online: {fileID: 2281380615629031352}
-  SelectedBgColor: {r: 0.056737266, g: 0.4811321, b: 0.064713165, a: 1}
-  UnknownMapName: Unknown
-  IsSelected: 0
+  Datas:
+  - name: LockImage
+    bindObj: {fileID: 2275116216004765977}
+    typeName: GameObject
+    hasVal: 0
+  - name: TextMapName
+    bindObj: {fileID: 6491087112147931744}
+    typeName: Text
+    hasVal: 0
+  - name: TextRoomName
+    bindObj: {fileID: 2594243840329022606}
+    typeName: Text
+    hasVal: 0
+  - name: TextPlayerCount
+    bindObj: {fileID: 2281380615629031352}
+    typeName: Text
+    hasVal: 0
 --- !u!1 &2632847401667395414
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,8 +813,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2509173070324297671}
   - component: {fileID: 6579637230478980888}
-  - component: {fileID: 5853802135079810609}
-  - component: {fileID: 6181600539266553780}
+  - component: {fileID: 3034904627024816873}
   m_Layer: 5
   m_Name: UIRoomList
   m_TagString: Untagged
@@ -822,7 +828,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3034904627024816872}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -844,7 +850,7 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3034904627024816872}
   m_CullTransparentMesh: 0
---- !u!114 &5853802135079810609
+--- !u!114 &3034904627024816873
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -853,26 +859,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 3034904627024816872}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8cbb591b29de5a4da9ba20fcd1f6b3e, type: 3}
+  m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CreateRoomWindow: {fileID: 0}
-  GameJoinButton: {fileID: 7021349928878771306}
-  LayoutGroup: {fileID: 5542928972516589892}
---- !u!114 &6181600539266553780
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3034904627024816872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 440b2f40fbe64636b2fb22907196b809, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemRoomPrefab: {fileID: 6160169182869554325}
-  LayoutGroup: {fileID: 5542928972516589892}
+  Datas:
+  - name: BtnJoinRoom
+    bindObj: {fileID: 7021349928878771306}
+    typeName: Button
+    hasVal: 0
+  - name: BtnCreateGame
+    bindObj: {fileID: 6091781777948923533}
+    typeName: Button
+    hasVal: 0
+  - name: BtnCreateLobby
+    bindObj: {fileID: 3029365003480773388}
+    typeName: Button
+    hasVal: 0
+  - name: BtnRefresh
+    bindObj: {fileID: 6050629426795117184}
+    typeName: Button
+    hasVal: 0
+  - name: LayoutGroup
+    bindObj: {fileID: 5542928972516589892}
+    typeName: LayoutGroup
+    hasVal: 0
+  - name: ListItemRoom
+    bindObj: {fileID: 2520500689879647971}
+    typeName: GameObject
+    hasVal: 0
 --- !u!1 &3165438152830958946
 GameObject:
   m_ObjectHideFlags: 0
@@ -1198,7 +1212,7 @@ GameObject:
   - component: {fileID: 3087464664670294393}
   - component: {fileID: 6091781777948923533}
   m_Layer: 5
-  m_Name: CreateGame
+  m_Name: BtnCreateGame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1301,7 +1315,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5853802135079810609}
+      - m_Target: {fileID: 0}
         m_MethodName: OnCreateGameClick
         m_Mode: 1
         m_Arguments:
@@ -1327,7 +1341,7 @@ GameObject:
   - component: {fileID: 6491087112147931744}
   - component: {fileID: 125869352219473072}
   m_Layer: 5
-  m_Name: Map
+  m_Name: TextMapName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1652,7 +1666,7 @@ GameObject:
   - component: {fileID: 370788639202084464}
   - component: {fileID: 3000327559524774613}
   m_Layer: 5
-  m_Name: List
+  m_Name: LayoutGroup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1769,7 +1783,7 @@ GameObject:
   - component: {fileID: 3387244162821820701}
   - component: {fileID: 3029365003480773388}
   m_Layer: 5
-  m_Name: CreateLobby
+  m_Name: BtnCreateLobby
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1898,7 +1912,7 @@ GameObject:
   - component: {fileID: 854110938227847002}
   - component: {fileID: 6050629426795117184}
   m_Layer: 5
-  m_Name: Refresh
+  m_Name: BtnRefresh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2001,7 +2015,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5853802135079810609}
+      - m_Target: {fileID: 0}
         m_MethodName: OnRefreshClick
         m_Mode: 1
         m_Arguments:
@@ -2271,7 +2285,7 @@ GameObject:
   - component: {fileID: 8884498210034659704}
   - component: {fileID: 7021349928878771306}
   m_Layer: 5
-  m_Name: JoinRoom
+  m_Name: BtnJoinRoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2374,7 +2388,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5853802135079810609}
+      - m_Target: {fileID: 0}
         m_MethodName: OnJoinGameClick
         m_Mode: 1
         m_Arguments:
@@ -2556,7 +2570,7 @@ GameObject:
   - component: {fileID: 2594243840329022606}
   - component: {fileID: 2362530678752258497}
   m_Layer: 5
-  m_Name: Name
+  m_Name: TextRoomName
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
