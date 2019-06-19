@@ -9,22 +9,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13b75c95f34a00d4e8c04f76b73312e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 21821844bccb84fe4bc03c6f62410f6b, type: 3}
   m_Name: TileWater
   m_EditorClassIdentifier: 
   m_AnimatedSprites:
-  - {fileID: 21300000, guid: 269e26eb9f2344397876eedb6983070b, type: 3}
-  - {fileID: 21300000, guid: 773b16f8154ec41f8be76b58bab401f0, type: 3}
-  - {fileID: 21300000, guid: b0a249574a1a54050856839dcd3e0d55, type: 3}
-  - {fileID: 21300000, guid: de50521f5abec44608457bfde344c67b, type: 3}
-  - {fileID: 21300000, guid: 20f4a9b8f6d05444ea3d8fa2f275a2ea, type: 3}
-  - {fileID: 21300000, guid: 1709e991fda3440299fb0d9ba5c95228, type: 3}
-  - {fileID: 21300000, guid: d42d01fa12fd14ca9a0ae75c564910f8, type: 3}
-  - {fileID: 21300000, guid: faa76c5cf6ceb40618c08b49f840054a, type: 3}
-  - {fileID: 21300000, guid: aa532308cba1d4a7abfce1f6db6cb255, type: 3}
-  - {fileID: 21300000, guid: 44a9806514d72478c95f0e879f58eadd, type: 3}
-  - {fileID: 21300000, guid: a04e365c4a0834857ba850fcabbbe8b4, type: 3}
-  m_MinSpeed: 11
-  m_MaxSpeed: 11
+  - {fileID: 21300000, guid: f9ed6c48e139044e68804ea77fc052a8, type: 3}
+  - {fileID: 21300000, guid: ace46d67d0f944e2eaafddb7e5e5f080, type: 3}
+  - {fileID: 21300000, guid: e420d0f8c63524bd489b734b225b2c86, type: 3}
+  - {fileID: 21300000, guid: fb4d1906dcc1f40a1a70b6b9096f23dc, type: 3}
+  - {fileID: 21300000, guid: f9ca183806dac494cb299e19241ede57, type: 3}
+  - {fileID: 21300000, guid: 0c27e232d6d0d4d27bf977e5227ebbf8, type: 3}
+  - {fileID: 21300000, guid: 96685708e94b848ab97f41dd80026c6b, type: 3}
+  - {fileID: 21300000, guid: acd888cd9c19b42a89be47b7a20871de, type: 3}
+  - {fileID: 21300000, guid: 3fc0406d6d1ed46d98db6cebb3b8e524, type: 3}
+  - {fileID: 21300000, guid: df7488660df8b48c980807432316c619, type: 3}
+  - {fileID: 21300000, guid: 43d8da8e7985d497fa4c3142a3342d20, type: 3}
+  - {fileID: 21300000, guid: 474f38dc0b0c84442b2dc5bbaf3414fb, type: 3}
+  m_MinSpeed: 3
+  m_MaxSpeed: 3
   m_AnimationStartTime: 0
   m_TileColliderType: 0

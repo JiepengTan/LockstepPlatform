@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 63cc1c8e436048e9b5e02843eaca87f4, type: 3}
+  m_Script: {fileID: 11500000, guid: 3caafa1625fc24f9d8eb245651c6b8f9, type: 3}
   m_Name: AudioConfig
   m_EditorClassIdentifier: 
   born: {fileID: 0}
-  died: {fileID: 8300000, guid: 083e6c0c165d0406fbec52b55dd71376, type: 3}
-  hitTank: {fileID: 8300000, guid: f015d85ccd1b64f528c3f27d77105446, type: 3}
-  hitBrick: {fileID: 8300000, guid: f015d85ccd1b64f528c3f27d77105446, type: 3}
-  hitIron: {fileID: 8300000, guid: 360b20e7144214aea883b65898121f17, type: 3}
-  destroyIron: {fileID: 8300000, guid: f015d85ccd1b64f528c3f27d77105446, type: 3}
-  destroyGrass: {fileID: 8300000, guid: f015d85ccd1b64f528c3f27d77105446, type: 3}
-  addItem: {fileID: 8300000, guid: 43f03d2c788ea4425b9966b749df33ea, type: 3}
-  bgMusic: {fileID: 0}
-  startMusic: {fileID: 8300000, guid: e8a86054a35b34073a8d776ffcdedfe4, type: 3}
+  died: {fileID: 8300000, guid: e699f863a50be47dc9b28a830d247404, type: 3}
+  hitTank: {fileID: 8300000, guid: 039a0e696579d46fbb1f787defd6b970, type: 3}
+  hitBrick: {fileID: 8300000, guid: 039a0e696579d46fbb1f787defd6b970, type: 3}
+  hitIron: {fileID: 8300000, guid: 0f59be09b9b3c4ee88a9eda22f8550d5, type: 3}
+  destroyIron: {fileID: 8300000, guid: e699f863a50be47dc9b28a830d247404, type: 3}
+  destroyGrass: {fileID: 8300000, guid: 039a0e696579d46fbb1f787defd6b970, type: 3}
+  addItem: {fileID: 8300000, guid: e65d0112d4094426290358bb02529c8a, type: 3}
+  bgMusic: {fileID: 8300000, guid: da320fc2d004b437baf63557b515fec1, type: 3}
+  startMusic: {fileID: 8300000, guid: da320fc2d004b437baf63557b515fec1, type: 3}
