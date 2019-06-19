@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using LitJson;
-using Lockstep.Util;
 
 namespace Lockstep.Game {
     public class ResService : BaseService, IResService {
