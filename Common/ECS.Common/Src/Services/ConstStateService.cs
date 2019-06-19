@@ -20,5 +20,14 @@ namespace Lockstep.Game {
         public IContexts Contexts { get; set; }
         public int SnapshotFrameInterval { get; set; }
         public EPureModeType RunMode{ get; set; }
+        
+        private string _relPathBin = "../Data/Client/";
+        public string ConfigPath => _relPath + _relPathBin;
+        
+        private string _relPath = "";
+        public string RelPath {
+            get => _relPath;
+            set => _relPath = value;
+        }
     }
 }

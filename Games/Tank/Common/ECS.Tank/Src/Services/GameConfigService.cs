@@ -16,10 +16,6 @@ namespace Lockstep.Game {
         public LVector2 TankBornOffset { get; set; } = LVector2.one;
         public LFloat TankBornDelay { get; set; } = LFloat.one;
         public LFloat DeltaTime { get; set; } = new LFloat(true, 16);
-        private string relPathBin = "../Data/Client/GameConfig.bytes";
-        private string relPathJson = "../Data/Client/GameConfig.json";
-        public string ConfigPath => RelPath + relPathBin;
-        public string JsonPath => RelPath + relPathJson;
         public string RelPath { get; set; } = "";
 
         public List<BaseEntitySetter> enemyPrefabs {
@@ -47,15 +43,15 @@ namespace Lockstep.Game {
             set => _CampPrefabs = value;
         }
 
-        public short BornPrefabAssetId { get; set; }
-        public short DiedPrefabAssetId { get; set; }
+        public short BornPrefabAssetId { get; set; } = 60;
+        public short DiedPrefabAssetId { get; set; } = 61;
 
         public float bornEnemyInterval => 3;
         public int MAX_ENEMY_COUNT => 6;
         public int initEnemyCount => 20;
 
         public override void DoAwake(IServiceContainer services){
-            this.Read(ConfigPath);
+            this.Read(_constStateService.ConfigPath + "GameConfig.bytes");
             //if (_constStateService.RunMode == EPureModeType.Pure) {
             //    var txt = JsonMapper.ToJson(this);
             //    File.WriteAllText(JsonPath, txt);

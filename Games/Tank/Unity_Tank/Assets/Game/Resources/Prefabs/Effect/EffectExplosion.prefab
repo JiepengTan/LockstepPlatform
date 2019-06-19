@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _liveTime:
-    _val: 1000
+    _val: 500
   sprites:
   - {fileID: 21300000, guid: 5d8b018adbc024de3a10e3eb1e586d70, type: 3}
   - {fileID: 21300000, guid: cb9fc01c8751549fd84de69b313e144b, type: 3}
@@ -103,4 +103,4 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 24fd17478431c472d99553ea20e0ea09, type: 3}
   - {fileID: 21300000, guid: c10fa196bf7454cd9b7191b988de6fec, type: 3}
   interval:
-    _val: 1000
+    _val: 500

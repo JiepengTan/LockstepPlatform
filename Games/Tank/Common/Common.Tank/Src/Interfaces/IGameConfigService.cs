@@ -19,8 +19,6 @@ namespace Lockstep.Game {
         LVector2 TankBornOffset { get; }
         LFloat TankBornDelay { get; }
         LFloat DeltaTime { get; }
-        string ConfigPath { get; }
-        string JsonPath { get; }
         string RelPath { set; }
     }
 }

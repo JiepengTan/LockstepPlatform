@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor;
 #endif
 namespace Lockstep.Util {
+    
     public static class PathUtil {
         // 遍历所选目录或文件，递归
         public static void Walk(string path, string exts, System.Action<string> callback, bool _is_save_assets = false,

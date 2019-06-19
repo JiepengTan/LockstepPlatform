@@ -66,8 +66,8 @@ namespace Lockstep.Game {
                 var tilemapSize = tilemap.size;
                 mapDataMin.x = LMath.Min(mapDataMin.x, tilemapMin.x);
                 mapDataMin.y = LMath.Min(mapDataMin.y, tilemapMin.y);
-                mapDataMax.x = LMath.Min(mapDataMax.y, tilemapMin.x + tilemapSize.x);
-                mapDataMax.y = LMath.Min(mapDataMax.y, tilemapMin.y + tilemapSize.y);
+                mapDataMax.x = LMath.Max(mapDataMax.y, tilemapMin.x + tilemapSize.x);
+                mapDataMax.y = LMath.Max(mapDataMax.y, tilemapMin.y + tilemapSize.y);
             }
 
             mapDataSize = (mapDataMax - mapDataMin) + LVector2Int.one;

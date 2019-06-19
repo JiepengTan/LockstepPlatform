@@ -21,11 +21,11 @@ public class MainScript : MonoBehaviour {
 
 
     private void Start(){
-        var iConfig = GetService<IGameConfigService>();
+        var stateService = GetService<IConstStateService>();
 #if UNITY_EDITOR
         var path = Application.dataPath + "/../../../";
         Debug.Log(path);
-        iConfig.RelPath = path;
+        stateService.RelPath = path;
 #endif
         _launcher.DoStart();
     }

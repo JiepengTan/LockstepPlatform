@@ -4,11 +4,10 @@ using Lockstep.Math;
 
 namespace Lockstep.Game {
     public interface IConstStateService : IService {
-
         bool IsVideoLoading { get; set; }
         bool IsVideoMode { get; set; }
         bool IsRunVideo { get; set; }
-        
+
         /// 是否正在重连
         bool IsReconnecting { get; set; }
 
@@ -17,8 +16,10 @@ namespace Lockstep.Game {
 
         int CurLevel { get; set; }
         IContexts Contexts { get; set; }
-        
-        int SnapshotFrameInterval{ get; set; }
-        EPureModeType RunMode{ get; set; }
+
+        int SnapshotFrameInterval { get; set; }
+        EPureModeType RunMode { get; set; }
+        string ConfigPath { get; }
+        string RelPath { get; set; }
     }
 }
