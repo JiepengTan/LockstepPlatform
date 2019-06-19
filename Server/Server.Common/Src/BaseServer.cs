@@ -30,11 +30,15 @@ namespace Lockstep.Server.Common {
         public virtual void DoAwake(ServerConfigInfo info){
             Debug = new DebugInstance(GetType().Name + ": ");
             HasInit = true;
-            Ip = NetworkHelper.GetLocalIP();
+
             serverType = info.type;
             _allConfig = ServerUtil.LoadConfig();
             _allConfig.DeamonPort = _allConfig.GetServerConfig(EServerType.DaemonServer).serverPort;
             _serverConfig = info;
+            Ip = NetworkHelper.GetLocalIP();
+            if (_allConfig.isDebugMode) {
+                Ip = "127.0.0.1";
+            }
             masterType = _allConfig.isMaster ? EMasterType.Master : EMasterType.Slave;
         }
 

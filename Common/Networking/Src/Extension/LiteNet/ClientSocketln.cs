@@ -214,6 +214,10 @@ namespace Lockstep.Networking {
         /// <param name="timeoutMillis"></param>
         /// <returns></returns>
         public IClientSocket Connect(string ip, int port, int timeoutMillis, string key = ""){
+            if (ip == "0.0.0.0") {
+                int sss = 0;
+            }
+
             _ip = ip;
             _port = port;
             _key = key;

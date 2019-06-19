@@ -14,11 +14,12 @@ namespace Lockstep.Game {
         private const string _prefabDir = "UI/";
         [SerializeField] private Transform _uiRoot;
         private Dictionary<string, UIBaseWindow> _windowPool = new Dictionary<string, UIBaseWindow>();
-        private UIRoot uiRoot;
         private Transform normalParent;
         private Transform forwardParent;
         private Transform importParent;
-
+        
+        private HashSet<UIBaseWindow> openedWindows = new HashSet<UIBaseWindow>();
+        private Assembly _uiAssembly;
         public T GetIService<T>() where T : IService{
             return GetService<T>();
         }
@@ -31,15 +32,15 @@ namespace Lockstep.Game {
             }
 
             var uiGo = GameObject.Instantiate(prefab, canvas.transform);
-            uiRoot = uiGo.GetOrAddComponent<UIRoot>();
-            normalParent = uiRoot.TransNormal;
-            forwardParent = uiRoot.TransForward;
-            importParent = uiRoot.TransNotice;
+            var uiRoot = uiGo.GetComponent<IReferenceHolder>();
+            normalParent = uiRoot.GetRef<Transform>("TransNormal");
+            forwardParent = uiRoot.GetRef<Transform>("TransForward");
+            importParent = uiRoot.GetRef<Transform>("TransNotice");
             if (_constStateService.IsVideoMode) {
-                OpenWindow<UILoading>(UIDefine.UILoading);
+                OpenWindow(UIDefine.UILoading);
             }
             else {
-                OpenWindow<UILogin>(UIDefine.UILogin);
+                OpenWindow(UIDefine.UILogin);
             }
         }
 
@@ -50,7 +51,7 @@ namespace Lockstep.Game {
                 case EWindowDepth.Forward: return importParent;
             }
 
-            return uiRoot.transform;
+            return null;
         }
 
         protected void OnEvent_OnTickPlayer(object param){
@@ -59,7 +60,7 @@ namespace Lockstep.Game {
                     window.Close();
                 }
 
-                OpenWindow<UILogin>(UIDefine.UILogin);
+                OpenWindow(UIDefine.UILogin);
             });
         }
 
@@ -70,18 +71,14 @@ namespace Lockstep.Game {
         #region interfaces
 
         public void ShowDialog(string title, string body, Action<bool> resultCallback){
-            OpenWindow<UIDialogBox>(UIDefine.UIDialogBox,
+            OpenWindow(UIDefine.UIDialogBox,
                 (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
         }
 
         public void ShowDialog(string title, string body, Action resultCallback = null){
-            OpenWindow<UIDialogBox>(UIDefine.UIDialogBox,
+            OpenWindow(UIDefine.UIDialogBox,
                 (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
         }
-         public void OpenWindow<T>(WindowCreateInfo info, UICallback callback = null)where T:UIBaseWindow{
-            OpenWindow<T>(info.resDir, info.depth, callback);
-        }
-
         public void CloseWindow(UIBaseWindow window){
             if (window != null) {
                 //unbind Msgs
@@ -106,12 +103,22 @@ namespace Lockstep.Game {
 
         #endregion
 
-        public void OpenWindow<T>(string resPath, EWindowDepth depth, UICallback callback = null){
-            OpenWindow(typeof(T),resPath, GetParentFromDepth(depth), callback);
+      
+
+        public void RegisterAssembly(Assembly uiAssembly){
+            _uiAssembly = uiAssembly;
         }
-
-        private HashSet<UIBaseWindow> openedWindows = new HashSet<UIBaseWindow>();
-
+        
+        public void OpenWindow(WindowCreateInfo info, UICallback callback = null){
+            OpenWindow(info.resDir, info.depth, callback);
+        }
+        public void OpenWindow(string resPath, EWindowDepth depth, UICallback callback = null){
+            OpenWindow(GetType(resPath), resPath, GetParentFromDepth(depth), callback);
+        }
+        private Type GetType(string resPath){
+            var type = _uiAssembly.GetType("Lockstep.Game.UI." + resPath);
+            return type;
+        }
         private void OpenWindow(Type type, string resPath, Transform parent, UICallback callback){
             UIBaseWindow window = null;
             if (_windowPool.TryGetValue(resPath, out var win)) {
@@ -168,6 +175,7 @@ namespace Lockstep.Game {
                 }
             }
         }
+
         void RegisterEventDropdown(object objWin, string compName, UnityAction<int> action){
             var window = (UIBaseWindow) objWin;
             var comp = window.GetRef<Dropdown>(compName);
@@ -179,6 +187,7 @@ namespace Lockstep.Game {
                 Logging.Debug.Log(window.GetType() + " miss ref " + compName);
             }
         }
+
         void RegisterEventToggle(object objWin, string compName, UnityAction<bool> action){
             var window = (UIBaseWindow) objWin;
             var comp = window.GetRef<Toggle>(compName);

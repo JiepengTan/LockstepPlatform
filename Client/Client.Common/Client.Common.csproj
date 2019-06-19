@@ -113,22 +113,7 @@
     <Compile Include="Src\TilemapTools\TileMapSerializer.cs" />
     <Compile Include="Src\UI\UIBaseItem.cs" />
     <Compile Include="Src\UI\UIBaseWindow.cs" />
-    <Compile Include="Src\UI\UICreateRoom.cs" />
     <Compile Include="Src\UI\UIDialogBox.cs" />
-    <Compile Include="Src\UI\UILoading.cs" />
-    <Compile Include="Src\UI\UILobby.cs" />
-    <Compile Include="Src\UI\UILogin.cs" />
-    <Compile Include="Src\UI\UIRoomList.cs" />
-    <Compile Include="Src\UI\UIRoot.cs" />
-    <Compile Include="Src\UI\Utils\BmHelper.cs" />
-    <Compile Include="Src\UI\Utils\GenericPool.cs" />
-    <Compile Include="Src\UI\Utils\GenericUiList.cs" />
-    <Compile Include="Src\UI\Utils\GUIConsole.cs" />
-    <Compile Include="Src\UI\Utils\SafeCoroutine.cs" />
-    <Compile Include="Src\UI\Widget\Draggable.cs" />
-    <Compile Include="Src\UI\Widget\ListItemPlayer.cs" />
-    <Compile Include="Src\UI\Widget\ListItemRoom.cs" />
-    <Compile Include="Src\UI\Widget\LoginFormData.cs" />
     <Compile Include="Src\Utils\BitUtil.cs" />
     <Compile Include="Src\Utils\ExtensionGameObject.cs" />
     <Compile Include="Src\Utils\JsonExtension.cs" />
@@ -167,8 +152,6 @@
     <Content Include="Src\.DS_Store" />
     <Content Include="Src\NaughtyAttributes\README.html" />
     <Content Include="Src\ResManager\.DS_Store" />
-    <Content Include="Src\UI\.DS_Store" />
-    <Content Include="Src\UI\Utils\.DS_Store" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

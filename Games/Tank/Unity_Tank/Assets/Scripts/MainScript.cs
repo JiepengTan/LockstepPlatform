@@ -15,6 +15,7 @@ public class MainScript : MonoBehaviour {
         Screen.SetResolution(1024, 768, false);
         var service = (UnityUIService) (GetService<IUIService>());
         service.rt = rt;
+        service.RegisterAssembly(GetType().Assembly);
     }
 
    

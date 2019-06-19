@@ -32,7 +32,7 @@ namespace Lockstep.Game.UI {
         }
 
         void OnClick_BtnCreateGame(){
-            OpenWindow<UICreateRoom>(UIDefine.UICreateRoom);
+            OpenWindow(UIDefine.UICreateRoom);
         }
 
         void OnClick_BtnCreateLobby(){ }
@@ -55,7 +55,7 @@ namespace Lockstep.Game.UI {
 
         protected void OnEvent_OnJoinRoomResult(object param){
             if (param is RoomPlayerInfo[] playerInfos) {
-                OpenWindow<UILobby>(UIDefine.UILobby);
+                OpenWindow(UIDefine.UILobby);
                 Close();
             }
         }
@@ -73,10 +73,12 @@ namespace Lockstep.Game.UI {
                 roomId = select.RoomId;
             }
 
-            _items.Generate<ListItemRoom>(data, (packet, item) => {
-                item.OnSelectCallback = Select;
-                item.Setup(packet, packet.RoomId == roomId);
-            });
+            if (data != null) {
+                _items.Generate<ListItemRoom>(data, (packet, item) => {
+                    item.OnSelectCallback = Select;
+                    item.Setup(packet, packet.RoomId == roomId);
+                });
+            }
             UpdateGameJoinButton();
         }
 

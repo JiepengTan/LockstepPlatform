@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 
 namespace Lockstep.Game {
     public enum EWindowDepth {
@@ -21,7 +22,9 @@ namespace Lockstep.Game {
 
     public interface IUIService : IService {
         T GetIService<T>() where T : IService;
-        void OpenWindow<T>(string dir, EWindowDepth dep, UICallback callback = null);
+        void RegisterAssembly(Assembly uiAssembly);
+        void OpenWindow(string dir, EWindowDepth dep, UICallback callback = null);
+        void OpenWindow(WindowCreateInfo info, UICallback callback = null);
         void CloseWindow(string dir);
         void CloseWindow(object window = null);
         void ShowDialog(string title, string body, Action<bool> resultCallback);

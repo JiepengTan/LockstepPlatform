@@ -30,11 +30,13 @@
       "type": 2,
       "serverPort": 10201,
       "masterPort": 10202,
+      "masterIp": "127.0.0.1",
       "tcpPort": 7250,
       "udpPort": 7251
     },
     {
       "isMaster": true,
+      "masterIp": "127.0.0.1",
       "type": 3,
       "serverPort": 10301,
       "masterPort": 10302,
@@ -43,6 +45,7 @@
     },
     {
       "isMaster": true,
+      "masterIp": "127.0.0.1",
       "type": 4,
       "serverIpPort": 10401,
       "masterPort": 10402,
@@ -51,6 +54,7 @@
     },
     {
       "isMaster": true,
+      "masterIp": "127.0.0.1",
       "type": 5,
       "serverPort": 10501,
       "masterPort": 10502,

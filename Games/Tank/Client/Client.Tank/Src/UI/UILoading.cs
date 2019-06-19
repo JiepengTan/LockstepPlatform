@@ -37,7 +37,7 @@ public class UILoading : UIBaseWindow {
 
     void EndLoading(){
         SliderProgress.value = 1;
-        OpenWindow<UIGameStatus>(UIDefine.UIGameStatus);
+        OpenWindow(UIDefine.UIGameStatus);
         Close();
     }
 }

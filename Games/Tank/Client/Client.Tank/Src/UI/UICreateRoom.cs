@@ -50,7 +50,7 @@ namespace Lockstep.Game.UI {
         void OnEvent_OnCreateRoom(object param){
             var info = param as RoomInfo;
             if (info != null) {
-                OpenWindow<UILobby>(UIDefine.UILobby);
+                OpenWindow(UIDefine.UILobby);
                 Close();
             }
         }

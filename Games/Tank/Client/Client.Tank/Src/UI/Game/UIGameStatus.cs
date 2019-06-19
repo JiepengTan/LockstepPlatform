@@ -32,7 +32,7 @@ public class UIGameStatus : UIBaseWindow {
     private void Start(){
         UpdateStatus();
         #if UNITY_EDITOR
-        //OpenWindow<UIDebugInfo>(UIDefine.UIDebugInfo);
+        //OpenWindow(UIDefine.UIDebugInfo);
         #endif
     }
 

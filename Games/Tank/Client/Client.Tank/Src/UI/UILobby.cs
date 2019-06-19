@@ -57,12 +57,12 @@ namespace Lockstep.Game.UI {
         }
 
         void OnEvent_OnLeaveRoom(object param){
-            OpenWindow<UIRoomList>(UIDefine.UIRoomList);
+            OpenWindow(UIDefine.UIRoomList);
             Close();
         }
 
         void OnEvent_OnConnectToGameServer(object param){
-            OpenWindow<UILoading>(UIDefine.UILoading);
+            OpenWindow(UIDefine.UILoading);
             Close();
         }
 
