@@ -1446,6 +1446,10 @@ MonoBehaviour:
     bindObj: {fileID: 666549309984016284}
     typeName: InputField
     hasVal: 0
+  - name: BtnCreate
+    bindObj: {fileID: 5083930896878973469}
+    typeName: Button
+    hasVal: 0
 --- !u!1 &2047842662698193818
 GameObject:
   m_ObjectHideFlags: 0

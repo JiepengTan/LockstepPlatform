@@ -862,7 +862,7 @@ GameObject:
   - component: {fileID: 3342815129030494660}
   - component: {fileID: 1246166121850263332}
   m_Layer: 5
-  m_Name: Ready
+  m_Name: ImgReady
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1039,6 +1039,10 @@ MonoBehaviour:
   - name: TextName
     bindObj: {fileID: 1638316341647015157}
     typeName: Text
+    hasVal: 0
+  - name: ImgReady
+    bindObj: {fileID: 1246166121850263332}
+    typeName: Image
     hasVal: 0
 --- !u!1 &1333788182562703383
 GameObject:
@@ -4676,7 +4680,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 2289879959941779488}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.99999964
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4949,7 +4953,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.0000010851179}
+  m_AnchoredPosition: {x: 0, y: 0.000005010836}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!222 &2090922791581292594

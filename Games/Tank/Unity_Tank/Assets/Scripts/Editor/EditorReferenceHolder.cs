@@ -61,7 +61,7 @@ public class EditorReferenceHolder : Editor {
         }
 
         var data = m_RefHolder.Datas[index];
-        if (string.IsNullOrEmpty(m_RefHolder.Datas[index].TypeName)) {
+        if (string.IsNullOrEmpty(data.TypeName)) {
             return;
         }
 

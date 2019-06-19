@@ -39,10 +39,11 @@ namespace Lockstep.Game.UI {
         public List<RefData> Datas = new List<RefData>();
 
         public T GetRef<T>(string name) where T : Object{
-            if (_name2Objs.TryGetValue(name, out Object val)) {
+            if (_name2Objs != null && _name2Objs.TryGetValue(name, out Object val)) {
                 return val as T;
             }
 
+            Debug.Log("Miss Ref " + name);
             return null;
         }
 
@@ -75,12 +76,17 @@ namespace Lockstep.Game.UI {
             }
 
             if (Application.isPlaying) {
+#if !UNITY_EDITOR
                 Datas = null;
+#endif
             }
         }
 
         public void OnDestroy(){
-            Datas = null;
+            if (Application.isPlaying) {
+                Datas = null;
+            }
+
             _name2Objs = null;
             _name2Vals = null;
         }

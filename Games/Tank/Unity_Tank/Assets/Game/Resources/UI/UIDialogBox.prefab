@@ -673,7 +673,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Datas: []
+  Datas:
+  - name: TextTitle
+    bindObj: {fileID: 355492311231717641}
+    typeName: Text
+    hasVal: 0
+  - name: TextContent
+    bindObj: {fileID: 355492311596610035}
+    typeName: Text
+    hasVal: 0
+  - name: BtnYes
+    bindObj: {fileID: 355492310652943317}
+    typeName: Button
+    hasVal: 0
+  - name: BtnNo
+    bindObj: {fileID: 355492311298098783}
+    typeName: Button
+    hasVal: 0
 --- !u!1 &355492312225374156
 GameObject:
   m_ObjectHideFlags: 0

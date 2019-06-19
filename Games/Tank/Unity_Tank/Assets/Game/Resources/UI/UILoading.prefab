@@ -476,7 +476,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7c079c5d066b42f88ae7f4f5675986d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Datas: []
+  Datas:
+  - name: TextInfo
+    bindObj: {fileID: 1043706653350831953}
+    typeName: Text
+    hasVal: 0
+  - name: SliderProgress
+    bindObj: {fileID: 2619697297976410737}
+    typeName: Slider
+    hasVal: 0
 --- !u!1 &9122018967419666279
 GameObject:
   m_ObjectHideFlags: 0

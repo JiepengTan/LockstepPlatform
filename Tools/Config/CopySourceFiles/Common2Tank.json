@@ -1,6 +1,6 @@
 {
   "srcDir": "",
-  "dstDir": "Games/Tank/Unity_Tank/Assets/Plugins/__DllSourceFiles/",
+  "dstDir": "Games/Tank/Unity_Tank/Assets/__DllSourceFiles/",
   "srcProjectDirs": [
     "Common/ECS.Common",
     "Client/Client.Common",
