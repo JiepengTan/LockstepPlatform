@@ -7,7 +7,7 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Game {
     public class UIBaseWindow : MonoBehaviour {
-        public IUIService uiService;
+        public IUIService _uiService;
         public string ResPath { get; set; }
         protected IReferenceHolder _referenceHolder;
 
@@ -21,7 +21,7 @@ namespace Lockstep.Game {
         }
 
         public void Close(){
-            uiService.CloseWindow(ResPath);
+            _uiService.CloseWindow(this);
         }
 
         public virtual void DoAwake(){ }
@@ -35,13 +35,13 @@ namespace Lockstep.Game {
         }
 
         protected void OpenWindow(WindowCreateInfo windowInfo){
-            uiService.OpenWindow(windowInfo.resDir, windowInfo.depth);
+            _uiService.OpenWindow(windowInfo.resDir, windowInfo.depth);
         }
 
         protected void SendMessage(EMsgSC type, object body){ }
 
         protected T GetService<T>() where T : IService{
-            return uiService.GetIService<T>();
+            return _uiService.GetIService<T>();
         }
     }
 }

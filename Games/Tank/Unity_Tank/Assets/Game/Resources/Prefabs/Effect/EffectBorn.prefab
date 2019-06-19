@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2619174733588082141}
-  - component: {fileID: 112158720444704182}
   - component: {fileID: 2433665004566486539}
-  - component: {fileID: 2433665004566486540}
+  - component: {fileID: 6299973038751987871}
   m_Layer: 0
   m_Name: EffectBorn
   m_TagString: Untagged
@@ -33,31 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &112158720444704182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2433665004566486538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a28dd800d2c249d3840fdb333aaf01e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pre: {fileID: 0}
-  next: {fileID: 0}
-  createTick: 0
-  diedTick: 0
-  liveTime:
-    _val: 1000
-  sprites:
-  - {fileID: 21300000, guid: 62714b940a5c345c59b0a2cca9a58664, type: 3}
-  - {fileID: 21300000, guid: 85b1b5879d7054fbda9a85dd3ff0941e, type: 3}
-  - {fileID: 21300000, guid: 6a86348b965c5416a8fe1006e988665a, type: 3}
-  - {fileID: 21300000, guid: 7576f64cf9ea5437fb2a56c94ed11840, type: 3}
-  interval:
-    _val: 500
 --- !u!212 &2433665004566486539
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -103,10 +77,10 @@ SpriteRenderer:
   m_Size: {x: 0.6, y: 0.6}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &2433665004566486540
+--- !u!114 &6299973038751987871
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -115,7 +89,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2433665004566486538}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7d393a3a5d324b80ae7be9189e95d65, type: 3}
+  m_Script: {fileID: 11500000, guid: 445811ccce91441f9947d751621141cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  delay: 1
+  _liveTime:
+    _val: 1000
+  sprites:
+  - {fileID: 21300000, guid: 0ad844e95f3c04e4b85f401e84c0a540, type: 3}
+  - {fileID: 21300000, guid: 09a147429784a48d5aeffd37ef70eed0, type: 3}
+  - {fileID: 21300000, guid: 5a4a939022cfb4ca9ab9a9a3d3893037, type: 3}
+  - {fileID: 21300000, guid: 56941e7b8e32040c7b38f0f91e97c173, type: 3}
+  interval:
+    _val: 500

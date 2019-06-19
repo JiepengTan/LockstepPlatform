@@ -1105,12 +1105,12 @@ PrefabInstance:
     - target: {fileID: 8028312660100317761, guid: 71d59051c8d944a369c556eb37bc6a34,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -53.96
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8028312660100317761, guid: 71d59051c8d944a369c556eb37bc6a34,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8028312660100317761, guid: 71d59051c8d944a369c556eb37bc6a34,
         type: 3}
@@ -5471,6 +5471,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_TileColorArray.Array.data[3].m_Data.b
       value: 0.72538507
+      objectReference: {fileID: 0}
+    - target: {fileID: 8028312660079559817, guid: 71d59051c8d944a369c556eb37bc6a34,
+        type: 3}
+      propertyPath: orthographic size
+      value: 13
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1864137047, guid: 71d59051c8d944a369c556eb37bc6a34, type: 3}

@@ -965,7 +965,7 @@ GameObject:
   - component: {fileID: 3212562389011556085}
   - component: {fileID: 3212562389011556084}
   m_Layer: 5
-  m_Name: RawImage
+  m_Name: RawImg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1223,6 +1223,10 @@ MonoBehaviour:
   - name: TextLife2
     bindObj: {fileID: 2104729809}
     typeName: Transform
+    hasVal: 0
+  - name: RawImg
+    bindObj: {fileID: 3212562389011556084}
+    typeName: RawImage
     hasVal: 0
 --- !u!1 &6108418127372183002
 GameObject:

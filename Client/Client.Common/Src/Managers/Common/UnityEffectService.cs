@@ -7,7 +7,7 @@ namespace Lockstep.Game {
         private EffectProxy tail;
 
         public void CreateEffect(int assetId, LVector2 pos){
-            var path = _resService.GetAssetPath((short) assetId);
+            var path = _resService.GetAssetPath((ushort) assetId);
             if (string.IsNullOrEmpty(path)) return;
             var prefab = Resources.Load<GameObject>(path);
             CreateEffect(prefab, pos);

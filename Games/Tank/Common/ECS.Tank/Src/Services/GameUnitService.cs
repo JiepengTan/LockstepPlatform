@@ -111,7 +111,7 @@ namespace Lockstep.Game {
             entity.dir.value = dir;
             entity.pos.value = createPos;
             if (!_constStateService.IsVideoLoading) {
-                _viewService.BindView(entity, (short) (ushort) assetId, createPos);
+                _viewService.BindView(entity, (ushort) assetId, createPos);
             }
 
             return entity;
@@ -135,7 +135,7 @@ namespace Lockstep.Game {
             entity.dir.value = rawDir;
             if (!_constStateService.IsVideoLoading) {
                 _viewService.DeleteView(entity.localId.value);
-                _viewService.BindView(entity, (short) (ushort) ecsPrefab.asset.assetId, rawPos,
+                _viewService.BindView(entity, (ushort) ecsPrefab.asset.assetId, rawPos,
                     DirUtil.GetDirDeg(rawDir));
             }
         }

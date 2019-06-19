@@ -26,6 +26,15 @@ namespace Lockstep.Game.UI {
             RestoreRememberedValues();
         }
 
+        public void OnEvent_OnConnLogin(object param){
+            RestoreRememberedValues();
+#if UNITY_EDITOR
+            if (_uiService.IsDebugMode) {
+                OnClick_BtnLogin();
+            }
+#endif
+        }
+        
         private void OnEnable(){
             gameObject.transform.localPosition = Vector3.zero;
         }

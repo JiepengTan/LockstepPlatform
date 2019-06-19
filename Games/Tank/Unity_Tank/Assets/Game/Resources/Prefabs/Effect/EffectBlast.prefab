@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7148426488709178694}
-  - component: {fileID: 1157616698138279634}
   - component: {fileID: 1982055441652467462}
+  - component: {fileID: 8246301054496835563}
   m_Layer: 0
   m_Name: EffectBlast
   m_TagString: Untagged
@@ -32,36 +32,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1157616698138279634
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 364227420693640187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a28dd800d2c249d3840fdb333aaf01e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pre: {fileID: 0}
-  next: {fileID: 0}
-  createTick: 0
-  diedTick: 0
-  liveTime:
-    _val: 500
-  sprites:
-  - {fileID: 21300000, guid: 30fe9be73369e4ca08f777daf9b5e2fc, type: 3}
-  - {fileID: 21300000, guid: da8c756447f5547ed911c25e35d2c8d0, type: 3}
-  - {fileID: 21300000, guid: 4adfa2f3a03884036bbec84efb2189b1, type: 3}
-  - {fileID: 21300000, guid: 66b402f69737348f1ac98e6cdff22437, type: 3}
-  - {fileID: 21300000, guid: 2cdeb2f050f7842a595bcf85ed919154, type: 3}
-  - {fileID: 21300000, guid: d49062c75977945a3909ce2cb7c148ce, type: 3}
-  - {fileID: 21300000, guid: 6267c2740e6aa469e8ecb5a39735f486, type: 3}
-  - {fileID: 21300000, guid: 30c285dcdaff04c728cdafd9e053e830, type: 3}
-  renderer: {fileID: 0}
-  interval: 0.5
-  isDestroyAfterFinishPlay: 1
 --- !u!212 &1982055441652467462
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -110,3 +80,28 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8246301054496835563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364227420693640187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 445811ccce91441f9947d751621141cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _liveTime:
+    _val: 1000
+  sprites:
+  - {fileID: 21300000, guid: 8d2528136e2c246338f7614406d4979e, type: 3}
+  - {fileID: 21300000, guid: 9fe69075e84884e34adae4eb0c4750ae, type: 3}
+  - {fileID: 21300000, guid: 6e2416b585e0b4f6584c5c0dc8118832, type: 3}
+  - {fileID: 21300000, guid: 363981a8e1046495aaf9fd735d988c9a, type: 3}
+  - {fileID: 21300000, guid: 03add1c95faf1475b8e0c1b00a4b81db, type: 3}
+  - {fileID: 21300000, guid: 77a5eab1dd1d6426fb62058b8f7ed2e6, type: 3}
+  - {fileID: 21300000, guid: d22e40cff7dcf468f80b94691b00c983, type: 3}
+  - {fileID: 21300000, guid: 8b09a52f5bdef40f1b3a83969aeb82f2, type: 3}
+  interval:
+    _val: 1000

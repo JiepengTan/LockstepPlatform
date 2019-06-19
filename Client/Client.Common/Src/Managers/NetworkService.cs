@@ -180,6 +180,7 @@ namespace Lockstep.Game {
         void IRoomMsgHandler.SetLogger(DebugInstance debug){ }
 
         public void OnConnectedLoginServer(){
+            EventHelper.Trigger(EEvent.OnConnLogin);
             Log("OnConnLogin ");
         }
 

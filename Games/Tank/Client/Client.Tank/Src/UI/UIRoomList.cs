@@ -21,9 +21,16 @@ namespace Lockstep.Game.UI {
         public override void DoAwake(){
             _items = new GenericUIList<RoomInfo>(ListItemRoom, LayoutGroup);
             var service = GetService<INetworkService>();
-            Setup((service as NetworkService)?.RoomInfos);
+            var infos = (service as NetworkService)?.RoomInfos;
+            Setup(infos);
+#if UNITY_EDITOR
+            if (_uiService.IsDebugMode &&  infos!= null ) {
+                _items.GetObjectAt(0).GetComponent<ListItemRoom>().SetIsSelected(true);
+                OnClick_BtnJoinRoom();
+            }
+#endif
         }
-
+    
         void OnClick_BtnJoinRoom(){
             var selected = GetSelectedItem();
             if (selected == null)
@@ -74,7 +81,6 @@ namespace Lockstep.Game.UI {
             }
 
             if (data != null) {
-                Debug.LogError(data.ToJson());
                 _items.Generate<ListItemRoom>(data, (packet, item) => {
                     item.OnSelectCallback = Select;
                     item.Setup(packet, packet.RoomId == roomId);

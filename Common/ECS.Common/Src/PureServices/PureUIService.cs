@@ -7,11 +7,12 @@ namespace Lockstep.Game {
             return GetService<T>();
         }
 
+        public   bool IsDebugMode { get; set; }
         public void RegisterAssembly(Assembly uiAssembly){ }
         public void OpenWindow(string dir, EWindowDepth dep, UICallback callback = null){ }
         public void OpenWindow(WindowCreateInfo info, UICallback callback = null){ }
         public void CloseWindow(string dir){ }
-        public void CloseWindow(object window = null){ }
+        public void CloseWindow(object window){ }
         public void ShowDialog(string title, string body, Action<bool> resultCallback){ }
     }
 }

@@ -2,6 +2,7 @@ namespace Lockstep {
     public enum EEvent {
         TryLogin,
         OnTickPlayer,
+        OnConnLogin,
         OnLoginFailed,
         OnLoginResult,
         OnLeaveRoom,

@@ -306,6 +306,7 @@ public class EditorReferenceHolder : Editor {
                     typeof(LayoutGroup),
                     typeof(Dropdown),
                     typeof(GameObject),
+                    typeof(RawImage),
                     typeof(Transform),
                 };
                 var fields = targetType

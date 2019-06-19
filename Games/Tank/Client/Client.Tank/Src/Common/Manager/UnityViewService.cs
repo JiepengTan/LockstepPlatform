@@ -22,7 +22,7 @@ namespace Lockstep.Game {
                 GameMatcher.Dir));
         }
 
-        public void BindView(IEntity entity, short assetId, LVector2 createPos, int deg = 0){
+        public void BindView(IEntity entity, ushort assetId, LVector2 createPos, int deg = 0){
             var path = _resService.GetAssetPath(assetId);
             if (string.IsNullOrEmpty(path)) return;
             var prefab = Resources.Load<GameObject>(path);
@@ -74,7 +74,7 @@ namespace Lockstep.Game {
             }
 
             var assetId = entity.asset.assetId;
-            var path = _resService.GetAssetPath((short) assetId);
+            var path = _resService.GetAssetPath((ushort) assetId);
             if (string.IsNullOrEmpty(path)) return;
             var prefab = Resources.Load<GameObject>(path);
             var go = Object.Instantiate(prefab,
