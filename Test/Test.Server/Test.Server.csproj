@@ -42,6 +42,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj">
       <Project>{2ee8f630-4373-4f2e-b988-b576a7b6fe52}</Project>
       <Name>NetMsg.Common</Name>

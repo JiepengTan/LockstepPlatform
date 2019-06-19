@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using Lockstep.Client;
 using Lockstep.Networking;
@@ -13,6 +11,8 @@ namespace Test {
         static NetworkProxy GetDebugClient(){
              return new FakeClient();
         }
+
+        private static NetworkProxy client;
         public static void Main(string[] args){
             //TestNetwork();
             if (args.Length == 0) {
@@ -23,8 +23,18 @@ namespace Test {
                FakeClient. _RandomSeed = DateTime.Now.Millisecond;
             }
 
-            ClientUtil.RunClient(GetDebugClient());
+            client = GetDebugClient();
+            ClientUtil.RunClient(client);
             while (true) {
+                var cmd = Console.ReadLine();
+                if (cmd == "kc") {
+                    client.DoDestroy();
+                }
+
+                if (cmd == "nc") {
+                    client = GetDebugClient();
+                    ClientUtil.RunClient(client);
+                }
                 Thread.Sleep(30);
             }
         }
