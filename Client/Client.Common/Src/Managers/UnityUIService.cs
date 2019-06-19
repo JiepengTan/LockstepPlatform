@@ -36,10 +36,10 @@ namespace Lockstep.Game {
             forwardParent = uiRoot.TransForward;
             importParent = uiRoot.TransNotice;
             if (_constStateService.IsVideoMode) {
-                OpenWindow(UIDefine.UILoading);
+                OpenWindow<UILoading>(UIDefine.UILoading);
             }
             else {
-                OpenWindow(UIDefine.UILogin);
+                OpenWindow<UILogin>(UIDefine.UILogin);
             }
         }
 
@@ -59,7 +59,7 @@ namespace Lockstep.Game {
                     window.Close();
                 }
 
-                OpenWindow(UIDefine.UILogin);
+                OpenWindow<UILogin>(UIDefine.UILogin);
             });
         }
 
@@ -70,17 +70,16 @@ namespace Lockstep.Game {
         #region interfaces
 
         public void ShowDialog(string title, string body, Action<bool> resultCallback){
-            OpenWindow(UIDefine.UIDialogBox,
+            OpenWindow<UIDialogBox>(UIDefine.UIDialogBox,
                 (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
         }
 
         public void ShowDialog(string title, string body, Action resultCallback = null){
-            OpenWindow(UIDefine.UIDialogBox,
+            OpenWindow<UIDialogBox>(UIDefine.UIDialogBox,
                 (window) => { (window as UIDialogBox)?.Init(title, body, resultCallback); });
         }
-
-        public void OpenWindow(WindowCreateInfo info, UICallback callback = null){
-            OpenWindow(info.resDir, info.depth, callback);
+         public void OpenWindow<T>(WindowCreateInfo info, UICallback callback = null)where T:UIBaseWindow{
+            OpenWindow<T>(info.resDir, info.depth, callback);
         }
 
         public void CloseWindow(UIBaseWindow window){
@@ -107,13 +106,13 @@ namespace Lockstep.Game {
 
         #endregion
 
-        public void OpenWindow(string resPath, EWindowDepth depth, UICallback callback = null){
-            OpenWindow(resPath, GetParentFromDepth(depth), callback);
+        public void OpenWindow<T>(string resPath, EWindowDepth depth, UICallback callback = null){
+            OpenWindow(typeof(T),resPath, GetParentFromDepth(depth), callback);
         }
 
         private HashSet<UIBaseWindow> openedWindows = new HashSet<UIBaseWindow>();
 
-        private void OpenWindow(string resPath, Transform parent, UICallback callback){
+        private void OpenWindow(Type type, string resPath, Transform parent, UICallback callback){
             UIBaseWindow window = null;
             if (_windowPool.TryGetValue(resPath, out var win)) {
                 win.gameObject.SetActive(true);
@@ -129,14 +128,14 @@ namespace Lockstep.Game {
                 }
 
                 var uiGo = GameObject.Instantiate(prefab, parent);
-                window = uiGo.GetOrAddComponent<UIBaseWindow>();
+                window = uiGo.GetOrAddComponent<UIBaseWindow>(type);
                 window.ResPath = resPath;
             }
 
             openedWindows.Add(window);
+            window.uiService = this;
             window.DoAwake();
             window.DoStart();
-            window.uiService = this;
             _eventRegisterService.RegisterEvent(window);
             RegisterUiEvent(window);
             callback?.Invoke(window);

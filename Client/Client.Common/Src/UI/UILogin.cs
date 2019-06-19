@@ -15,13 +15,14 @@ namespace Lockstep.Game.UI
         private Button BtnLogin => GetRef<Button>("BtnLogin");
         private Toggle TglRemember => GetRef<Toggle>("TglRemember");
         private InputField InputPassword => GetRef<InputField>("InputPassword");
-        private InputField InputUsername => GetRef<InputField>("Username");
+        private InputField InputUsername => GetRef<InputField>("InputUsername");
 
         protected string RememberPrefKey = "lp.auth.remember";
         protected string UsernamePrefKey = "lp.auth.username";
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             TextError.gameObject.SetActive(false);
         }
 
@@ -112,12 +113,12 @@ namespace Lockstep.Game.UI
 
         public void OnEvent_OnLoginResult(object param){
             if (param != null) {
-                OpenWindow(UIDefine.UIRoomList);
+                OpenWindow<UIRoomList>(UIDefine.UIRoomList);
                 Close();
             }
         }  
         public  void OnEvent_OnConnectToGameServer(object param){
-            OpenWindow(UIDefine.UILoading);
+            OpenWindow<UILoading>(UIDefine.UILoading);
             Close();
         }
 

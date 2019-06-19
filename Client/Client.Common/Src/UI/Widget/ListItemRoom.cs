@@ -19,7 +19,7 @@ namespace Lockstep.Game.UI {
         public Color DefaultBgColor;
         public Color SelectedBgColor;
         public string UnknownMapName = "Unknown";
-        public Action<object> OnSelectCallback;
+        public Action<ListItemRoom> OnSelectCallback;
 
         public bool IsSelected;
 
@@ -27,9 +27,9 @@ namespace Lockstep.Game.UI {
         ////RawData.IsPasswordProtected;
 
         // Use this for initialization
-        protected override void Awake(){
-            base.Awake();
-            ImgBg = GetComponent<Image>();
+        protected override void DoAwake(){
+            ImgBg = GetComponent<Image>(); 
+            SelectedBgColor = BmHelper.SelectColor;
             DefaultBgColor = ImgBg.color;
             GetComponent<Button>().onClick.AddListener(OnClick);
             SetIsSelected(false);

@@ -9,17 +9,18 @@ namespace Lockstep.Game.UI {
         private Dropdown DropMapId=> GetRef<Dropdown>("DropMapId");
         private Dropdown DropMaxCount=> GetRef<Dropdown>("DropMaxCount");
         private InputField InputRoomName=> GetRef<InputField>("InputRoomName");
+        private Button BtnCreate=> GetRef<Button>("BtnCreate");
 
         private int _curMaxCount = 1;
         private int _curMapIdx = 0;
 
-        protected override void Awake(){
+       
+        public override void DoAwake(){
             DropMapId.ClearOptions();
             DropMapId.AddOptions(MapNames);
             DropMaxCount.ClearOptions();
             DropMaxCount.AddOptions(MaxCounts);
         }
-
         private List<string> MaxCounts {
             get {
                 return new List<string>() {
@@ -49,7 +50,7 @@ namespace Lockstep.Game.UI {
         void OnEvent_OnCreateRoom(object param){
             var info = param as RoomInfo;
             if (info != null) {
-                OpenWindow(UIDefine.UILobby);
+                OpenWindow<UILobby>(UIDefine.UILobby);
                 Close();
             }
         }

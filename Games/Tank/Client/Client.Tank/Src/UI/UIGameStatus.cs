@@ -4,21 +4,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class UIGameStatus : UIBaseWindow {
-    public Transform tranLevel;
-    public Transform tranEnemy;
-    public Transform tranMsg;
-    public Transform tranScore1;
-    public Transform tranLife1;
-    public Transform tranScore2;
-    public Transform tranLife2;
-
+    private Transform TextMsg=> GetRef<Transform>("TextMsg");
+    private Transform TextLevel=> GetRef<Transform>("TextLevel");
+    private Transform TextEnemyCount=> GetRef<Transform>("TextEnemyCount");
+    private Transform TextScore1=> GetRef<Transform>("TextScore1");
+    private Transform TextLife1=> GetRef<Transform>("TextLife1");
+    private Transform TextScore2=> GetRef<Transform>("TextScore2");
+    private Transform TextLife2=> GetRef<Transform>("TextLife2");
+    
     public RawImage rawImage;
-    void ShowPlayerInfo(ActorEntity entity, Transform tranScore, Transform tranLife){
+    void ShowPlayerInfo(ActorEntity entity, Transform textScore, Transform textLife){
         if (entity == null) return;
         var score = entity.score.value;
         var life = entity.life.value;
-        ShowText(tranLife, life.ToString());
-        ShowText(tranScore, score.ToString());
+        ShowText(textLife, life.ToString());
+        ShowText(textScore, score.ToString());
     }
 
     void ShowText(Transform parent, string txt){
@@ -32,12 +32,12 @@ public class UIGameStatus : UIBaseWindow {
     private void Start(){
         UpdateStatus();
         #if UNITY_EDITOR
-        //OpenWindow(UIDefine.UIDebugInfo);
+        //OpenWindow<UIDebugInfo>(UIDefine.UIDebugInfo);
         #endif
     }
 
     void Update(){
-        UpdateStatus();
+        //UpdateStatus();
     }
 
     void UpdateStatus(){
@@ -49,11 +49,11 @@ public class UIGameStatus : UIBaseWindow {
         var actor = Contexts.sharedInstance.actor;
         var player1 = actor.GetEntityWithId(0);
         var player2 = actor.GetEntityWithId(1);
-        ShowPlayerInfo(player1, tranScore1, tranLife1);
-        ShowPlayerInfo(player2, tranScore2, tranLife2);
+        ShowPlayerInfo(player1, TextScore1, TextLife1);
+        ShowPlayerInfo(player2, TextScore2, TextLife2);
         var gameState = Contexts.sharedInstance.gameState;
         var game = Contexts.sharedInstance.game;
-        ShowText(tranEnemy, (GameStateService.Instance.remainCountToBorn).ToString());
-        ShowText(tranLevel, (ConstStateService.Instance.CurLevel).ToString());
+        ShowText(TextEnemyCount, (GameStateService.Instance.remainCountToBorn).ToString());
+        ShowText(TextLevel, (ConstStateService.Instance.CurLevel).ToString());
     }
 }

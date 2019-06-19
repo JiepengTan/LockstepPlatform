@@ -7,17 +7,17 @@ using UnityEngine.UI;
 namespace Lockstep.Game.UI {
     public class ListItemPlayer : UIBaseItem {
         private Text TextName=> GetRef<Text>("TextName");
+        private Image ImgReady=> GetRef<Image>("ImgReady");
         public RoomPlayerInfo RawData { get; protected set; }
-        public Image BgImage;
         private Color DefaultBgColor;
         public Color SelectedBgColor;
         public int GameId { get; private set; }
         public bool IsSelected { get; private set; }
         public bool IsReady { get; set; }
 
-        protected override void Awake(){
-            BgImage = GetComponent<Image>();
-            DefaultBgColor = BgImage.color;
+        protected override void DoAwake(){
+            DefaultBgColor = ImgReady.color;
+            SelectedBgColor = BmHelper.SelectColor;
             SetIsSelected(false);
         }
 
@@ -33,7 +33,7 @@ namespace Lockstep.Game.UI {
         }
 
         public void SetReady(bool isReady){
-            BgImage.color = isReady ? SelectedBgColor : DefaultBgColor;
+            ImgReady.color = isReady ? SelectedBgColor : DefaultBgColor;
         }
 
     }

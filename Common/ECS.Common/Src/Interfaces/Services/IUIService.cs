@@ -21,7 +21,7 @@ namespace Lockstep.Game {
 
     public interface IUIService : IService {
         T GetIService<T>() where T : IService;
-        void OpenWindow(string dir, EWindowDepth dep, UICallback callback = null);
+        void OpenWindow<T>(string dir, EWindowDepth dep, UICallback callback = null);
         void CloseWindow(string dir);
         void CloseWindow(object window = null);
         void ShowDialog(string title, string body, Action<bool> resultCallback);

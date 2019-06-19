@@ -138,7 +138,7 @@ namespace Lockstep.Game.UI
             return default(T2);
         }
 
-        public void Generate<T2>(IEnumerable<T> items, Action<T, T2> transformer) where T2 : class
+        public void Generate<T2>(IEnumerable<T> items, Action<T, T2> transformer) where T2 : Component
         {
             var index = 0;
 
@@ -159,11 +159,11 @@ namespace Lockstep.Game.UI
                     _items.Add(listItem);
                 }
                 
+                listItem.SetActive(true);
                 if (typeof(T2) == typeof(GameObject))
                     transformer.Invoke(item, listItem as T2);
                 else
-                    transformer.Invoke(item, listItem.GetComponent<T2>());
-                listItem.SetActive(true);
+                    transformer.Invoke(item, listItem.GetOrAddComponent<T2>());
                 index++;
             }
 
@@ -175,10 +175,6 @@ namespace Lockstep.Game.UI
             }
         }
 
-        public void Generate(IEnumerable<T> items, Action<T, GameObject> transformer)
-        {
-            Generate<GameObject>(items, transformer);
-        }
 
         public GameObject GetObjectAt(int index)
         {

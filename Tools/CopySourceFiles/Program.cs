@@ -25,8 +25,7 @@ namespace CopySourceFiles {
             }
             else {
                 Console.WriteLine("Need config path");
-                CopyFilesByConfig(AppDomain.CurrentDomain.BaseDirectory +
-                                  "../Tools/Config/CopySourceFiles/Tank2Common.json");
+                //CopyFilesByConfig(AppDomain.CurrentDomain.BaseDirectory +"../Tools/Config/CopySourceFiles/Tank2Common.json");
                 //PathUtil.Walk(ConfigPath, "*.json", (path) => { CopyFilesByConfig(path); });
             }
         }

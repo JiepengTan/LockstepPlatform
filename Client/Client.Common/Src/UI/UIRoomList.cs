@@ -8,19 +8,20 @@ namespace Lockstep.Game.UI {
     ///     Represents a basic view for login form
     /// </summary>
     public class UIRoomList : UIBaseWindow {
-        private Button BtnJoinRoom=> GetRef<Button>("BtnJoinRoom");
-        private Button BtnCreateGame=> GetRef<Button>("BtnCreateGame");
-        private Button BtnCreateLobby=> GetRef<Button>("BtnCreateLobby");
-        private Button BtnRefresh=> GetRef<Button>("BtnRefresh");
+        private Button BtnJoinRoom => GetRef<Button>("BtnJoinRoom");
+        private Button BtnCreateGame => GetRef<Button>("BtnCreateGame");
+        private Button BtnCreateLobby => GetRef<Button>("BtnCreateLobby");
+        private Button BtnRefresh => GetRef<Button>("BtnRefresh");
         private LayoutGroup LayoutGroup => GetRef<LayoutGroup>("LayoutGroup");
-        private GameObject ListItemRoom=> GetRef<GameObject>("ListItemRoom");
-        
+        private GameObject ListItemRoom => GetRef<GameObject>("ListItemRoom");
+
         private GenericUIList<RoomInfo> _items;
 
-        protected override void Awake(){
-            base.Awake();
+
+        public override void DoAwake(){
             _items = new GenericUIList<RoomInfo>(ListItemRoom, LayoutGroup);
-            Setup(GetService<NetworkService>().RoomInfos);
+            var service = GetService<INetworkService>();
+            Setup((service as NetworkService)?.RoomInfos);
         }
 
         void OnClick_BtnJoinRoom(){
@@ -31,7 +32,7 @@ namespace Lockstep.Game.UI {
         }
 
         void OnClick_BtnCreateGame(){
-            OpenWindow(UIDefine.UICreateRoom);
+            OpenWindow<UICreateRoom>(UIDefine.UICreateRoom);
         }
 
         void OnClick_BtnCreateLobby(){ }
@@ -54,12 +55,13 @@ namespace Lockstep.Game.UI {
 
         protected void OnEvent_OnJoinRoomResult(object param){
             if (param is RoomPlayerInfo[] playerInfos) {
-                OpenWindow(UIDefine.UILobby);
+                OpenWindow<UILobby>(UIDefine.UILobby);
                 Close();
             }
         }
 
         private void OnEnable(){
+            if (_items == null) return;
             Setup(NetworkService.Instance.RoomInfos);
             NetworkService.Instance.ReqRoomList(0);
         }
@@ -71,7 +73,10 @@ namespace Lockstep.Game.UI {
                 roomId = select.RoomId;
             }
 
-            _items.Generate<ListItemRoom>(data, (packet, item) => { item.Setup(packet, packet.RoomId == roomId); });
+            _items.Generate<ListItemRoom>(data, (packet, item) => {
+                item.OnSelectCallback = Select;
+                item.Setup(packet, packet.RoomId == roomId);
+            });
             UpdateGameJoinButton();
         }
 
@@ -82,7 +87,7 @@ namespace Lockstep.Game.UI {
         }
 
         public ListItemRoom GetSelectedItem(){
-            return _items.FindObject<ListItemRoom>(item => item.IsSelected);
+            return _items.FindObject<ListItemRoom>(item => item != null && item.IsSelected);
         }
 
         public void Select(ListItemRoom listItemRoom){

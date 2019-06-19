@@ -34,8 +34,8 @@ namespace Lockstep.Game {
             return btn;
         }
 
-        protected void OpenWindow(WindowCreateInfo windowInfo){
-            uiService.OpenWindow(windowInfo.resDir, windowInfo.depth);
+        protected void OpenWindow<T>(WindowCreateInfo windowInfo)where T:UIBaseWindow{
+            uiService.OpenWindow<T>(windowInfo.resDir, windowInfo.depth);
         }
 
         protected void SendMessage(EMsgSC type, object body){ }

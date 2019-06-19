@@ -23,7 +23,9 @@ namespace Lockstep.Game {
         }
 
         public void BindView(IEntity entity, short assetId, LVector2 createPos, int deg = 0){
-            var prefab = Resources.Load<GameObject>(_resService.GetAssetPath(assetId));
+            var path = _resService.GetAssetPath(assetId);
+            if (string.IsNullOrEmpty(path)) return;
+            var prefab = Resources.Load<GameObject>(path);
             var go = GameObject.Instantiate(prefab, transform.position + createPos.ToVector3(),
                 Quaternion.Euler(0, 0, deg), transform);
             go.AddComponent<PosListener>();
@@ -72,7 +74,9 @@ namespace Lockstep.Game {
             }
 
             var assetId = entity.asset.assetId;
-            var prefab = Resources.Load<GameObject>(_resService.GetAssetPath((short) assetId));
+            var path = _resService.GetAssetPath((short) assetId);
+            if (string.IsNullOrEmpty(path)) return;
+            var prefab = Resources.Load<GameObject>(path);
             var go = Object.Instantiate(prefab,
                 transform.position + entity.pos.value.ToVector3(),
                 Quaternion.Euler(0, 0, DirUtil.GetDirDeg(entity.dir.value)), transform);

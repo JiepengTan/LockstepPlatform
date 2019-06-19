@@ -9,6 +9,7 @@ namespace Lockstep.Game.UI
     {
         public const int MaxUnetConnections = 500;
 
+        public static Color SelectColor = BmHelper.HexToColor("599F29");
         /// <summary>
         /// Creates a random string of a given length.
         /// Uses a substring of guid

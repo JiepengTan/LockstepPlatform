@@ -15,12 +15,10 @@ namespace Lockstep.Game.UI {
         private GenericUIList<RoomPlayerInfo> _items;
         private bool _isReady = false;
 
-        protected override void Awake(){
-            base.Awake();
+        public override void DoAwake(){
             _items = new GenericUIList<RoomPlayerInfo>(ListItemPlayer, LayoutGroup);
             Setup(NetworkService.Instance.PlayerInfos);
         }
-
         private void OnEnable(){
             Setup(NetworkService.Instance.PlayerInfos);
         }
@@ -59,17 +57,17 @@ namespace Lockstep.Game.UI {
         }
 
         void OnEvent_OnLeaveRoom(object param){
-            OpenWindow(UIDefine.UIRoomList);
+            OpenWindow<UIRoomList>(UIDefine.UIRoomList);
             Close();
         }
 
         void OnEvent_OnConnectToGameServer(object param){
-            OpenWindow(UIDefine.UILoading);
+            OpenWindow<UILoading>(UIDefine.UILoading);
             Close();
         }
 
         public void Setup(IEnumerable<RoomPlayerInfo> data){
-            _items.Generate<ListItemPlayer>(data, (packet, item) => { item.Setup(packet); });
+            _items?.Generate<ListItemPlayer>(data, (packet, item) => { item.Setup(packet); });
         }
 
         public ListItemPlayer GetSelectedItem(){
