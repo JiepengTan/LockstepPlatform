@@ -2,9 +2,7 @@
 #if UNITY_EDITOR || DEBUG_EVENT_TRIGGER
 #define _DEBUG_EVENT_TRIGGER
 #endif
-
 using System.Collections.Generic;
-using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep {
     public delegate void GlobalEventHandler(object param);

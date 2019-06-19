@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
-
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 namespace Lockstep.Util {
     public static class PathUtil {
         // 遍历所选目录或文件，递归

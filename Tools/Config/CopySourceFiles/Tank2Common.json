@@ -3,6 +3,13 @@
   "dstDir": "",
   "srcProjectDirs": [
     "Common/ECS.Common",
+    "Common/Logging",
+    "Common/Math",
+    "Common/Math.Editor",
+    "Common/NetMsg.Common",
+    "Common/Networking",
+    "Common/Serializaition",
+    "Common/Util",
     "Client/Client.Common",
     "Games/Tank/Client/Client.Tank",
     "Games/Tank/Client/Client.Tank.Editor",

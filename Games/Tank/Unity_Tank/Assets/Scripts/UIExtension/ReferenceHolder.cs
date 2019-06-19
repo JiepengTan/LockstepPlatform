@@ -74,12 +74,6 @@ namespace Lockstep.Game.UI {
                     _name2Vals.Add(item.name, item.bindVal);
                 }
             }
-
-            if (Application.isPlaying) {
-#if !UNITY_EDITOR
-                Datas = null;
-#endif
-            }
         }
 
         public void OnDestroy(){

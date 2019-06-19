@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Lockstep.Logging;
 using NetMsg.Common;
 

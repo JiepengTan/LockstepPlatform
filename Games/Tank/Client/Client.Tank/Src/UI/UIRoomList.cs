@@ -74,6 +74,7 @@ namespace Lockstep.Game.UI {
             }
 
             if (data != null) {
+                Debug.LogError(data.ToJson());
                 _items.Generate<ListItemRoom>(data, (packet, item) => {
                     item.OnSelectCallback = Select;
                     item.Setup(packet, packet.RoomId == roomId);
