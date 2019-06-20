@@ -59,7 +59,7 @@
 - Network using LiteNetLib: [https://github.com/RevenantX/LiteNetLib][2] 
 - Uses Entitas as ECS Framework: [https://github.com/sschmid/Entitas-CSharp][3] 
 - Deterministic Math lib: [https://github.com/JiepengTan/LockstepMath][4] 
-- Deterministic Collision2D lib  : [https://github.com/JiepengTan/LockstepCollision2D][5] 
+- Deterministic Collision lib  : [https://github.com/JiepengTan/LockstepCollision][5] 
 
 
 
@@ -67,6 +67,6 @@
  [2]: https://github.com/RevenantX/LiteNetLib
  [3]: https://github.com/sschmid/Entitas-CSharp
  [4]: https://github.com/JiepengTan/LockstepMath
- [5]: https://github.com/JiepengTan/LockstepCollision2D
+ [5]: https://github.com/JiepengTan/LockstepCollision
  [6]: https://github.com/JiepengTan/LockstepPlatform/releases
  [7]: https://github.com/sschmid/Entitas-CSharp/releases
