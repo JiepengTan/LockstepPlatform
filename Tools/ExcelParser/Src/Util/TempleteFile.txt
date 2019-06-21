@@ -1,0 +1,20 @@
+/// <summary>
+/// Auto generate by tools
+/// Don't modify it by hand
+/// </summary>
+public class #ClassName : TableData<#ClassName>
+{
+    static string tableName = "#ClassName";
+#PropertyDeclare
+    //对应的Table文件
+    protected override string Name() { return tableName; }
+
+    protected override BaseTableData OnGetVal(TableTypesData bytesData)
+    {
+        var table = new #ClassName();
+        bytesData.BeginLoad();
+        //设置字段值
+#PropertyAssign
+        return table;
+    }
+}

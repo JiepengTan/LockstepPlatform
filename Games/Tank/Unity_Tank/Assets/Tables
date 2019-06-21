@@ -1,0 +1,33 @@
+﻿/// <summary>
+/// Auto generate by tools
+/// Don't modify it by hand
+/// </summary>
+namespace Lockstep.Game{
+    public class TableAssets : TableData<Table_Assets>
+    {
+        static string tableName = "Assets";
+
+        /// id
+        public int id;
+        /// 目录
+        public string dir;
+        /// 名字
+        public string name;
+        /// 后缀
+        public string suffix;
+        ///对应的Table文件名
+        protected override string Name() { return tableName; }
+    
+        protected override BaseTableData OnGetVal(TableTypesData bytesData)
+        {
+            var table = new Table_Assets();
+            bytesData.BeginLoad();
+      
+            table.id = bytesData.ReadInt32();      
+            table.dir = bytesData.ReadString();      
+            table.name = bytesData.ReadString();      
+            table.suffix = bytesData.ReadString();
+            return table;
+        }
+    }
+}

@@ -62,6 +62,39 @@ public class EditorUtil {
 #endif
     }
 
+    public static void WalkWithProcessBar(string path, string exts, System.Action<string> callback,string title = "Batch Modify Prefabs"){
+        var count = 0;
+        PathUtil.Walk(path, exts, (_cPath) => { ++count; });
+        if (count == 0) return;
+        var idx = 0;
+        bool isNeedCancel = false;
+#if UNITY_EDITOR
+        try {
+            PathUtil.Walk(path, exts, (_cPath) => {
+                ++idx;
+                if(isNeedCancel) return;
+                if (EditorUtility.DisplayCancelableProgressBar(title, "Process " + path + "Exts:" + exts,
+                    idx * 0.1f / count)) {
+                    isNeedCancel = true;
+                    return;
+                }
+            });
+        }
+        catch (Exception ) {
+            throw;
+        }
+        finally {
+            if (isNeedCancel) {
+                Debug.Log($" Task {path}:{exts} Canceled ");
+            }
+
+            EditorUtility.ClearProgressBar();
+            AssetDatabase.Refresh();
+            AssetDatabase.SaveAssets();
+        }
+#endif
+    }
+
     public static void WalkWithProcessBar(Func<bool> callback, Func<string> processBarInfo, Func<float> process,
         string title = "Batch Modify Prefabs"){
 #if UNITY_EDITOR
@@ -131,7 +164,7 @@ public class EditorUtil {
 #endif
     }
 
-    public static void WalkAllChild<T>(Transform parent,Action<T> callback) where T:Component{
+    public static void WalkAllChild<T>(Transform parent, Action<T> callback) where T : Component{
         Queue<Transform> queue = new Queue<Transform>();
         queue.Enqueue(parent);
         while (queue.Count > 0) {
@@ -140,6 +173,7 @@ public class EditorUtil {
             if (comp != null) {
                 callback(comp);
             }
+
             foreach (Transform childTran in trans) {
                 queue.Enqueue(childTran);
             }
@@ -153,7 +187,7 @@ public class EditorUtil {
     /// <param name="callback"></param>
     public static void WalkAllPrefab(string pPath, Func<GameObject, bool> callback, bool includechildfloder = true){
 #if UNITY_EDITOR
-        if (!pPath.StartsWith("/")&& !pPath.Contains(Application.dataPath)) {
+        if (!pPath.StartsWith("/") && !pPath.Contains(Application.dataPath)) {
             pPath = Path.Combine(Application.dataPath, pPath);
         }
 
