@@ -1,19 +1,15 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Lockstep.AI
 {
-    public class BTActionLoop : BTAction
+    public unsafe partial class BTActionLoop : BTAction
     {
         public const int INFINITY = -1;
-        //--------------------------------------------------------
-        protected class BTActionLoopContext : BTActionContext
+        [StructLayout(LayoutKind.Sequential, Pack = NativeHelper.STRUCT_PACK)]
+        public unsafe partial struct BTActionLoopContext 
         {
             internal int currentCount;
-
-            public BTActionLoopContext()
-            {
-                currentCount = 0;
-            }
         }
         //--------------------------------------------------------
         private int _loopCount;
@@ -31,8 +27,8 @@ namespace Lockstep.AI
         //-------------------------------------------------------
         protected override bool OnEvaluate(/*in*/BTWorkingData wData)
         {
-            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
-            bool checkLoopCount = (_loopCount == INFINITY || thisContext.currentCount < _loopCount);
+            var thisContext = (BTActionLoopContext*)wData.GetContext(_uniqueKey);
+            bool checkLoopCount = (_loopCount == INFINITY || thisContext->currentCount < _loopCount);
             if (checkLoopCount == false) {
                 return false;
             }
@@ -44,14 +40,14 @@ namespace Lockstep.AI
         }
         protected override int OnUpdate(BTWorkingData wData)
         {
-            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
+            var thisContext = (BTActionLoopContext*)wData.GetContext(_uniqueKey);
             int runningStatus = BTRunningStatus.FINISHED;
             if (IsIndexValid(0)) {
                 BTAction node = GetChild<BTAction>(0);
                 runningStatus = node.Update(wData);
                 if (BTRunningStatus.IsFinished(runningStatus)) {
-                    thisContext.currentCount++;
-                    if (thisContext.currentCount < _loopCount || _loopCount == INFINITY) {
+                    thisContext->currentCount++;
+                    if (thisContext->currentCount < _loopCount || _loopCount == INFINITY) {
                         runningStatus = BTRunningStatus.EXECUTING;
                     }
                 }
@@ -60,12 +56,12 @@ namespace Lockstep.AI
         }
         protected override void OnTransition(BTWorkingData wData)
         {
-            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
+            var thisContext = (BTActionLoopContext*)wData.GetContext(_uniqueKey);
             if (IsIndexValid(0)) {
                 BTAction node = GetChild<BTAction>(0);
                 node.Transition(wData);
             }
-            thisContext.currentCount = 0;
+            thisContext->currentCount = 0;
         }
     }
 }

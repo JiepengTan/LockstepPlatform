@@ -1,25 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lockstep.AI {
     public class BTActionContext { }
 
-    public abstract class BTAction : BTTreeNode {
-        private static int sUNIQUEKEY = 0;
-
-        private static int genUniqueKey(){
-            if (sUNIQUEKEY >= int.MaxValue) {
-                sUNIQUEKEY = 0;
-            }
-            else {
-                sUNIQUEKEY = sUNIQUEKEY + 1;
-            }
-
-            return sUNIQUEKEY;
-        }
-
-        //-------------------------------------------------------------
-        protected int _uniqueKey;
-        protected BTPrecondition _precondition;
+    public abstract unsafe class BTAction : BTNode {
 #if DEBUG
         protected string _name;
         public string name {
@@ -27,10 +12,10 @@ namespace Lockstep.AI {
             set { _name = value; }
         }
 #endif
+        
         //-------------------------------------------------------------
         public BTAction(int maxChildCount)
             : base(maxChildCount){
-            _uniqueKey = BTAction.genUniqueKey();
         }
 
         ~BTAction(){
@@ -57,20 +42,6 @@ namespace Lockstep.AI {
 
         public override int GetHashCode(){
             return _uniqueKey;
-        }
-
-        protected T GetContext<T>(BTWorkingData wData) where T : BTActionContext, new(){
-            int uniqueKey = GetHashCode();
-            T thisContext;
-            if (wData.context.ContainsKey(uniqueKey) == false) {
-                thisContext = new T();
-                wData.context.Add(uniqueKey, thisContext);
-            }
-            else {
-                thisContext = (T) wData.context[uniqueKey];
-            }
-
-            return thisContext;
         }
 
         //--------------------------------------------------------

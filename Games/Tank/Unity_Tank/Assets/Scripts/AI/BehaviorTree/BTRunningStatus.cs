@@ -1,38 +1,39 @@
 ﻿using System;
 
-namespace Lockstep.AI
-{
-    public class BTRunningStatus
-    {
+namespace Lockstep.AI {
+    public unsafe partial class BTRunningStatus {
         //-------------------------------------------------------
         //Any value which is below ZERO means error occurs 
         //-------------------------------------------------------
         //default running status
-        public const int EXECUTING   = 0;
-        public const int FINISHED    = 1;
-        public const int TRANSITION  = 2;
+        public const int EXECUTING = 0;
+        public const int FINISHED = 1;
+
+        public const int TRANSITION = 2;
+
         //-------------------------------------------------------
         //User running status
-        //100-999, reserved user executing status
-        public const int USER_EXECUTING = 100;
-        //>=1000, reserved user finished status
-        public const int USER_FINISHED = 1000;
+        //50-100, reserved user executing status
+        public const int USER_EXECUTING = 50;
+
+        //>=100, reserved user finished status
+        public const int USER_FINISHED = 100;
+
         //-------------------------------------------------------
-        static public bool IsOK(int runningStatus)
-        {
+        public static bool IsOK(int runningStatus){
             return runningStatus == BTRunningStatus.FINISHED ||
                    runningStatus >= BTRunningStatus.USER_FINISHED;
         }
-        static public bool IsError(int runningStatus)
-        {
+
+        public static bool IsError(int runningStatus){
             return runningStatus < 0;
         }
-        static public bool IsFinished(int runningStatus)
-        {
+
+        public static bool IsFinished(int runningStatus){
             return IsOK(runningStatus) || IsError(runningStatus);
         }
-        static public bool IsExecuting(int runningStatus)
-        {
+
+        public static bool IsExecuting(int runningStatus){
             return !IsFinished(runningStatus);
         }
     }
