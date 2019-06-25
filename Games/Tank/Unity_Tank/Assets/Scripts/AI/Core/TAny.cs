@@ -1,4 +1,4 @@
-﻿namespace TsiU
+﻿namespace Lockstep.AI
 {
     public class TAny
     {

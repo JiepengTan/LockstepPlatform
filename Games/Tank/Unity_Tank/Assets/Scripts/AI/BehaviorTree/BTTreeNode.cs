@@ -1,38 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTTreeNode
+    public class BTTreeNode
     {
         //-------------------------------------------------------------------
         private const int defaultChildCount = -1; //TJQ： unlimited count
         //-------------------------------------------------------------------
-        private List<TBTTreeNode> _children;
+        private List<BTTreeNode> _children;
         private int _maxChildCount;
         //private TBTTreeNode _parent;
         //-------------------------------------------------------------------
-        public TBTTreeNode(int maxChildCount = -1)
+        public BTTreeNode(int maxChildCount = -1)
         {
-            _children = new List<TBTTreeNode>();
+            _children = new List<BTTreeNode>();
             if (maxChildCount >= 0) {
                 _children.Capacity = maxChildCount;
             }
             _maxChildCount = maxChildCount;
         }
-        public TBTTreeNode()
+        public BTTreeNode()
             : this(defaultChildCount)
         {}
-        ~TBTTreeNode()
+        ~BTTreeNode()
         {
             _children = null;
             //_parent = null;
         }
         //-------------------------------------------------------------------
-        public TBTTreeNode AddChild(TBTTreeNode node)
+        public BTTreeNode AddChild(BTTreeNode node)
         {
             if (_maxChildCount >= 0 && _children.Count >= _maxChildCount) {
-                //TLogger.WARNING("**BT** exceeding child count");
+                TLogger.WARNING("**BT** exceeding child count");
                 return this;
             }
             _children.Add(node);
@@ -47,7 +47,7 @@ namespace TsiU
         {
             return index >= 0 && index < _children.Count;
         }
-        public T GetChild<T>(int index) where T : TBTTreeNode 
+        public T GetChild<T>(int index) where T : BTTreeNode 
         {
             if (index < 0 || index >= _children.Count) {
                 return null;

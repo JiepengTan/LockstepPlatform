@@ -1,32 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTActionPrioritizedSelector : TBTAction
+    public class BTActionPrioritizedSelector : BTAction
     {
-        protected class TBTActionPrioritizedSelectorContext : TBTActionContext
+        protected class BTActionPrioritizedSelectorContext : BTActionContext
         {
             internal int currentSelectedIndex;
             internal int lastSelectedIndex;
 
-            public TBTActionPrioritizedSelectorContext()
+            public BTActionPrioritizedSelectorContext()
             {
                 currentSelectedIndex = -1;
                 lastSelectedIndex = -1;
             }
         }
-        public TBTActionPrioritizedSelector()
+        public BTActionPrioritizedSelector()
             : base(-1)
         {
         }
-        protected override bool onEvaluate(/*in*/TBTWorkingData wData)
+        protected override bool OnEvaluate(/*in*/BTWorkingData wData)
         {
-            TBTActionPrioritizedSelectorContext thisContext = getContext<TBTActionPrioritizedSelectorContext>(wData);
+            BTActionPrioritizedSelectorContext thisContext = GetContext<BTActionPrioritizedSelectorContext>(wData);
             thisContext.currentSelectedIndex = -1;
             int childCount = GetChildCount();
             for(int i = 0; i < childCount; ++i) {
-                TBTAction node = GetChild<TBTAction>(i);
+                BTAction node = GetChild<BTAction>(i);
                 if (node.Evaluate(wData)) {
                     thisContext.currentSelectedIndex = i;
                     return true;
@@ -34,30 +34,30 @@ namespace TsiU
             }
             return false;
         }
-        protected override int onUpdate(TBTWorkingData wData)
+        protected override int OnUpdate(BTWorkingData wData)
         {
-            TBTActionPrioritizedSelectorContext thisContext = getContext<TBTActionPrioritizedSelectorContext>(wData);
-            int runningState = TBTRunningStatus.FINISHED;
+            BTActionPrioritizedSelectorContext thisContext = GetContext<BTActionPrioritizedSelectorContext>(wData);
+            int runningState = BTRunningStatus.FINISHED;
             if (thisContext.currentSelectedIndex != thisContext.lastSelectedIndex) {
                 if (IsIndexValid(thisContext.lastSelectedIndex)) {
-                    TBTAction node = GetChild<TBTAction>(thisContext.lastSelectedIndex);
+                    BTAction node = GetChild<BTAction>(thisContext.lastSelectedIndex);
                     node.Transition(wData);
                 }
                 thisContext.lastSelectedIndex = thisContext.currentSelectedIndex;
             }
             if (IsIndexValid(thisContext.lastSelectedIndex)) {
-                TBTAction node = GetChild<TBTAction>(thisContext.lastSelectedIndex);
+                BTAction node = GetChild<BTAction>(thisContext.lastSelectedIndex);
                 runningState = node.Update(wData);
-                if (TBTRunningStatus.IsFinished(runningState)) {
+                if (BTRunningStatus.IsFinished(runningState)) {
                     thisContext.lastSelectedIndex = -1;
                 }
             }
             return runningState;
         }
-        protected override void onTransition(TBTWorkingData wData)
+        protected override void OnTransition(BTWorkingData wData)
         {
-            TBTActionPrioritizedSelectorContext thisContext = getContext<TBTActionPrioritizedSelectorContext>(wData);
-            TBTAction node = GetChild<TBTAction>(thisContext.lastSelectedIndex);
+            BTActionPrioritizedSelectorContext thisContext = GetContext<BTActionPrioritizedSelectorContext>(wData);
+            BTAction node = GetChild<BTAction>(thisContext.lastSelectedIndex);
             if (node != null) {
                 node.Transition(wData);
             }

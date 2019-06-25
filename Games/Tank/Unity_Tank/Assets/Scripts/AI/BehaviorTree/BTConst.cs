@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTRunningStatus
+    public class BTRunningStatus
     {
         //-------------------------------------------------------
         //Any value which is below ZERO means error occurs 
@@ -20,8 +20,8 @@ namespace TsiU
         //-------------------------------------------------------
         static public bool IsOK(int runningStatus)
         {
-            return runningStatus == TBTRunningStatus.FINISHED ||
-                   runningStatus >= TBTRunningStatus.USER_FINISHED;
+            return runningStatus == BTRunningStatus.FINISHED ||
+                   runningStatus >= BTRunningStatus.USER_FINISHED;
         }
         static public bool IsError(int runningStatus)
         {

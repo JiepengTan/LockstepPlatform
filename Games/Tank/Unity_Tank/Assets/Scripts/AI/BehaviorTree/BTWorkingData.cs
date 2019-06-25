@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTWorkingData : TAny
+    public class BTWorkingData : TAny
     {
         //------------------------------------------------------
-        internal Dictionary<int, TBTActionContext> _context;
-        internal Dictionary<int, TBTActionContext> context 
+        internal Dictionary<int, BTActionContext> _context;
+        internal Dictionary<int, BTActionContext> context 
         {
             get 
             {
@@ -15,11 +15,11 @@ namespace TsiU
             }
         }
         //------------------------------------------------------
-        public TBTWorkingData()
+        public BTWorkingData()
         {
-            _context = new Dictionary<int, TBTActionContext>();
+            _context = new Dictionary<int, BTActionContext>();
         }
-        ~TBTWorkingData()
+        ~BTWorkingData()
         {
             _context = null;
         }

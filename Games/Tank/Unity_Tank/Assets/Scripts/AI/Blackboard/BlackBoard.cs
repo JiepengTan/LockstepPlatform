@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBlackBoard
+    public class BlackBoard
     {
         class TBlackboardItem
         {
@@ -18,7 +18,7 @@ namespace TsiU
         }
         private Dictionary<string, TBlackboardItem> _items;
 
-        public TBlackBoard()
+        public BlackBoard()
         {
             _items = new Dictionary<string, TBlackboardItem>();
         }

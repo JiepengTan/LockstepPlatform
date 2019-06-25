@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTActionParallel : TBTAction
+    public class BTActionParallel : BTAction
     {
         public enum ECHILDREN_RELATIONSHIP
         {
             AND, OR
         }
         //-------------------------------------------------------
-        protected class TBTActionParallelContext : TBTActionContext
+        protected class BTActionParallelContext : BTActionContext
         {
             internal List<bool> evaluationStatus;
             internal List<int> runningStatus;
 
-            public TBTActionParallelContext()
+            public BTActionParallelContext()
             {
                 evaluationStatus = new List<bool>();
                 runningStatus = new List<int>();
@@ -25,30 +25,30 @@ namespace TsiU
         private ECHILDREN_RELATIONSHIP _evaluationRelationship;
         private ECHILDREN_RELATIONSHIP _runningStatusRelationship;
         //-------------------------------------------------------
-        public TBTActionParallel()
+        public BTActionParallel()
             : base(-1)
         {
             _evaluationRelationship = ECHILDREN_RELATIONSHIP.AND;
             _runningStatusRelationship = ECHILDREN_RELATIONSHIP.OR;
         }
-        public TBTActionParallel SetEvaluationRelationship(ECHILDREN_RELATIONSHIP v)
+        public BTActionParallel SetEvaluationRelationship(ECHILDREN_RELATIONSHIP v)
         {
             _evaluationRelationship = v;
             return this;
         }
-        public TBTActionParallel SetRunningStatusRelationship(ECHILDREN_RELATIONSHIP v)
+        public BTActionParallel SetRunningStatusRelationship(ECHILDREN_RELATIONSHIP v)
         {
             _runningStatusRelationship = v;
             return this;
         }
         //------------------------------------------------------
-        protected override bool onEvaluate(/*in*/TBTWorkingData wData)
+        protected override bool OnEvaluate(/*in*/BTWorkingData wData)
         {
-            TBTActionParallelContext thisContext = getContext<TBTActionParallelContext>(wData);
+            BTActionParallelContext thisContext = GetContext<BTActionParallelContext>(wData);
             initListTo<bool>(thisContext.evaluationStatus, false);
             bool finalResult = false;
             for (int i = 0; i < GetChildCount(); ++i) {
-                TBTAction node = GetChild<TBTAction>(i);
+                BTAction node = GetChild<BTAction>(i);
                 bool ret = node.Evaluate(wData);
                 //early break
                 if (_evaluationRelationship == ECHILDREN_RELATIONSHIP.AND && ret == false) {
@@ -62,12 +62,12 @@ namespace TsiU
             }
             return finalResult;
         }
-        protected override int onUpdate(TBTWorkingData wData)
+        protected override int OnUpdate(BTWorkingData wData)
         {
-            TBTActionParallelContext thisContext = getContext<TBTActionParallelContext>(wData);
+            BTActionParallelContext thisContext = GetContext<BTActionParallelContext>(wData);
             //first time initialization
             if (thisContext.runningStatus.Count != GetChildCount()) {
-                initListTo<int>(thisContext.runningStatus, TBTRunningStatus.EXECUTING);
+                initListTo<int>(thisContext.runningStatus, BTRunningStatus.EXECUTING);
             }
             bool hasFinished  = false;
             bool hasExecuting = false;
@@ -75,13 +75,13 @@ namespace TsiU
                 if (thisContext.evaluationStatus[i] == false) {
                     continue;
                 }
-                if (TBTRunningStatus.IsFinished(thisContext.runningStatus[i])) {
+                if (BTRunningStatus.IsFinished(thisContext.runningStatus[i])) {
                     hasFinished = true;
                     continue;
                 }
-                TBTAction node = GetChild<TBTAction>(i);
+                BTAction node = GetChild<BTAction>(i);
                 int runningStatus = node.Update(wData);
-                if (TBTRunningStatus.IsFinished(runningStatus)) {
+                if (BTRunningStatus.IsFinished(runningStatus)) {
                     hasFinished  = true;
                 } else {
                     hasExecuting = true;
@@ -89,20 +89,20 @@ namespace TsiU
                 thisContext.runningStatus[i] = runningStatus;
             }
             if (_runningStatusRelationship == ECHILDREN_RELATIONSHIP.OR && hasFinished || _runningStatusRelationship == ECHILDREN_RELATIONSHIP.AND && hasExecuting == false) {
-                initListTo<int>(thisContext.runningStatus, TBTRunningStatus.EXECUTING);
-                return TBTRunningStatus.FINISHED;
+                initListTo<int>(thisContext.runningStatus, BTRunningStatus.EXECUTING);
+                return BTRunningStatus.FINISHED;
             }
-            return TBTRunningStatus.EXECUTING;
+            return BTRunningStatus.EXECUTING;
         }
-        protected override void onTransition(TBTWorkingData wData)
+        protected override void OnTransition(BTWorkingData wData)
         {
-            TBTActionParallelContext thisContext = getContext<TBTActionParallelContext>(wData);
+            BTActionParallelContext thisContext = GetContext<BTActionParallelContext>(wData);
             for (int i = 0; i < GetChildCount(); ++i) {
-                TBTAction node = GetChild<TBTAction>(i);
+                BTAction node = GetChild<BTAction>(i);
                 node.Transition(wData);
             }
             //clear running status
-            initListTo<int>(thisContext.runningStatus, TBTRunningStatus.EXECUTING);
+            initListTo<int>(thisContext.runningStatus, BTRunningStatus.EXECUTING);
         }
         private void initListTo<T>(List<T> list, T value)
         {

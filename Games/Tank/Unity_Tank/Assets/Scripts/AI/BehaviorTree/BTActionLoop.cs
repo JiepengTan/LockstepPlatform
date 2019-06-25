@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace TsiU
+namespace Lockstep.AI
 {
-    public class TBTActionLoop : TBTAction
+    public class BTActionLoop : BTAction
     {
         public const int INFINITY = -1;
         //--------------------------------------------------------
-        protected class TBTActionLoopContext : TBTActionContext
+        protected class BTActionLoopContext : BTActionContext
         {
             internal int currentCount;
 
-            public TBTActionLoopContext()
+            public BTActionLoopContext()
             {
                 currentCount = 0;
             }
@@ -18,51 +18,51 @@ namespace TsiU
         //--------------------------------------------------------
         private int _loopCount;
         //--------------------------------------------------------
-        public TBTActionLoop()
+        public BTActionLoop()
             : base(1)
         {
             _loopCount = INFINITY;
         }
-        public TBTActionLoop SetLoopCount(int count)
+        public BTActionLoop SetLoopCount(int count)
         {
             _loopCount = count;
             return this;
         }
         //-------------------------------------------------------
-        protected override bool onEvaluate(/*in*/TBTWorkingData wData)
+        protected override bool OnEvaluate(/*in*/BTWorkingData wData)
         {
-            TBTActionLoopContext thisContext = getContext<TBTActionLoopContext>(wData);
+            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
             bool checkLoopCount = (_loopCount == INFINITY || thisContext.currentCount < _loopCount);
             if (checkLoopCount == false) {
                 return false;
             }
             if (IsIndexValid(0)) {
-                TBTAction node = GetChild<TBTAction>(0);
+                BTAction node = GetChild<BTAction>(0);
                 return node.Evaluate(wData);
             }
             return false;
         }
-        protected override int onUpdate(TBTWorkingData wData)
+        protected override int OnUpdate(BTWorkingData wData)
         {
-            TBTActionLoopContext thisContext = getContext<TBTActionLoopContext>(wData);
-            int runningStatus = TBTRunningStatus.FINISHED;
+            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
+            int runningStatus = BTRunningStatus.FINISHED;
             if (IsIndexValid(0)) {
-                TBTAction node = GetChild<TBTAction>(0);
+                BTAction node = GetChild<BTAction>(0);
                 runningStatus = node.Update(wData);
-                if (TBTRunningStatus.IsFinished(runningStatus)) {
+                if (BTRunningStatus.IsFinished(runningStatus)) {
                     thisContext.currentCount++;
                     if (thisContext.currentCount < _loopCount || _loopCount == INFINITY) {
-                        runningStatus = TBTRunningStatus.EXECUTING;
+                        runningStatus = BTRunningStatus.EXECUTING;
                     }
                 }
             }
             return runningStatus;
         }
-        protected override void onTransition(TBTWorkingData wData)
+        protected override void OnTransition(BTWorkingData wData)
         {
-            TBTActionLoopContext thisContext = getContext<TBTActionLoopContext>(wData);
+            BTActionLoopContext thisContext = GetContext<BTActionLoopContext>(wData);
             if (IsIndexValid(0)) {
-                TBTAction node = GetChild<TBTAction>(0);
+                BTAction node = GetChild<BTAction>(0);
                 node.Transition(wData);
             }
             thisContext.currentCount = 0;
