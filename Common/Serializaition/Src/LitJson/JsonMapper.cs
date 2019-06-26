@@ -374,10 +374,13 @@ namespace LitJson
                 #endif
                 // Try using an implicit conversion operator
                 MethodInfo conv_op = GetConvOp (value_type, json_type);
-
+                
                 if (conv_op != null)
                     return conv_op.Invoke (null,
                                            new object[] { reader.Value });
+                if (json_type == typeof(double) && inst_type == typeof(float)) {
+                    return (float)(double)reader.Value;
+                }
 
                 // No luck
                 throw new JsonException (String.Format (
