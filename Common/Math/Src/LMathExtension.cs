@@ -50,6 +50,21 @@ namespace Lockstep.Math {
         public static Vector3 ToVector3(this LVector3 vec){
             return new Vector3(vec.x.ToFloat(), vec.y.ToFloat(), vec.z.ToFloat());
         }
+        
+        public static Vector3[] ToVecArray(this LVector3[] lVecs){
+            var vecs = new Vector3[lVecs.Length];
+            for (int i = 0; i < lVecs.Length; i++) {
+                vecs[i] = lVecs[i].ToVector3();
+            }
+            return vecs;
+        }
+        public static LVector3[] ToLVecArray(this Vector3[] vecs){
+            var lVecs = new LVector3[vecs.Length];
+            for (int i = 0; i < vecs.Length; i++) {
+                lVecs[i] = vecs[i].ToLVector3();
+            }
+            return lVecs;
+        }
     }
 #endif
 }

@@ -744,6 +744,10 @@ namespace LitJson
                 return;
             }
 
+            if (obj is float) {
+                writer.Write ((double)(float) obj);
+                return;
+            }
             if (obj is Int32) {
                 writer.Write ((int) obj);
                 return;

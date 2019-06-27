@@ -19,6 +19,8 @@ namespace Lockstep.Math {
         public static readonly LFloat INTERVAL_EPSI_LON = new LFloat(true,1);
 
         public static readonly LFloat MaxValue = new LFloat(true,int.MaxValue);
+        public static readonly LFloat MinValue = new LFloat(true,int.MinValue);
+        
         /// <summary>
         /// 传入的是正常数放大1000 的数值
         /// </summary>

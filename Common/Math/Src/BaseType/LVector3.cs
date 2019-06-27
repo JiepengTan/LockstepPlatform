@@ -25,9 +25,11 @@ namespace Lockstep.Math
             get { return new LFloat(true,_z); }
             set { _z = value._val ; }
         }
-
+        [NonSerialized]
         public int _x;
+        [NonSerialized]
         public int _y;
+        [NonSerialized]
         public int _z;
 
 
