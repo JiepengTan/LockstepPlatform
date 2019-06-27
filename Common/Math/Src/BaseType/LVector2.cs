@@ -8,14 +8,11 @@ namespace Lockstep.Math {
             get { return new LFloat(true,_x); }
             set { _x = value._val; }
         }
-
         public LFloat y {
             get { return new LFloat(true,_y); }
             set { _y = value._val; }
         }
-        [NonSerialized]
         public int _x;
-        [NonSerialized]
         public int _y;
         public static readonly LVector2 zero = new LVector2(true,0, 0);
         public static readonly LVector2 one = new LVector2(true,LFloat.Precision, LFloat.Precision);
