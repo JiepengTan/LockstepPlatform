@@ -16,6 +16,7 @@ namespace Lockstep.AI
         protected BTPrecondition _precondition;
         private List<BTNode> _children;
         private int _maxChildCount;
+        
         public BTNode(int maxChildCount = -1)
         {
             _children = new List<BTNode>();
@@ -31,7 +32,7 @@ namespace Lockstep.AI
         {
             _children = null;
         }
-        //-------------------------------------------------------------------
+        
         public BTNode AddChild(BTNode node)
         {
             if (_maxChildCount >= 0 && _children.Count >= _maxChildCount) {
@@ -75,6 +76,7 @@ namespace Lockstep.AI
             var nodes = new List<BTNode>();
             Flatten(nodes);
             var offsets = new int[nodes.Count];
+           
             for (int i = 0; i < nodes.Count; i++) {
                 Debug.Assert(nodes[i]._uniqueKey == i,"Error: Idx not match");
             }
