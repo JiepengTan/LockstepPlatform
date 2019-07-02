@@ -7,8 +7,8 @@
     <ProjectGuid>{AC5B8A05-6E14-4B17-98D1-5BFFF3290E76}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Util</RootNamespace>
-    <AssemblyName>Util</AssemblyName>
+    <RootNamespace>Lockstep.Util</RootNamespace>
+    <AssemblyName>Lockstep.Util</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

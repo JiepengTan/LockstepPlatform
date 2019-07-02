@@ -31,6 +31,7 @@
     2. (确定性)NavMesh 库 (done) (TODO指针版本)
     3. ECL（a domain-specific language(DSL) for Entity component design）(解释器正在开发中)
     4. AssetBundleLoader (TODO)
+    5. ECS代码生成器 (done) ECS 代码生成器 目前支持Entitas, 后续版本会同时支持生成Unity ECS代码，以及兼容Unsafe ECS代码  (新增)
 
 ###### v0.5.0（TODO）
     1. BehaviorTree 添加 Eidtor 支持
@@ -52,6 +53,7 @@
 - 确定性 NavMesh 库: [https://github.com/JiepengTan/LockstepPathFinding][8] 
 - 内存紧凑版 行为树库: [https://github.com/JiepengTan/LockstepBehaviorTree][9] 
 - ECL解释器: [https://github.com/JiepengTan/LockstepECL][10] 
+- ECS代码生成器: [https://github.com/JiepengTan/LockstepECSGenerator][13]  
 - 其他的库(Serialization，Logging,ExcelParser，Network)没有独立出项目来，但是库是作为单独的子模块位于本项目中[https://github.com/JiepengTan/LockstepPlatform][11]
 
 
@@ -87,3 +89,4 @@
  [10]: https://github.com/JiepengTan/LockstepECL
  [11]: https://github.com/JiepengTan/LockstepPlatform
  [12]: https://www.bilibili.com/video/av55450233
+ [13]: https://github.com/JiepengTan/LockstepECSGenerator
