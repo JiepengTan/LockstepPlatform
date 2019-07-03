@@ -10,6 +10,8 @@
     "Common/Networking",
     "Common/Serializaition",
     "Common/Util",
+    "Common/PathFinding",
+    "Common/BehaviorTree",
     "Client/Client.Common",
     "Games/Tank/Client/Client.Tank",
     "Games/Tank/Client/Client.Tank.Editor",
