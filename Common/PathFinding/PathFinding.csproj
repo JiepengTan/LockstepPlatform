@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{CD412E22-5502-4DDF-9E31-9B267FD407E7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lockstep.AI.PathFinding</RootNamespace>
+    <AssemblyName>Lockstep.AI.PathFinding</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../Libs/</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../Libs/</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Geometry\GeometryUtil.cs" />
+    <Compile Include="Src\Geometry\Plane.cs" />
+    <Compile Include="Src\Geometry\Ray.cs" />
+    <Compile Include="Src\NavMesh\EdgePoint.cs" />
+    <Compile Include="Src\NavMesh\Funnel.cs" />
+    <Compile Include="Src\NavMesh\Triangle.cs" />
+    <Compile Include="Src\NavMesh\TriangleData.cs" />
+    <Compile Include="Src\NavMesh\TriangleEdge.cs" />
+    <Compile Include="Src\NavMesh\TriangleGraph.cs" />
+    <Compile Include="Src\NavMesh\TriangleGraphPath.cs" />
+    <Compile Include="Src\NavMesh\TriangleHeuristic.cs" />
+    <Compile Include="Src\NavMesh\TriangleNavMesh.cs" />
+    <Compile Include="Src\NavMesh\TrianglePointPath.cs" />
+    <Compile Include="Src\PathFinder\Connection.cs" />
+    <Compile Include="Src\PathFinder\DefaultGraphPath.cs" />
+    <Compile Include="Src\PathFinder\Graph.cs" />
+    <Compile Include="Src\PathFinder\GraphPath.cs" />
+    <Compile Include="Src\PathFinder\Heuristic.cs" />
+    <Compile Include="Src\PathFinder\IndexedAStarPathFinder.cs" />
+    <Compile Include="Src\PathFinder\IndexedGraph.cs" />
+    <Compile Include="Src\PathFinder\NavMesh.cs" />
+    <Compile Include="Src\PathFinder\NavMeshData.cs" />
+    <Compile Include="Src\PathFinder\NodeBinaryHeap.cs" />
+    <Compile Include="Src\PathFinder\PathFinder.cs" />
+    <Compile Include="Src\VectorExtension.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Src\.DS_Store" />
+    <Content Include="Src\NavMesh\.DS_Store" />
+    <Content Include="Src\PathFinder\.DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>

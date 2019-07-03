@@ -68,6 +68,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelParser", "Tools\ExcelP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorTree", "Common\BehaviorTree\BehaviorTree.csproj", "{00965C13-8FC2-4138-801A-6E3814F79F84}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PathFinding", "Common\PathFinding\PathFinding.csproj", "{CD412E22-5502-4DDF-9E31-9B267FD407E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,6 +104,7 @@ Global
 		{D2BA2511-1EAC-40EB-B7B7-68122E491A90} = {9B30925C-213D-4E87-904F-DAA0AC4269B0}
 		{035B3F4C-A88B-477A-A7D2-6568A58B1E0E} = {9B30925C-213D-4E87-904F-DAA0AC4269B0}
 		{00965C13-8FC2-4138-801A-6E3814F79F84} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
+		{CD412E22-5502-4DDF-9E31-9B267FD407E7} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1AE6C358-53D2-4B7D-9451-7DB18B00CFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -200,5 +203,9 @@ Global
 		{00965C13-8FC2-4138-801A-6E3814F79F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00965C13-8FC2-4138-801A-6E3814F79F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00965C13-8FC2-4138-801A-6E3814F79F84}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD412E22-5502-4DDF-9E31-9B267FD407E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD412E22-5502-4DDF-9E31-9B267FD407E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD412E22-5502-4DDF-9E31-9B267FD407E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD412E22-5502-4DDF-9E31-9B267FD407E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
