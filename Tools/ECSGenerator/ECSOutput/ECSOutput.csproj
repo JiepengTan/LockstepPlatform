@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C67DF7F6-1B1D-407F-B290-3937465D5D33}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lockstep.ECS.ECSOutput</RootNamespace>
+    <AssemblyName>Lockstep.ECS.ECSOutput</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../bin/</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../bin/</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Libs\Entitas\Entitas.dll</HintPath>
+    </Reference>
+    <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
+    </Reference>
+    <Reference Include="Lockstep.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\Libs\Lockstep.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\Components\GameStateBackupCurFrameComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\Components\GameStateBeforeExecuteHashCodeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\Components\GameStateHashCodeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\Components\GameStateTickComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorBackupComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorEntityCountComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorGameLocalIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\Components\DebuggingHashCodeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\Components\DebuggingTickComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameColliderComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameDelayCallComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameDirComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameDropRateComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameFireRequestComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameItemTypeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameMoveComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GamePosComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameOwnerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameBulletComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameSkillComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameTagBulletComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameTagCampComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameTagEnemyComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameTagTankComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameUnitComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameMoveRequestComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameBornPointComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorScoreComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameAIComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameActorIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorLifeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameBackupComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameDestroyedComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameLocalIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameAssetComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputDestroyedComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputEntityConfigIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputTickComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputFireComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputActorIdComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\Components\InputMoveDirComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\Components\SnapshotHashCodeComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\Components\SnapshotTickComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GameDirListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\Components\GamePosListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorScoreListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\Components\ActorLifeListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\ActorComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\DebuggingComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\GameComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\GameStateComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\InputComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\SnapshotComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Config\ConfigComponentsLookup.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\GameAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\ActorAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\InputAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\GameStateAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\SnapshotAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\DebuggingAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Config\ConfigAttribute.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\GameContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\ActorContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\InputContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\GameStateContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\SnapshotContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\DebuggingContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Config\ConfigContext.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\GameMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\ActorMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\InputMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\GameStateMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\SnapshotMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\DebuggingMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Config\ConfigMatcher.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Contexts.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Game\GameEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Actor\ActorEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Input\InputEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\GameState\GameStateEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Snapshot\SnapshotEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Debugging\DebuggingEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Config\ConfigEntity.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Components\DirListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Components\PosListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Components\ScoreListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Components\LifeListenerComponent.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Interfaces\IDirListener.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Interfaces\IPosListener.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Interfaces\IScoreListener.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Interfaces\ILifeListener.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Systems\DirEventSystem.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Systems\PosEventSystem.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Systems\ScoreEventSystem.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\Systems\LifeEventSystem.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\GameEventSystems.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Events\ActorEventSystems.cs" />
+    <Compile Include="..\ECSOutput\Src\Entitas\Generated\Feature.cs" />
+  </ItemGroup>
+  <ItemGroup>
+     <Compile Include="Src\Entitas\Components\ComponentDefine.cs "/>
+     <Compile Include="Src\Entitas\Components\EnumDefines.cs "/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Src\Entitas\Generated" />
+    <Folder Include="Src\Unity\Components" />
+    <Folder Include="Src\Unsafe\Components" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
