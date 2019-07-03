@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C84BC4D1-DF69-40E9-AB9C-C3E2E90D07AD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Lockstep.Collision</RootNamespace>
+    <AssemblyName>Lockstep.Collision</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../Libs/</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../Libs/</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Src\Collision2D\ColliderProxy2D.cs" />
+    <Compile Include="Src\Collision2D\Shapes\AABB.cs" />
+    <Compile Include="Src\Collision2D\Shapes\BaseShaper2D.cs" />
+    <Compile Include="Src\Collision2D\Shapes\Circle.cs" />
+    <Compile Include="Src\Collision2D\Shapes\OBB.cs" />
+    <Compile Include="Src\Collision2D\Utils\Utils.cs" />
+    <Compile Include="Src\Collision\ColliderProxy.cs" />
+    <Compile Include="Src\Collision\CollisionUtils\CollisionClosestPoint.cs" />
+    <Compile Include="Src\Collision\CollisionUtils\CollisionFuncs.cs" />
+    <Compile Include="Src\Collision\CollisionUtils\CollisionMovingPrim.cs" />
+    <Compile Include="Src\Collision\CollisionUtils\CollisionTestPrimPrim.cs" />
+    <Compile Include="Src\Collision\CollisionUtils\CollisionTestRayPrim.cs" />
+    <Compile Include="Src\Collision\Geometry\2D\Polygon.cs" />
+    <Compile Include="Src\Collision\Geometry\2D\Rect.cs" />
+    <Compile Include="Src\Collision\Geometry\2D\Segment.cs" />
+    <Compile Include="Src\Collision\Geometry\AABB.cs" />
+    <Compile Include="Src\Collision\Geometry\BaseShape.cs" />
+    <Compile Include="Src\Collision\Geometry\Capsule.cs" />
+    <Compile Include="Src\Collision\Geometry\ColMesh.cs" />
+    <Compile Include="Src\Collision\Geometry\Cylinder.cs" />
+    <Compile Include="Src\Collision\Geometry\OBB.cs" />
+    <Compile Include="Src\Collision\Geometry\Plane.cs" />
+    <Compile Include="Src\Collision\Geometry\Ray.cs" />
+    <Compile Include="Src\Collision\Geometry\Sphere.cs" />
+    <Compile Include="Src\Collision\Geometry\Triangle.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Src\Collision2D\Shapes\.DS_Store" />
+    <Content Include="Src\Collision2D\Utils\.DS_Store" />
+    <Content Include="Src\Collision\CollisionUtils\.DS_Store" />
+    <Content Include="Src\Collision\Geometry\.DS_Store" />
+    <Content Include="Src\Collision\Geometry\2D\.DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Math\Math.csproj">
+      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+</Project>
