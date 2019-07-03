@@ -66,6 +66,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopySourceFiles", "Tools\Co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelParser", "Tools\ExcelParser\ExcelParser.csproj", "{035B3F4C-A88B-477A-A7D2-6568A58B1E0E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BehaviorTree", "Common\BehaviorTree\BehaviorTree.csproj", "{00965C13-8FC2-4138-801A-6E3814F79F84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,7 @@ Global
 		{756E9C8F-9916-4975-AA1D-C1A62B27152D} = {5DE328B6-21BB-4A06-BCB6-888A9B29F814}
 		{D2BA2511-1EAC-40EB-B7B7-68122E491A90} = {9B30925C-213D-4E87-904F-DAA0AC4269B0}
 		{035B3F4C-A88B-477A-A7D2-6568A58B1E0E} = {9B30925C-213D-4E87-904F-DAA0AC4269B0}
+		{00965C13-8FC2-4138-801A-6E3814F79F84} = {33BFFAA9-3103-45EF-B3D4-C52AF0F1736C}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1AE6C358-53D2-4B7D-9451-7DB18B00CFAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -193,5 +196,9 @@ Global
 		{035B3F4C-A88B-477A-A7D2-6568A58B1E0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{035B3F4C-A88B-477A-A7D2-6568A58B1E0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{035B3F4C-A88B-477A-A7D2-6568A58B1E0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{00965C13-8FC2-4138-801A-6E3814F79F84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00965C13-8FC2-4138-801A-6E3814F79F84}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00965C13-8FC2-4138-801A-6E3814F79F84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00965C13-8FC2-4138-801A-6E3814F79F84}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
