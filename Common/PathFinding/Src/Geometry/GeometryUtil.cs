@@ -1,4 +1,3 @@
-using System;
 using Lockstep.Math;
 
 namespace Lockstep.AI.PathFinding {

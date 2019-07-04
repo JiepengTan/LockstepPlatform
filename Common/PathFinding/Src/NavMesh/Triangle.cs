@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Lockstep.Math;
-using Lockstep.Math;
 
 namespace Lockstep.AI.PathFinding {
     public class Triangle {

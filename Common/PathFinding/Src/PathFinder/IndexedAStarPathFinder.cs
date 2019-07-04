@@ -1,4 +1,3 @@
-using System;
 using Lockstep.Logging;
 using Lockstep.Math;
 

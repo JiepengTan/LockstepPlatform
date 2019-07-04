@@ -1,23 +1,3 @@
-
-
-using System;
-using System.Collections.Generic;
-using Lockstep.Math;
-
-
-
-/**
- * 图接口 
- * <br>
- * A graph is a collection of nodes, each one having a collection of
- * outgoing {@link Connection connections}.
- * 
- * @param <N>
- *            Type of node
- * 
- * @author davebaol
- */
-
 using System.Collections.Generic;
 
 namespace Lockstep.AI.PathFinding {

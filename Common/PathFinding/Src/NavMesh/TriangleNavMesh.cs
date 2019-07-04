@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using LitJson;
 using Lockstep.Math;
-using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.AI.PathFinding {
     public class TriangleNavMesh : NavMesh {

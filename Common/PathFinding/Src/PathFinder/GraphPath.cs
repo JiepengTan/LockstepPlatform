@@ -1,8 +1,4 @@
 
-using System;
-using System.Collections.Generic;
-using Lockstep.Math;
-
 namespace Lockstep.AI.PathFinding {
 
 	public interface GraphPath<N> {

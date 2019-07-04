@@ -1,20 +1,5 @@
-
 using System;
-using System.Collections.Generic;
 using Lockstep.Math;
-
-
-
-
-
-/**
- * 相连接三角形的共享边
- * 
- * @author JiangZhiYong
- * @QQ 359135103 2017年11月7日 下午4:50:11
- */
-
-using System;
 using System.Text;
 
 namespace Lockstep.AI.PathFinding {
