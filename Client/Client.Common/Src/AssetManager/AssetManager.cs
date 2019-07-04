@@ -76,7 +76,7 @@ namespace Lockstep.Game.Res {
                 _loaderReal = new UnityResLoaderAssetDatabase();
             }
 #else
-            loaderBundle = new  ResLoaderAssetBundle();
+            _loaderReal = new UnityResLoaderAssetBundle();
 #endif
             _loaderResources.DoInit(trans);
             _loaderReal.DoInit(trans);

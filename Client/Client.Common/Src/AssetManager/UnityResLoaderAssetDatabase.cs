@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿
 #if UNITY_EDITOR
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
-#endif
 using System.IO;
 
 namespace Lockstep.Game.Res
@@ -142,3 +142,4 @@ namespace Lockstep.Game.Res
         #endregion
     }
 }
+#endif
