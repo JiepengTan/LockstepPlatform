@@ -3,14 +3,14 @@ using Lockstep.Math;
 using Entitas;
 namespace Lockstep.ECS.Actor{
     [Actor]
-    public partial class BackupComponent :IComponent {
-        public byte actorId;
-        public int tick;
+    public partial class GameLocalIdComponent :IComponent {
+        public uint value;
     }
 
     [Actor]
-    public partial class EntityCountComponent :IComponent {
-        public uint value;
+    public partial class BackupComponent :IComponent {
+        public byte actorId;
+        public int tick;
     }
 
     [Actor]
@@ -19,30 +19,24 @@ namespace Lockstep.ECS.Actor{
     }
 
     [Actor]
-    public partial class GameLocalIdComponent :IComponent {
+    public partial class EntityCountComponent :IComponent {
         public uint value;
     }
 
 }
 namespace Lockstep.ECS.Debug{
     [Debugging]
-    public partial class HashCodeComponent :IComponent {
-        public long value;
-    }
-
-    [Debugging]
     public partial class TickComponent :IComponent {
         public uint value;
     }
 
-}
-namespace Lockstep.ECS.Game{
-    [Game]
-    public partial class ColliderComponent :IComponent {
-        public LVector2 size;
-        public LFloat radius;
+    [Debugging]
+    public partial class HashCodeComponent :IComponent {
+        public long value;
     }
 
+}
+namespace Lockstep.ECS.Game{
     [Game]
     public partial class DelayCallComponent :IComponent {
         public LFloat delayTimer;
@@ -76,10 +70,8 @@ namespace Lockstep.ECS.Game{
         public bool isChangedDir;
     }
 
-    [Game]
-    [Event(EventTarget.Self)]
-    public partial class PosComponent :IComponent {
-        public LVector2 value;
+    public partial class MoveRequestComponent :IComponent {
+        public Lockstep.ECS.EDir value;
     }
 
     [Game]
@@ -88,18 +80,9 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    public partial class BulletComponent :IComponent {
-        public bool canDestoryIron;
-        public bool canDestoryGrass;
-        public uint ownerLocalId;
-    }
-
-    [Game]
-    public partial class SkillComponent :IComponent {
-        public LFloat cd;
-        public LFloat cdTimer;
-        public int bulletId;
-        public bool isNeedFire;
+    public partial class ColliderComponent :IComponent {
+        public LVector2 size;
+        public LFloat radius;
     }
 
     [Game]
@@ -128,19 +111,30 @@ namespace Lockstep.ECS.Game{
         public uint killerLocalId;
     }
 
-    public partial class MoveRequestComponent :IComponent {
-        public Lockstep.ECS.EDir value;
+    [Game]
+    [Event(EventTarget.Self)]
+    public partial class PosComponent :IComponent {
+        public LVector2 value;
     }
 
     [Game]
-    public partial class BornPointComponent :IComponent {
-        public LVector2 coord;
+    public partial class SkillComponent :IComponent {
+        public LFloat cd;
+        public LFloat cdTimer;
+        public int bulletId;
+        public bool isNeedFire;
     }
 
-    [Actor]
-    [Event(EventTarget.Self)]
-    public partial class ScoreComponent :IComponent {
-        public int value;
+    [Game]
+    public partial class BulletComponent :IComponent {
+        public bool canDestoryIron;
+        public bool canDestoryGrass;
+        public uint ownerLocalId;
+    }
+
+    [Game]
+    public partial class AssetComponent :IComponent {
+        public Lockstep.ECS.EAssetID assetId;
     }
 
     [Game]
@@ -150,9 +144,10 @@ namespace Lockstep.ECS.Game{
         public LFloat fireRate;
     }
 
-    [Game]
-    public partial class ActorIdComponent :IComponent {
-        public byte value;
+    [Actor]
+    [Event(EventTarget.Self)]
+    public partial class ScoreComponent :IComponent {
+        public int value;
     }
 
     [Actor]
@@ -162,22 +157,27 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    public partial class BackupComponent :IComponent {
-        public uint localEntityId;
-        public int tick;
+    public partial class LocalIdComponent :IComponent {
+        [PrimaryEntityIndex]public uint value;
     }
 
     public partial class DestroyedComponent :IComponent {
     }
 
     [Game]
-    public partial class LocalIdComponent :IComponent {
-        [PrimaryEntityIndex]public uint value;
+    public partial class BackupComponent :IComponent {
+        public uint localEntityId;
+        public int tick;
     }
 
     [Game]
-    public partial class AssetComponent :IComponent {
-        public Lockstep.ECS.EAssetID assetId;
+    public partial class ActorIdComponent :IComponent {
+        public byte value;
+    }
+
+    [Game]
+    public partial class BornPointComponent :IComponent {
+        public LVector2 coord;
     }
 
 }
@@ -195,20 +195,30 @@ namespace Lockstep.ECS.GameState{
 
     [GameState]
     [Unique]
-    public partial class HashCodeComponent :IComponent {
-        public long value;
+    public partial class TickComponent :IComponent {
+        public int value;
     }
 
     [GameState]
     [Unique]
-    public partial class TickComponent :IComponent {
-        public int value;
+    public partial class HashCodeComponent :IComponent {
+        public long value;
     }
 
 }
 namespace Lockstep.ECS.Input{
     [Input]
-    public partial class DestroyedComponent :IComponent {
+    public partial class MoveDirComponent :IComponent {
+        public Lockstep.ECS.EDir value;
+    }
+
+    [Input]
+    public partial class FireComponent :IComponent {
+    }
+
+    [Input]
+    public partial class TickComponent :IComponent {
+        public int value;
     }
 
     [Input]
@@ -217,12 +227,7 @@ namespace Lockstep.ECS.Input{
     }
 
     [Input]
-    public partial class TickComponent :IComponent {
-        public int value;
-    }
-
-    [Input]
-    public partial class FireComponent :IComponent {
+    public partial class DestroyedComponent :IComponent {
     }
 
     [Input]
@@ -230,21 +235,16 @@ namespace Lockstep.ECS.Input{
         public byte value;
     }
 
-    [Input]
-    public partial class MoveDirComponent :IComponent {
-        public Lockstep.ECS.EDir value;
-    }
-
 }
 namespace Lockstep.ECS.Snapshot{
     [Snapshot]
-    public partial class HashCodeComponent :IComponent {
-        public long value;
+    public partial class TickComponent :IComponent {
+        [PrimaryEntityIndex]public int value;
     }
 
     [Snapshot]
-    public partial class TickComponent :IComponent {
-        [PrimaryEntityIndex]public int value;
+    public partial class HashCodeComponent :IComponent {
+        public long value;
     }
 
 }
