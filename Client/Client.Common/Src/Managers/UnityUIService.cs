@@ -25,17 +25,7 @@ namespace Lockstep.Game {
             return GetService<T>();
         }
 
-        private bool _isDebugMode;
-
-        public bool IsDebugMode {
-            get {
-#if UNITY_EDITOR
-                return true;
-#endif
-                return _isDebugMode;
-            }
-            set { _isDebugMode = value; }
-        }
+        public bool IsDebugMode => _constStateService.IsDebugMode;
 
         public override void DoStart(){
             var canvas = GameObject.Find("Canvas");

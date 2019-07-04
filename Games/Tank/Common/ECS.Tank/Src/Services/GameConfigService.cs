@@ -51,7 +51,7 @@ namespace Lockstep.Game {
         public int initEnemyCount => 20;
 
         public override void DoAwake(IServiceContainer services){
-            this.Read(_constStateService.ConfigPath + "GameConfig.bytes");
+            this.Read(_constStateService.ClientConfigPath + "GameConfig.bytes");
             //if (_constStateService.RunMode == EPureModeType.Pure) {
             //    var txt = JsonMapper.ToJson(this);
             //    File.WriteAllText(JsonPath, txt);

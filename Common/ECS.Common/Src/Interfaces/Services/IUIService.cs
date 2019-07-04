@@ -21,7 +21,7 @@ namespace Lockstep.Game {
     public delegate void UICallback(object windowObj);
 
     public interface IUIService : IService {
-        bool IsDebugMode { get; set; }
+        bool IsDebugMode { get; }
         T GetIService<T>() where T : IService;
         void RegisterAssembly(Assembly uiAssembly);
         void OpenWindow(string dir, EWindowDepth dep, UICallback callback = null);

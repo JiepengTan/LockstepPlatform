@@ -21,6 +21,8 @@ namespace Lockstep.Game {
         }
 
         public static Launcher Instance { get; private set; }
+        public string GameName = "";
+        public bool IsDebugMode = false;
         public IContexts Contexts;
 
         private ServiceContainer _serviceContainer;
@@ -86,8 +88,15 @@ namespace Lockstep.Game {
                 var method = ty.GetMethod("DoInit",
                     BindingFlags.FlattenHierarchy | BindingFlags.Instance | BindingFlags.Public);
                 if (method != null) {
-                    method.Invoke(service, new object[] {transform});
+                    try {
+                        method.Invoke(service, new object[] {transform});
+                    }
+                    catch (Exception e) {
+                        Debug.LogError("" + service.GetType() + "  " + e);
+                        throw;
+                    }
                 }
+
                 _serviceContainer.RegisterService(service);
                 _timeMachineContainer.RegisterTimeMachine(service as ITimeMachine);
                 if (service is BaseService baseService) {
@@ -98,7 +107,9 @@ namespace Lockstep.Game {
             Contexts = _serviceContainer.GetService<IECSFacadeService>().CreateContexts();
             _serviceContainer.GetService<IConstStateService>().Contexts = Contexts;
             _serviceContainer.GetService<IConstStateService>().RunMode = RunMode;
-            
+            _serviceContainer.GetService<IConstStateService>().GameName = GameName;
+            _serviceContainer.GetService<IConstStateService>().IsDebugMode = IsDebugMode;
+
             _serviceContainer.RegisterService(_timeMachineContainer);
             _serviceContainer.RegisterService(_registerService);
         }

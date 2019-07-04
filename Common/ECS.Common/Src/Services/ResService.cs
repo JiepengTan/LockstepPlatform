@@ -7,7 +7,7 @@ namespace Lockstep.Game {
         private Dictionary<ushort, string> _id2Path = new Dictionary<ushort, string>();
         public override void DoStart(){
             base.DoStart();
-            var path = _constStateService.ConfigPath + "AssetPath.json";
+            var path = _constStateService.ClientConfigPath + "AssetPath.json";
             var text = File.ReadAllText(path);
             //TODO 
             var content = JsonMapper.ToObject<Dictionary<string, string>>(text);
