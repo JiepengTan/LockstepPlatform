@@ -9,7 +9,7 @@ namespace Lockstep.Game.Res {
     public delegate List<AssetInfo> GetAssetTableHandler();
 
     public interface IUnityResLoader : IService {
-        void DoInit();
+        void DoInit(object trans);
         void DoUpdate();
         void DoExitScene();
         bool HasAsset(int assetId);

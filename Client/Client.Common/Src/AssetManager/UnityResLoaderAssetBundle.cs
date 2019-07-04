@@ -11,7 +11,7 @@ namespace Lockstep.Game.Res
 {
     public class UnityResLoaderAssetBundle : IUnityResLoader
     {
-        public void DoInit() { }
+        public void DoInit(object trans) { }
         public void DoUpdate() { }
         public void DoExitScene() { }
         public byte[] LoadTextBytes(string filePath) { return null; }

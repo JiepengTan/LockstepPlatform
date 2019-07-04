@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,7 +11,7 @@ namespace Lockstep.Game.Res
         private AssetInfoManager _assetInfoManager;
         #region interface 
 
-        public void DoInit(){
+        public void DoInit(object trans){
             _assetInfoManager = AssetInfoManager.Instance;
         }
         public void DoUpdate() { }

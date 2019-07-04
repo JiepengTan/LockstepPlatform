@@ -66,7 +66,7 @@ namespace Lockstep.Game.Res {
         public bool IsForceUseBundleMode = false;
 
         #region Interface IResLoader
-        public void DoInit(){
+        public void DoInit(object trans){
             AssetInfoManager.Instance.Init();
 #if UNITY_EDITOR
             if (IsForceUseBundleMode) {
@@ -78,8 +78,8 @@ namespace Lockstep.Game.Res {
 #else
             loaderBundle = new  ResLoaderAssetBundle();
 #endif
-            _loaderResources.DoInit();
-            _loaderReal.DoInit();
+            _loaderResources.DoInit(trans);
+            _loaderReal.DoInit(trans);
         }
 
         public void DoUpdate(){

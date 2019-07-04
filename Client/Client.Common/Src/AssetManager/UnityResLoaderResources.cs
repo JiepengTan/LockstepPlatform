@@ -37,7 +37,7 @@ namespace Lockstep.Game.Res {
 
         #region Interface 
 
-        public void DoInit(){
+        public void DoInit(object trans){
             _assetInfoManager = AssetInfoManager.Instance;
         }
 
