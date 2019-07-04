@@ -8,9 +8,13 @@ public class MainScript : MonoBehaviour {
     [HideInInspector] public RenderTexture rt;
 
     public Launcher _launcher = new Launcher();
-    public string GameName = "Tank";
+    public bool IsDebugMode = false;
+
     private void Awake(){
-        _launcher.GameName = GameName;
+        _launcher.GameName = "Tank";
+#if UNITY_EDITOR
+        _launcher.IsDebugMode = IsDebugMode;
+#endif
         _launcher.DoAwake(null);
         rt = new RenderTexture(renderTextureSize.x, renderTextureSize.y, 1, RenderTextureFormat.ARGB32);
         gameCamera.targetTexture = rt;
@@ -24,7 +28,7 @@ public class MainScript : MonoBehaviour {
     private void Start(){
         var stateService = GetService<IConstStateService>();
         string path = Application.dataPath;
-#if UNITY_EDITOR 
+#if UNITY_EDITOR
         path = Application.dataPath + "/../../../";
 #elif UNITY_STANDALONE_OSX
         path = Application.dataPath + "/../../../../../";

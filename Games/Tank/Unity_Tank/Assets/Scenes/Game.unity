@@ -334,6 +334,8 @@ MonoBehaviour:
   renderTextureSize: {x: 768, y: 768}
   rt: {fileID: 0}
   _launcher:
+    GameName: 
+    IsDebugMode: 0
     _mainManager:
       IsVideoMode: 0
       RecordPath: 
@@ -359,6 +361,7 @@ MonoBehaviour:
       JumpToTick: 10
       CurTick: 0
     RunMode: 1
+  IsDebugMode: 0
 --- !u!213 &1038545873
 Sprite:
   m_ObjectHideFlags: 0
