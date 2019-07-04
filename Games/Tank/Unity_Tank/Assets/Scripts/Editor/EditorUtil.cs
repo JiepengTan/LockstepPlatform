@@ -11,6 +11,14 @@ using System.Text;
 using Lockstep.Util;
 
 public class EditorUtil {
+    
+    public static void ShowMessage(string content){
+        EditorWindow window = null;
+        if (EditorWindow.focusedWindow == null) {
+            window = EditorWindow.mouseOverWindow;
+        }
+        window?.ShowNotification(new GUIContent(content));
+    }
     /// <summary>
     /// 对目录下面相应的类型asset进行操作
     /// </summary>

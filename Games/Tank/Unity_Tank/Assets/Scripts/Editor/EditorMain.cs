@@ -8,6 +8,7 @@ public class EditorMain : UnityEditor.Editor {
     private MainManager owner;
     private Launcher _Launcher;
 
+
     public override void OnInspectorGUI(){
         base.OnInspectorGUI();
         _Launcher = (target as MainScript)?._launcher;

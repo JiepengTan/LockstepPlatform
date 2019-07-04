@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-using Lockstep.Game;
+﻿using Lockstep.Game;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
+
 
 public class EditorUIRecover : UnityEditor.Editor {
     [MenuItem("Tools/RecoverAllUI")]
