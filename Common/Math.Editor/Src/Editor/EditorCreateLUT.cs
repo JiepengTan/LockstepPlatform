@@ -10,7 +10,7 @@ namespace Lockstep.Math
 {
     public static class EditorCreateLUT
     {
-	    [MenuItem("Lockstep.Math/CreateLUTAsin")]
+	    [MenuItem("Tools/Lockstep.Math/CreateLUTAsin")]
         static void  CreateLUTAsin()
         {
             string fileName = Application.dataPath + "/Lockstep.Math/LUT/LUTAsin.cs";

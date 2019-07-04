@@ -1,6 +1,4 @@
-
 using System;
-using System.Runtime.InteropServices;
 using System.Text;
 using Lockstep.Math;
 
@@ -22,7 +20,6 @@ namespace Lockstep.AI.PathFinding {
 			return value.ToString();
 		}
 	}
-
 /**
  * 二叉堆
  *  @author Nathan Sweet */
@@ -175,21 +172,11 @@ namespace Lockstep.AI.PathFinding {
 		public override int GetHashCode(){
 			int h = 1;
 			for (int i = 0, n = size; i < n; i++)
-				h = h * 31 + FloatToIntBits(_nodes[i].value);
+				h = h * 31 + _nodes[i].value._val;
 			return h;
 		}
 
-		int FloatToIntBits(LFloat value){
-			ConverterHelperFloat ch = new ConverterHelperFloat {ALFloat = value};
-			return ch.Aint;
-		}
 
-		[StructLayout(LayoutKind.Explicit)]
-		private struct ConverterHelperFloat {
-			[FieldOffset(0)] public int Aint;
-
-			[FieldOffset(0)] public LFloat ALFloat;
-		}
 
 		public override String ToString(){
 			if (size == 0)
