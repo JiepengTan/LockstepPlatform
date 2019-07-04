@@ -334,7 +334,7 @@ namespace Lockstep.Server.Game {
                 return;
             }
 
-            var msgType = reader.GetInt16();
+            var msgType = reader.ReadInt16();
             if (msgType >= MaxMsgIdx) {
                 DealMsgHandlerError(player, $"{player.UserId} send a Error msgType out of range {msgType}");
                 return;
@@ -419,7 +419,7 @@ namespace Lockstep.Server.Game {
 
         public void BorderUdp(EMsgSC type, ISerializable body){
             var writer = new Serializer();
-            writer.PutInt16((short) type);
+            writer.Write((short) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             foreach (var player in Players) {
@@ -434,7 +434,7 @@ namespace Lockstep.Server.Game {
 
         public void SendUdp(Player player, EMsgSC type, ISerializable body, bool isNeedDebugSize = false){
             var writer = new Serializer();
-            writer.PutInt16((short) type);
+            writer.Write((short) type);
             body.Serialize(writer);
             var bytes = Compressor.Compress(writer);
             if (isNeedDebugSize) {

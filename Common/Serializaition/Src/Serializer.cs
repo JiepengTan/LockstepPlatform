@@ -64,7 +64,7 @@ namespace Lockstep.Serialization {
         public static Serializer FromBytes(byte[] bytes, bool copy){
             if (copy) {
                 var netDataWriter = new Serializer(true, bytes.Length);
-                netDataWriter.Put(bytes);
+                netDataWriter._Put(bytes);
                 return netDataWriter;
             }
 
@@ -79,13 +79,13 @@ namespace Lockstep.Serialization {
         /// <param name="length">Length of array</param>
         public static Serializer FromBytes(byte[] bytes, int offset, int length){
             var netDataWriter = new Serializer(true, bytes.Length);
-            netDataWriter.Put(bytes, offset, length);
+            netDataWriter._Put(bytes, offset, length);
             return netDataWriter;
         }
 
         public static Serializer FromString(string value){
             var netDataWriter = new Serializer();
-            netDataWriter.PutString(value);
+            netDataWriter.Write(value);
             return netDataWriter;
         }
 
@@ -122,317 +122,200 @@ namespace Lockstep.Serialization {
             get { return _position; }
         }
 
-        public void PutSingle(float value){
+        public void Write(float value){
             ResizeIfNeed(_position + 4);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
         }
 
-        public void PutDouble(double value){
+        public void Write(double value){
             ResizeIfNeed(_position + 8);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 8;
         }
 
-        public void PutInt64(long value){
+        public void Write(long value){
             ResizeIfNeed(_position + 8);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 8;
         }
 
-        public void PutUInt64(ulong value){
+        public void Write(ulong value){
             ResizeIfNeed(_position + 8);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 8;
         }
 
-        public void PutInt32(int value){
+        public void Write(int value){
             ResizeIfNeed(_position + 4);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
         }
 
-        public void PutUInt32(uint value){
+        public void Write(uint value){
             ResizeIfNeed(_position + 4);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 4;
         }
 
 
-        public void PutUInt16(ushort value){
+        public void Write(ushort value){
             ResizeIfNeed(_position + 2);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 2;
         }
 
-        public void PutInt16(short value){
+        public void Write(short value){
             ResizeIfNeed(_position + 2);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 2;
         }
 
-        public void PutSByte(sbyte value){
+        public void Write(sbyte value){
             ResizeIfNeed(_position + 1);
             _data[_position] = (byte) value;
             _position++;
         }
 
-        public void PutByte(byte value){
+        public void Write(byte value){
             ResizeIfNeed(_position + 1);
             _data[_position] = value;
             _position++;
         }
 
-        public void PutBoolean(bool value){
+        public void Write(bool value){
             ResizeIfNeed(_position + 1);
             _data[_position] = (byte) (value ? 1 : 0);
             _position++;
         }
 
-        public void PutChar(char value){
+        public void Write(char value){
             ResizeIfNeed(_position + 2);
             FastBitConverter.GetBytes(_data, _position, value);
             _position += 2;
         }
 
-        public void PutIPEndPoint(IPEndPoint endPoint){
-            PutString(endPoint.Address.ToString());
-            PutInt32(endPoint.Port);
+        public void Write(IPEndPoint endPoint){
+            Write(endPoint.Address.ToString());
+            Write(endPoint.Port);
         }
 
-        public void PutString(string value){
+        public void Write(string value){
             if (string.IsNullOrEmpty(value)) {
-                PutInt32(0);
+                Write(0);
                 return;
             }
 
             //put bytes count
             int bytesCount = Encoding.UTF8.GetByteCount(value);
             ResizeIfNeed(_position + bytesCount + 4);
-            PutInt32(bytesCount);
+            Write(bytesCount);
 
             //put string
             Encoding.UTF8.GetBytes(value, 0, value.Length, _data, _position);
             _position += bytesCount;
         }
 
-        public void PutString(string value, int maxLength){
-            if (string.IsNullOrEmpty(value)) {
-                PutInt32(0);
-                return;
-            }
 
-            int length = value.Length > maxLength ? maxLength : value.Length;
-            //calculate max count
-            int bytesCount = Encoding.UTF8.GetByteCount(value);
-            ResizeIfNeed(_position + bytesCount + 4);
-
-            //put bytes count
-            PutInt32(bytesCount);
-
-            //put string
-            Encoding.UTF8.GetBytes(value, 0, length, _data, _position);
-
-            _position += bytesCount;
-        }
-
-        public void Put(BaseFormater value){
-            PutBoolean(value == null);
+        public void Write(BaseFormater value){
+            Write(value == null);
             value?.Serialize(this);
         }
 
+ 
+        public void Write(string[] value){
+            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
+            Write(len);
+            for (int i = 0; i < len; i++)
+                Write(value[i]);
+        }
+
         /// len should less then ushort.MaxValue
-        public void PutBytes(byte[] value){
+        public void Write(byte[] value){
             ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            PutUInt16(len);
-            Put(value);
-        }
-
-        public void PutArray(float[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(float));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 4 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutSingle(value[i]);
-        }
-
-        public void PutArray(double[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(double));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 8 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutDouble(value[i]);
-        }
-
-        public void PutArray(long[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(long));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 8 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutInt64(value[i]);
-        }
-
-        public void PutArray(ulong[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(ulong));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 8 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutUInt64(value[i]);
-        }
-
-        public void PutArray(int[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(int));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 4 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutInt32(value[i]);
-        }
-
-        public void PutArray(uint[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(uint));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 4 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutUInt32(value[i]);
-        }
-
-        public void PutArray(ushort[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(ushort));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 2 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutUInt16(value[i]);
-        }
-
-        public void PutArray(short[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(short));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len * 2 + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutInt16(value[i]);
-        }
-
-        public void PutArray(bool[] value){
-            if (BitConverter.IsLittleEndian) {
-                __PutArrayFastLE(value, sizeof(bool));
-                return;
-            }
-
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            ResizeIfNeed(_position + len + 2);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutBoolean(value[i]);
-        }
-
-        public void PutArray(string[] value){
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutString(value[i]);
-        }
-
-        public void PutArray(string[] value, int maxLength){
-            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
-            PutUInt16(len);
-            for (int i = 0; i < len; i++)
-                PutString(value[i], maxLength);
-        }
-
-
-        public void PutArray<T>(T[] value)where T:BaseFormater{
-            ushort len = (ushort) (value?.Length ?? 0);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++) {
-                var val = value[i];
-                PutBoolean(val == null);
-                val?.Serialize(this);
-            }
-        }
-        public void PutList<T>(List<T> value) where T:BaseFormater{
-            ushort len = (ushort) (value?.Count ?? 0);
-            PutUInt16(len);
-            for (int i = 0; i < len; i++) {
-                var val = value[i];
-                PutBoolean(val == null);
-                val?.Serialize(this);
-            }
-        }
-
-        public void PutArray(byte[] value){
-            ushort len = (ushort) (value?.Length ?? 0);
-            PutUInt16(len);
+            Write(len);
             if (len > 0) {
-                Put(value);
+                _Put(value);
             }
         }
-
-        public void PutBytes_255(byte[] value){
+        public void WriteBytes_255(byte[] value){
             if (value == null) {
-                PutByte((byte) 0);
+                Write((byte) 0);
                 return;
             }
-
             if (value.Length > byte.MaxValue) {
                 throw new ArgumentOutOfRangeException($"Input Cmd len should less then {byte.MaxValue}");
             }
-
-            PutByte((byte) value.Length);
-            Put(value);
+            Write((byte) value.Length);
+            _Put(value);
         }
 
-        private void Put(byte[] data, int offset, int length){
+        public void Write(float[] value){_PutArray(value, sizeof(float), FastBitConverter.GetBytes);}
+
+        public void Write(double[] value){_PutArray(value, sizeof(double), FastBitConverter.GetBytes);}
+
+        public void Write(long[] value){_PutArray(value, sizeof(long), FastBitConverter.GetBytes);}
+
+        public void Write(ulong[] value){_PutArray(value, sizeof(ulong), FastBitConverter.GetBytes);}
+
+        public void Write(int[] value){_PutArray(value, sizeof(int), FastBitConverter.GetBytes);}
+
+        public void Write(uint[] value){_PutArray(value, sizeof(uint), FastBitConverter.GetBytes);}
+
+        public void Write(ushort[] value){_PutArray(value, sizeof(ushort), FastBitConverter.GetBytes);}
+
+        public void Write(short[] value){_PutArray(value, sizeof(short), FastBitConverter.GetBytes);}
+
+        public void Write(bool[] value){_PutArray(value, sizeof(bool), FastBitConverter.GetBytes);}
+
+
+        public void Write<T>(T[] value) where T : BaseFormater{
+            ushort len = (ushort) (value?.Length ?? 0);
+            Write(len);
+            for (int i = 0; i < len; i++) {
+                var val = value[i];
+                Write(val == null);
+                val?.Serialize(this);
+            }
+        }
+
+        public void Write<T>(List<T> value) where T : BaseFormater{
+            ushort len = (ushort) (value?.Count ?? 0);
+            Write(len);
+            for (int i = 0; i < len; i++) {
+                var val = value[i];
+                Write(val == null);
+                val?.Serialize(this);
+            }
+        }
+
+
+        private void _Put(byte[] data, int offset, int length){
             ResizeIfNeed(_position + length);
             Buffer.BlockCopy(data, offset, _data, _position, length);
             _position += length;
         }
 
-        private void Put(byte[] data){
+        private void _Put(byte[] data){
             ResizeIfNeed(_position + data.Length);
             Buffer.BlockCopy(data, 0, _data, _position, data.Length);
             _position += data.Length;
         }
 
+
+        private void _PutArray<T>(T[] value, int typeSize, Action<byte[], int, T> _func) where T : struct{
+            if (BitConverter.IsLittleEndian) {
+                __PutArrayFastLE(value, typeSize);
+                return;
+            }
+            ushort len = value == null ? (ushort) 0 : (ushort) value.Length;
+            ResizeIfNeed(_position + 2 + typeSize * len);
+            Write(len);
+            for (int i = 0; i < len; i++) {
+                _func(_data, _position, value[i]);
+                _position += typeSize;
+            }
+        }
         private void __PutArrayFastLE<T>(T[] x, int elemSize) where T : struct{
             ushort len = x == null ? (ushort) 0 : (ushort) x.Length;
             int bytesCount = elemSize * len;
@@ -448,5 +331,4 @@ namespace Lockstep.Serialization {
             _position += bytesCount;
         }
     }
-    
 }

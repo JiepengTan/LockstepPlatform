@@ -252,14 +252,14 @@ namespace Lockstep.Client {
 
         public void SendUdp(EMsgSC msgId, ISerializable body){
             var writer = new Serializer();
-            writer.PutInt16((short) msgId);
+            writer.Write((short) msgId);
             body?.Serialize(writer);
             _netUdp?.SendMessage(EMsgSC.C2G_UdpMessage, writer.CopyData(), EDeliveryMethod.Unreliable);
         }
 
         public void SendTcp(EMsgSC msgId, BaseMsg body){
             var writer = new Serializer();
-            writer.PutInt16((short) msgId);
+            writer.Write((short) msgId);
             body.Serialize(writer);
             _netTcp?.SendMessage(EMsgSC.C2G_TcpMessage, writer.CopyData());
         }
@@ -271,7 +271,7 @@ namespace Lockstep.Client {
         }
 
         protected void OnRecvMsg(Deserializer reader){
-            var msgType = reader.GetInt16();
+            var msgType = reader.ReadInt16();
             if (msgType >= _maxMsgId) {
                 Debug.LogError($" send a Error msgType out of range {msgType}");
                 return;

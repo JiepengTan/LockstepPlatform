@@ -418,8 +418,8 @@ namespace Lockstep.Game {
 
         public void DumpGameLog(Stream outputStream, bool closeStream = true){
             var serializer = new Serializer();
-            serializer.PutInt64(_gameStateContext.hashCode.value);
-            serializer.PutInt32(_gameStateContext.tick.value);
+            serializer.Write(_gameStateContext.hashCode.value);
+            serializer.Write(_gameStateContext.tick.value);
             outputStream.Write(serializer.Data, 0, serializer.Length);
 
             GameLog.WriteTo(outputStream);

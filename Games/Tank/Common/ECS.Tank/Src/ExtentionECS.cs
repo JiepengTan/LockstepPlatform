@@ -56,11 +56,11 @@ namespace Lockstep.ECS.Input{
     [System.Serializable]
     public partial class ActorIdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutByte(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetByte();
+			value = reader.ReadByte();
         }
 
         public override void CopyTo(object comp){
@@ -92,11 +92,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class ActorIdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutByte(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetByte();
+			value = reader.ReadByte();
         }
 
         public override void CopyTo(object comp){
@@ -172,11 +172,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class AssetComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32((int)(assetId));
+			writer.Write((int)(assetId));
         }
     
         public override void Deserialize(Deserializer reader){
-			assetId = (Lockstep.Game.EAssetID)reader.GetInt32();
+			assetId = (Lockstep.Game.EAssetID)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -208,13 +208,13 @@ namespace Lockstep.ECS.Actor{
     [System.Serializable]
     public partial class BackupComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutByte(actorId);
-			writer.PutInt32(tick);
+			writer.Write(actorId);
+			writer.Write(tick);
         }
     
         public override void Deserialize(Deserializer reader){
-			actorId = reader.GetByte();
-			tick = reader.GetInt32();
+			actorId = reader.ReadByte();
+			tick = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -248,13 +248,13 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class BackupComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(localEntityId);
-			writer.PutInt32(tick);
+			writer.Write(localEntityId);
+			writer.Write(tick);
         }
     
         public override void Deserialize(Deserializer reader){
-			localEntityId = reader.GetUInt32();
-			tick = reader.GetInt32();
+			localEntityId = reader.ReadUInt32();
+			tick = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -324,11 +324,11 @@ namespace Lockstep.ECS.GameState{
     [System.Serializable]
     public partial class BeforeExecuteHashCodeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt64(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt64();
+			value = reader.ReadInt64();
         }
 
         public override void CopyTo(object comp){
@@ -396,15 +396,15 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class BulletComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutBoolean(canDestoryGrass);
-			writer.PutBoolean(canDestoryIron);
-			writer.PutUInt32(ownerLocalId);
+			writer.Write(canDestoryGrass);
+			writer.Write(canDestoryIron);
+			writer.Write(ownerLocalId);
         }
     
         public override void Deserialize(Deserializer reader){
-			canDestoryGrass = reader.GetBoolean();
-			canDestoryIron = reader.GetBoolean();
-			ownerLocalId = reader.GetUInt32();
+			canDestoryGrass = reader.ReadBoolean();
+			canDestoryIron = reader.ReadBoolean();
+			ownerLocalId = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -480,12 +480,12 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class DelayCallComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(callBack);
+			writer.Write(callBack);
 			writer.PutLFloat(delayTimer);
         }
     
         public override void Deserialize(Deserializer reader){
-			callBack = reader.GetInt32();
+			callBack = reader.ReadInt32();
 			delayTimer = reader.GetLFloat();
         }
 
@@ -592,11 +592,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class DirComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32((int)(value));
+			writer.Write((int)(value));
         }
     
         public override void Deserialize(Deserializer reader){
-			value = (Lockstep.Game.EDir)reader.GetInt32();
+			value = (Lockstep.Game.EDir)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -664,11 +664,11 @@ namespace Lockstep.ECS.Input{
     [System.Serializable]
     public partial class EntityConfigIdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -700,11 +700,11 @@ namespace Lockstep.ECS.Actor{
     [System.Serializable]
     public partial class EntityCountComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetUInt32();
+			value = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -808,11 +808,11 @@ namespace Lockstep.ECS.Actor{
     [System.Serializable]
     public partial class GameLocalIdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetUInt32();
+			value = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -844,11 +844,11 @@ namespace Lockstep.ECS.Debug{
     [System.Serializable]
     public partial class HashCodeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt64(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt64();
+			value = reader.ReadInt64();
         }
 
         public override void CopyTo(object comp){
@@ -880,11 +880,11 @@ namespace Lockstep.ECS.GameState{
     [System.Serializable]
     public partial class HashCodeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt64(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt64();
+			value = reader.ReadInt64();
         }
 
         public override void CopyTo(object comp){
@@ -916,11 +916,11 @@ namespace Lockstep.ECS.Snapshot{
     [System.Serializable]
     public partial class HashCodeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt64(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt64();
+			value = reader.ReadInt64();
         }
 
         public override void CopyTo(object comp){
@@ -952,11 +952,11 @@ namespace Lockstep.ECS.Actor{
     [System.Serializable]
     public partial class IdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutByte(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetByte();
+			value = reader.ReadByte();
         }
 
         public override void CopyTo(object comp){
@@ -988,13 +988,13 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class ItemTypeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutByte(killerActorId);
-			writer.PutInt32((int)(type));
+			writer.Write(killerActorId);
+			writer.Write((int)(type));
         }
     
         public override void Deserialize(Deserializer reader){
-			killerActorId = reader.GetByte();
-			type = (Lockstep.ECS.Game.EItemType)reader.GetInt32();
+			killerActorId = reader.ReadByte();
+			type = (Lockstep.ECS.Game.EItemType)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1028,11 +1028,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class LifeComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1064,11 +1064,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class LocalIdComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetUInt32();
+			value = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1100,13 +1100,13 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class MoveComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutBoolean(isChangedDir);
+			writer.Write(isChangedDir);
 			writer.PutLFloat(maxMoveSpd);
 			writer.PutLFloat(moveSpd);
         }
     
         public override void Deserialize(Deserializer reader){
-			isChangedDir = reader.GetBoolean();
+			isChangedDir = reader.ReadBoolean();
 			maxMoveSpd = reader.GetLFloat();
 			moveSpd = reader.GetLFloat();
         }
@@ -1144,11 +1144,11 @@ namespace Lockstep.ECS.Input{
     [System.Serializable]
     public partial class MoveDirComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32((int)(value));
+			writer.Write((int)(value));
         }
     
         public override void Deserialize(Deserializer reader){
-			value = (Lockstep.Game.EDir)reader.GetInt32();
+			value = (Lockstep.Game.EDir)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1180,11 +1180,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class MoveRequestComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32((int)(value));
+			writer.Write((int)(value));
         }
     
         public override void Deserialize(Deserializer reader){
-			value = (Lockstep.Game.EDir)reader.GetInt32();
+			value = (Lockstep.Game.EDir)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1216,11 +1216,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class OwnerComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(localId);
+			writer.Write(localId);
         }
     
         public override void Deserialize(Deserializer reader){
-			localId = reader.GetUInt32();
+			localId = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1288,11 +1288,11 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class ScoreComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1324,17 +1324,17 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class SkillComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(bulletId);
+			writer.Write(bulletId);
 			writer.PutLFloat(cd);
 			writer.PutLFloat(cdTimer);
-			writer.PutBoolean(isNeedFire);
+			writer.Write(isNeedFire);
         }
     
         public override void Deserialize(Deserializer reader){
-			bulletId = reader.GetInt32();
+			bulletId = reader.ReadInt32();
 			cd = reader.GetLFloat();
 			cdTimer = reader.GetLFloat();
-			isNeedFire = reader.GetBoolean();
+			isNeedFire = reader.ReadBoolean();
         }
 
         public override void CopyTo(object comp){
@@ -1516,11 +1516,11 @@ namespace Lockstep.ECS.Debug{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutUInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetUInt32();
+			value = reader.ReadUInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1552,11 +1552,11 @@ namespace Lockstep.ECS.GameState{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1588,11 +1588,11 @@ namespace Lockstep.ECS.Input{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1624,11 +1624,11 @@ namespace Lockstep.ECS.Snapshot{
     [System.Serializable]
     public partial class TickComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(value);
+			writer.Write(value);
         }
     
         public override void Deserialize(Deserializer reader){
-			value = reader.GetInt32();
+			value = reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){
@@ -1660,21 +1660,21 @@ namespace Lockstep.ECS.Game{
     [System.Serializable]
     public partial class UnitComponent  {
         public override void Serialize(Serializer writer){
-			writer.PutInt32(damage);
-			writer.PutInt32(detailType);
-			writer.PutInt32(health);
-			writer.PutUInt32(killerLocalId);
-			writer.PutString(name);
-			writer.PutInt32((int)(camp));
+			writer.Write(damage);
+			writer.Write(detailType);
+			writer.Write(health);
+			writer.Write(killerLocalId);
+			writer.Write(name);
+			writer.Write((int)(camp));
         }
     
         public override void Deserialize(Deserializer reader){
-			damage = reader.GetInt32();
-			detailType = reader.GetInt32();
-			health = reader.GetInt32();
-			killerLocalId = reader.GetUInt32();
-			name = reader.GetString();
-			camp = (Lockstep.Game.ECampType)reader.GetInt32();
+			damage = reader.ReadInt32();
+			detailType = reader.ReadInt32();
+			health = reader.ReadInt32();
+			killerLocalId = reader.ReadUInt32();
+			name = reader.ReadString();
+			camp = (Lockstep.Game.ECampType)reader.ReadInt32();
         }
 
         public override void CopyTo(object comp){

@@ -78,11 +78,11 @@ namespace Lockstep.Game {
         }
 
         public void Serialize(Serializer writer){
-            writer.PutList(enemyPrefabs);
-            writer.PutList(playerPrefabs);
-            writer.PutList(bulletPrefabs);
-            writer.PutList(itemPrefabs);
-            writer.PutList(CampPrefabs);
+            writer.Write(enemyPrefabs);
+            writer.Write(playerPrefabs);
+            writer.Write(bulletPrefabs);
+            writer.Write(itemPrefabs);
+            writer.Write(CampPrefabs);
         }
 
         public void Deserialize(Deserializer reader){
@@ -96,7 +96,7 @@ namespace Lockstep.Game {
         List<TRet> GetList<TRet, TParam>(Deserializer reader) where TParam : BaseEntitySetter, new()
             where TRet : BaseEntitySetter{
             var lst = new List<TParam>();
-            lst = reader.GetList(lst);
+            lst = reader.ReadList(lst);
             var lst2 = new List<TRet>(lst.Count);
             foreach (var item in lst) {
                 lst2.Add((TRet) (object) item);

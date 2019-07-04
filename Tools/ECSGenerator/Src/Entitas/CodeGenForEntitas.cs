@@ -68,7 +68,6 @@ using Entitas;";
             catch (Exception ex) {
                 codeGenFileArray1 = new CodeGenFile[0];
                 codeGenFileArray2 = new CodeGenFile[0];
-
                 //LogError("Error" + ex.Message + ex.StackTrace);
             }
 

@@ -8,23 +8,23 @@ namespace Lockstep.CodeGenerator {
     public class TypeHandlerMsg: ITypeHandler {
         public class HandlerDeserialize : FiledHandler {
             public HandlerDeserialize(ICodeHelper helper):base(helper){
-                _defaultCodeTemplete = @"{0}{1} = reader.Get{2}();";
+                _defaultCodeTemplete = @"{0}{1} = reader.Read{2}();";
                 _enumCodeTemplete = @"{0}{1} = ({2})reader.GetInt32();";
-                _clsCodeTemplete = @"{0}{1} = reader.Get(ref this.{1});";
-                _arrayCodeTemplete = @"{0}{1} = reader.GetArray(this.{1});";
-                _lstCodeTemplete = @"{0}{1} = reader.GetList(this.{1});";
-                _dictCodeTemplete = @"{0}{1} = reader.GetDict(this.{1});";
+                _clsCodeTemplete = @"{0}{1} = reader.Read(ref this.{1});";
+                _arrayCodeTemplete = @"{0}{1} = reader.ReadArray(this.{1});";
+                _lstCodeTemplete = @"{0}{1} = reader.ReadList(this.{1});";
+                _dictCodeTemplete = @"{0}{1} = reader.ReadDict(this.{1});";
             }
         }
 
         public class HandlerSerialize : FiledHandler {
             public HandlerSerialize(ICodeHelper helper):base(helper){
-                _defaultCodeTemplete = @"{0}writer.Put{2}({1});";
-                _enumCodeTemplete = @"{0}writer.PutInt32((int)({1}));";
-                _clsCodeTemplete = @"{0}writer.Put({1});";
-                _arrayCodeTemplete = @"{0}writer.PutArray({1});";
-                _lstCodeTemplete = @"{0}writer.PutList({1});";
-                _dictCodeTemplete = @"{0}writer.PutDict({1});";
+                _defaultCodeTemplete = @"{0}writer.Write({1});";
+                _enumCodeTemplete = @"{0}writer.Write((int)({1}));";
+                _clsCodeTemplete = @"{0}writer.Write({1});";
+                _arrayCodeTemplete = @"{0}writer.Write({1});";
+                _lstCodeTemplete = @"{0}writer.Write({1});";
+                _dictCodeTemplete = @"{0}writer.Write({1});";
             }
         }
 

@@ -8,11 +8,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_BorderMasterInfo{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -20,17 +20,17 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_I2L_UserLogin{
         public override void Serialize(Serializer writer){
-			writer.PutString(Account);
-			writer.PutInt32(GameType);
-			writer.PutString(LoginHash);
-			writer.PutInt64(UserId);
+			writer.Write(Account);
+			writer.Write(GameType);
+			writer.Write(LoginHash);
+			writer.Write(UserId);
         }
     
         public override void Deserialize(Deserializer reader){
-			Account = reader.GetString();
-			GameType = reader.GetInt32();
-			LoginHash = reader.GetString();
-			UserId = reader.GetInt64();
+			Account = reader.ReadString();
+			GameType = reader.ReadInt32();
+			LoginHash = reader.ReadString();
+			UserId = reader.ReadInt64();
         }
     }
 
@@ -38,11 +38,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_RegisterDaemon{
         public override void Serialize(Serializer writer){
-			writer.PutByte(Type);
+			writer.Write(Type);
         }
     
         public override void Deserialize(Deserializer reader){
-			Type = reader.GetByte();
+			Type = reader.ReadByte();
         }
     }
 
@@ -50,11 +50,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_RegisterServer{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -62,11 +62,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_RepMasterInfo{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -74,11 +74,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_RepOtherServerInfo{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -86,11 +86,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_ReqMasterInfo{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -98,13 +98,13 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_ReqOtherServerInfo{
         public override void Serialize(Serializer writer){
-			writer.PutByte(DetailType);
-			writer.PutByte(ServerType);
+			writer.Write(DetailType);
+			writer.Write(ServerType);
         }
     
         public override void Deserialize(Deserializer reader){
-			DetailType = reader.GetByte();
-			ServerType = reader.GetByte();
+			DetailType = reader.ReadByte();
+			ServerType = reader.ReadByte();
         }
     }
 
@@ -112,11 +112,11 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class Msg_ReqServerInfo{
         public override void Serialize(Serializer writer){
-			writer.Put(ServerInfo);
+			writer.Write(ServerInfo);
         }
     
         public override void Deserialize(Deserializer reader){
-			ServerInfo = reader.Get(ref this.ServerInfo);
+			ServerInfo = reader.ReadRef(ref this.ServerInfo);
         }
     }
 
@@ -124,17 +124,17 @@ namespace NetMsg.Server{
     [System.Serializable]
     public partial class ServerIpInfo{
         public override void Serialize(Serializer writer){
-			writer.PutString(Ip);
-			writer.PutBoolean(IsMaster);
-			writer.PutUInt16(Port);
-			writer.PutByte(ServerType);
+			writer.Write(Ip);
+			writer.Write(IsMaster);
+			writer.Write(Port);
+			writer.Write(ServerType);
         }
     
         public override void Deserialize(Deserializer reader){
-			Ip = reader.GetString();
-			IsMaster = reader.GetBoolean();
-			Port = reader.GetUInt16();
-			ServerType = reader.GetByte();
+			Ip = reader.ReadString();
+			IsMaster = reader.ReadBoolean();
+			Port = reader.ReadUInt16();
+			ServerType = reader.ReadByte();
         }
     }
 

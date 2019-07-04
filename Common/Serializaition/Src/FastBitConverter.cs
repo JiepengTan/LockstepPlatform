@@ -86,11 +86,14 @@ namespace Lockstep.Serialization
             WriteLittleEndian(bytes, startIndex, ch.Aint);
         }
 
+        public static void GetBytes(byte[] bytes, int startIndex, bool value)
+        {
+            bytes[startIndex] = (byte)(value?1:0);
+        }
         public static void GetBytes(byte[] bytes, int startIndex, short value)
         {
             WriteLittleEndian(bytes, startIndex, value);
         }
-
         public static void GetBytes(byte[] bytes, int startIndex, ushort value)
         {
             WriteLittleEndian(bytes, startIndex, (short)value);

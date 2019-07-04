@@ -16,10 +16,10 @@ namespace Lockstep.Networking {
             {
                 var writer = new Serializer();
                 {
-                    writer.PutInt32(list.Count());
+                    writer.Write(list.Count());
 
                     foreach (var item in list)
-                        writer.PutString(item);
+                        writer.Write(item);
                 }
 
                 b = writer.CopyData();
@@ -31,10 +31,10 @@ namespace Lockstep.Networking {
             {
                 var reader = new Deserializer(data);
                 {
-                    var count = reader.GetInt32();
+                    var count = reader.ReadInt32();
 
                     for (var i = 0; i < count; i++) {
-                        list.Add(reader.GetString());
+                        list.Add(reader.ReadString());
                     }
                 }
             }
@@ -48,11 +48,11 @@ namespace Lockstep.Networking {
             {
                 var writer = new Serializer();
                 {
-                    writer.PutInt32(dictionary.Count);
+                    writer.Write(dictionary.Count);
 
                     foreach (var item in dictionary) {
-                        writer.PutInt32(item.Key);
-                        writer.PutInt32(item.Value);
+                        writer.Write(item.Key);
+                        writer.Write(item.Value);
                     }
                 }
 
@@ -65,11 +65,11 @@ namespace Lockstep.Networking {
             {
                 var reader = new Deserializer(data);
                 {
-                    var count = reader.GetInt32();
+                    var count = reader.ReadInt32();
 
                     for (var i = 0; i < count; i++) {
-                        var key = reader.GetInt32();
-                        var value = reader.GetInt32();
+                        var key = reader.ReadInt32();
+                        var value = reader.ReadInt32();
 
                         if (dictionary.ContainsKey(key)) {
                             dictionary[key] = value;
@@ -88,11 +88,11 @@ namespace Lockstep.Networking {
             {
                 var writer = new Serializer();
                 {
-                    writer.PutInt32(dictionary.Count);
+                    writer.Write(dictionary.Count);
 
                     foreach (var item in dictionary) {
-                        writer.PutString(item.Key);
-                        writer.PutInt32(item.Value);
+                        writer.Write(item.Key);
+                        writer.Write(item.Value);
                     }
                 }
 
@@ -105,11 +105,11 @@ namespace Lockstep.Networking {
             {
                 var reader = new Deserializer(data);
                 {
-                    var count = reader.GetInt32();
+                    var count = reader.ReadInt32();
 
                     for (var i = 0; i < count; i++) {
-                        var key = reader.GetString();
-                        var value = reader.GetInt32();
+                        var key = reader.ReadString();
+                        var value = reader.ReadInt32();
 
                         if (dictionary.ContainsKey(key)) {
                             dictionary[key] = value;
@@ -128,11 +128,11 @@ namespace Lockstep.Networking {
             {
                 var writer = new Serializer();
                 {
-                    writer.PutInt32(dictionary.Count);
+                    writer.Write(dictionary.Count);
 
                     foreach (var item in dictionary) {
-                        writer.PutString(item.Key);
-                        writer.PutSingle(item.Value);
+                        writer.Write(item.Key);
+                        writer.Write(item.Value);
                     }
                 }
 
@@ -144,11 +144,11 @@ namespace Lockstep.Networking {
         public static Dictionary<string, float> FromBytes(this Dictionary<string, float> dictionary, byte[] data){
             var reader = new Deserializer(data);
             {
-                var count = reader.GetInt32();
+                var count = reader.ReadInt32();
 
                 for (var i = 0; i < count; i++) {
-                    var key = reader.GetString();
-                    var value = reader.GetSingle();
+                    var key = reader.ReadString();
+                    var value = reader.ReadSingle();
 
                     if (dictionary.ContainsKey(key)) {
                         dictionary[key] = value;
@@ -166,11 +166,11 @@ namespace Lockstep.Networking {
             {
                 var writer = new Serializer();
                 {
-                    writer.PutInt32(dictionary.Count);
+                    writer.Write(dictionary.Count);
 
                     foreach (var item in dictionary) {
-                        writer.PutString(item.Key);
-                        writer.PutString(item.Value);
+                        writer.Write(item.Key);
+                        writer.Write(item.Value);
                     }
                 }
 
@@ -181,25 +181,25 @@ namespace Lockstep.Networking {
 
         public static void ToWriter(this Dictionary<string, string> dictionary, Serializer writer){
             if (dictionary == null) {
-                writer.PutInt32(0);
+                writer.Write(0);
                 return;
             }
 
-            writer.PutInt32(dictionary.Count);
+            writer.Write(dictionary.Count);
 
             foreach (var item in dictionary) {
-                writer.PutString(item.Key);
-                writer.PutString(item.Value);
+                writer.Write(item.Key);
+                writer.Write(item.Value);
             }
         }
 
         public static Dictionary<string, string> FromReader(this Dictionary<string, string> dictionary,
             Deserializer reader){
-            var count = reader.GetInt32();
+            var count = reader.ReadInt32();
 
             for (var i = 0; i < count; i++) {
-                var key = reader.GetString();
-                var value = reader.GetString();
+                var key = reader.ReadString();
+                var value = reader.ReadString();
                 if (dictionary.ContainsKey(key)) {
                     dictionary[key] = value;
                 }
@@ -232,13 +232,13 @@ namespace Lockstep.Networking {
 
         public static void WriteDictionary(this Serializer writer, Dictionary<string, string> dictionary){
             var bytes = dictionary != null ? dictionary.ToBytes() : new byte[0];
-            writer.PutInt32(bytes.Length);
-            writer.PutArray(bytes);
+            writer.Write(bytes.Length);
+            writer.Write(bytes);
         }
 
         public static Dictionary<string, string> ReadDictionary(this Deserializer reader){
             // Additional dictionary
-            var length = reader.GetInt32();
+            var length = reader.ReadInt32();
 
             if (length > 0)
                 return new Dictionary<string, string>().FromReader(reader);

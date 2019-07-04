@@ -47,12 +47,12 @@ namespace NetMsg.Common {
 
         public override void Serialize(Serializer writer){
 #if DEBUG_FRAME_DELAY
-            writer.PutSingle(timeSinceStartUp);
+            writer.Write(timeSinceStartUp);
 #endif
-            writer.PutByte(ActorId);
-            writer.PutInt32(Tick);
+            writer.Write(ActorId);
+            writer.Write(Tick);
             int count = Commands?.Length ?? 0;
-            writer.PutByte((byte) count);
+            writer.Write((byte) count);
             for (int i = 0; i < count; i++) {
                 Commands[i].Serialize(writer);
             }
@@ -60,11 +60,11 @@ namespace NetMsg.Common {
 
         public override void Deserialize(Deserializer reader){
 #if DEBUG_FRAME_DELAY
-            timeSinceStartUp = reader.GetSingle();
+            timeSinceStartUp = reader.ReadSingle();
 #endif
-            ActorId = reader.GetByte();
-            Tick = reader.GetInt32();
-            int count = reader.GetByte();
+            ActorId = reader.ReadByte();
+            Tick = reader.ReadInt32();
+            int count = reader.ReadByte();
             if (count == 0) {
                 Commands = null;
                 return;

@@ -45,11 +45,11 @@ namespace NetMsg.Common {
         public override void Serialize(Serializer writer){
             Debug.Assert(content != null && content.Length>0&& content.Length < byte.MaxValue
                 , $"!!!!!!!!! Input Cmd len{content?.Length ?? 0} should less then {byte.MaxValue}");
-            writer.PutBytes_255(content);
+            writer.WriteBytes_255(content);
         }
 
         public override void Deserialize(Deserializer reader){
-            content = reader.GetBytes_255();
+            content = reader.ReadBytes_255();
             Debug.Assert(content != null && content.Length > 0,"!!!!!!!!! Input Cmd len{content?.Length ?? 0} should less then {byte.MaxValue}");
         }
     }

@@ -8,13 +8,13 @@ namespace NetMsg.Common {
         public ServerFrame[] frames;
 
         public override void Serialize(Serializer writer){
-            writer.PutInt32(startTick);
-            writer.PutArray(frames);
+            writer.Write(startTick);
+            writer.Write(frames);
         }
 
         public override void Deserialize(Deserializer reader){
-            startTick = reader.GetInt32();
-            frames = reader.GetArray(frames);
+            startTick = reader.ReadInt32();
+            frames = reader.ReadArray(frames);
         }
     }
 }

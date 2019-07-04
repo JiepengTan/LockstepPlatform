@@ -54,27 +54,27 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigBullet {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(bullet);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(move);
-            writer.Put(owner);
-            writer.Put(pos);
-            writer.Put(tagBullet);
-            writer.Put(unit);
+            writer.Write(asset);
+            writer.Write(bullet);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(move);
+            writer.Write(owner);
+            writer.Write(pos);
+            writer.Write(tagBullet);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            bullet = reader.Get(ref this.bullet);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            move = reader.Get(ref this.move);
-            owner = reader.Get(ref this.owner);
-            pos = reader.Get(ref this.pos);
-            tagBullet = reader.Get(ref this.tagBullet);
-            unit = reader.Get(ref this.unit);
+            asset = reader.ReadRef(ref this.asset);
+            bullet = reader.ReadRef(ref this.bullet);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            move = reader.ReadRef(ref this.move);
+            owner = reader.ReadRef(ref this.owner);
+            pos = reader.ReadRef(ref this.pos);
+            tagBullet = reader.ReadRef(ref this.tagBullet);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -82,21 +82,21 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigCamp {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(pos);
-            writer.Put(tagCamp);
-            writer.Put(unit);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(pos);
+            writer.Write(tagCamp);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            pos = reader.Get(ref this.pos);
-            tagCamp = reader.Get(ref this.tagCamp);
-            unit = reader.Get(ref this.unit);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            pos = reader.ReadRef(ref this.pos);
+            tagCamp = reader.ReadRef(ref this.tagCamp);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -104,33 +104,33 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigEnemy {
         public override void Serialize(Serializer writer){
-            writer.Put(ai);
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(dropRate);
-            writer.Put(move);
-            writer.Put(moveReq);
-            writer.Put(pos);
-            writer.Put(skill);
-            writer.Put(tagEnemy);
-            writer.Put(tagTank);
-            writer.Put(unit);
+            writer.Write(ai);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(dropRate);
+            writer.Write(move);
+            writer.Write(moveReq);
+            writer.Write(pos);
+            writer.Write(skill);
+            writer.Write(tagEnemy);
+            writer.Write(tagTank);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            ai = reader.Get(ref this.ai);
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            dropRate = reader.Get(ref this.dropRate);
-            move = reader.Get(ref this.move);
-            moveReq = reader.Get(ref this.moveReq);
-            pos = reader.Get(ref this.pos);
-            skill = reader.Get(ref this.skill);
-            tagEnemy = reader.Get(ref this.tagEnemy);
-            tagTank = reader.Get(ref this.tagTank);
-            unit = reader.Get(ref this.unit);
+            ai = reader.ReadRef(ref this.ai);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            dropRate = reader.ReadRef(ref this.dropRate);
+            move = reader.ReadRef(ref this.move);
+            moveReq = reader.ReadRef(ref this.moveReq);
+            pos = reader.ReadRef(ref this.pos);
+            skill = reader.ReadRef(ref this.skill);
+            tagEnemy = reader.ReadRef(ref this.tagEnemy);
+            tagTank = reader.ReadRef(ref this.tagTank);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -138,19 +138,19 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigItem {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(pos);
-            writer.Put(type);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(pos);
+            writer.Write(type);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            pos = reader.Get(ref this.pos);
-            type = reader.Get(ref this.type);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            pos = reader.ReadRef(ref this.pos);
+            type = reader.ReadRef(ref this.type);
         }
     }
 
@@ -158,21 +158,21 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigMover {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(move);
-            writer.Put(pos);
-            writer.Put(unit);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(move);
+            writer.Write(pos);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            move = reader.Get(ref this.move);
-            pos = reader.Get(ref this.pos);
-            unit = reader.Get(ref this.unit);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            move = reader.ReadRef(ref this.move);
+            pos = reader.ReadRef(ref this.pos);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -180,25 +180,25 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigPlayer {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(move);
-            writer.Put(pos);
-            writer.Put(skill);
-            writer.Put(tagTank);
-            writer.Put(unit);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(move);
+            writer.Write(pos);
+            writer.Write(skill);
+            writer.Write(tagTank);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            move = reader.Get(ref this.move);
-            pos = reader.Get(ref this.pos);
-            skill = reader.Get(ref this.skill);
-            tagTank = reader.Get(ref this.tagTank);
-            unit = reader.Get(ref this.unit);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            move = reader.ReadRef(ref this.move);
+            pos = reader.ReadRef(ref this.pos);
+            skill = reader.ReadRef(ref this.skill);
+            tagTank = reader.ReadRef(ref this.tagTank);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -206,25 +206,25 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigTank {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(move);
-            writer.Put(pos);
-            writer.Put(skill);
-            writer.Put(tagTank);
-            writer.Put(unit);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(move);
+            writer.Write(pos);
+            writer.Write(skill);
+            writer.Write(tagTank);
+            writer.Write(unit);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            move = reader.Get(ref this.move);
-            pos = reader.Get(ref this.pos);
-            skill = reader.Get(ref this.skill);
-            tagTank = reader.Get(ref this.tagTank);
-            unit = reader.Get(ref this.unit);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            move = reader.ReadRef(ref this.move);
+            pos = reader.ReadRef(ref this.pos);
+            skill = reader.ReadRef(ref this.skill);
+            tagTank = reader.ReadRef(ref this.tagTank);
+            unit = reader.ReadRef(ref this.unit);
         }
     }
 
@@ -232,17 +232,17 @@ namespace Lockstep.Game {
     [System.Serializable]
     public partial class ConfigUnit {
         public override void Serialize(Serializer writer){
-            writer.Put(asset);
-            writer.Put(collider);
-            writer.Put(dir);
-            writer.Put(pos);
+            writer.Write(asset);
+            writer.Write(collider);
+            writer.Write(dir);
+            writer.Write(pos);
         }
 
         public override void Deserialize(Deserializer reader){
-            asset = reader.Get(ref this.asset);
-            collider = reader.Get(ref this.collider);
-            dir = reader.Get(ref this.dir);
-            pos = reader.Get(ref this.pos);
+            asset = reader.ReadRef(ref this.asset);
+            collider = reader.ReadRef(ref this.collider);
+            dir = reader.ReadRef(ref this.dir);
+            pos = reader.ReadRef(ref this.pos);
         }
     }
 

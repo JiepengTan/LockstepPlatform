@@ -32,30 +32,30 @@ namespace NetMsg.Common {
             if (inputDatas != null) return;
             var writer = new Serializer();
             var inputLen = (byte) (Inputs?.Length ?? 0);
-            writer.PutByte(inputLen);
+            writer.Write(inputLen);
             for (byte i = 0; i < inputLen; i++) {
                 var cmds = Inputs[i].Commands;
                 var len = (byte) (cmds?.Length ?? 0);
-                writer.PutByte(len);
+                writer.Write(len);
                 for (int cmdIdx = 0; cmdIdx < len; cmdIdx++) {
                     cmds[cmdIdx].Serialize(writer);
                 }
             }
 
-            writer.PutBytes_255(_serverInputs);
+            writer.WriteBytes_255(_serverInputs);
             inputDatas = writer.CopyData();
         }
 
         public void AfterDeserialize(){
             var reader = new Deserializer(inputDatas);
-            var inputLen = reader.GetByte();
+            var inputLen = reader.ReadByte();
             _inputs = new Msg_PlayerInput[inputLen];
             for (byte i = 0; i < inputLen; i++) {
                 var input = new Msg_PlayerInput();
                 input.Tick = tick;
                 input.ActorId = i;
                 _inputs[i] = input;
-                var len = reader.GetByte();
+                var len = reader.ReadByte();
                 if (len == 0) {
                     input.Commands = null;
                     continue;
@@ -69,18 +69,18 @@ namespace NetMsg.Common {
                 }
             }
 
-            _serverInputs = reader.GetBytes_255();
+            _serverInputs = reader.ReadBytes_255();
         }
 
         public override void Serialize(Serializer writer){
             BeforeSerialize();
-            writer.PutInt32(tick);
-            writer.PutBytes(inputDatas);
+            writer.Write(tick);
+            writer.Write(inputDatas);
         }
 
         public override void Deserialize(Deserializer reader){
-            tick = reader.GetInt32();
-            inputDatas = reader.GetBytes();
+            tick = reader.ReadInt32();
+            inputDatas = reader.ReadBytes();
             AfterDeserialize();
         }
 

@@ -11,24 +11,24 @@ namespace NetMsg.Common {
         public ServerFrame[] frames;
 
         public override void Serialize(Serializer writer){
-            writer.PutInt32(startTick);
+            writer.Write(startTick);
             var count = (ushort) frames.Length;
-            writer.PutUInt16(count);
+            writer.Write(count);
             for (int i = 0; i < count; i++) {
                 Debug.Assert(frames[i].tick == startTick + i, "Frame error");
                 frames[i].BeforeSerialize();
-                writer.PutBytes(frames[i].inputDatas);
+                writer.Write(frames[i].inputDatas);
             }
         }
 
         public override void Deserialize(Deserializer reader){
-            startTick = reader.GetInt32();
-            var tickCount = reader.GetUInt16();
+            startTick = reader.ReadInt32();
+            var tickCount = reader.ReadUInt16();
             frames = new ServerFrame[tickCount];
             for (int i = 0; i < tickCount; i++) {
                 var frame = new ServerFrame();
                 frame.tick = startTick + i;
-                frame.inputDatas = reader.GetBytes();
+                frame.inputDatas = reader.ReadBytes();
                 frame.AfterDeserialize();
                 frames[i] = frame;
             }
