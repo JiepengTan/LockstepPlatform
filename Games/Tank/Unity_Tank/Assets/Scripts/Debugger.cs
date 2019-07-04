@@ -31,7 +31,7 @@ public class Debugger : MonoBehaviour
     private int _frameNumber = 0;
     private float _lastShowFPSTime = 0f;
 
-    private void Start () 
+    private void Awake () 
     {
         if (AllowDebugging)
         {
