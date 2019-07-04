@@ -9,8 +9,8 @@ namespace Lockstep.CodeGenerator {
         public class HandlerDeserialize : FiledHandler {
             public HandlerDeserialize(ICodeHelper helper):base(helper){
                 _defaultCodeTemplete = @"{0}{1} = reader.Read{2}();";
-                _enumCodeTemplete = @"{0}{1} = ({2})reader.GetInt32();";
-                _clsCodeTemplete = @"{0}{1} = reader.Read(ref this.{1});";
+                _enumCodeTemplete = @"{0}{1} = ({2})reader.ReadInt32();";
+                _clsCodeTemplete = @"{0}{1} = reader.ReadRef(ref this.{1});";
                 _arrayCodeTemplete = @"{0}{1} = reader.ReadArray(this.{1});";
                 _lstCodeTemplete = @"{0}{1} = reader.ReadList(this.{1});";
                 _dictCodeTemplete = @"{0}{1} = reader.ReadDict(this.{1});";
