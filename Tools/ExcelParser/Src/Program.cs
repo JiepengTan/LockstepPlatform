@@ -17,7 +17,7 @@ class Program {
         public string TemplatePath;
     }
 
-    public static string ConfigPath => AppDomain.CurrentDomain.BaseDirectory + "../Tools/Config/ExcelParser/";
+    public static string ConfigPath => AppDomain.CurrentDomain.BaseDirectory + "../Config/ExcelParser/";
 
     public static void Main(string[] args){
         //args = new[] {"Tank.json"};

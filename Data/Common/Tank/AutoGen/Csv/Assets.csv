@@ -1,0 +1,8 @@
+﻿ServerDefine,,,,,,,,
+ClientDefine,key,,,,,del,del,
+Info,id,目录,名字,后缀,,,备注,
+Type,int,string,string,string,,,string,
+Name,id,dir,name,suffix,,,remark,
+Value,101,UI,UIRoot,.prefab,,,Root,
+,102,UI,Mask,.prefab,,,登陆,
+,,,,,,,,

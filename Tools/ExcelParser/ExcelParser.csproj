@@ -10,10 +10,10 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Tools/</OutputPath>
+      <OutputPath>../bin/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Tools</OutputPath>
+      <OutputPath>../bin/</OutputPath>
     </PropertyGroup>
     <ItemGroup>
       <Reference Include="Excel, Version=2.1.0.0, Culture=neutral, PublicKeyToken=93517dbe6a4012fa">
