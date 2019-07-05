@@ -1,6 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>False</Private>
+    </Reference>
+  </ItemDefinitionGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin/</OutputPath>
+    <OutputPath>bin/Debug/</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,62 +31,50 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin/</OutputPath>
+    <OutputPath>bin/Release/</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DesperateDevs.Analytics, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs\Editor\DesperateDevs.Analytics.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\Editor\DesperateDevs.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.CodeGeneration, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs\Editor\DesperateDevs.CodeGeneration.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\Editor\DesperateDevs.CodeGeneration.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.CodeGeneration.CodeGenerator, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs\Editor\DesperateDevs.CodeGeneration.CodeGenerator.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\Editor\DesperateDevs.CodeGeneration.CodeGenerator.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.CodeGeneration.Plugins, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs\Editor\Plugins\DesperateDevs.CodeGeneration.Plugins.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\Editor\Plugins\DesperateDevs.CodeGeneration.Plugins.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Logging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs.Logging.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\DesperateDevs.Logging.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Networking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs\DesperateDevs.Networking.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\DesperateDevs.Networking.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Serialization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs.Serialization.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\DesperateDevs.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="DesperateDevs.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\DesperateDevs.Utils.dll</HintPath>
+      <HintPath>..\..\Libs\DesperateDevs\DesperateDevs.Utils.dll</HintPath>
     </Reference>
     <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Entitas\Entitas.dll</HintPath>
+      <HintPath>..\..\Libs\Entitas\Entitas.dll</HintPath>
     </Reference>
     <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
+      <HintPath>..\..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
     </Reference>
     <Reference Include="Entitas.CodeGeneration.Plugins, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Entitas\Editor\Plugins\Entitas.CodeGeneration.Plugins.dll</HintPath>
+      <HintPath>..\..\Libs\Entitas\Editor\Plugins\Entitas.CodeGeneration.Plugins.dll</HintPath>
     </Reference>
     <Reference Include="Entitas.Migration, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Entitas\Editor\Entitas.Migration.dll</HintPath>
+      <HintPath>..\..\Libs\Entitas\Editor\Entitas.Migration.dll</HintPath>
     </Reference>
     <Reference Include="Entitas.VisualDebugging.CodeGeneration.Plugins, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Entitas\Editor\Plugins\Entitas.VisualDebugging.CodeGeneration.Plugins.dll</HintPath>
-    </Reference>
-    <Reference Include="Lockstep.Logging, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Lockstep.Logging.dll</HintPath>
-    </Reference>
-    <Reference Include="Lockstep.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Lockstep.Math.dll</HintPath>
-    </Reference>
-    <Reference Include="Lockstep.Serializaition, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Lockstep.Serializaition.dll</HintPath>
-    </Reference>
-    <Reference Include="Lockstep.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>Libs\Lockstep.Util.dll</HintPath>
+      <HintPath>..\..\Libs\Entitas\Editor\Plugins\Entitas.VisualDebugging.CodeGeneration.Plugins.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -101,12 +94,33 @@
     <Folder Include="Src\UnsafeECS" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Logging\Logging.csproj">
+      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
+      <Name>Logging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Math\Math.csproj">
+      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj">
+      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
+      <Name>Serializaition</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Util\Util.csproj">
+      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
+      <Name>Util</Name>
+    </ProjectReference>
     <ProjectReference Include="ECDefine\ECDefine.csproj">
       <Project>{e31a1e93-0331-4c64-9759-c9cf91e47a8f}</Project>
       <Name>ECDefine</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemDefinitionGroup>
+    <Reference>
+      <Private>False</Private>
+    </Reference>
+  </ItemDefinitionGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
     <Target Name="BeforeBuild">

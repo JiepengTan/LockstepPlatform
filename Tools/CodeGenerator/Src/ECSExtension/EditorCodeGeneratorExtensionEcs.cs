@@ -4,8 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Entitas;
-using UnityEditor;
-using UnityEngine;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.CodeGenerator {
@@ -37,7 +35,7 @@ namespace Lockstep.CodeGenerator {
         }
 
         protected override void ReflectRegisterTypes(){
-            var types =  typeof(Lockstep.ECS.Actor.IdComponent).Assembly.GetTypes();
+            var types = new Type[0];// //TODO fixed by load dll// typeof(Lockstep.ECS.Actor.IdComponent).Assembly.GetTypes();
             //var types = ReflectionUtility.GetInterfaces(typeof(IComponent));
             foreach (var t in types) {
                 //代码自动生成的Componennt 不处理

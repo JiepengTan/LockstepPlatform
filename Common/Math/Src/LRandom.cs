@@ -1,7 +1,5 @@
 ﻿using System;
 using Lockstep.Math;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Lockstep.Math {
     public partial class Random {

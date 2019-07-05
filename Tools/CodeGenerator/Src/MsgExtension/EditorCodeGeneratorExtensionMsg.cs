@@ -31,11 +31,11 @@ namespace Lockstep.CodeGenerator {
     }
     public partial class EditorCodeGeneratorExtensionEntityConfig : EditorCodeGeneratorExtensionMsg {
         public override Type[] GetTypes(){
-            return typeof(GameConfig).Assembly.GetTypes();
+            return new Type[0];//TODO fixed by load dll // typeof(GameConfig).Assembly.GetTypes();
         }
 
         public override string GetNameSpace(){
-            return typeof(GameConfig).Namespace;
+            return "";//TODO fixed by load dll //typeof(GameConfig).Namespace;
         }
         protected override string GeneratePath {
             get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Tank/Src/"); }
