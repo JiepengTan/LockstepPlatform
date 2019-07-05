@@ -3,7 +3,6 @@ using System.Threading;
 using Lockstep.Client;
 using Lockstep.Networking;
 using Lockstep.Server.Common;
-using NetMsg.Common;
 
 namespace Test {
     internal class Program {

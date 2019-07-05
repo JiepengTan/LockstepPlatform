@@ -27,8 +27,8 @@ namespace Lockstep.Server.Daemon {
         private int _reportInterval = 1000;
         private int _reportTimer = 0;
         private DaemonState _curState;
-        private PerformanceCounter _cpuCounter;
-        private PerformanceCounter _memCounter;
+        //private PerformanceCounter _cpuCounter;
+        //private PerformanceCounter _memCounter;
 
         #region Server YX
 
@@ -66,8 +66,8 @@ namespace Lockstep.Server.Daemon {
 
         public override void DoStart(){
             _curState = new DaemonState();
-            _cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
-            _memCounter = new PerformanceCounter("Memory", "Available MBytes");
+            //_cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            //_memCounter = new PerformanceCounter("Memory", "Available MBytes");
             InitServerXS();
             InitServerYXM();
             InitClientYX();
@@ -104,8 +104,8 @@ namespace Lockstep.Server.Daemon {
         }
 
         public void ReportState(){
-            _curState.cpu = _cpuCounter.NextValue();
-            _curState.memory = _memCounter.NextValue();
+            //_curState.cpu = _cpuCounter.NextValue();
+            //_curState.memory = _memCounter.NextValue();
             //var servers = _netServerXS.Peers;
             //_curState.localServers = new byte[servers.Count];
             //int i = 0;

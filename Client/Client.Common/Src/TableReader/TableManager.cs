@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using Lockstep.Game;
 using UnityEngine;
-public class TableManager : Singleton<TableManager>
+public class TableManager 
 {
+    public static TableManager _Instance = new TableManager();
+    public static TableManager Instance => _Instance;
     /// <summary> 已加载表的单例缓存，比如TableHero.Instance </summary>
     Dictionary<string, BaseTableData> _tableDataDic = new Dictionary<string, BaseTableData>();
     /// <summary> 已加载表的二进制数据，每个表的单例包含一个TableTable </summary>

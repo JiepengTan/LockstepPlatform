@@ -293,7 +293,7 @@ namespace Lockstep.Server.Game {
 
         private void DumpGameFrames(){
             var msg = new Msg_RepMissFrame();
-            int count = Math.Min((Tick - 1), allHistoryFrames.Count);
+            int count = System.Math.Min((Tick - 1), allHistoryFrames.Count);
             if (count <= 0) return;
             var writer = new Serializer();
             GameStartInfo.Serialize(writer);
@@ -645,7 +645,7 @@ namespace Lockstep.Server.Game {
             var reqMsg = data as Msg_ReqMissFrame;
             var nextCheckTick = reqMsg.StartTick;
             Log($"OnNet_ReqMissFrame nextCheckTick id:{player.LocalId}:{nextCheckTick}");
-            int count = Math.Min(Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
+            int count = System.Math.Min(System.Math.Min((Tick - 1), allHistoryFrames.Count) - nextCheckTick,
                 MaxRepMissFrameCountPerPack);
             if (count <= 0) return;
             var msg = new Msg_RepMissFrame();

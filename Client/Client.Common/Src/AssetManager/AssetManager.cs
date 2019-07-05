@@ -8,7 +8,9 @@ using System.IO;
 using Lockstep.Game;
 
 namespace Lockstep.Game.Res {
-    public class AssetInfoManager:Singleton<AssetInfoManager> {
+    public class AssetInfoManager {
+        public static AssetInfoManager _Instance = new AssetInfoManager();
+        public static AssetInfoManager Instance => _Instance;
         private Dictionary<int, AssetInfo> _assetInfoDict = new Dictionary<int, AssetInfo>();
 
         public bool HasInited {

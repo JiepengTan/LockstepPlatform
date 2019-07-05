@@ -1,129 +1,32 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <ItemDefinitionGroup>
-    <Reference>
-      <Private>False</Private>
-    </Reference>
-  </ItemDefinitionGroup>
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2CB8BC27-C8B1-4B8F-BC53-98A120B4B65F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Lockstep.ECS.CodeGenEntitas</RootNamespace>
-    <AssemblyName>Lockstep.ECS.CodeGenEntitas</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>../bin/Debug/Libs/</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>../bin/Release/Libs/</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Src\Components\ComponentDefine.cs" />
-    <Compile Include="Src\Components\EnumDefines.cs" />
-    <Compile Include="Src\_Generated\Actor\ActorAttribute.cs" />
-    <Compile Include="Src\_Generated\Actor\ActorComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Actor\ActorContext.cs" />
-    <Compile Include="Src\_Generated\Actor\ActorEntity.cs" />
-    <Compile Include="Src\_Generated\Actor\ActorMatcher.cs" />
-    <Compile Include="Src\_Generated\Config\ConfigAttribute.cs" />
-    <Compile Include="Src\_Generated\Config\ConfigComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Config\ConfigContext.cs" />
-    <Compile Include="Src\_Generated\Config\ConfigEntity.cs" />
-    <Compile Include="Src\_Generated\Config\ConfigMatcher.cs" />
-    <Compile Include="Src\_Generated\Contexts.cs" />
-    <Compile Include="Src\_Generated\Debugging\DebuggingAttribute.cs" />
-    <Compile Include="Src\_Generated\Debugging\DebuggingComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Debugging\DebuggingContext.cs" />
-    <Compile Include="Src\_Generated\Debugging\DebuggingEntity.cs" />
-    <Compile Include="Src\_Generated\Debugging\DebuggingMatcher.cs" />
-    <Compile Include="Src\_Generated\Feature.cs" />
-    <Compile Include="Src\_Generated\GameState\GameStateAttribute.cs" />
-    <Compile Include="Src\_Generated\GameState\GameStateComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\GameState\GameStateContext.cs" />
-    <Compile Include="Src\_Generated\GameState\GameStateEntity.cs" />
-    <Compile Include="Src\_Generated\GameState\GameStateMatcher.cs" />
-    <Compile Include="Src\_Generated\Game\GameAttribute.cs" />
-    <Compile Include="Src\_Generated\Game\GameComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Game\GameContext.cs" />
-    <Compile Include="Src\_Generated\Game\GameEntity.cs" />
-    <Compile Include="Src\_Generated\Game\GameMatcher.cs" />
-    <Compile Include="Src\_Generated\Input\InputAttribute.cs" />
-    <Compile Include="Src\_Generated\Input\InputComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Input\InputContext.cs" />
-    <Compile Include="Src\_Generated\Input\InputEntity.cs" />
-    <Compile Include="Src\_Generated\Input\InputMatcher.cs" />
-    <Compile Include="Src\_Generated\Snapshot\SnapshotAttribute.cs" />
-    <Compile Include="Src\_Generated\Snapshot\SnapshotComponentsLookup.cs" />
-    <Compile Include="Src\_Generated\Snapshot\SnapshotContext.cs" />
-    <Compile Include="Src\_Generated\Snapshot\SnapshotEntity.cs" />
-    <Compile Include="Src\_Generated\Snapshot\SnapshotMatcher.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="DesperateDevs.Serialization, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Libs\DesperateDevs\DesperateDevs.Serialization.dll</HintPath>
-    </Reference>
-    <Reference Include="DesperateDevs.Utils, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Libs\DesperateDevs\DesperateDevs.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Libs\Entitas\Entitas.dll</HintPath>
-    </Reference>
-    <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\..\..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
-    </Reference>
-    <Reference Include="System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-      <HintPath>..\..\..\..\..\..\Library\Frameworks\Mono.framework\Versions\5.16.0\lib\mono\4.5-api\System.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\Logging\Logging.csproj">
-      <Project>{7a5e2696-0566-40a5-bd33-21a580fbdd6c}</Project>
-      <Name>Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\Math\Math.csproj">
-      <Project>{17a82628-87ef-462b-8e03-d0adecd567c6}</Project>
-      <Name>Math</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\Serializaition\Serializaition.csproj">
-      <Project>{1a00f547-a5d9-4fba-953a-04236882cc7a}</Project>
-      <Name>Serializaition</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Common\Util\Util.csproj">
-      <Project>{ac5b8a05-6e14-4b17-98d1-5bfff3290e76}</Project>
-      <Name>Util</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <ItemDefinitionGroup>
-    <Reference>
-      <Private>False</Private>
-    </Reference>
-  </ItemDefinitionGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-         Other similar extension points exist, see Microsoft.Common.targets.
-    <Target Name="BeforeBuild">
-    </Target>
-    <Target Name="AfterBuild">
-    </Target>
-    -->
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyName>Lockstep.ECS.CodeGenEntitas</AssemblyName>
+    </PropertyGroup>
+    <ItemDefinitionGroup>
+        <Reference>
+            <Private>False</Private>
+        </Reference>
+    </ItemDefinitionGroup>
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>../bin/</OutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../bin/</OutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\Libs\Entitas\Entitas.dll</HintPath>
+      </Reference>
+      <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\..\Common\Math\Math.csproj" />
+    </ItemGroup>
 </Project>

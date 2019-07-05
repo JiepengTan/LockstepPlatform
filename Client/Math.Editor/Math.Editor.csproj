@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <AssemblyName>Lockstep.Test.Common</AssemblyName>
+        <AssemblyName>Lockstep.Math.Editor</AssemblyName>
     </PropertyGroup>
     <ItemDefinitionGroup>
         <Reference>
@@ -19,12 +19,14 @@
       <OutputPath>../../bin/Release/Libs/</OutputPath>
     </PropertyGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\Client\Client.Common\Client.Common.csproj" />
-      <ProjectReference Include="..\..\Common\Logging\Logging.csproj" />
       <ProjectReference Include="..\..\Common\Math\Math.csproj" />
-      <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj" />
-      <ProjectReference Include="..\..\Common\Networking\Networking.csproj" />
-      <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj" />
-      <ProjectReference Include="..\..\Common\Util\Util.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <Reference Include="UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\UnityEditor.dll</HintPath>
+      </Reference>
+      <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\UnityEngine.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

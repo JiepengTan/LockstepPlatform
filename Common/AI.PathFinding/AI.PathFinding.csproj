@@ -2,7 +2,7 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <AssemblyName>Lockstep.Serialization</AssemblyName>
+        <AssemblyName>Lockstep.AI.Pathfinding</AssemblyName>
     </PropertyGroup>
     <ItemDefinitionGroup>
         <Reference>
@@ -12,10 +12,11 @@
     <PropertyGroup>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Libs/</OutputPath>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Libs/</OutputPath>
-    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Logging\Logging.csproj" />
+      <ProjectReference Include="..\Math\Math.csproj" />
+      <ProjectReference Include="..\Serializaition\Serializaition.csproj" />
+    </ItemGroup>
+
 </Project>
