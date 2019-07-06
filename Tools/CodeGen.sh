@@ -5,5 +5,5 @@ cd $dir
 cd ../bin/
 pwd
 echo "1.Code gen"
-mono ../bin/Lockstep.ECSGenerator.exe
+mono ../bin/Lockstep.Tools.ECSGenerator.dll
 

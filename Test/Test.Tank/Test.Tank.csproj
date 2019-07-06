@@ -13,10 +13,10 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../biin/Debug/Test/</OutputPath>
+      <OutputPath>../bin/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../biin/Release/Test/</OutputPath>
+      <OutputPath>../bin/</OutputPath>
     </PropertyGroup>
     <ItemGroup>
       <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">

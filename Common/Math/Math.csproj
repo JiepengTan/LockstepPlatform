@@ -13,11 +13,11 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Libs/</OutputPath>
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
       <DefineConstants>TRACE;DEBUG;NETCOREAPP;NETCOREAPP2_2;UNITY_5_3_OR_NEWER</DefineConstants>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Libs/</OutputPath>
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
       <DefineConstants>TRACE;RELEASE;NETCOREAPP;NETCOREAPP2_2;UNITY_5_3_OR_NEWER</DefineConstants>
     </PropertyGroup>
     <ItemGroup>

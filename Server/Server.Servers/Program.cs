@@ -25,25 +25,25 @@ namespace Lockstep.Server.Servers {
         }
  
         static void Main(string[] args){
-            var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var files = Directory.GetFiles(dir);
-            foreach (var path in files) {
-                if (path.EndsWith(".dll")) {
-                   var ass =  Assembly.LoadFrom(path);
-                   ass = null;
-                }
-            }
-            AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveHandler;
-            AssemblyLoadContext.Default.Resolving+= (a, name) => {
-                string libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
-                                 Path.DirectorySeparatorChar;
-                var path = libPath + name.Name.Split(',')[0] + ".dll";
-                return Assembly.LoadFrom(path);
-
-            };
-            var assembly =  typeof (Program).GetTypeInfo().Assembly;
-            var exAssembly = Assembly.GetExecutingAssembly();
-            var types = assembly.GetTypes();
+            //var dir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            //var files = Directory.GetFiles(dir);
+            //foreach (var path in files) {
+            //    if (path.EndsWith(".dll")) {
+            //       var ass =  Assembly.LoadFrom(path);
+            //       ass = null;
+            //    }
+            //}
+            //AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolveHandler;
+            //AssemblyLoadContext.Default.Resolving+= (a, name) => {
+            //    string libPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) +
+            //                     Path.DirectorySeparatorChar;
+            //    var path = libPath + name.Name.Split(',')[0] + ".dll";
+            //    return Assembly.LoadFrom(path);
+//
+            //};
+            //var assembly =  typeof (Program).GetTypeInfo().Assembly;
+            //var exAssembly = Assembly.GetExecutingAssembly();
+            //var types = assembly.GetTypes();
             SubMain(args);
         }
         static void SubMain(string[] args){

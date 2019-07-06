@@ -10,10 +10,10 @@
         <UseNETCoreGenerator>true</UseNETCoreGenerator>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Server/</OutputPath>
+      <OutputPath>../../Libs/Server/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Server/</OutputPath>
+      <OutputPath>../../Libs/Server/</OutputPath>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj" />

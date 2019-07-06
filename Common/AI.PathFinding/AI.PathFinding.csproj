@@ -12,7 +12,12 @@
     <PropertyGroup>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
-
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
+    </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\Logging\Logging.csproj" />
       <ProjectReference Include="..\Math\Math.csproj" />

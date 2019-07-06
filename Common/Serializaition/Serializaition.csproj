@@ -13,9 +13,9 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Libs/</OutputPath>
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Libs/</OutputPath>
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
     </PropertyGroup>
 </Project>
