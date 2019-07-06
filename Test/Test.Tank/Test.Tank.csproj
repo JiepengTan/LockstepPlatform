@@ -13,22 +13,11 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Test/</OutputPath>
+      <OutputPath>../biin/Debug/Test/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Test/</OutputPath>
+      <OutputPath>../biin/Release/Test/</OutputPath>
     </PropertyGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\Client\Client.Common\Client.Common.csproj" />
-      <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj" />
-      <ProjectReference Include="..\..\Common\Logging\Logging.csproj" />
-      <ProjectReference Include="..\..\Common\Math\Math.csproj" />
-      <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj" />
-      <ProjectReference Include="..\..\Common\Networking\Networking.csproj" />
-      <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj" />
-      <ProjectReference Include="..\..\Common\Util\Util.csproj" />
-      <ProjectReference Include="..\Test.Common\Test.Common.csproj" />
-    </ItemGroup>
     <ItemGroup>
       <Reference Include="Entitas, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\..\Libs\Entitas\Entitas.dll</HintPath>
