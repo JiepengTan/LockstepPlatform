@@ -11,7 +11,7 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
     public static class ServerUtil {
-        public const string defaultConfigPath = "../Data/Server/Config.json";
+        public const string defaultConfigPath = "../../../Data/Server/Config.json";
 
         public static ConfigInfo LoadConfig(string relPath = defaultConfigPath){
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relPath);
@@ -38,6 +38,13 @@ namespace Lockstep.Server.Common {
             });
             thread.Start();
         }
+        public static void RunServerInThread(Assembly Assembly, BaseServer server){
+            var thread = new Thread(() => {
+                var config = ServerUtil.LoadConfig();
+                ServerUtil.RunServer(Assembly, server, config);
+            });
+            thread.Start();
+        }
 
         public static void RunServer(Assembly assembly, EServerType serverType, ConfigInfo allConfig){
             string serverTypeStr = "Lockstep.Server." + serverType.ToString().Replace("Server", "") + "." +
@@ -50,12 +57,17 @@ namespace Lockstep.Server.Common {
 
             var sobj = Activator.CreateInstance(type);
             BaseServer server = sobj as BaseServer;
+            server.serverType = serverType;
+            RunServer(assembly, server,  allConfig);
+        }
+
+        public static void RunServer(Assembly assembly, BaseServer server,ConfigInfo allConfig){
             if (server == null) {
                 Console.WriteLine("RunServer failed sobj is not a BaseServer");
                 return;
             }
 
-            var serverConfig = allConfig.GetServerConfig(serverType);
+            var serverConfig = allConfig.GetServerConfig(server.serverType);
             long lastTick = 1;
             int tickInterval = 40;
             Console.WriteLine("=============== LockstepPlatform " + serverConfig.type + " Start!! ===============");

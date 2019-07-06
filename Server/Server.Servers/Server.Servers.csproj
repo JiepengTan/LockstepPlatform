@@ -2,21 +2,18 @@
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <AssemblyName>Lockstep.NetMsg.Server</AssemblyName>
+        <AssemblyName>Lockstep.Server.Servers</AssemblyName>
+        <OutputType>Exe</OutputType>
     </PropertyGroup>
-    <ItemDefinitionGroup>
-        <Reference>
-            <Private>False</Private>
-        </Reference>
-    </ItemDefinitionGroup>
     <PropertyGroup>
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <UseNETCoreGenerator>true</UseNETCoreGenerator>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-      <OutputPath>../../bin/Debug/Libs/</OutputPath>
+      <OutputPath>../../bin/Debug/Server/</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-      <OutputPath>../../bin/Release/Libs/</OutputPath>
+      <OutputPath>../../bin/Release/Server/</OutputPath>
     </PropertyGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj" />

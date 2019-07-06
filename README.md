@@ -1,5 +1,4 @@
-# LPEngine 
-//原名叫 LockstepPlatform 
+#  LockstepPlatform 
  
 ##### 1.项目目标    
 
@@ -47,8 +46,8 @@
 
 #### **References：** 
 - ECS 回滚原型来自 UnityLockstep:[https://github.com/proepkes/UnityLockstep][1] 
-- 当前网络库使用 LiteNetLib: [https://github.com/RevenantX/LiteNetLib][2] 
-- ECS Framework Entitas: [https://github.com/sschmid/Entitas-CSharp][3] 
+- 当前网络库使用 LiteNetLib: [https://github.com/RevenantX/LiteNetLib][2] (v0.8.3 .NetCore)
+- ECS Framework Entitas: [https://github.com/sschmid/Entitas-CSharp][3] (v1.13.0)
 - 确定性 数学库: [https://github.com/JiepengTan/LockstepMath][4]  
 - 确定性 碰撞检测库: [https://github.com/JiepengTan/LockstepCollision][5] 
 - 确定性 NavMesh 库: [https://github.com/JiepengTan/LockstepPathFinding][8] 
