@@ -26,4 +26,15 @@
         <HintPath>..\..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
       </Reference>
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\..\Client\Client.Common\Client.Common.csproj" />
+      <ProjectReference Include="..\..\Common\ECS.Common\ECS.Common.csproj" />
+      <ProjectReference Include="..\..\Common\Logging\Logging.csproj" />
+      <ProjectReference Include="..\..\Common\Math\Math.csproj" />
+      <ProjectReference Include="..\..\Common\NetMsg.Common\NetMsg.Common.csproj" />
+      <ProjectReference Include="..\..\Common\Networking\Networking.csproj" />
+      <ProjectReference Include="..\..\Common\Serializaition\Serializaition.csproj" />
+      <ProjectReference Include="..\..\Common\Util\Util.csproj" />
+      <ProjectReference Include="..\Test.Common\Test.Common.csproj" />
+    </ItemGroup>
 </Project>
