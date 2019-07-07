@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Reflection;
 using System.Text;
 using DesperateDevs.CodeGeneration;
@@ -36,54 +37,12 @@ namespace Lockstep.ECSGenerator {
             var text = File.ReadAllText(jennyConfig);
             var properties = new Properties(text);
             var projectPath = properties.ToDictionary()["DesperateDevs.CodeGeneration.Plugins.ProjectPath"];
-            var dstPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-                "../ECSOutput/Src/Entitas/Components/");
+            var dstPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,DstCopyRelDir);
             var relDir = @"Src/Entitas/Components/";
 
             ProjectUtil.UpdateProjectFile(projectPath, relDir, dstPath);
         }
 
-        public class DebugHook : CodeGeneratorTrackingHook {
-            protected override string name {
-                get { return "DebugHook"; }
-            }
-
-            protected override DesperateDevs.Analytics.TrackingData GetData(){
-                var _preProcessorscount = _preProcessors.Length;
-                var _dataProviderscount = _dataProviders.Length;
-                var _codeGeneratorscount = _codeGenerators.Length;
-                var _postProcessorscount = _postProcessors.Length;
-
-                Log(
-                    "_preProcessorscount: " + _preProcessorscount
-                                            + "_dataProviderscount: " + _dataProviderscount
-                                            + "_codeGeneratorscount: " + _codeGeneratorscount
-                                            + "_postProcessorscount: " + _postProcessorscount
-                );
-                return new DesperateDevs.Analytics.TrackingData();
-            }
-        }
-
-        private string resolvePath(string name, string[] _basePaths){
-            try {
-                string name1 = new System.Reflection.AssemblyName(name).Name;
-                if (!name1.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) &&
-                    !name1.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
-                    name1 += ".dll";
-                foreach (string basePath in _basePaths) {
-                    string path = basePath + Path.DirectorySeparatorChar.ToString() + name1;
-                    if (File.Exists(path)) {
-                        Log("    ➜ Resolved: " + path);
-                        return path;
-                    }
-                }
-            }
-            catch (FileLoadException ex) {
-                Log("    × Could not resolve: " + name);
-            }
-
-            return (string) null;
-        }
 
         Type[] LoadTypes(Preferences preferences){
             CodeGeneratorConfig andConfigure = preferences.CreateAndConfigure<CodeGeneratorConfig>();
@@ -208,6 +167,33 @@ namespace Lockstep.ECSGenerator {
                 LogError("Error" + ex.Message + ex.StackTrace);
             }
 
+            UpdateOutputProjectFile();
+            LogGenInfo(codeGenFileArray2, codeGenFileArray1);
+        }
+        protected void UpdateOutputProjectFile(){
+            //Dotnet 不需要更新Proj 文件
+            var jennyConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Jenny.properties");
+            var text = File.ReadAllText(jennyConfig);
+            var properties = new Properties(text);
+            var projectPath = properties.ToDictionary()["DesperateDevs.CodeGeneration.Plugins.ProjectPath"];
+            var dstPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,projectPath);
+            var allLines = File.ReadAllLines(dstPath);
+            StringBuilder builder = new StringBuilder();
+            string preLine = "";
+            string nexLine = "";
+            var tag = "<Compile Include=";
+            for (int i = 0; i < allLines.Length-1; i++) {
+                var line = allLines[i];
+                if (!allLines[i+1].Contains(tag)&& !line.Contains(tag)&&!preLine.Contains(tag)) {
+                    builder.AppendLine(allLines[i]);
+                }
+                preLine = line;
+            }
+
+            builder.AppendLine(allLines[allLines.Length - 1]);
+            File.WriteAllText(projectPath,builder.ToString());
+        }
+        private static void LogGenInfo(CodeGenFile[] codeGenFileArray2, CodeGenFile[] codeGenFileArray1){
             Log((object) ("Done Generated " + (object) ((IEnumerable<CodeGenFile>) codeGenFileArray2)
                           .Select<CodeGenFile, string>((
                               Func<CodeGenFile, string>) (file => file.fileName)).Distinct<string>()
@@ -226,9 +212,9 @@ namespace Lockstep.ECSGenerator {
                           .Sum<string>(
                               (
                                   Func<string, int>) (content => content.Split('\n').Length)) + " loc)"));
-
         }
 
+  
         protected override void GenTypeCode(StringBuilder sb, Type type){
             var typeName = type.Name;
             var attriNames = type.GetCustomAttributes(typeof(AttributeAttribute), true)

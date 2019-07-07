@@ -2,8 +2,8 @@
 clear
 dir="$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)"
 cd $dir
-cd ./bin/
 pwd
+cd ./bin/
 echo "1.Code gen"
-mono ./Lockstep.Tools.ECSGenerator.exe ../../Config/ECSGenerator/Config.json
+mono ./Lockstep.Tools.ECSGenerator.exe ../Config/ECSGenerator/Config.json
 

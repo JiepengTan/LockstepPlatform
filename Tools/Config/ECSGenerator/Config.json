@@ -1,13 +1,14 @@
 {
   "NameSpaceTag" : "Lockstep.ECS.ECDefine",
   "IgnoreDll"    : "Lockstep.ECS.ECDefine.dll",
-  "BuildECdefineShell" : "../../Src/BuildECDefineGame.sh",
+  "BuildECdefineShell" : "../BuildECDefineGame.sh",
   "BuildECdefineShellWorkingDir" : "",
-  "BuildShell" : "../../Src/BuildCodeGenEntitas.sh",
+  "BuildShell" : "../BuildCodeGenEntitas.sh",
   "BuildShellWorkingDir" : "",
-  "DesFilePath" : "../../Src/ECS.CodeGenEntitas/Src/Components/ComponentDefine.cs",
-  "SrcCopyRelDir" : "../../Src/ECS.CodeGenEntitas/Src/Components/",
-  "DstCopyRelDir" : "../../Src/ECS.ECSOutput/Src/Entitas/Components/",
+  "DesFilePath" : "../Src/ECS.CodeGenEntitas/Src/Components/ComponentDefine.cs",
+  "SrcCopyRelDir" : "../Src/ECS.CodeGenEntitas/Src/Components/",
+  "DstCopyRelDir" : "../Src/ECS.ECSOutput/Src/Entitas/Components/",
+  "RelCopyDir" : "Src/Entitas/Components/",
   "FileHeaderStr" :"using Entitas.CodeGeneration.Attributes;  \nusing Lockstep.Math;  \nusing Entitas;",
-  "JennyPropertyPath" : "../../Jenny.properties"
+  "JennyPropertyPath" : "../Jenny.properties"
 }

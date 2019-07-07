@@ -12,7 +12,7 @@ internal class Program {
     public static void Main(string[] args){
         Console.WriteLine("pwd " + AppDomain.CurrentDomain.BaseDirectory);
         if (args == null || args.Length == 0) {
-            args = new[] {"../../Config/ECSGenerator/Config.json"};    
+            args = new[] {"../Config/ECSGenerator/Config.json"};    
         }
         if (args.Length > 0) {
             foreach (var path in args) {
