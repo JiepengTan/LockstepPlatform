@@ -1,5 +1,5 @@
-using Entitas.CodeGeneration.Attributes; 
-using Lockstep.Math; 
+using Entitas.CodeGeneration.Attributes;  
+using Lockstep.Math;  
 using Entitas;
 namespace Lockstep.ECS.Actor{
     [Actor]

@@ -7,20 +7,13 @@ using DesperateDevs.CodeGeneration;
 using DesperateDevs.CodeGeneration.CodeGenerator;
 using DesperateDevs.Serialization;
 using DesperateDevs.Utils;
+using LitJson;
 using Lockstep.ECS.ECDefine;
 using Lockstep.Util;
 using static Lockstep.Util.ProjectUtil;
 
 namespace Lockstep.ECSGenerator {
-    public class CodeGenForEntitas : CodeGenerator {       
-        protected override string BuildShell => "../Tools/BuildCodeGenEntitas";
-        protected override string SrcCopyRelDir => "../CodeGenEntitas/Src/Components/";
-        protected override string DstCopyRelDir => "../ECSOutput/Src/Entitas/Components/";
-        protected override string DesFilePath => "../CodeGenEntitas/Src/Components/ComponentDefine.cs";
-        protected override string FileHeaderStr =>
-            @"using Entitas.CodeGeneration.Attributes; 
-using Lockstep.Math; 
-using Entitas;";
+    public class CodeGenForEntitas : CodeGenerator {
 
         static void TestMergeEntitasFile(){
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../CodeGenEntitas/Src/RawFiles");
@@ -29,9 +22,11 @@ using Entitas;";
             File.WriteAllText(Path.Combine(path, "../Output/ComponentDefine.cs"), sb.ToString());
         }
 
-
-        public static void GenCode(){
-            new CodeGenForEntitas().OnGenCode();
+        public static void GenCode(string configPath){
+            var allTxt = File.ReadAllText(configPath);
+            var configInfo = JsonMapper.ToObject<ConfigInfo>(allTxt);
+            //Console.WriteLine(JsonMapper.ToJson(configInfo));
+            new CodeGenForEntitas().OnGenCode(configInfo);
         }
 
         protected override void UpdateProjectFile(){
@@ -51,10 +46,11 @@ using Entitas;";
 
         protected override void GenerateCodes(){
             Log((object) "Generating...");
-            var recordpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Jenny.properties");
+            var recordpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, JennyPropertyPath);
             LogError("recordpath " + recordpath);
             var text = File.ReadAllText(recordpath);
             var preference = new Preferences(recordpath, recordpath);
+            Log(text);
             DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator codeGenerator =
                 CodeGeneratorUtil.CodeGeneratorFromPreferences(preference);
 
