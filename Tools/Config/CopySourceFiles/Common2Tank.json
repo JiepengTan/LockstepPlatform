@@ -1,22 +1,32 @@
-{
-  "srcDir": "",
-  "dstDir": "Games/Tank/Unity_Tank/Assets/__DllSourceFiles/",
-  "srcProjectDirs": [
-    "Common/ECS.Common",
-    "Common/Logging",
-    "Common/Math",
-    "Common/Math.Editor",
-    "Common/NetMsg.Common",
-    "Common/Networking",
-    "Common/Serializaition",
-    "Common/Util",
-    "Common/PathFinding",
-    "Common/BehaviorTree",
-    "Client/Client.Common",
-    "Games/Tank/Client/Client.Tank",
-    "Games/Tank/Client/Client.Tank.Editor",
-    "Games/Tank/Common/Common.Tank",
-    "Games/Tank/Common/ECS.Tank"
-  ],
-  "sourceFileDir": "/Src"
-}
+[
+  {
+    "__commment": "EnvirDir=~/LPEngine/Lockstep_Demo2D/Tools/bin/",
+    "srcDir": "../../../LockstepPlatform/",
+    "dstDir": "../../Src/Unity/Assets/__DllSourceFiles/",
+    "srcProjectDirs": [
+      "Common/ECS.Common",
+      "Common/Logging",
+      "Common/Math",
+      "Common/Math.Editor",
+      "Common/NetMsg.Common",
+      "Common/Networking",
+      "Common/Serializaition",
+      "Common/Util",
+      "Common/PathFinding",
+      "Common/BehaviorTree",
+      "Client/Client.Common"
+    ],
+    "sourceFileDir": "/Src"
+  },
+  {
+    "srcDir": "../../Src/",
+    "dstDir": "../../Src/Unity/Assets/__DllSourceFiles/__Local/",
+    "srcProjectDirs": [
+      "Game.Client",
+      "Game.Common",
+      "Game.ECS",
+      "Game.Editor"
+    ],
+    "sourceFileDir": "/Src"
+  }
+]

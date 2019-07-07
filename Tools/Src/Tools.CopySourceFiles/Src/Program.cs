@@ -8,19 +8,20 @@ using Lockstep.Util;
 namespace CopySourceFiles {
     internal class Program {
         public class CopyFileInfos {
+            public string __commment;
             public string srcDir;
             public string dstDir;
             public List<string> srcProjectDirs;
             public string sourceFileDir;
         }
 
-        public static string ConfigPath => AppDomain.CurrentDomain.BaseDirectory + "../Tools/Config/CopySourceFiles/";
 
         public static void Main(string[] args){
+            Console.WriteLine("pwd " + AppDomain.CurrentDomain.BaseDirectory);
             if (args.Length > 0) {
                 foreach (var path in args) {
                     Console.WriteLine(path);
-                    CopyFilesByConfig(AppDomain.CurrentDomain.BaseDirectory + path);
+                    CopyFilesByConfig(Path.Combine(AppDomain.CurrentDomain.BaseDirectory + path));
                 }
             }
             else {
@@ -32,19 +33,22 @@ namespace CopySourceFiles {
 
         static void CopyFilesByConfig(string configPath){
             var allTxt = File.ReadAllText(configPath);
-            var config = JsonMapper.ToObject<CopyFileInfos>(allTxt);
-            var prefix = AppDomain.CurrentDomain.BaseDirectory + "../";
-            var srcPrefix = prefix + config.srcDir;
-            var dstPrefix = prefix + config.dstDir;
-            var sourceDir = "/Src";
-            foreach (var projectDir in config.srcProjectDirs) {
-                var srcDir = srcPrefix + projectDir + sourceDir;
-                var dstDir = dstPrefix + projectDir + sourceDir;
-                if (Directory.Exists(dstDir)) {
-                    Directory.Delete(dstDir, true);
+            var configs = JsonMapper.ToObject<CopyFileInfos[]>(allTxt);
+            foreach (var config in configs) {
+                var prefix = AppDomain.CurrentDomain.BaseDirectory;
+                var srcPrefix = Path.Combine(prefix + config.srcDir);
+                var dstPrefix = Path.Combine(prefix + config.dstDir);
+                var sourceDir = config.sourceFileDir;
+                foreach (var projectDir in config.srcProjectDirs) {
+                    var srcDir = srcPrefix + projectDir + sourceDir;
+                    var dstDir = dstPrefix + projectDir + sourceDir;
+                    if (Directory.Exists(dstDir)) {
+                        Directory.Delete(dstDir, true);
+                    }
+
+                    Console.WriteLine("Copy: " + projectDir);
+                    CopyFiles(srcDir, dstDir);
                 }
-                Console.WriteLine("Copy: " + projectDir);
-                CopyFiles(srcDir, dstDir);
             }
 
             Console.WriteLine("Done");
