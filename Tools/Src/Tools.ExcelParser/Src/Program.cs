@@ -17,14 +17,13 @@ class Program {
         public string TemplatePath;
     }
 
-    public static string ConfigPath => AppDomain.CurrentDomain.BaseDirectory + "../Config/ExcelParser/";
 
     public static void Main(string[] args){
         //args = new[] {"Tank.json"};
         if (args.Length > 0) {
             foreach (var path in args) {
                 Console.WriteLine(path);
-                CopyFilesByConfig(ConfigPath + path);
+                CopyFilesByConfig(Path.Combine(AppDomain.CurrentDomain.BaseDirectory ,path));
             }
         }
         else {
@@ -35,8 +34,7 @@ class Program {
     static void CopyFilesByConfig(string configPath){
         var allTxt = File.ReadAllText(configPath);
         var config = JsonMapper.ToObject<CopyFileInfos>(allTxt);
-        var prefix = AppDomain.CurrentDomain.BaseDirectory + "../";
-        var sourceDir = "/Src";
+        var prefix = AppDomain.CurrentDomain.BaseDirectory ;
         var gener = new CSVGenCode.TableConfigGenerator();
         try {
             for (int i = 0; i < config.InputDirs.Count; i++) {

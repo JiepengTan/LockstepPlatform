@@ -1,9 +1,9 @@
 {
   "InputDirs": [
-    "../Data/Common/Tank/Excels"
+    "../../Data/Common/Tank/Excels"
   ],
-  "OutputDirCsv": "../Data/Common/Tank/AutoGen/Csv",
-  "OutputDirByte":"../Data/Common/Tank/AutoGen/Bytes",
-  "OutputDirCode":"../Data/Common/Tank/AutoGen/CodeCS",
-  "TemplatePath": "../Data/Common/TemplateFiles/CS.txt"
+  "OutputDirCsv": "../../Data/Common/Tank/AutoGen/Csv",
+  "OutputDirByte":"../../Data/Common/Tank/AutoGen/Bytes",
+  "OutputDirCode":"../../Data/Common/Tank/AutoGen/CodeCS",
+  "TemplatePath": "../../Data/Common/TemplateFiles/CS.txt"
 }
