@@ -13,29 +13,28 @@ public static class GameComponentsLookup {
     public const int AI = 2;
     public const int Asset = 3;
     public const int Backup = 4;
-    public const int BornPoint = 5;
-    public const int Bullet = 6;
-    public const int Collider = 7;
-    public const int DelayCall = 8;
-    public const int Destroyed = 9;
-    public const int Dir = 10;
-    public const int DropRate = 11;
-    public const int FireRequest = 12;
-    public const int ItemType = 13;
-    public const int LocalId = 14;
-    public const int Move = 15;
-    public const int MoveRequest = 16;
-    public const int Owner = 17;
-    public const int Pos = 18;
-    public const int Skill = 19;
-    public const int TagBullet = 20;
-    public const int TagCamp = 21;
-    public const int TagEnemy = 22;
-    public const int TagTank = 23;
-    public const int Unit = 24;
-    public const int PosListener = 25;
+    public const int Bullet = 5;
+    public const int Collider = 6;
+    public const int DelayCall = 7;
+    public const int Destroyed = 8;
+    public const int Dir = 9;
+    public const int DropRate = 10;
+    public const int FireRequest = 11;
+    public const int ItemType = 12;
+    public const int LocalId = 13;
+    public const int Move = 14;
+    public const int MoveRequest = 15;
+    public const int Owner = 16;
+    public const int Pos = 17;
+    public const int Skill = 18;
+    public const int TagBullet = 19;
+    public const int TagCamp = 20;
+    public const int TagEnemy = 21;
+    public const int TagTank = 22;
+    public const int Unit = 23;
+    public const int PosListener = 24;
 
-    public const int TotalComponents = 26;
+    public const int TotalComponents = 25;
 
     public static readonly string[] componentNames = {
         "DirListener",
@@ -43,7 +42,6 @@ public static class GameComponentsLookup {
         "AI",
         "Asset",
         "Backup",
-        "BornPoint",
         "Bullet",
         "Collider",
         "DelayCall",
@@ -72,7 +70,6 @@ public static class GameComponentsLookup {
         typeof(Lockstep.ECS.Game.AIComponent),
         typeof(Lockstep.ECS.Game.AssetComponent),
         typeof(Lockstep.ECS.Game.BackupComponent),
-        typeof(Lockstep.ECS.Game.BornPointComponent),
         typeof(Lockstep.ECS.Game.BulletComponent),
         typeof(Lockstep.ECS.Game.ColliderComponent),
         typeof(Lockstep.ECS.Game.DelayCallComponent),

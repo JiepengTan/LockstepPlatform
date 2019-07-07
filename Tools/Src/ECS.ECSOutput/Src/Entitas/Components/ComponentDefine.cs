@@ -38,12 +38,6 @@ namespace Lockstep.ECS.Debug{
 }
 namespace Lockstep.ECS.Game{
     [Game]
-    public partial class DelayCallComponent :IComponent {
-        public LFloat delayTimer;
-        public int callBack;
-    }
-
-    [Game]
     [Event(EventTarget.Self)]
     public partial class DirComponent :IComponent {
         public Lockstep.ECS.EDir value;
@@ -75,14 +69,15 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    public partial class OwnerComponent :IComponent {
-        public uint localId;
+    [Event(EventTarget.Self)]
+    public partial class PosComponent :IComponent {
+        public LVector2 value;
     }
 
     [Game]
-    public partial class ColliderComponent :IComponent {
-        public LVector2 size;
-        public LFloat radius;
+    public partial class DelayCallComponent :IComponent {
+        public LFloat delayTimer;
+        public int callBack;
     }
 
     [Game]
@@ -112,9 +107,8 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    [Event(EventTarget.Self)]
-    public partial class PosComponent :IComponent {
-        public LVector2 value;
+    public partial class OwnerComponent :IComponent {
+        public uint localId;
     }
 
     [Game]
@@ -126,10 +120,9 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    public partial class BulletComponent :IComponent {
-        public bool canDestoryIron;
-        public bool canDestoryGrass;
-        public uint ownerLocalId;
+    public partial class ColliderComponent :IComponent {
+        public LVector2 size;
+        public LFloat radius;
     }
 
     [Game]
@@ -176,8 +169,10 @@ namespace Lockstep.ECS.Game{
     }
 
     [Game]
-    public partial class BornPointComponent :IComponent {
-        public LVector2 coord;
+    public partial class BulletComponent :IComponent {
+        public bool canDestoryIron;
+        public bool canDestoryGrass;
+        public uint ownerLocalId;
     }
 
 }

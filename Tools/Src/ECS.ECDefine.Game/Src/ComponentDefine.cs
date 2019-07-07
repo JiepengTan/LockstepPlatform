@@ -225,10 +225,10 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
-    public partial class BornPointComponent : IComponent {
-        public Vector2 coord;
-    }
+    //[Attribute("Game")]
+    //public partial class BornPointComponent : IComponent {
+    //    public Vector2 coord;
+    //}
 }
 
 

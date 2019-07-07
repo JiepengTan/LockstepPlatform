@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using DesperateDevs.CodeGeneration;
 using DesperateDevs.CodeGeneration.CodeGenerator;
@@ -14,7 +15,6 @@ using static Lockstep.Util.ProjectUtil;
 
 namespace Lockstep.ECSGenerator {
     public class CodeGenForEntitas : CodeGenerator {
-
         static void TestMergeEntitasFile(){
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../CodeGenEntitas/Src/RawFiles");
             StringBuilder sb = new StringBuilder();
@@ -43,6 +43,139 @@ namespace Lockstep.ECSGenerator {
             ProjectUtil.UpdateProjectFile(projectPath, relDir, dstPath);
         }
 
+        public class DebugHook : CodeGeneratorTrackingHook {
+            protected override string name {
+                get { return "DebugHook"; }
+            }
+
+            protected override DesperateDevs.Analytics.TrackingData GetData(){
+                var _preProcessorscount = _preProcessors.Length;
+                var _dataProviderscount = _dataProviders.Length;
+                var _codeGeneratorscount = _codeGenerators.Length;
+                var _postProcessorscount = _postProcessors.Length;
+
+                Log(
+                    "_preProcessorscount: " + _preProcessorscount
+                                            + "_dataProviderscount: " + _dataProviderscount
+                                            + "_codeGeneratorscount: " + _codeGeneratorscount
+                                            + "_postProcessorscount: " + _postProcessorscount
+                );
+                return new DesperateDevs.Analytics.TrackingData();
+            }
+        }
+
+        private string resolvePath(string name, string[] _basePaths){
+            try {
+                string name1 = new System.Reflection.AssemblyName(name).Name;
+                if (!name1.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) &&
+                    !name1.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                    name1 += ".dll";
+                foreach (string basePath in _basePaths) {
+                    string path = basePath + Path.DirectorySeparatorChar.ToString() + name1;
+                    if (File.Exists(path)) {
+                        Log("    ➜ Resolved: " + path);
+                        return path;
+                    }
+                }
+            }
+            catch (FileLoadException ex) {
+                Log("    × Could not resolve: " + name);
+            }
+
+            return (string) null;
+        }
+
+        Type[] LoadTypes(Preferences preferences){
+            CodeGeneratorConfig andConfigure = preferences.CreateAndConfigure<CodeGeneratorConfig>();
+            var dirs = new string[andConfigure.searchPaths.Length];
+            for (int i = 0; i < andConfigure.searchPaths.Length; i++) {
+                dirs[i] = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, andConfigure.searchPaths[i]);
+            }
+
+            List<Assembly> assemblies = new List<Assembly>();
+            foreach (string plugin in andConfigure.plugins) {
+                var pluginName = plugin;
+                if (!plugin.EndsWith(".dll")) {
+                    pluginName = plugin + ".dll";
+                }
+
+                foreach (var dir in dirs) {
+                    var fileName = Path.Combine(dir, pluginName);
+                    if (File.Exists(fileName)) {
+                        var assembly = Assembly.LoadFrom(fileName);
+                        assemblies.Add(assembly);
+                    }
+                }
+            }
+
+            return assemblies.GetAllTypes();
+        }
+
+        public static Type[] GetAllTypes(IEnumerable<Assembly> assemblies){
+            List<Type> typeList = new List<Type>();
+            foreach (Assembly assembly in assemblies) {
+                try {
+                    typeList.AddRange((IEnumerable<Type>) assembly.GetTypes());
+                }
+                catch (ReflectionTypeLoadException ex) {
+                    typeList.AddRange(
+                        ((IEnumerable<Type>) ex.Types).Where<Type>((Func<Type, bool>) (type => type != null)));
+                }
+            }
+
+            return typeList.ToArray();
+        }
+
+        public ICodeGenerationPlugin[] LoadFromPlugins(
+            Preferences preferences){
+            CodeGeneratorConfig andConfigure = preferences.CreateAndConfigure<CodeGeneratorConfig>();
+            AssemblyResolver assemblyResolver = new AssemblyResolver(false, andConfigure.searchPaths);
+            foreach (string plugin in andConfigure.plugins)
+                assemblyResolver.Load(plugin);
+            //Type[] types = assemblyResolver.GetTypes();
+            var types = LoadTypes(preferences);
+            
+            Log($"----------------------------types Count = {types.Length}-------------------" );
+            return ((IEnumerable<Type>) types.GetNonAbstractTypes<ICodeGenerationPlugin>())
+                .Select<Type, ICodeGenerationPlugin>((Func<Type, ICodeGenerationPlugin>) (type => {
+                    try {
+                        return (ICodeGenerationPlugin) Activator.CreateInstance(type);
+                    }
+                    catch (TypeLoadException ex) {
+                        Log(ex.Message);
+                    }
+
+                    return (ICodeGenerationPlugin) null;
+                })).Where<ICodeGenerationPlugin>((Func<ICodeGenerationPlugin, bool>) (instance => instance != null))
+                .ToArray<ICodeGenerationPlugin>();
+        }
+
+        DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator CodeGeneratorFromPreferences(Preferences preferences){
+            ICodeGenerationPlugin[] instances = LoadFromPlugins(preferences);
+            CodeGeneratorConfig andConfigure = preferences.CreateAndConfigure<CodeGeneratorConfig>();
+            IPreProcessor[] enabledInstancesOf1 =
+                CodeGeneratorUtil.GetEnabledInstancesOf<IPreProcessor>(instances, andConfigure.preProcessors);
+            IDataProvider[] enabledInstancesOf2 =
+                CodeGeneratorUtil.GetEnabledInstancesOf<IDataProvider>(instances, andConfigure.dataProviders);
+            ICodeGenerator[] enabledInstancesOf3 =
+                CodeGeneratorUtil.GetEnabledInstancesOf<ICodeGenerator>(instances, andConfigure.codeGenerators);
+            IPostProcessor[] enabledInstancesOf4 =
+                CodeGeneratorUtil.GetEnabledInstancesOf<IPostProcessor>(instances, andConfigure.postProcessors);
+            configure((ICodeGenerationPlugin[]) enabledInstancesOf1, preferences);
+            configure((ICodeGenerationPlugin[]) enabledInstancesOf2, preferences);
+            configure((ICodeGenerationPlugin[]) enabledInstancesOf3, preferences);
+            configure((ICodeGenerationPlugin[]) enabledInstancesOf4, preferences);
+            bool trackHooks = true;
+            if (preferences.HasKey("Jenny.TrackHooks"))
+                trackHooks = preferences["Jenny.TrackHooks"] == "true";
+            return new DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator(enabledInstancesOf1,
+                enabledInstancesOf2, enabledInstancesOf3, enabledInstancesOf4, trackHooks);
+        }
+
+        private static void configure(ICodeGenerationPlugin[] plugins, Preferences preferences){
+            foreach (IConfigurable configurable in plugins.OfType<IConfigurable>())
+                configurable.Configure(preferences);
+        }
 
         protected override void GenerateCodes(){
             Log((object) "Generating...");
@@ -50,10 +183,16 @@ namespace Lockstep.ECSGenerator {
             LogError("recordpath " + recordpath);
             var text = File.ReadAllText(recordpath);
             var preference = new Preferences(recordpath, recordpath);
-            Log(text);
-            DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator codeGenerator =
-                CodeGeneratorUtil.CodeGeneratorFromPreferences(preference);
+            ICodeGenerationPlugin[] instances = CodeGeneratorUtil.LoadFromPlugins(preference);
+            CodeGeneratorConfig andConfigure = preference.CreateAndConfigure<CodeGeneratorConfig>();
+            AssemblyResolver assemblyResolver = new AssemblyResolver(false, andConfigure.searchPaths);
+            foreach (string plugin in andConfigure.plugins) {
+                Log("load plugin " + plugin);
+                assemblyResolver.Load(plugin);
+            }
 
+            DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator codeGenerator =
+                CodeGeneratorFromPreferences(preference);
             codeGenerator.OnProgress += (GeneratorProgress) ((title, info, progress) => {
                 Log("progress " + (progress));
             });
@@ -66,7 +205,7 @@ namespace Lockstep.ECSGenerator {
             catch (Exception ex) {
                 codeGenFileArray1 = new CodeGenFile[0];
                 codeGenFileArray2 = new CodeGenFile[0];
-                //LogError("Error" + ex.Message + ex.StackTrace);
+                LogError("Error" + ex.Message + ex.StackTrace);
             }
 
             Log((object) ("Done Generated " + (object) ((IEnumerable<CodeGenFile>) codeGenFileArray2)
@@ -87,6 +226,7 @@ namespace Lockstep.ECSGenerator {
                           .Sum<string>(
                               (
                                   Func<string, int>) (content => content.Split('\n').Length)) + " loc)"));
+
         }
 
         protected override void GenTypeCode(StringBuilder sb, Type type){
