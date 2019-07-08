@@ -59,7 +59,7 @@
 
 #### 2D Demo(FC Tank)
     
-- v0.3.0 项目演示 [https://www.bilibili.com/video/av55450233][12] 
+- 2D Demo地址 FCTank:[https://github.com/JiepengTan/Lockstep_Demo2D_Tank][14] 
 
 <p align="center"> <img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/Show/game_pic.png?raw=true" width="512"/></p>
 
@@ -90,3 +90,4 @@
  [11]: https://github.com/JiepengTan/LockstepPlatform
  [12]: https://www.bilibili.com/video/av55450233
  [13]: https://github.com/JiepengTan/LockstepECSGenerator
+ [14]: https://github.com/JiepengTan/Lockstep_Demo2D_Tank
