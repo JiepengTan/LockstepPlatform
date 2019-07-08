@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Lockstep.Logging;
 using Lockstep.Math;
+using Debug = Lockstep.Logging.Debug;
 #if UNITY_5_3_OR_NEWER
 using UnityEngine;
 #endif
