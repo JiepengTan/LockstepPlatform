@@ -2,3 +2,4 @@ Unity*
 LPEngine/
 Client/
 Server/
+!*.pdb
