@@ -29,5 +29,8 @@
       <Reference Include="Entitas.CodeGeneration.Attributes, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
         <HintPath>..\..\..\Libs\Entitas\Entitas.CodeGeneration.Attributes.dll</HintPath>
       </Reference>
+      <Reference Include="LiteDB, Version=2.0.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27">
+        <HintPath>..\..\..\Server\bin\LiteDB.dll</HintPath>
+      </Reference>
     </ItemGroup>
 </Project>

@@ -22,12 +22,16 @@ namespace Lockstep.CodeGenerator {
             Type[] types = null;
             HashSet<Type> allTypes = new HashSet<Type>();
             types = GetTypes();
+            var interfaceName = GenInfo.InterfaceName;
             foreach (var t in types) {
                 if (!allTypes.Add(t)) continue;
                 if (t.IsSubclassOf(typeof(BaseFormater)) 
                     &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
                     ) {
-                    RegisterType(t);
+                    var interfaces = t.GetInterfaces().Where((_t) => _t.Name.Contains(interfaceName)).ToArray();
+                    if (interfaces.Length > 0) {
+                        RegisterType(t);
+                    }
                 }
             }
         }

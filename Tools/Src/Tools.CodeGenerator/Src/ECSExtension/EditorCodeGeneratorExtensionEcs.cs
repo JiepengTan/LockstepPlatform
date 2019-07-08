@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using Entitas;
+using Lockstep.Serialization;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.CodeGenerator {
@@ -14,17 +16,24 @@ namespace Lockstep.CodeGenerator {
         }
 
         protected override void ReflectRegisterTypes(){
-            var types = new Type[0];// //TODO fixed by load dll// typeof(Lockstep.ECS.Actor.IdComponent).Assembly.GetTypes();
-            //var types = ReflectionUtility.GetInterfaces(typeof(IComponent));
+            Type[] types = null;
+            HashSet<Type> allTypes = new HashSet<Type>();
+            types = GetTypes();
+            var interfaceName = GenInfo.InterfaceName;
             foreach (var t in types) {
-                //代码自动生成的Componennt 不处理
+                if (!allTypes.Add(t)) continue;
                 if (t.GetCustomAttributes(typeof(Entitas.CodeGeneration.Attributes.DontGenerateAttribute),
                     true).Any()) {
                     continue;
                 }
-
-                //RegisterTypeWithNamespace(t);
-                RegisterType(t);
+                if (t.IsSubclassOf(typeof(BaseFormater)) 
+                    &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
+                ) {
+                    var interfaces = t.GetInterfaces().Where((_t) => _t.Name.Contains(interfaceName)).ToArray();
+                    if (interfaces.Length > 0) {
+                        RegisterType(t);
+                    }
+                }
             }
         }
 
