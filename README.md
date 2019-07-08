@@ -73,7 +73,20 @@
 
 
 
-#### **How to run it**
+#### **环境搭建**
+##### **Mac 环境搭建**
+    1. 下载LockstepPlatform [https://github.com/JiepengTan/LockstepPlatform/releases/tag/v0.3.5][11]
+    2. 下载Demo [https://github.com/JiepengTan/Lockstep_Demo2D_Tank/releases/tag/v0.3.5][12]
+    3. 解压 LockstepPlatform 并命名为LockstepPlatform (注意目前一定需要这样命名)
+    4. 使用Rider 或visualStudio 打开 LockstepPlatform/LockstepPlatform.sln。(不要编译,等待编译器价值完成)
+    5. 打开你想要使用的Unity的版本
+    6. 执行 Lockstep_Demo2D_Tank-0.3.5/Setup.sh
+    7. 点击 Lockstep_Demo2D_Tank-0.3.5/RunServer.sh 运行服务器
+    8. Unity 打开Lockstep_Demo2D_Tank-0.3.5/Src/Unity/ 运行游戏
+
+    想看视频的可以点击这里 [Mac环境搭建视频][15] 
+
+##### **Win 环境搭建**
 //TODO
 
 
@@ -91,3 +104,4 @@
  [12]: https://www.bilibili.com/video/av55450233
  [13]: https://github.com/JiepengTan/LockstepECSGenerator
  [14]: https://github.com/JiepengTan/Lockstep_Demo2D_Tank
+ [15]: https://www.bilibili.com/video/av58401872/
