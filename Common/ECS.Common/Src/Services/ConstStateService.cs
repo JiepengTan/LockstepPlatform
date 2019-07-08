@@ -23,7 +23,7 @@ namespace Lockstep.Game {
         public EPureModeType RunMode{ get; set; }
         
         private string _clientConfigPath;
-        public string ClientConfigPath => _clientConfigPath ?? (_clientConfigPath = _relPath + $"../Data/Client/{GameName}/");
+        public string ClientConfigPath => _clientConfigPath ?? (_clientConfigPath = _relPath + $"Data/Client/{GameName}/");
 
         private string _relPath = "";
         public string RelPath {
