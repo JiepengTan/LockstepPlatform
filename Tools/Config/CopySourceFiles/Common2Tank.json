@@ -4,17 +4,19 @@
     "srcDir": "../../../LockstepPlatform/",
     "dstDir": "../../Src/Unity/Assets/__DllSourceFiles/",
     "srcProjectDirs": [
+      "Common/AI.PathFinding",
+      "Common/AI.BehaviorTree",
       "Common/ECS.Common",
+      "Common/Collision",
       "Common/Logging",
       "Common/Math",
-      "Common/Math.Editor",
       "Common/NetMsg.Common",
       "Common/Networking",
       "Common/Serializaition",
       "Common/Util",
-      "Common/PathFinding",
-      "Common/BehaviorTree",
-      "Client/Client.Common"
+      "Client/Client.Common",
+      "Client/Client.Common.Editor",
+      "Client/Math.Editor"
     ],
     "sourceFileDir": "/Src"
   },

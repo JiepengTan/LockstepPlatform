@@ -1,0 +1,30 @@
+{
+  "MsgCommon": {
+    "DllRelPath": "../../../LockstepPlatform/Libs/LPEngine/Lockstep.NetMsg.Common.dll",
+    "NameSpace": "NetMsg.Common",
+    "GeneratePath": "../../../LockstepPlatform/Common/NetMsg.Common/Src/",
+    "GenerateFileName": "ExtensionMsg.cs",
+    "InterfaceName": "IBaseMsg"
+  },
+  "MsgServer": {
+    "DllRelPath": "../../../LockstepPlatform/Libs/Server/Lockstep.NetMsg.Server.dll",
+    "NameSpace": "NetMsg.Server",
+    "GeneratePath": "../../../LockstepPlatform/Server/NetMsg.Server/Src/",
+    "GenerateFileName": "ExtensionMsg.cs",
+    "InterfaceName": "IBaseMsg"
+  },
+  "EntityConfig": {
+    "DllRelPath": "../../bin/Lockstep.Game.ECS.Tank.dll",
+    "NameSpace": "Lockstep.Game",
+    "GeneratePath": "../../Src/Game.ECS/Src/",
+    "GenerateFileName": "ExtensionConfig.cs",
+    "InterfaceName": "IEntitySetter"
+  },
+  "TankEcs": {
+    "DllRelPath": "../../bin/Lockstep.Game.ECS.Tank.dll",
+    "NameSpace": "Lockstep.Game",
+    "GeneratePath": "../Common/ECS.Tank/Src/",
+    "GenerateFileName": "ExtensionECS.cs",
+    "InterfaceName": "Entitas.IComponent"
+  }
+}

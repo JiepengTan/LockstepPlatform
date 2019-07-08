@@ -11,80 +11,12 @@ using NetMsg.Server;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.CodeGenerator {
-    public class EditorCodeGenerator {
-#if UNITY_EDITOR
-        [MenuItem("Tools/MsgExtension/0.Hide Compiler Error")]
-#endif
-        public static void HideCompileError(){
-            new EditorCodeGeneratorExtensionMsgCommon().HideGenerateCodes(false);
-            new EditorCodeGeneratorExtensionMsgServer().HideGenerateCodes(false);
-            new EditorCodeGeneratorExtensionEntityConfig().HideGenerateCodes(false);
-        }
-#if UNITY_EDITOR
-        [MenuItem("Tools/MsgExtension/1.Generate Code")]
-#endif
-        public static void GenerateCode(){
-            new EditorCodeGeneratorExtensionMsgCommon().GenerateCodeNodeData(true);
-            new EditorCodeGeneratorExtensionMsgServer().GenerateCodeNodeData(true);
-            //new EditorCodeGeneratorExtensionEntityConfig().GenerateCodeNodeData(true);
-        }
-    }
-    public partial class EditorCodeGeneratorExtensionEntityConfig : EditorCodeGeneratorExtensionMsg {
-        public override Type[] GetTypes(){
-            return new Type[0];//TODO fixed by load dll // typeof(GameConfig).Assembly.GetTypes();
-        }
-
-        public override string GetNameSpace(){
-            return "";//TODO fixed by load dll //typeof(GameConfig).Namespace;
-        }
-        protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Tank/Src/"); }
-        }
-        protected override string GenerateFilePath {
-            get { return Path.Combine(GeneratePath, "ExtentionConfig.cs"); }
-        }
-    }
-    public partial class EditorCodeGeneratorExtensionMsgCommon : EditorCodeGeneratorExtensionMsg {
-        public override Type[] GetTypes(){
-            return typeof(EMsgSC).Assembly.GetTypes();
-        }
-
-        public override string GetNameSpace(){
-            return typeof(EMsgSC).Namespace;
-        }
-        protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/NetMsg.Common/Src/"); }
-        }
-    }
-    public partial class EditorCodeGeneratorExtensionMsgServer : EditorCodeGeneratorExtensionMsg {
-        
-        public override Type[] GetTypes(){
-            return typeof(EMsgSS).Assembly.GetTypes();
-        }
-
-        public override string GetNameSpace(){
-            return typeof(EMsgSS).Namespace;
-        }
-        
-        protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Server/NetMsg.Server/Src/"); }
-        }
-    }
-    public abstract partial class EditorCodeGeneratorExtensionMsg : EditorBaseCodeGenerator {
-        protected override string GeneratePath {
-            get { return ""; }
-        }
-
-        protected override string GenerateFilePath {
-            get { return Path.Combine(GeneratePath, "ExtentionMsg.cs"); }
-        }
+    public partial class EditorCodeGeneratorExtensionMsg : EditorBaseCodeGenerator {
 
         public override string prefix {
             get { return "\t\t\t"; }
         }
 
-        public abstract Type[] GetTypes();
-        public abstract string GetNameSpace();
 
         protected override void ReflectRegisterTypes(){
             Type[] types = null;
@@ -92,7 +24,7 @@ namespace Lockstep.CodeGenerator {
             types = GetTypes();
             foreach (var t in types) {
                 if (!allTypes.Add(t)) continue;
-                if (t.IsSubclassOf(typeof(BaseMsg)) 
+                if (t.IsSubclassOf(typeof(BaseFormater)) 
                     &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
                     ) {
                     RegisterType(t);
@@ -128,7 +60,7 @@ namespace #NAMESPACE{
 }
 ";
             return fileContent
-                    .Replace("#NAMESPACE", GetNameSpace())
+                    .Replace("#NAMESPACE", NameSpace)
                     .Replace("//#TYPES_EXTENSIONS", extensionStr)
                 ;
         }

@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AssemblyName>Lockstep.Server.CommonGame</AssemblyName>
+    </PropertyGroup>
+    <ItemDefinitionGroup>
+        <Reference>
+            <Private>False</Private>
+        </Reference>
+    </ItemDefinitionGroup>
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>../../Libs/Server/</OutputPath>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../../Libs/Server/</OutputPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Reference Include="Lockstep.ECS.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.ECS.Common.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Logging.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Math.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.NetMsg.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.NetMsg.Common.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.NetMsg.Server, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\Server\Lockstep.NetMsg.Server.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Networking, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Networking.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Serialization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Serialization.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Server.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\Server\Lockstep.Server.Common.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Util.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+</Project>

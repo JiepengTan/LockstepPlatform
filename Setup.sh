@@ -48,7 +48,7 @@ mkdir -p ./Tools/Src/
 cp -rf ../LockstepPlatform/Tools/bin/ ./Tools/bin/
 cp -rf ../LockstepPlatform/Tools/Config/ ./Tools/Config/
 cp -rf ../LockstepPlatform/Tools/Src/*ECS* ./Tools/Src/
-cp -rf ../LockstepPlatform/Tools/Build*.sh ./Tools/
+cp -rf ../LockstepPlatform/Tools/*.* ./Tools/
 
 printInfo "Build LPGame "
 msbuild /property:Configuration=Debug /p:WarningLevel=0 /verbosity:minimal ./LPGame.sln

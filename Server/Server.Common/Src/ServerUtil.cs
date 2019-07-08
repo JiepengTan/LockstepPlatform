@@ -11,7 +11,7 @@ using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.Server.Common {
     public static class ServerUtil {
-        public const string defaultConfigPath = "../../../Data/Server/Config.json";
+        public const string defaultConfigPath = "../../Data/Server/Config.json";
 
         public static ConfigInfo LoadConfig(string relPath = defaultConfigPath){
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relPath);

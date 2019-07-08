@@ -2,8 +2,11 @@ using System;
 using Lockstep.Serialization;
 
 namespace NetMsg.Common {
+
+    public interface IBaseMsg { }
     [System.Serializable]
-    public partial class BaseMsg : BaseFormater {}
+    [SelfImplement]
+    public partial class BaseMsg : BaseFormater ,IBaseMsg{}
     
     #region UDP
 

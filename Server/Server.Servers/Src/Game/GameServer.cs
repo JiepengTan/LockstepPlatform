@@ -299,7 +299,7 @@ namespace Lockstep.Server.Game {
         private Dictionary<int, FuncCreateGame> _gameFactoryFuncs = new Dictionary<int, FuncCreateGame>();
 
         string GameType2DllPath(int type){
-            return "Game.Tank" + ".dll"; //TODO ReadFromConfig
+            return "Lockstep.Server.CommonGame" + ".dll"; //TODO ReadFromConfig
         }
 
         /// Create From Dll by reflect 

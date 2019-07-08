@@ -20,7 +20,7 @@ namespace Lockstep.Serialization {
         }
     }
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,Inherited = false)]
     public class SelfImplementAttribute : Attribute { }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]

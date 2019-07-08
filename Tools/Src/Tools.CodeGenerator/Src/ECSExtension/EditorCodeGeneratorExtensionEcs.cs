@@ -7,29 +7,8 @@ using Entitas;
 using Debug = Lockstep.Logging.Debug;
 
 namespace Lockstep.CodeGenerator {
-    public partial class EditorCodeGeneratorExtensionEcs {
-#if UNITY_EDITOR
-        [MenuItem("Tools/ECSExtension/0.Hide Compiler Error")]
-#endif
-        public static void HideCompileError(){
-            new EditorCodeGeneratorExtensionEcs().HideGenerateCodes(false);
-        }
-#if UNITY_EDITOR
-        [MenuItem("Tools/ECSExtension/1.Generate Code")]
-#endif
-        public static void GenerateCode(){
-            new EditorCodeGeneratorExtensionEcs().GenerateCodeNodeData(true);
-        }
-    }
 
     public partial class EditorCodeGeneratorExtensionEcs : EditorBaseCodeGenerator {
-        protected override string GeneratePath {
-            get { return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Common/ECS.Tank/Src/"); }
-        }
-
-        protected override string GenerateFilePath {
-            get { return Path.Combine(GeneratePath, "ExtentionECS.cs"); }
-        }
         public override string prefix {
             get { return "\t\t\t"; }
         }

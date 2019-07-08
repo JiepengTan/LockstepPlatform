@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Lockstep.Logging;
 using Lockstep.Util;
+using NetMsg.Server;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -11,16 +13,21 @@ using UnityEditor;
 
 namespace Lockstep.CodeGenerator {
     public class EditorBaseCodeGenerator : ICodeHelper {
+        public GenInfo GenInfo;
         protected HashSet<Type> togenCodeTypes = new HashSet<Type>();
         protected HashSet<Type> needNameSpaceTypes = new HashSet<Type>();
 
-        protected virtual string GeneratePath {
-            get { return ""; }
+        public Type[] GetTypes(){
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GenInfo.DllRelPath);
+            var assembly =  Assembly.LoadFrom(path);
+            return assembly.GetTypes();
         }
 
-        protected virtual string GenerateFilePath {
-            get { return ""; }
-        }
+        public string NameSpace => GenInfo.NameSpace;
+        
+        protected string GeneratePath => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GenInfo.GeneratePath);
+
+        protected string GenerateFilePath => Path.Combine(GeneratePath, GenInfo.GenerateFileName);
 
 
         protected virtual void CustomRegisterTypes(){ }
