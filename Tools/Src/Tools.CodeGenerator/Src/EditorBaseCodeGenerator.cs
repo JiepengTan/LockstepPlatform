@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using Lockstep.Logging;
+using Lockstep.Serialization;
 using Lockstep.Util;
 using NetMsg.Server;
 
@@ -31,9 +33,68 @@ namespace Lockstep.CodeGenerator {
 
 
         protected virtual void CustomRegisterTypes(){ }
+        public virtual string prefix => "\t\t\t";
 
-        protected virtual void ReflectRegisterTypes(){ }
+        protected virtual void ReflectRegisterTypes(){
+            Type[] types = null;
+            HashSet<Type> allTypes = new HashSet<Type>();
+            types = GetTypes();
+            var interfaceName = GenInfo.InterfaceName;
+            foreach (var t in types) {
+                if (!allTypes.Add(t)) continue;
+                if (t.GetCustomAttributes(typeof(Entitas.CodeGeneration.Attributes.DontGenerateAttribute),
+                    true).Any()) {
+                    continue;
+                }
+                if (t.IsSubclassOf(typeof(BaseFormater)) 
+                    &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
+                ) {
+                    var allInterfaces = t.GetInterfaces();
+                    var interfaces = allInterfaces.Where((_t) => _t.FullName.Contains(interfaceName)).ToArray();
+                    if (interfaces.Length > 0) {
+                        RegisterType(t);
+                    }
+                }
+            }
+        }
 
+        public virtual void GenerateCodeNodeData(bool isRefresh, params Type[] types){
+            var ser = new CodeGenerator();
+            foreach (var handler in GenInfo.FileHandlerInfo.TypeHandler) {
+                handler.Init(this);
+            }
+            var extensionStr = GenTypeCode(ser,new TypeHandler(this,GenInfo.FileHandlerInfo.TypeHandler,GenInfo.FileHandlerInfo.ClsCodeTemplate));
+            var registerStr = GenRegisterCode(ser);
+            var finalStr = GenFinalCodes(extensionStr, registerStr, isRefresh);
+            SaveFile(isRefresh, finalStr);
+        }
+
+        protected string GenRegisterCode(CodeGenerator gen){
+            var allGentedTypes = gen.AllGeneratedTypes;
+            var prefix = "";
+            var RegisterCode =GenInfo.FileHandlerInfo.RegisterCode;
+            if (string.IsNullOrEmpty(RegisterCode)) return string.Empty;
+            allGentedTypes.Sort((a, b) => { return GetTypeName(a).CompareTo(GetTypeName(b)); });
+            StringBuilder sb = new StringBuilder();
+            foreach (var t in allGentedTypes) {
+                var clsFuncName = GetTypeName(t);
+                var nameSpace = GetNameSpace(t);
+                sb.AppendLine(string.Format(RegisterCode, prefix, clsFuncName, nameSpace));
+            }
+
+            return sb.ToString();
+        }
+
+        string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh){
+            string fileContent = GenInfo.FileHandlerInfo.FileContent;
+            return fileContent
+                    .Replace("#NAMESPACE", NameSpace)
+                    .Replace("//#DECLARE_BASE_TYPES", RegisterStr)
+                    .Replace("//#TYPES_EXTENSIONS", extensionStr)
+                ;
+        }
+        
+        
         public string GenTypeCode(CodeGenerator gen, ITypeHandler typeHandler, params Type[] types){
             List<Type> allTypes = new List<Type>();
             allTypes.AddRange(types);
@@ -63,7 +124,6 @@ namespace Lockstep.CodeGenerator {
             }
         }
 
-        public virtual void GenerateCodeNodeData(bool isRefresh, params Type[] types){ }
 
         protected void SaveFile(bool isRefresh, string finalStr){ //save to file
             //Debug.LogError(GeneratePath);
@@ -87,7 +147,7 @@ namespace Lockstep.CodeGenerator {
             CustomRegisterTypes();
             ReflectRegisterTypes();
             var list = togenCodeTypes.ToList();
-            list.Sort((a, b) => { return a.Name.CompareTo(b.Name); });
+            list.Sort((a, b) => String.Compare(a.Name, b.Name, StringComparison.Ordinal));
             return list.ToArray();
         }
 
@@ -119,9 +179,6 @@ namespace Lockstep.CodeGenerator {
             return needNameSpaceTypes.Contains(t);
         }
 
-        public virtual string prefix {
-            get { return "\t\t"; }
-        }
 
         public string GetNameSpace(Type type){
             return type.Namespace;

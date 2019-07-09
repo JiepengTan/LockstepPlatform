@@ -5,6 +5,15 @@ using LitJson;
 using Lockstep.Util;
 
 namespace Lockstep.CodeGenerator {
+    public class FileHandlerInfo {
+
+        public string FileContent;
+        public string RegisterCode;
+        public string ClsCodeTemplate;
+        public FiledHandler[] TypeHandler;
+        
+    }
+
     public class GenInfo {
         public string ProjectFilePath;
         public string DllRelPath;
@@ -12,6 +21,7 @@ namespace Lockstep.CodeGenerator {
         public string GeneratePath;
         public string GenerateFileName;
         public string InterfaceName;
+        public FileHandlerInfo FileHandlerInfo;
     }
 
     internal class Program {
@@ -66,12 +76,8 @@ namespace Lockstep.CodeGenerator {
         static void GenCode(EGenType type, GenInfo info){
             EditorBaseCodeGenerator gener = null;
             if (info == null || string.IsNullOrEmpty(info.GenerateFileName)) return;
-            if (type == EGenType.ECS)
-                gener = new EditorCodeGeneratorExtensionEcs() {GenInfo = info};
-            else {
-                gener = new EditorCodeGeneratorExtensionMsg() {GenInfo = info};
-            }
 
+            gener = new EditorBaseCodeGenerator() {GenInfo = info};
             gener.HideGenerateCodes();
             gener.BuildProject();
             gener.GenerateCodeNodeData(true);
