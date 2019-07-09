@@ -6,6 +6,7 @@ using Lockstep.Util;
 
 namespace Lockstep.CodeGenerator {
     public class GenInfo {
+        public string ProjectFilePath;
         public string DllRelPath;
         public string NameSpace;
         public string GeneratePath;
@@ -50,10 +51,10 @@ namespace Lockstep.CodeGenerator {
             var allTxt = File.ReadAllText(configPath);
             var config = JsonMapper.ToObject<CopyFileInfos>(allTxt);
             var prefix = AppDomain.CurrentDomain.BaseDirectory;
-            GenCode(EGenType.ECS, config.TankEcs);
             GenCode(EGenType.Msg, config.MsgCommon);
             GenCode(EGenType.Msg, config.MsgServer);
             GenCode(EGenType.Msg, config.EntityConfig);
+            GenCode(EGenType.ECS, config.TankEcs);
             DeleteUselessFiles();
         }
 
@@ -63,12 +64,17 @@ namespace Lockstep.CodeGenerator {
         }
 
         static void GenCode(EGenType type, GenInfo info){
+            EditorBaseCodeGenerator gener = null;
             if (info == null || string.IsNullOrEmpty(info.GenerateFileName)) return;
             if (type == EGenType.ECS)
-                new EditorCodeGeneratorExtensionEcs() {GenInfo = info}.GenerateCodeNodeData(true);
+                gener = new EditorCodeGeneratorExtensionEcs() {GenInfo = info};
             else {
-                new EditorCodeGeneratorExtensionMsg() {GenInfo = info}.GenerateCodeNodeData(true);
+                gener = new EditorCodeGeneratorExtensionMsg() {GenInfo = info};
             }
+
+            gener.HideGenerateCodes();
+            gener.BuildProject();
+            gener.GenerateCodeNodeData(true);
         }
 
         public static void DeleteUselessFiles(){

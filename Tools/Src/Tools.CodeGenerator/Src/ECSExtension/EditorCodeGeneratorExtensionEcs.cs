@@ -29,7 +29,8 @@ namespace Lockstep.CodeGenerator {
                 if (t.IsSubclassOf(typeof(BaseFormater)) 
                     &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
                 ) {
-                    var interfaces = t.GetInterfaces().Where((_t) => _t.Name.Contains(interfaceName)).ToArray();
+                    var allInterfaces = t.GetInterfaces();
+                    var interfaces = allInterfaces.Where((_t) => _t.FullName.Contains(interfaceName)).ToArray();
                     if (interfaces.Length > 0) {
                         RegisterType(t);
                     }
@@ -37,7 +38,7 @@ namespace Lockstep.CodeGenerator {
             }
         }
 
-        public void GenerateCodeNodeData(bool isRefresh, params Type[] types){
+        public override void GenerateCodeNodeData(bool isRefresh, params Type[] types){
             var ser = new CodeGenerator();
             var extensionStr = GenTypeCode(ser,new TypeHandlerECS(this));
             var registerStr = GenRegisterCode(ser);

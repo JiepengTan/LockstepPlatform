@@ -42,6 +42,13 @@ namespace Lockstep.CodeGenerator {
             return gen.GenTypeCode(typeHandler, allTypes.ToArray());
         }
 
+        public void BuildProject(){
+            if (!string.IsNullOrEmpty(GenInfo.ProjectFilePath)) {
+                Utils.ExecuteCmd("msbuild /property:Configuration=Debug /p:WarningLevel=0 /verbosity:minimal " 
+                                 + GenInfo.ProjectFilePath, AppDomain.CurrentDomain.BaseDirectory);
+            }
+        }
+
         public void HideGenerateCodes(bool isSave = true){
             var path = GenerateFilePath;
             var lines = System.IO.File.ReadAllLines(path);
@@ -55,6 +62,8 @@ namespace Lockstep.CodeGenerator {
 #endif
             }
         }
+
+        public virtual void GenerateCodeNodeData(bool isRefresh, params Type[] types){ }
 
         protected void SaveFile(bool isRefresh, string finalStr){ //save to file
             //Debug.LogError(GeneratePath);

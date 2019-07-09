@@ -1,5 +1,10 @@
 namespace Lockstep.Game {
 
+    public interface IDelayCallService : IService {
+        int RegisterFunc(int delayMs, System.Action action);
+        void Call(int id);
+        void RemoveFunc(int leId);
+    }
     public class ServiceReferenceHolder {
         protected IServiceContainer _serviceContainer;
         protected IECSFacadeService _ecsFacadeService;

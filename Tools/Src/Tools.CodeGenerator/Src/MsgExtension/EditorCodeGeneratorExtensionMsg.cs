@@ -36,7 +36,7 @@ namespace Lockstep.CodeGenerator {
             }
         }
 
-        public void GenerateCodeNodeData(bool isRefresh, params Type[] types){
+        public override void GenerateCodeNodeData(bool isRefresh, params Type[] types){
             var ser = new CodeGenerator();
             var extensionStr = GenTypeCode(ser, new TypeHandlerMsg(this));
             var finalStr = GenFinalCodes(extensionStr, isRefresh);

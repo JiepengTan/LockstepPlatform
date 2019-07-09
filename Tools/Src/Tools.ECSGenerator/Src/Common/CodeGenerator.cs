@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Entitas.Migration;
 using Lockstep.ECGenerator.Common;
 using Lockstep.ECS.ECDefine;
 using Lockstep.Util;
@@ -61,21 +62,7 @@ namespace Lockstep.ECSGenerator {
         protected virtual void GenTypeCode(StringBuilder sb, Type type){ }
 
         static void ExecuteCmd(string shellName, string workingDir){
-            Process process = new Process();
-            process.StartInfo.CreateNoWindow = false;
-            process.StartInfo.ErrorDialog = true;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.FileName = "/bin/bash";
-            process.StartInfo.Arguments = shellName;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.RedirectStandardInput = true;
-            process.StartInfo.WorkingDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, workingDir);
-            process.Start();
-            ProjectUtil.Log("building  ... process start WorkingDirectory = " + process.StartInfo.WorkingDirectory);
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            process.Close();
-            ProjectUtil.Log(output);
+            Utils.ExecuteCmd(shellName, Path.Combine(AppDomain.CurrentDomain.BaseDirectory, workingDir));
         }
 
         static void CopyComponents(string srcRelDir, string dstRelDir){
