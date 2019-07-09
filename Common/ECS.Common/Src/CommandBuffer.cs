@@ -145,4 +145,55 @@ namespace Lockstep.Game {
         void Execute(int tick, ICommand cmd);
     }
 
+
+    public class DebugCommandBuffer : ICommandBuffer {
+        protected object _param;
+        protected List<List<ICommand>> _allCMds = new List<List<ICommand>>();
+
+        public void Init(object param, FuncUndoCommands funcUndoCommand){
+            _param = param;
+            var func = funcUndoCommand;
+            //func ?? UndoCommands; //暴力回滚 不考虑优化
+        }
+
+
+        ///RevertTo tick , so all cmd between [tick,~)(Include tick) should undo
+        public void Jump(int curTick, int dstTick){
+            if (curTick == dstTick) {
+                Debug.Log("hehe curTick == dstTick" + curTick);
+            }
+
+            if (curTick >= dstTick) {
+                for (int i = _allCMds.Count - 1; i >= dstTick; --i) {
+                    var cmds = _allCMds[i];
+                    if (cmds != null) {
+                        for (int j = cmds.Count - 1; j >= 0; --j) {
+                            cmds[j].Undo(_param);
+                        }
+                    }
+                }
+
+            }
+            else {
+                Debug.LogError("往前滚？？？");
+            }
+            if (_allCMds.Count > dstTick) {
+                _allCMds.RemoveRange(dstTick, _allCMds.Count - dstTick);
+            }
+        }
+
+        ///Discard all cmd between [0,maxVerifiedTick] (Include maxVerifiedTick)
+        public void Clean(int maxVerifiedTick){ }
+
+        public void Execute(int tick, ICommand cmd){
+            for (int i = _allCMds.Count; i <= tick; i++) {
+                _allCMds.Add(new List<ICommand>());
+            }
+
+            _allCMds[tick].Add(cmd);
+            cmd.Do(_param);
+        }
+
+        protected void UndoCommands(CommandNode minTickNode, CommandNode maxTickNode, object param){ }
+    }
 }

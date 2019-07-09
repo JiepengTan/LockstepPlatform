@@ -11,7 +11,7 @@ namespace Lockstep.Game {
         public virtual void OnApplicationQuit(){ }
 
         protected BaseService(){
-            cmdBuffer = new CommandBuffer();
+            cmdBuffer = new DebugCommandBuffer();
             cmdBuffer.Init(this, GetRollbackFunc());
         }
 

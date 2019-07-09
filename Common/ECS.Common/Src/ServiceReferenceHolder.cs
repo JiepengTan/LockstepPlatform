@@ -15,7 +15,8 @@ namespace Lockstep.Game {
         protected IResService _resService;
         protected IEffectService _effectService;
         protected IEventRegisterService _eventRegisterService;
-
+        protected IDelayCallService _delayCallService;
+        
         protected T GetService<T>() where T : IService{
             return _serviceContainer.GetService<T>();
         }
@@ -34,7 +35,7 @@ namespace Lockstep.Game {
             _resService = serviceContainer.GetService<IResService>();
             _effectService = serviceContainer.GetService<IEffectService>();
             _eventRegisterService = serviceContainer.GetService<IEventRegisterService>();
-            
+            _delayCallService = serviceContainer.GetService<IDelayCallService>();
         }
     }
    
