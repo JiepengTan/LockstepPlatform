@@ -40,42 +40,42 @@ namespace Lockstep.CodeGenerator {
 
 
         string clsCodeTemplate = @"
-namespace #NameSpace{
-    [System.Serializable]
-    public partial class #ClsName  {
-        public override void Serialize(Serializer writer){
-//#SERIALIZER
-        }
-    
-        public override void Deserialize(Deserializer reader){
-//#DESERIALIZER
-        }
-
-        public override void CopyTo(object comp){
-            var dst = (#ClsName) comp;
-            if (dst == null) {
-                throw new CopyToUnExceptTypeException(comp == null ? ""null"" : comp.GetType().ToString());
-            }
-//#COPYTO
-        }
-        
-        public override object Clone(){
-            var dst = new #ClsName();
-            CopyTo(dst);
-            return dst;
-        }
-        
-        public override int GetHashCode(){return base.GetHashCode();}
-        public override bool Equals(object obj){
-            var dst = (#ClsName) obj;
-            if (dst == null) return false;
-//#EUQALS
-            return true;
-        }
-    }
-}
-";
-
+namespace #NameSpace{                                                                                                                                                                                                                       
+    [System.Serializable]                                                                                                                           
+    public partial class #ClsName  {                                                                                                                            
+        public override void Serialize(Serializer writer){                                                                                                                          
+//#SERIALIZER                                                                                                                           
+        }                                                                                                                           
+                                                                                                                                
+        public override void Deserialize(Deserializer reader){                                                                                                                          
+//#DESERIALIZER                                                                                                                         
+        }                                                                                                                           
+                                                                                                                            
+        public override void CopyTo(object comp){                                                                                                                           
+            var dst = (#ClsName) comp;                                                                                                                          
+            if (dst == null) {                                                                                                                          
+                throw new CopyToUnExceptTypeException(comp == null ? ""null"" : comp.GetType().ToString());                                                                                                                         
+            }                                                                                                                           
+//#COPYTO                                                                                                                           
+        }                                                                                                                           
+                                                                                                                                    
+        public override object Clone(){                                                                                                                         
+            var dst = new #ClsName();                                                                                                                           
+            CopyTo(dst);                                                                                                                            
+            return dst;                                                                                                                         
+        }                                                                                                                           
+                                                                                                                                    
+        public override int GetHashCode(){return base.GetHashCode();}                                                                                                                           
+        public override bool Equals(object obj){                                                                                                                            
+            var dst = (#ClsName) obj;                                                                                                                           
+            if (dst == null) return false;                                                                                                                          
+//#EUQALS                                                                                                                           
+            return true;                                                                                                                            
+        }                                                                                                                           
+    }                                                                                                                           
+}                                                                                                                           
+";                                                                                                                          
+                                                                                                                            
         public override bool CanAddType(Type t){
             return typeof(IComponent).IsAssignableFrom(t);
         }
@@ -100,6 +100,5 @@ namespace #NameSpace{
                 ;
             return str;
         }
-        
     }
 }
