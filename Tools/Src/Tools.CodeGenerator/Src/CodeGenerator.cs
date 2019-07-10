@@ -17,6 +17,7 @@ namespace Lockstep.CodeGenerator {
     }
 
     public class GenInfo {
+        public string __Comment;
         public string ProjectFilePath;
         public string DllRelPath;
         public string NameSpace;

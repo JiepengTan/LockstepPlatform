@@ -14,11 +14,8 @@ namespace Lockstep.CodeGenerator {
             });
         }
 
-        public class CopyFileInfos {
-            public GenInfo MsgCommon = new GenInfo();
-            public GenInfo MsgServer = new GenInfo();
-            public GenInfo EntityConfig = new GenInfo();
-            public GenInfo TankEcs = new GenInfo();
+        public class CodeGenInfos {
+            public GenInfo[] GenInfos;
         }
 
 
@@ -40,12 +37,11 @@ namespace Lockstep.CodeGenerator {
 
         static void CopyFilesByConfig(string configPath){
             var allTxt = File.ReadAllText(configPath);
-            var config = JsonMapper.ToObject<CopyFileInfos>(allTxt);
+            var config = JsonMapper.ToObject<CodeGenInfos>(allTxt);
             var prefix = AppDomain.CurrentDomain.BaseDirectory;
-            GenCode(config.MsgCommon);
-            GenCode(config.MsgServer);
-            GenCode(config.EntityConfig);
-            GenCode(config.TankEcs);
+            foreach (var genInfo in config.GenInfos) {
+                GenCode(genInfo);
+            }
             DeleteUselessFiles();
         }
 
