@@ -16,19 +16,6 @@ using static Lockstep.Util.ProjectUtil;
 
 namespace Lockstep.ECSGenerator {
     public class CodeGenForEntitas : CodeGenerator {
-        static void TestMergeEntitasFile(){
-            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../CodeGenEntitas/Src/RawFiles");
-            StringBuilder sb = new StringBuilder();
-            PathUtil.Walk(path, "*.cs", (filePath) => { sb.AppendLine(File.ReadAllText(filePath)); });
-            File.WriteAllText(Path.Combine(path, "../Output/ComponentDefine.cs"), sb.ToString());
-        }
-
-        public static void GenCode(string configPath){
-            var allTxt = File.ReadAllText(configPath);
-            var configInfo = JsonMapper.ToObject<ConfigInfo>(allTxt);
-            //Console.WriteLine(JsonMapper.ToJson(configInfo));
-            new CodeGenForEntitas().OnGenCode(configInfo);
-        }
 
         protected override void UpdateProjectFile(){
             return;
@@ -43,7 +30,87 @@ namespace Lockstep.ECSGenerator {
             ProjectUtil.UpdateProjectFile(projectPath, relDir, dstPath);
         }
 
+        protected override void GenTypeCode(StringBuilder sb, Type type){
+            var typeName = type.Name;
+            var attriNames = type.GetCustomAttributes(typeof(NeedAttributeAttribute), true)
+                .Select((attri) => (attri as NeedAttributeAttribute)?.name).ToArray();
+            foreach (var attriName in attriNames) {
+                sb.AppendLine(_typeCodePrefix + $"[{attriName}]");
+            }
 
+            sb.AppendLine(_typeCodePrefix + $"public partial class {typeName} :IComponent {{");
+            string filedStr = "";
+            foreach (var filed in type.GetFields()) {
+                var filedAttris = filed.GetCustomAttributes(typeof(NeedAttributeAttribute), true)
+                    .Select((attri) => (attri as NeedAttributeAttribute)?.name).ToArray();
+                sb.Append(_typeCodePrefix + "    ");
+                foreach (var filedAttri in filedAttris) {
+                    sb.Append($"[{filedAttri}]");
+                }
+
+                var fileTypeStr = filed.FieldType.ToString();
+                if (type2Str.TryGetValue(filed.FieldType, out var typstr)) {
+                    fileTypeStr = typstr;
+                }
+
+                sb.AppendLine($"public {fileTypeStr} {filed.Name};");
+            }
+
+            sb.AppendLine(_typeCodePrefix + "}");
+        }
+
+        public static Dictionary<Type, string> type2Str = new Dictionary<Type, string>() {
+            {typeof(bool), "bool"},
+            {typeof(string), "string"},
+            {typeof(float), "LFloat"},
+            {typeof(byte), "byte"},
+            {typeof(sbyte), "sbyte"},
+            {typeof(short), "short"},
+            {typeof(ushort), "ushort"},
+            {typeof(int), "int"},
+            {typeof(uint), "uint"},
+            {typeof(long), "long"},
+            {typeof(ulong), "ulong"},
+            {typeof(Lockstep.ECS.ECDefine.Vector2), "LVector2"},
+            {typeof(Lockstep.ECS.ECDefine.Vector3), "LVector3"},
+            {typeof(Lockstep.ECS.ECDefine.Quaternion), "LQuaternion"},
+        };
+        
+        protected override void GenerateCodes(){
+            Log((object) "Generating...");
+            var recordpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, JennyPropertyPath);
+            LogError("recordpath " + recordpath);
+            var text = File.ReadAllText(recordpath);
+            var preference = new Preferences(recordpath, recordpath);
+            ICodeGenerationPlugin[] instances = CodeGeneratorUtil.LoadFromPlugins(preference);
+            CodeGeneratorConfig andConfigure = preference.CreateAndConfigure<CodeGeneratorConfig>();
+            AssemblyResolver assemblyResolver = new AssemblyResolver(false, andConfigure.searchPaths);
+            foreach (string plugin in andConfigure.plugins) {
+                Log("load plugin " + plugin);
+                assemblyResolver.Load(plugin);
+            }
+
+            DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator codeGenerator =
+                CodeGeneratorFromPreferences(preference);
+            codeGenerator.OnProgress += (GeneratorProgress) ((title, info, progress) => {
+                Log("progress " + (progress));
+            });
+
+            CodeGenFile[] codeGenFileArray1 = new CodeGenFile[0];
+            CodeGenFile[] codeGenFileArray2;
+            try {
+                codeGenFileArray2 = codeGenerator.Generate();
+            }
+            catch (Exception ex) {
+                codeGenFileArray1 = new CodeGenFile[0];
+                codeGenFileArray2 = new CodeGenFile[0];
+                LogError("Error" + ex.Message + ex.StackTrace);
+            }
+
+            UpdateOutputProjectFile();
+            LogGenInfo(codeGenFileArray2, codeGenFileArray1);
+        }
+        
         Type[] LoadTypes(Preferences preferences){
             CodeGeneratorConfig andConfigure = preferences.CreateAndConfigure<CodeGeneratorConfig>();
             var dirs = new string[andConfigure.searchPaths.Length];
@@ -135,41 +202,6 @@ namespace Lockstep.ECSGenerator {
             foreach (IConfigurable configurable in plugins.OfType<IConfigurable>())
                 configurable.Configure(preferences);
         }
-
-        protected override void GenerateCodes(){
-            Log((object) "Generating...");
-            var recordpath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, JennyPropertyPath);
-            LogError("recordpath " + recordpath);
-            var text = File.ReadAllText(recordpath);
-            var preference = new Preferences(recordpath, recordpath);
-            ICodeGenerationPlugin[] instances = CodeGeneratorUtil.LoadFromPlugins(preference);
-            CodeGeneratorConfig andConfigure = preference.CreateAndConfigure<CodeGeneratorConfig>();
-            AssemblyResolver assemblyResolver = new AssemblyResolver(false, andConfigure.searchPaths);
-            foreach (string plugin in andConfigure.plugins) {
-                Log("load plugin " + plugin);
-                assemblyResolver.Load(plugin);
-            }
-
-            DesperateDevs.CodeGeneration.CodeGenerator.CodeGenerator codeGenerator =
-                CodeGeneratorFromPreferences(preference);
-            codeGenerator.OnProgress += (GeneratorProgress) ((title, info, progress) => {
-                Log("progress " + (progress));
-            });
-
-            CodeGenFile[] codeGenFileArray1 = new CodeGenFile[0];
-            CodeGenFile[] codeGenFileArray2;
-            try {
-                codeGenFileArray2 = codeGenerator.Generate();
-            }
-            catch (Exception ex) {
-                codeGenFileArray1 = new CodeGenFile[0];
-                codeGenFileArray2 = new CodeGenFile[0];
-                LogError("Error" + ex.Message + ex.StackTrace);
-            }
-
-            UpdateOutputProjectFile();
-            LogGenInfo(codeGenFileArray2, codeGenFileArray1);
-        }
         protected void UpdateOutputProjectFile(){
             //Dotnet 不需要更新Proj 文件
             var jennyConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../Jenny.properties");
@@ -215,50 +247,18 @@ namespace Lockstep.ECSGenerator {
         }
 
   
-        protected override void GenTypeCode(StringBuilder sb, Type type){
-            var typeName = type.Name;
-            var attriNames = type.GetCustomAttributes(typeof(AttributeAttribute), true)
-                .Select((attri) => (attri as AttributeAttribute)?.name).ToArray();
-            foreach (var attriName in attriNames) {
-                sb.AppendLine(_typeCodePrefix + $"[{attriName}]");
-            }
-
-            sb.AppendLine(_typeCodePrefix + $"public partial class {typeName} :IComponent {{");
-            string filedStr = "";
-            foreach (var filed in type.GetFields()) {
-                var filedAttris = filed.GetCustomAttributes(typeof(AttributeAttribute), true)
-                    .Select((attri) => (attri as AttributeAttribute)?.name).ToArray();
-                sb.Append(_typeCodePrefix + "    ");
-                foreach (var filedAttri in filedAttris) {
-                    sb.Append($"[{filedAttri}]");
-                }
-
-                var fileTypeStr = filed.FieldType.ToString();
-                if (type2Str.TryGetValue(filed.FieldType, out var typstr)) {
-                    fileTypeStr = typstr;
-                }
-
-                sb.AppendLine($"public {fileTypeStr} {filed.Name};");
-            }
-
-            sb.AppendLine(_typeCodePrefix + "}");
+        static void TestMergeEntitasFile(){
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../CodeGenEntitas/Src/RawFiles");
+            StringBuilder sb = new StringBuilder();
+            PathUtil.Walk(path, "*.cs", (filePath) => { sb.AppendLine(File.ReadAllText(filePath)); });
+            File.WriteAllText(Path.Combine(path, "../Output/ComponentDefine.cs"), sb.ToString());
         }
 
-        public static Dictionary<Type, string> type2Str = new Dictionary<Type, string>() {
-            {typeof(bool), "bool"},
-            {typeof(string), "string"},
-            {typeof(float), "LFloat"},
-            {typeof(byte), "byte"},
-            {typeof(sbyte), "sbyte"},
-            {typeof(short), "short"},
-            {typeof(ushort), "ushort"},
-            {typeof(int), "int"},
-            {typeof(uint), "uint"},
-            {typeof(long), "long"},
-            {typeof(ulong), "ulong"},
-            {typeof(Lockstep.ECS.ECDefine.Vector2), "LVector2"},
-            {typeof(Lockstep.ECS.ECDefine.Vector3), "LVector3"},
-            {typeof(Lockstep.ECS.ECDefine.Quaternion), "LQuaternion"},
-        };
+        public static void GenCode(string configPath){
+            var allTxt = File.ReadAllText(configPath);
+            var configInfo = JsonMapper.ToObject<ConfigInfo>(allTxt);
+            //Console.WriteLine(JsonMapper.ToJson(configInfo));
+            new CodeGenForEntitas().OnGenCode(configInfo);
+        }
     }
 }

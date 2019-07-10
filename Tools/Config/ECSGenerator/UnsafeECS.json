@@ -1,0 +1,8 @@
+{
+  "NameSpaceTag" : "Lockstep.ECS.ECDefine",
+  "IgnoreDll"    : "Lockstep.ECS.ECDefine.dll",
+  "BuildECdefineShell" : "../BuildECDefineGame.sh",
+  "BuildECdefineShellWorkingDir" : "",
+  "DesFilePath" : "../../../Lockstep_Demo2D/Tools/Src/ECS.ECSOutput/Src/Unsafe/Components/UnsafeECS_Gen.cs",
+  "FileHeaderStr" :"using Lockstep.Math; "
+}

@@ -53,7 +53,7 @@ namespace Lockstep.CodeGenerator {
             var allTxt = File.ReadAllText(path);
             var config = JsonMapper.ToObject<FileHandlerInfo>(allTxt);
             info.FileHandlerInfo = config;
-            gener = new EditorBaseCodeGenerator() {GenInfo = info};
+            gener = new EditorBaseCodeGenerator(info) {};
             gener.HideGenerateCodes();
             gener.BuildProject();
             gener.GenerateCodeNodeData(true);

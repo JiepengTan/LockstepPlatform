@@ -1,5 +1,5 @@
 namespace Lockstep.ECS.UnsafeECS.CodeGen {
-    public class CodeGenEvent {
+    public class CodeGenEntity :CodeGenBase{
         
     }
 }

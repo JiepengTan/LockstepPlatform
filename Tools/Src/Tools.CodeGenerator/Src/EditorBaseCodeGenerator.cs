@@ -19,6 +19,10 @@ namespace Lockstep.CodeGenerator {
         protected HashSet<Type> togenCodeTypes = new HashSet<Type>();
         protected HashSet<Type> needNameSpaceTypes = new HashSet<Type>();
 
+        public EditorBaseCodeGenerator(GenInfo GenInfo){
+            this.GenInfo = GenInfo;
+        }
+
         public Type[] GetTypes(){
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, GenInfo.DllRelPath);
             var assembly =  Assembly.LoadFrom(path);
@@ -53,6 +57,7 @@ namespace Lockstep.CodeGenerator {
                 true).Any()) {
                 return false;
             }
+
             if (t.IsSubclassOf(typeof(BaseFormater)) 
                 &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
             ) {

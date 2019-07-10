@@ -25,6 +25,7 @@ namespace Lockstep.CodeGenerator {
         public string GenerateFileName;
         public string InterfaceName;
         public string TypeHandlerConfigPath;
+        public bool IsNeedCopyEnum;
         public FileHandlerInfo FileHandlerInfo;
     }
 

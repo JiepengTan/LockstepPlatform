@@ -1,23 +1,8 @@
 using Lockstep.ECS.ECDefine;
-
-namespace Lockstep.ECS {
-    public enum EAssetID {
-        Bullet0
-    }
-
-    public enum EDir { }
-
-    [Ignore]
-    public enum ECampType { }
-    public enum EItemType {
-        Boom,
-        AddLife,
-        Upgrade,
-    }
-}
+using Lockstep.Game;
 
 namespace Lockstep.ECS.Actor {
-    [Attribute("Actor")]
+    [NeedAttribute("Actor")]
     //An ActorEntity with BackupComponent refers to an actor in the past
     public partial class BackupComponent : IComponent {
         public byte actorId;
@@ -28,7 +13,7 @@ namespace Lockstep.ECS.Actor {
 
 
 namespace Lockstep.ECS.Actor {
-    [Attribute("Actor")]
+    [NeedAttribute("Actor")]
     public partial class EntityCountComponent : IComponent {
         public uint value;
     }
@@ -39,15 +24,15 @@ namespace Lockstep.ECS.Actor {
     /// <summary>
     /// 标志 当前Entity 是当前Tick 中存在  非Backup
     /// </summary>
-    [Attribute("Actor")]
+    [NeedAttribute("Actor")]
     public partial class IdComponent : IComponent {
-        [Attribute("PrimaryEntityIndex")] public byte value;
+        [NeedAttribute("PrimaryEntityIndex")] public byte value;
     }
 }
 
 
 namespace Lockstep.ECS.Debug {
-    [Attribute("Debugging")]
+    [NeedAttribute("Debugging")]
     public partial class HashCodeComponent : IComponent {
         public long value;
     }
@@ -55,7 +40,7 @@ namespace Lockstep.ECS.Debug {
 
 
 namespace Lockstep.ECS.Debug {
-    [Attribute("Debugging")]
+    [NeedAttribute("Debugging")]
     public partial class TickComponent : IComponent {
         public uint value;
     }
@@ -63,7 +48,7 @@ namespace Lockstep.ECS.Debug {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class ActorIdComponent : IComponent {
         public byte value;
     }
@@ -71,7 +56,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     //A GameEntity with BackupComponent refers to an entity in the past
     public partial class BackupComponent : IComponent {
         public uint localEntityId;
@@ -90,16 +75,16 @@ namespace Lockstep.ECS.Game {
     /// <summary>
     /// 标志 当前Entity 是当前Tick 中存在 非Backup
     /// </summary>
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class LocalIdComponent : IComponent {
-        [Attribute("PrimaryEntityIndex")] public uint value;
+        [NeedAttribute("PrimaryEntityIndex")] public uint value;
     }
 }
 
 
 namespace Lockstep.ECS.GameState {
-    [Attribute("GameState")]
-    [Attribute("Unique")]
+    [NeedAttribute("GameState")]
+    [NeedAttribute("Unique")]
     public partial class BackupCurFrameComponent : IComponent { }
 }
 
@@ -108,8 +93,8 @@ namespace Lockstep.ECS.GameState {
     /// <summary>
     /// 执行前的hash
     /// </summary>
-    [Attribute("GameState")]
-    [Attribute("Unique")]
+    [NeedAttribute("GameState")]
+    [NeedAttribute("Unique")]
     public partial class BeforeExecuteHashCodeComponent : IComponent {
         public long value;
     }
@@ -117,8 +102,8 @@ namespace Lockstep.ECS.GameState {
     /// <summary>
     /// 执行后的hash
     /// </summary>
-    [Attribute("GameState")]
-    [Attribute("Unique")]
+    [NeedAttribute("GameState")]
+    [NeedAttribute("Unique")]
     public partial class HashCodeComponent : IComponent {
         public long value;
     }
@@ -126,8 +111,8 @@ namespace Lockstep.ECS.GameState {
 
 
 namespace Lockstep.ECS.GameState {
-    [Attribute("GameState")]
-    [Attribute("Unique")]
+    [NeedAttribute("GameState")]
+    [NeedAttribute("Unique")]
     public partial class TickComponent : IComponent {
         public int value;
     }
@@ -135,7 +120,7 @@ namespace Lockstep.ECS.GameState {
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class ActorIdComponent : IComponent {
         public byte value;
     }
@@ -143,13 +128,13 @@ namespace Lockstep.ECS.Input {
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class DestroyedComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class EntityConfigIdComponent : IComponent {
         public int value;
     }
@@ -157,7 +142,7 @@ namespace Lockstep.ECS.Input {
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class TickComponent : IComponent {
         public int value;
     }
@@ -165,7 +150,7 @@ namespace Lockstep.ECS.Input {
 
 
 namespace Lockstep.ECS.Snapshot {
-    [Attribute("Snapshot")]
+    [NeedAttribute("Snapshot")]
     public partial class HashCodeComponent : IComponent {
         public long value;
     }
@@ -173,15 +158,15 @@ namespace Lockstep.ECS.Snapshot {
 
 
 namespace Lockstep.ECS.Snapshot {
-    [Attribute("Snapshot")]
+    [NeedAttribute("Snapshot")]
     public partial class TickComponent : IComponent {
-        [Attribute("PrimaryEntityIndex")] public int value;
+        [NeedAttribute("PrimaryEntityIndex")] public int value;
     }
 }
 
 
 namespace Lockstep.ECS.Actor {
-    [Attribute("Actor")]
+    [NeedAttribute("Actor")]
     public partial class GameLocalIdComponent : IComponent {
         public uint value;
     }
@@ -189,8 +174,8 @@ namespace Lockstep.ECS.Actor {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Actor")]
-    [Attribute("Event(EventTarget.Self)")]
+    [NeedAttribute("Actor")]
+    [NeedAttribute("Event(EventTarget.Self)")]
     public partial class LifeComponent : IComponent {
         public int value;
     }
@@ -198,8 +183,8 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Actor")]
-    [Attribute("Event(EventTarget.Self)")]
+    [NeedAttribute("Actor")]
+    [NeedAttribute("Event(EventTarget.Self)")]
     public partial class ScoreComponent : IComponent {
         public int value;
     }
@@ -207,7 +192,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class AIComponent : IComponent {
         public float timer;
         public float updateInterval;
@@ -217,7 +202,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class AssetComponent : IComponent {
         public EAssetID assetId = EAssetID.Bullet0;
     }
@@ -233,7 +218,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class BulletComponent : IComponent {
         public bool canDestoryIron = false;
         public bool canDestoryGrass = false;
@@ -243,7 +228,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class ColliderComponent : IComponent {
         public Vector2 size;
         public float radius;
@@ -252,17 +237,19 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class DelayCallComponent : IComponent {
         public float delayTimer;
-        public int callBack;
+        
+        [NeedAttribute("NoGenCode")]
+        public System.Action callBack;
     }
 }
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
-    [Attribute("Event(EventTarget.Self)")]
+    [NeedAttribute("Game")]
+    [NeedAttribute("Event(EventTarget.Self)")]
     public partial class DirComponent : IComponent {
         public EDir value;
     }
@@ -270,7 +257,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class DropRateComponent : IComponent {
         public float value;
     }
@@ -284,7 +271,7 @@ namespace Lockstep.ECS.Game {
 
 namespace Lockstep.ECS.Game {
 
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class ItemTypeComponent : IComponent {
         public EItemType type;
         public byte killerActorId;
@@ -293,7 +280,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class MoveComponent : IComponent {
         public float moveSpd;
         public float maxMoveSpd;
@@ -310,7 +297,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class OwnerComponent : IComponent {
         public uint localId;
     }
@@ -318,8 +305,8 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
-    [Attribute("Event(EventTarget.Self)")]
+    [NeedAttribute("Game")]
+    [NeedAttribute("Event(EventTarget.Self)")]
     public partial class PosComponent : IComponent {
         public Vector2 value;
     }
@@ -327,7 +314,7 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class SkillComponent : IComponent {
         public float cd;
 
@@ -341,31 +328,31 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class TagBulletComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class TagCampComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class TagEnemyComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class TagTankComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Game {
-    [Attribute("Game")]
+    [NeedAttribute("Game")]
     public partial class UnitComponent : IComponent {
         public string name;
         public ECampType camp;
@@ -378,13 +365,13 @@ namespace Lockstep.ECS.Game {
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class FireComponent : IComponent { }
 }
 
 
 namespace Lockstep.ECS.Input {
-    [Attribute("Input")]
+    [NeedAttribute("Input")]
     public partial class MoveDirComponent : IComponent {
         public EDir value;
     }
