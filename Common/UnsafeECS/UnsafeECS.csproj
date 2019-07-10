@@ -2,7 +2,25 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp2.2</TargetFramework>
-        <RootNamespace>Game.UnsafeECS</RootNamespace>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <RootNamespace>Lockstep.UnsafeECS</RootNamespace>
+        <AssemblyName>Lockstep.UnsafeECS</AssemblyName>
+    </PropertyGroup>
+    <ItemDefinitionGroup>
+        <Reference>
+            <Private>False</Private>
+        </Reference>
+    </ItemDefinitionGroup>
+    <PropertyGroup>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../../Libs/LPEngine/</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>

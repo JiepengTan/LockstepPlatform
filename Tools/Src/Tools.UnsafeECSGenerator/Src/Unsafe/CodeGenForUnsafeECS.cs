@@ -10,14 +10,14 @@ using Lockstep.Util;
 
 namespace Lockstep.ECSGenerator {
     public class ConfigInfo {
-        public string NameSpaceTag;
+        public string DllNameTag;
         public string IgnoreDll;
         public string BuildECdefineShell;
         public string BuildECdefineShellWorkingDir;
         public string DesFilePath;
-        public string FileHeaderStr;
+        public string TypeNameSpaceTag;
+        public string[] FileContent;
     }
-
     public class CodeGenForUnsafeECS {
         private ConfigInfo Info;
 
@@ -25,7 +25,7 @@ namespace Lockstep.ECSGenerator {
             this.Info = configInfo;
             ProjectUtil.Log("cur Dir" + AppDomain.CurrentDomain.BaseDirectory);
             //. build ECDefine project
-            ExecuteCmd(Info.BuildECdefineShell, Info.BuildECdefineShellWorkingDir);
+            //ExecuteCmd(Info.BuildECdefineShell, Info.BuildECdefineShellWorkingDir);
             //. parse define file and gen entitas code
             ParseECDefine();
         }
@@ -48,18 +48,19 @@ namespace Lockstep.ECSGenerator {
             ProjectUtil.Log("ParseECDefine ");
 
             PathUtil.Walk(path, "*.dll", (filePath) => {
-                if (filePath.Contains(Info.NameSpaceTag) && !filePath.Contains(Info.IgnoreDll)) {
+                if (filePath.Contains(Info.DllNameTag) && !filePath.Contains(Info.IgnoreDll)) {
                     StringBuilder sb = new StringBuilder();
-                    sb.AppendLine(Info.FileHeaderStr);
                     var types = DllUtil.LoadDll(filePath, (t) => true);
-                    var geners = GetType().Assembly.GetTypes().Where(t => t.BaseType != null && t.BaseType == typeof(CodeGenBase));
+                    types = types.Where(t => t.Namespace.Contains(Info.TypeNameSpaceTag)).ToArray();
+                    var geners = GetType().Assembly.GetTypes().Where(t => t.BaseType != null && typeof(CodeGenBase).IsAssignableFrom(t));
                     foreach (var gener in geners) {
                         var instance = (CodeGenBase) Activator.CreateInstance(gener);
-                        instance.GenCode(sb, types);
+                        instance.sb = sb;
+                        instance.Info = Info;
+                        instance.GenCode( types);
                     }
 
                     ProjectUtil.Log("DllPath " + filePath);
-                    if (types == null) return;
                     var typeLst = new List<Type>(types);
                     typeLst.Sort((a, b) => String.CompareOrdinal(a.Namespace, b.Namespace));
 
@@ -69,7 +70,8 @@ namespace Lockstep.ECSGenerator {
                         Directory.CreateDirectory(dir);
                     }
 
-                    File.WriteAllText(outputPath, sb.ToString());
+                    var finalContent = string.Join(' ',Info.FileContent).Replace("#TYPES_EXTENSIONS", sb.ToString());
+                    File.WriteAllText(outputPath, finalContent);
                     Console.WriteLine("Save code " + outputPath);
                 }
             });
