@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp2.2</TargetFramework>
+        <RootNamespace>Game.UnsafeECS</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Lockstep.AI.BehaviorTree, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.AI.BehaviorTree.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.AI.Pathfinding, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.AI.Pathfinding.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Collision, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Collision.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Logging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Logging.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Math, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Math.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Serialization, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Serialization.dll</HintPath>
+      </Reference>
+      <Reference Include="Lockstep.Util, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\..\Libs\LPEngine\Lockstep.Util.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>

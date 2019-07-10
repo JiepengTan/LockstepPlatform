@@ -9,6 +9,24 @@ using UnityEngine;
 
 #endif
 namespace Lockstep.CodeGenerator {
+    public class FileHandlerInfo {
+        public string[] FileContent;
+        public string RegisterCode;
+        public string[] ClsCodeTemplate;
+        public FiledHandler[] TypeHandler;
+    }
+
+    public class GenInfo {
+        public string ProjectFilePath;
+        public string DllRelPath;
+        public string NameSpace;
+        public string GeneratePath;
+        public string GenerateFileName;
+        public string InterfaceName;
+        public string TypeHandlerConfigPath;
+        public FileHandlerInfo FileHandlerInfo;
+    }
+
     public class CodeGenerator {
         const BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetField;
         readonly Queue<Type> todoTypes = new Queue<Type>();

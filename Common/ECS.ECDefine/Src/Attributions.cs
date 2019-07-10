@@ -17,9 +17,9 @@ namespace Lockstep.ECS.ECDefine {
     }
 
     [AttributeUsage(AttributeTargets.Class| AttributeTargets.Field,AllowMultiple = true)]
-    public class AttributeAttribute : System.Attribute {
+    public class NeedAttributeAttribute : System.Attribute {
         public string name;
-        public AttributeAttribute(string name){
+        public NeedAttributeAttribute(string name){
             this.name = name;
         }
     }

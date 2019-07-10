@@ -5,24 +5,6 @@ using LitJson;
 using Lockstep.Util;
 
 namespace Lockstep.CodeGenerator {
-    public class FileHandlerInfo {
-        public string[] FileContent;
-        public string RegisterCode;
-        public string[] ClsCodeTemplate;
-        public FiledHandler[] TypeHandler;
-    }
-
-    public class GenInfo {
-        public string ProjectFilePath;
-        public string DllRelPath;
-        public string NameSpace;
-        public string GeneratePath;
-        public string GenerateFileName;
-        public string InterfaceName;
-        public string TypeHandlerConfigPath;
-        public FileHandlerInfo FileHandlerInfo;
-    }
-
     internal class Program {
         static void DeleteUselessFiles(string relPath){
             var dllPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relPath);
