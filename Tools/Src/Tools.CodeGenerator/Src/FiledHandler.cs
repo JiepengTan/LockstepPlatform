@@ -12,6 +12,7 @@ namespace Lockstep.CodeGenerator {
         IFiledHandler[] GetFiledHandlers();
     }
     public interface ICodeHelper {
+        bool CanAddType(Type t);
         string prefix { get; }
         string GetNameSpace(Type type);
         string GetTypeName(Type type,bool isWithNameSpaceIfNeed = true);

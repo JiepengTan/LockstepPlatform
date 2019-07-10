@@ -9,7 +9,6 @@ using UnityEngine;
 
 #endif
 namespace Lockstep.CodeGenerator {
-
     public class CodeGenerator {
         const BindingFlags bindingAttr = BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetField;
         readonly Queue<Type> todoTypes = new Queue<Type>();
@@ -67,6 +66,8 @@ namespace Lockstep.CodeGenerator {
 
                 return;
             }
+
+            if (generatedTypes.Contains(type) || todoTypesSet.Contains(type)) return;
 
             if (!typeHandler.CanAddType(type)) return;
 
@@ -214,7 +215,7 @@ namespace Lockstep.CodeGenerator {
             }
 
             for (; i < count; i++) {
-                var property = properties[i-fileds.Count];
+                var property = properties[i - fileds.Count];
                 var ty = property.PropertyType;
                 DealMemberType(Handler, ty, property, AppendString);
             }

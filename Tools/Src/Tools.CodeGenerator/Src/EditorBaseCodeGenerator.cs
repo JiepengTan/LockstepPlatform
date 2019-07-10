@@ -42,20 +42,28 @@ namespace Lockstep.CodeGenerator {
             var interfaceName = GenInfo.InterfaceName;
             foreach (var t in types) {
                 if (!allTypes.Add(t)) continue;
-                if (t.GetCustomAttributes(typeof(Entitas.CodeGeneration.Attributes.DontGenerateAttribute),
-                    true).Any()) {
-                    continue;
-                }
-                if (t.IsSubclassOf(typeof(BaseFormater)) 
-                    &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
-                ) {
-                    var allInterfaces = t.GetInterfaces();
-                    var interfaces = allInterfaces.Where((_t) => _t.FullName.Contains(interfaceName)).ToArray();
-                    if (interfaces.Length > 0) {
-                        RegisterType(t);
-                    }
+                if (CanAddType(t)) {
+                    RegisterType(t);
                 }
             }
+        }
+
+        public bool CanAddType(Type t){
+            if (t.GetCustomAttributes(typeof(Entitas.CodeGeneration.Attributes.DontGenerateAttribute),
+                true).Any()) {
+                return false;
+            }
+            if (t.IsSubclassOf(typeof(BaseFormater)) 
+                &&t.GetCustomAttribute(typeof(SelfImplementAttribute)) == null
+            ) {
+                var allInterfaces = t.GetInterfaces();
+                var interfaces = allInterfaces.Where((_t) => _t.FullName.Contains(GenInfo.InterfaceName)).ToArray();
+                if (interfaces.Length > 0) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public virtual void GenerateCodeNodeData(bool isRefresh, params Type[] types){
@@ -63,7 +71,9 @@ namespace Lockstep.CodeGenerator {
             foreach (var handler in GenInfo.FileHandlerInfo.TypeHandler) {
                 handler.Init(this);
             }
-            var extensionStr = GenTypeCode(ser,new TypeHandler(this,GenInfo.FileHandlerInfo.TypeHandler,GenInfo.FileHandlerInfo.ClsCodeTemplate));
+            var extensionStr = GenTypeCode(ser,new TypeHandler(
+                this,GenInfo.FileHandlerInfo.TypeHandler,
+                String.Join(' ',GenInfo.FileHandlerInfo.ClsCodeTemplate)));
             var registerStr = GenRegisterCode(ser);
             var finalStr = GenFinalCodes(extensionStr, registerStr, isRefresh);
             SaveFile(isRefresh, finalStr);
@@ -86,7 +96,7 @@ namespace Lockstep.CodeGenerator {
         }
 
         string GenFinalCodes(string extensionStr, string RegisterStr, bool isRefresh){
-            string fileContent = GenInfo.FileHandlerInfo.FileContent;
+            string fileContent = string.Join(" ",GenInfo.FileHandlerInfo.FileContent);
             return fileContent
                     .Replace("#NAMESPACE", NameSpace)
                     .Replace("//#DECLARE_BASE_TYPES", RegisterStr)

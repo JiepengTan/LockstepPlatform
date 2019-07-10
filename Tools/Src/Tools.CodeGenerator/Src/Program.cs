@@ -6,12 +6,10 @@ using Lockstep.Util;
 
 namespace Lockstep.CodeGenerator {
     public class FileHandlerInfo {
-
-        public string FileContent;
+        public string[] FileContent;
         public string RegisterCode;
-        public string ClsCodeTemplate;
+        public string[] ClsCodeTemplate;
         public FiledHandler[] TypeHandler;
-        
     }
 
     public class GenInfo {
@@ -21,6 +19,7 @@ namespace Lockstep.CodeGenerator {
         public string GeneratePath;
         public string GenerateFileName;
         public string InterfaceName;
+        public string TypeHandlerConfigPath;
         public FileHandlerInfo FileHandlerInfo;
     }
 
@@ -61,22 +60,21 @@ namespace Lockstep.CodeGenerator {
             var allTxt = File.ReadAllText(configPath);
             var config = JsonMapper.ToObject<CopyFileInfos>(allTxt);
             var prefix = AppDomain.CurrentDomain.BaseDirectory;
-            GenCode(EGenType.Msg, config.MsgCommon);
-            GenCode(EGenType.Msg, config.MsgServer);
-            GenCode(EGenType.Msg, config.EntityConfig);
-            GenCode(EGenType.ECS, config.TankEcs);
+            GenCode(config.MsgCommon);
+            GenCode(config.MsgServer);
+            GenCode(config.EntityConfig);
+            GenCode(config.TankEcs);
             DeleteUselessFiles();
         }
 
-        public enum EGenType {
-            ECS,
-            Msg,
-        }
-
-        static void GenCode(EGenType type, GenInfo info){
+        static void GenCode(GenInfo info){
             EditorBaseCodeGenerator gener = null;
             if (info == null || string.IsNullOrEmpty(info.GenerateFileName)) return;
-
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,info.TypeHandlerConfigPath);
+            Console.WriteLine(path);
+            var allTxt = File.ReadAllText(path);
+            var config = JsonMapper.ToObject<FileHandlerInfo>(allTxt);
+            info.FileHandlerInfo = config;
             gener = new EditorBaseCodeGenerator() {GenInfo = info};
             gener.HideGenerateCodes();
             gener.BuildProject();

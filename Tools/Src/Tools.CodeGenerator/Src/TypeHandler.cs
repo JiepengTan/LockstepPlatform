@@ -22,7 +22,7 @@ namespace Lockstep.CodeGenerator {
 
 
         public bool CanAddType(Type t){
-            return true;
+            return _helper.CanAddType(t);
         }
 
         public string DealType(Type t, List<string> filedsStrs){
@@ -40,7 +40,7 @@ namespace Lockstep.CodeGenerator {
                 ;
 
             for (int i = 0; i < filedsStrs.Count; i++) {
-                var tag = "TYPE_HANDLE" + i;
+                var tag = "#TYPE_HANDLE" + i;
                 str = str.Replace(tag, filedsStrs[i]);
             }
 
