@@ -84,8 +84,8 @@
     7. 点击 Lockstep_Demo2D_Tank-0.3.5/RunServer.sh 运行服务器
     8. Unity 打开Lockstep_Demo2D_Tank-0.3.5/Src/Unity/ 运行游戏
 
-    想看视频的可以点击这里 [Mac环境搭建视频][15] 
 
+想看视频的可以点击这里 [Mac环境搭建视频][15] 
 ##### **Win 环境搭建**
 //TODO
 
