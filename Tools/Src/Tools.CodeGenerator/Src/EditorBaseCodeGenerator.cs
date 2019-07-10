@@ -122,6 +122,7 @@ namespace Lockstep.CodeGenerator {
 
         public void HideGenerateCodes(bool isSave = true){
             var path = GenerateFilePath;
+            if (!File.Exists(path)) return;
             var lines = System.IO.File.ReadAllLines(path);
             lines[0] = lines[0].Replace("//#define", "#define");
             System.IO.File.WriteAllLines(path, lines);
