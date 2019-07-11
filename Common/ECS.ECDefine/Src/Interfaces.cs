@@ -10,4 +10,6 @@ namespace Lockstep.ECS.ECDefine {
     public interface IEntity { }
 
     public interface IAsset { }
+    
+    public interface IRef { }
 }

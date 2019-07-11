@@ -31,9 +31,8 @@ namespace Lockstep.ECS.UnsafeECS.CodeGen {
             return primers;
         }
 
-        public override void GenCode(Type[] rawtypes){
+        protected override void OnBeforeGenCode(Type[] rawTypes){
             Primers = CalcPrimers(200);
-            base.GenCode(rawtypes);
         }
 
         protected override string ClsPrototype => @"
@@ -65,14 +64,14 @@ namespace Lockstep.ECS.UnsafeECS.CodeGen {
                     .Replace("#ATTRIS_DEFINE", strDefines)
                     .Replace("#HASH_CODES", strHashCodes)
                 ;
-            sb.AppendLine(typeStr);
+            _sb.AppendLine(typeStr);
         }
 
         private string HashStr = " hash = hash * 31 +{0}.GetHashCode();";
         private string hashPrefix = attriPrefix + "        ";
         string GetHashCodeString(FieldInfo[] fields){
             return IterateFields(fields,
-                (field) => { _attriSb.AppendLine(hashPrefix + string.Format(HashStr, field.Name)); });
+                (field) => { AppendAttri(hashPrefix + string.Format(HashStr, field.Name)); });
         }
     }
 }

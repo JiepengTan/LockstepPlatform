@@ -1,30 +1,50 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using Lockstep.ECS.ECDefine;
 
 namespace Lockstep.ECS.UnsafeECS.CodeGen {
     public class CodeGenBase {
         public Lockstep.ECSGenerator.ConfigInfo Info;
-        public StringBuilder sb;
+        public StringBuilder _sb;
         protected static string prefix = "    ";
         protected static string attriPrefix = prefix + "    ";
 
         protected void AppendLineType(string str){
-            sb.AppendLine(prefix + str);
+            _sb.AppendLine(prefix + str);
         }
 
         protected void AppendLineAttri(string str){
-            sb.AppendLine(attriPrefix + str);
+            _sb.AppendLine(attriPrefix + str);
         }
 
-        public virtual void GenCode(Type[] rawtypes){
-            foreach (var type in rawtypes) {
+        private Type[] _rawTypes;
+
+        public virtual void GenCode(Type[] rawTypes){
+            _rawTypes = rawTypes;
+            OnBeforeGenCode(rawTypes);
+            foreach (var type in rawTypes) {
                 if (FilterFunc(type)) {
                     DealType(type);
                 }
             }
+
+            OnAfterGenCode(rawTypes);
         }
+
+        protected virtual void OnBeforeGenCode(Type[] rawTypes){ }
+        protected virtual void OnAfterGenCode(Type[] rawTypes){ }
+
+        protected Type[] GetTypesEntity(){return GetTypes<IEntity>();}
+        protected Type[] GetTypesAsset(){return GetTypes<IAsset>();}
+        protected Type[] GetTypesComponent(){return GetTypes<IComponent>();}
+        protected Type[] GetTypesEvent(){return GetTypes<IEvent>();}
+        protected Type[] GetTypesEntityField(){return GetTypes<IEntity>()
+            .Select( (t) => t.GetNestedTypes()[0]).ToArray();}
+        Type[] GetTypes<T>(){return _rawTypes.Where(IsTargetType<T>).ToArray();}
+        protected bool IsTargetType<T>(Type t){return t != typeof(T) && typeof(T).IsAssignableFrom(t);}
 
         protected virtual bool FilterFunc(Type type){
             return true;
@@ -55,10 +75,10 @@ namespace Lockstep.ECS.UnsafeECS.CodeGen {
             }
 
             if (type.IsGenericType) {
-                return $"{type.Name.Replace("`1","") }<{type.GenericTypeArguments[0].Name}>";
+                return $"{type.Name.Replace("`1", "")}<{type.GenericTypeArguments[0].Name}>";
             }
             else {
-                return type.Name;    
+                return type.Name;
             }
         }
     }

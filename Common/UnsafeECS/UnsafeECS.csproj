@@ -47,4 +47,8 @@
       </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Src\Common" />
+    </ItemGroup>
+
 </Project>

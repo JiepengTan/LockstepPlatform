@@ -25,7 +25,7 @@ namespace Lockstep.ECS.UnsafeECS.CodeGen {
     }
 ";
 
-        public override void GenCode(Type[] rawtypes){
+        public override void GenCode(Type[] rawTypes){
             foreach (var size in GetAllSize()) {
                 GenBitSet(size);
                 
@@ -41,7 +41,7 @@ namespace Lockstep.ECS.UnsafeECS.CodeGen {
         }
 
         void GenBitSet(int bitNum){
-            sb.AppendLine(ClsPrototype.Replace("#BIT_SET_NUM", bitNum.ToString()));
+            _sb.AppendLine(ClsPrototype.Replace("#BIT_SET_NUM", bitNum.ToString()));
         }
     }
 }

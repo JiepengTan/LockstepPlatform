@@ -3,7 +3,7 @@
   "IgnoreDll": "Lockstep.ECS.ECDefine.dll",
   "BuildECdefineShell": "../BuildECDefineGame.sh",
   "BuildECdefineShellWorkingDir": "",
-  "DesFilePath": "../../../Lockstep_Demo2D/Tools/Src/ECS.ECSOutput/Src/Unsafe/Components/UnsafeECS_Gen.cs",
+  "DesFileDir": "../../../Lockstep_Demo2D/Tools/Src/ECS.ECSOutput/Src/Unsafe/Components/",
   "TypeNameSpaceTag": "Lockstep.ECS.ECDefine.UnsafeECS",
   "FileContent": [
     "\n//#define DONT_USE_GENERATE_CODE                                                                ",
@@ -22,7 +22,7 @@
     "\nusing System;                                                                                   ",
     "\nusing Lockstep.Math;                                                                                   ",
     "\nusing Lockstep.Game;                                                                                   ",
-    "\nnamespace Lockstep.ECS.Game{                                                                    ",
+    "\nnamespace Lockstep.UnsafeECS.Game{                                                                    ",
     "\n#if !DONT_USE_GENERATE_CODE                                                                     ",
     "\n#TYPES_EXTENSIONS                                                                               ",
     "\n#endif                                                                                          ",

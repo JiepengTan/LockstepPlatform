@@ -1,18 +1,25 @@
 namespace Lockstep.ECS.ECDefine {
+    public class AssetRef<T> : IRef where T : IAsset { }
 
-    public class AssetRef<T> where T:IAsset{ }
+    public class EntityRef<T> : IRef where T : IEntity { }
 
-    public class EntityRef<T> where T:IEntity { }
+    public class EntityRef : IRef { }
 
-    public class EntityRef { }
-    public class PlayerRef { }
+    public class PlayerRef : IRef { }
+
     public class Vector2 { }
+
     public class Vector3 { }
+
     public class Quaternion { }
 
     public class Prefab { }
+
     public class Transform2D { }
+
     public class CollisionAgent { }
+
     public class NavMeshAgent { }
+
     public class Button { }
 }

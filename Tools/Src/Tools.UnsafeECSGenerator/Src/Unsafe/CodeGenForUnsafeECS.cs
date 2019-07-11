@@ -14,10 +14,11 @@ namespace Lockstep.ECSGenerator {
         public string IgnoreDll;
         public string BuildECdefineShell;
         public string BuildECdefineShellWorkingDir;
-        public string DesFilePath;
+        public string DesFileDir;
         public string TypeNameSpaceTag;
         public string[] FileContent;
     }
+
     public class CodeGenForUnsafeECS {
         private ConfigInfo Info;
 
@@ -49,32 +50,33 @@ namespace Lockstep.ECSGenerator {
 
             PathUtil.Walk(path, "*.dll", (filePath) => {
                 if (filePath.Contains(Info.DllNameTag) && !filePath.Contains(Info.IgnoreDll)) {
-                    StringBuilder sb = new StringBuilder();
+                    ProjectUtil.Log("DllPath " + filePath);
                     var types = DllUtil.LoadDll(filePath, (t) => true);
                     types = types.Where(t => t.Namespace.Contains(Info.TypeNameSpaceTag)).ToArray();
-                    var geners = GetType().Assembly.GetTypes().Where(t => t.BaseType != null && typeof(CodeGenBase).IsAssignableFrom(t));
+                    var geners = GetType().Assembly.GetTypes()
+                        .Where(t => t.BaseType != null && typeof(CodeGenBase).IsAssignableFrom(t) && t!= typeof(CodeGenBase));
                     foreach (var gener in geners) {
+                        StringBuilder sb = new StringBuilder();
                         var instance = (CodeGenBase) Activator.CreateInstance(gener);
-                        instance.sb = sb;
+                        instance._sb = sb;
                         instance.Info = Info;
-                        instance.GenCode( types);
+                        instance.GenCode(types);
+                        var outputPath = Path.Combine(Path.Combine(path, Info.DesFileDir), gener.Name.Replace("CodeGen","UnsafeECSGen_") + ".cs");
+                        SaveToFile(outputPath, sb);
                     }
-
-                    ProjectUtil.Log("DllPath " + filePath);
-                    var typeLst = new List<Type>(types);
-                    typeLst.Sort((a, b) => String.CompareOrdinal(a.Namespace, b.Namespace));
-
-                    var outputPath = Path.Combine(path, Info.DesFilePath);
-                    var dir = Path.GetDirectoryName(outputPath);
-                    if (!Directory.Exists(dir)) {
-                        Directory.CreateDirectory(dir);
-                    }
-
-                    var finalContent = string.Join(' ',Info.FileContent).Replace("#TYPES_EXTENSIONS", sb.ToString());
-                    File.WriteAllText(outputPath, finalContent);
-                    Console.WriteLine("Save code " + outputPath);
                 }
             });
+        }
+
+        private void SaveToFile(string outputPath, StringBuilder sb){
+            var dir = Path.GetDirectoryName(outputPath);
+            if (!Directory.Exists(dir)) {
+                Directory.CreateDirectory(dir);
+            }
+
+            var finalContent = string.Join(' ', Info.FileContent).Replace("#TYPES_EXTENSIONS", sb.ToString());
+            File.WriteAllText(outputPath, finalContent);
+            Console.WriteLine("Save code " + outputPath);
         }
     }
 }

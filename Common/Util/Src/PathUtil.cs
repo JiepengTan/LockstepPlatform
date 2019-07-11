@@ -1,12 +1,30 @@
 using System;
 using System.IO;
 using System.Linq;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 namespace Lockstep.Util {
-    
     public static class PathUtil {
+        public static void CopyDir(string srcDir, string dstDir, string ext){
+            var srcDirName = Path.GetDirectoryName(srcDir);
+            var dstDirName = Path.GetDirectoryName(dstDir);
+            PathUtil.Walk(srcDir, ext, (path) => {
+                var dstPath = path.Replace(srcDirName, dstDirName);
+                CopyFile(path, dstPath);
+            });
+        }
+
+        public static void CopyFile(string srcPath, string dstPath){
+            var dstDir = Path.GetDirectoryName(dstPath);
+            if (!Directory.Exists(dstDir)) {
+                Directory.CreateDirectory(dstDir);
+            }
+
+            File.Copy(srcPath, dstPath, true);
+        }
+
         // 遍历所选目录或文件，递归
         public static void Walk(string path, string exts, System.Action<string> callback, bool _is_save_assets = false,
             bool _is_all_directories = true){

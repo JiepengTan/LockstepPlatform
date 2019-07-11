@@ -47,29 +47,11 @@ namespace CopySourceFiles {
                     }
 
                     Console.WriteLine("Copy: " + projectDir);
-                    CopyFiles(srcDir, dstDir);
+                    PathUtil.CopyDir(srcDir, dstDir, "*.cs");
                 }
             }
 
             Console.WriteLine("Done");
-        }
-
-        static void CopyFiles(string srcDir, string dstDir){
-            var srcDirName = Path.GetDirectoryName(srcDir);
-            var dstDirName = Path.GetDirectoryName(dstDir);
-            PathUtil.Walk(srcDir, "*.cs", (path) => {
-                var dstPath = path.Replace(srcDirName, dstDirName);
-                CopyFile(path, dstPath);
-            });
-        }
-
-        static void CopyFile(string srcPath, string dstPath){
-            var dstDir = Path.GetDirectoryName(dstPath);
-            if (!Directory.Exists(dstDir)) {
-                Directory.CreateDirectory(dstDir);
-            }
-
-            File.Copy(srcPath, dstPath, true);
         }
     }
 }
