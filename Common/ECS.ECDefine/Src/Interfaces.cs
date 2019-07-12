@@ -1,7 +1,9 @@
 using System;
 
 namespace Lockstep.ECS.ECDefine {
+    public interface ISignal { }
     public interface IEvent { }
+    public interface ICollisionDefine { }
 
     public interface IGlobal { }
 
