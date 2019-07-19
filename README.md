@@ -1,5 +1,9 @@
 #  LockstepPlatform 
  
+##### 0. 架构设计
+
+<p align="center"> <img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/LockstepPlatform/LPArchitecture.png?raw=true" width="512"/></p>
+
 ##### 1.项目目标    
 
     1. 基于ECS快照回滚帧同步技术，提供一个游戏双端解决方案。

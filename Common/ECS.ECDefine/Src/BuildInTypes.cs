@@ -1,6 +1,8 @@
 namespace Lockstep.ECS.ECDefine {
+    [Abstract]
     public class AssetRef<T> : IRef where T : IAsset { }
 
+    [Abstract]
     public class EntityRef<T> : IRef where T : IEntity { }
 
     public class EntityRef : IRef { }
