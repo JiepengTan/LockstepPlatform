@@ -4,6 +4,8 @@
 
 <p align="center"> <img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/LockstepPlatform/LPArchitecture.png?raw=true" width="512"/></p>
 
+
+
 ##### 1.项目目标    
 
     1. 基于ECS快照回滚帧同步技术，提供一个游戏双端解决方案。
@@ -64,15 +66,6 @@
 #### 2D Demo(FC Tank)
     
 - 2D Demo地址 FCTank:[https://github.com/JiepengTan/Lockstep_Demo2D_Tank][14] 
-
-<p align="center"> <img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/Show/game_pic.png?raw=true" width="512"/></p>
-
-
-### ** Basic lockstep and rollback file**
-<p align="center"><img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/Show/lockstepgifbig.gif?raw=true" width="512"></p>
-
-### ** Replay record file**
-<p align="center"><img src="https://github.com/JiepengTan/JiepengTan.github.io/blob/master/assets/img/blog/Show/lsp_recode_file2.gif?raw=true" width="940"></p>
 
 
 
