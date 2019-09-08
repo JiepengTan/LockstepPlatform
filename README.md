@@ -1,5 +1,8 @@
 此项目不再开放 请移步到 [https://github.com/JiepengTan/LockstepEngine][16]
 
+#### **QQ 群：** 
+- 帧同步技术交流  839944367
+
  [1]: https://github.com/proepkes/UnityLockstep
  [2]: https://github.com/RevenantX/LiteNetLib
  [3]: https://github.com/sschmid/Entitas-CSharp
